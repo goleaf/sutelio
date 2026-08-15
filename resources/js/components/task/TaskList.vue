@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
 import { useUi } from '@/composables/useUi';
+import { isTodoOverdue } from '@/lib/todoDates';
 import type { Todo } from '@/types/models';
 
 const props = defineProps<{
@@ -22,6 +23,12 @@ const emit = defineEmits<{
 }>();
 const { formatDate, t } = useUi();
 const selected = computed(() => new Set(props.selectedIds));
+
+const isOverdue = (todo: Todo): boolean =>
+    isTodoOverdue(todo.due_date, todo.is_completed);
+
+const priorityColor = (todo: Todo): string =>
+    safeDefinitionColor(todo.priority_definition?.color);
 const allSelected = computed(
     () =>
         props.todos.length > 0 &&
@@ -50,11 +57,12 @@ const allSelected = computed(
             v-for="todo in todos"
             :key="todo.id"
             class="group relative grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-border/80 bg-background p-3 transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-orange-500/25 hover:shadow-[0_16px_36px_-30px_rgba(234,88,12,0.55)] motion-reduce:transform-none sm:gap-3 sm:p-4"
-            :class="
+            :class="[
                 selected.has(todo.id)
                     ? 'border-orange-500/30 bg-orange-500/[0.035]'
-                    : ''
-            "
+                    : '',
+                isOverdue(todo) ? 'border-red-500/40 bg-red-500/[0.025]' : '',
+            ]"
             :aria-busy="busyTodoId === todo.id"
         >
             <button
@@ -113,25 +121,29 @@ const allSelected = computed(
                     <span v-if="todo.project" class="truncate">{{
                         todo.project.name
                     }}</span>
-                    <span v-if="todo.due_date">{{
-                        formatDate(todo.due_date, {
-                            month: 'short',
-                            day: 'numeric',
-                        })
-                    }}</span>
                     <Badge
-                        class="hidden sm:inline-flex"
+                        v-if="todo.priority_definition || todo.priority"
+                        class="inline-flex"
                         variant="outline"
                         :style="{
-                            borderColor: safeDefinitionColor(
-                                todo.priority_definition?.color,
-                            ),
-                            color: safeDefinitionColor(
-                                todo.priority_definition?.color,
-                            ),
+                            borderColor: priorityColor(todo),
+                            color: priorityColor(todo),
                         }"
                     >
                         {{ todo.priority_definition?.name ?? todo.priority }}
+                    </Badge>
+                    <Badge
+                        v-if="todo.due_date"
+                        class="inline-flex"
+                        :class="isOverdue(todo) ? 'border-red-500/50 text-red-600 dark:text-red-400' : ''"
+                        variant="outline"
+                    >
+                        {{ isOverdue(todo) ? `${t('tasks.stats.overdue')} · ` : '' }}{{
+                            formatDate(todo.due_date, {
+                                month: 'short',
+                                day: 'numeric',
+                            })
+                        }}
                     </Badge>
                 </span>
             </div>

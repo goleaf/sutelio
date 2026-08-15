@@ -309,7 +309,7 @@ Completed.
 
 ### Status
 
-In progress.
+Completed and ready for delivery.
 
 ### Scope And Decisions
 
@@ -1322,6 +1322,84 @@ No migration or Composer/npm package was added, removed, or upgraded.
 - Commit `bdac5ae` (`fix: normalize task UI control flow`) was pushed to `origin main`.
 - Commit `4ed0952` (`fix: clean board and keyboard guards`) was pushed to `origin main`.
 - This final delivery record will be committed as `docs: record ESLint cleanup delivery` and pushed separately to `origin main`.
+
+## Task Index Production Build Repair
+
+### Status
+
+Completed.
+
+### Scope And Decisions
+
+- Resolve the task index Vue compiler failure without changing the localized date output or unrelated in-progress frontend work.
+- Reuse the shared locale- and timezone-aware `useUi` date formatter under a distinct local name.
+- Return the task priority badge's exact supported variant union so this page also passes Vue type checking.
+
+### Changed Files
+
+- `resources/js/pages/tasks/Index.vue`
+- `docs/progress.md`
+
+### Migrations And Packages
+
+No migration or Composer/npm package change is planned.
+
+### Verification
+
+- `npm run build`: passed; Vite transformed 3,360 modules and generated the production bundle. The existing optional `fontaine` optimization notice remains non-blocking.
+- Targeted ESLint for `resources/js/pages/tasks/Index.vue`: passed.
+- Targeted Prettier verification for the repaired Vue page and this progress file: passed.
+- `npm run types:check`: the task index error is resolved; the repository check remains blocked by seven unrelated errors in passkey, task-create, autosave, task-state-test, and project-show files.
+- Scoped `git diff --check`: passed.
+
+### Known Limitations
+
+- The optional `fontaine` notice was not changed because resolving it requires either an npm dependency change or disabling optimized font fallbacks.
+- Seven unrelated pre-existing/concurrent Vue type errors remain outside this repair.
+
+### Git Delivery
+
+No commit or push was created because both changed files already contain intertwined concurrent user work that cannot be isolated safely from this repair. All unrelated worktree changes remain preserved.
+
+## Herd Upload Runtime Limit Repair
+
+### Status
+
+Completed.
+
+### Scope And Decisions
+
+- Align Herd's PHP 8.4 request limits with the existing 10 MiB attachment and 5 MiB import validation boundaries.
+- Set `upload_max_filesize` to 10 MiB and reserve multipart overhead with a 12 MiB `post_max_size` boundary.
+- Use Herd's supported per-PHP-version `php.ini` configuration after confirming parked sites do not load a project `public/.user.ini` through Herd's router.
+
+### Changed Files
+
+- `~/Library/Application Support/Herd/config/php/84/php.ini` (local Herd runtime configuration, outside Git)
+- `docs/progress.md`
+
+### Migrations And Packages
+
+No migration or Composer/npm package change is planned.
+
+### Verification
+
+- Reproduced the PHP startup warning with a 3 MiB request against the original 2 MiB `post_max_size` boundary.
+- Confirmed new CLI values of `upload_max_filesize=10M` and `post_max_size=12M` after editing Herd's PHP 8.4 configuration.
+- Fully stopped and started Herd so its previously stale PHP 8.4 FPM master reloaded the settings.
+- Confirmed an 11 MiB POST reaches Laravel and returns the expected HTTP 419 CSRF response instead of `PostTooLargeException`.
+- Confirmed a 13 MiB POST remains rejected at PHP startup against the new 12 MiB boundary.
+- Focused import and attachment size-boundary Pest tests passed: 2 tests and 8 assertions.
+- Scoped `git diff --check` passed for this progress update.
+
+### Known Limitations
+
+- Herd applies these values to all local sites served by its PHP 8.4 runtime; production PHP-FPM must configure equivalent limits independently.
+- No application PHP behavior changed; the discarded `public/.user.ini` experiment and its temporary test were removed after the live Herd check proved that parked sites do not load it.
+
+### Git Delivery
+
+No commit or push was created because the functional fix lives in Herd's user-level PHP configuration and `docs/progress.md` already contains intertwined user work. Existing unrelated worktree changes remain excluded and preserved.
 
 ## UI Phase: Warm Precision Across All Pages
 
