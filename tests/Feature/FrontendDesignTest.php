@@ -325,7 +325,8 @@ test('task creation fields expose complete invalid and disabled states', functio
         ->toContain('form.errors.recurring_rule')
         ->toContain(':disabled="!form.is_recurring || form.processing"')
         ->toContain('<InputError :message="form.errors.priority" />')
-        ->toContain('<InputError :message="form.errors.due_date" />')
+        ->toContain('id="due-date-error"')
+        ->toContain(':message="form.errors.due_date"')
         ->toContain('<InputError :message="form.errors.recurring_rule" />');
 });
 

@@ -185,9 +185,16 @@ async function submit(): Promise<void> {
                             type="date"
                             :disabled="form.processing"
                             :aria-invalid="Boolean(form.errors.due_date)"
-                            :aria-describedby="form.errors.due_date ? 'due-date-error' : undefined"
+                            :aria-describedby="
+                                form.errors.due_date
+                                    ? 'due-date-error'
+                                    : undefined
+                            "
                         />
-                        <InputError :message="form.errors.due_date" />
+                        <InputError
+                            id="due-date-error"
+                            :message="form.errors.due_date"
+                        />
                     </div>
                 </div>
                 <div class="space-y-2">

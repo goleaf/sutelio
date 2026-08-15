@@ -10,7 +10,10 @@ const overviewPanel = readFileSync(
     new URL('./TaskOverviewPanel.vue', import.meta.url),
     'utf8',
 );
-const taskList = readFileSync(new URL('./TaskList.vue', import.meta.url), 'utf8');
+const taskList = readFileSync(
+    new URL('./TaskList.vue', import.meta.url),
+    'utf8',
+);
 const taskIndex = readFileSync(
     new URL('../../Pages/tasks/Index.vue', import.meta.url),
     'utf8',
@@ -21,6 +24,8 @@ test('todo UI submits title priority and due date when creating a task', () => {
     assert.match(createDialog, /priority:/);
     assert.match(createDialog, /due_date:/);
     assert.match(createDialog, /form\.submit\(store\(props\.workspaceId\)/);
+    assert.match(createDialog, /aria-describedby/);
+    assert.match(createDialog, /id="due-date-error"/);
 });
 
 test('todo UI supports editing title priority and due date', () => {

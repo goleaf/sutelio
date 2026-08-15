@@ -135,10 +135,18 @@ const allSelected = computed(
                     <Badge
                         v-if="todo.due_date"
                         class="inline-flex"
-                        :class="isOverdue(todo) ? 'border-red-500/50 text-red-600 dark:text-red-400' : ''"
+                        :class="
+                            isOverdue(todo)
+                                ? 'border-red-500/50 text-red-600 dark:text-red-400'
+                                : ''
+                        "
                         variant="outline"
                     >
-                        {{ isOverdue(todo) ? `${t('tasks.stats.overdue')} · ` : '' }}{{
+                        {{
+                            isOverdue(todo)
+                                ? `${t('tasks.stats.overdue')} · `
+                                : ''
+                        }}{{
                             formatDate(todo.due_date, {
                                 month: 'short',
                                 day: 'numeric',

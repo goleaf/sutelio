@@ -2,9 +2,7 @@
 
 namespace Database\Factories;
 
-
 use App\Models\Project;
-use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

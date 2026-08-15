@@ -22,7 +22,10 @@ const taskIndex = readFileSync(
 test('todo list displays title completion priority and due date', () => {
     assert.match(taskList, /todo\.title/);
     assert.match(taskList, /todo\.is_completed/);
-    assert.match(taskList, /todo\.priority_definition\?\.name \?\? todo\.priority/);
+    assert.match(
+        taskList,
+        /todo\.priority_definition\?\.name \?\? todo\.priority/,
+    );
     assert.match(taskList, /todo\.due_date/);
 });
 
