@@ -4183,6 +4183,17 @@ Completed. The feature implementation, review corrections, and completion record
 - `git push --verbose origin main` exited 0 and reported `c08fa2b..c34fe48 main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
 - No force push, history rewrite, destructive Git command, secret, generated build output, migration, dependency, or unrelated deletion was used.
 
+## Workspace Stewardship Console
+
+### Preflight Status
+
+- Began on `main` at `f6d2813` with a clean worktree synchronized with `origin/main` after the completed Task Focus Desk delivery.
+- Re-read the repository contract and phase workflow, inspected the workspace routes, controllers, query/resources, portfolio and management Vue surfaces, translations, focused tests, live SQLite workspace graph, and current Herd workspace routes before implementation.
+- Live QA established the design target: at 390 by 844 pixels the management overview is 2,496 pixels tall, the horizontal section strip clips the Danger destination, and Task configuration is 5,774 pixels tall with 83 exposed controls. The single-workspace desktop portfolio also leaves most of its operational surface unused.
+- Preserved the existing Laravel 13, Inertia 3, Vue 3, TypeScript, Tailwind CSS 4, Reka UI, Wayfinder, Pest, workspace authorization/actions, and SQLite architecture. No package, schema, route, policy, API contract, or alternate frontend stack is planned.
+- The user approved the complete portfolio, management-shell, and taxonomy-studio scope. The accepted Warm Stewardship Ledger design and red-green implementation sequence are recorded under `docs/plans/2026-08-16-workspace-stewardship-console-*.md`.
+- Activated the repository workflow, brainstorming, frontend-design, UI/UX, web-design, Inertia/Vue, Tailwind CSS, Wayfinder, Laravel, TypeScript, refactoring, Pest/TDD, browser-QA, and review guidance. The UI/UX skill's optional search script and Ruflo ToolSearch/MCP tools are not exposed, so no execution of those helpers is claimed.
+
 ## Task Focus Desk
 
 ### Preflight Status
