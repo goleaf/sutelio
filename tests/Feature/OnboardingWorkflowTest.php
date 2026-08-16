@@ -269,6 +269,7 @@ test('onboarding preferences save canonical values and advance to workspace setu
             'week_start' => 'monday',
         ])
         ->assertSessionHasNoErrors()
+        ->assertSessionHas('locale', 'lt')
         ->assertRedirectToRoute('onboarding.index');
 
     $preferences->refresh();

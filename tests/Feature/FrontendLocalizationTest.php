@@ -86,6 +86,51 @@ test('every application translation catalog has locale parity', function () {
     }
 });
 
+test('guided onboarding copy has complete groups placeholder parity and plural forms', function () {
+    $requiredGroups = [
+        'meta',
+        'steps',
+        'actions',
+        'status',
+        'errors',
+        'welcome',
+        'preferences',
+        'workspace',
+        'project',
+        'task',
+        'product_map',
+        'safety',
+        'results',
+    ];
+    $english = Arr::dot(trans('onboarding', locale: 'en'));
+
+    foreach ($requiredGroups as $group) {
+        expect(trans("onboarding.{$group}", locale: 'en'))->toBeArray();
+    }
+
+    foreach (['en', 'lt', 'ru'] as $locale) {
+        $catalog = Arr::dot(trans('onboarding', locale: $locale));
+
+        expect(array_keys($catalog))->toBe(array_keys($english));
+
+        foreach ($english as $key => $message) {
+            preg_match_all('/:[A-Za-z_]+/', (string) $message, $englishPlaceholders);
+            preg_match_all('/:[A-Za-z_]+/', (string) $catalog[$key], $localePlaceholders);
+
+            expect($localePlaceholders[0], "Placeholder mismatch for {$locale}.{$key}")
+                ->toBe($englishPlaceholders[0]);
+        }
+
+        expect($catalog)
+            ->toHaveKeys([
+                'results.entity_count_one',
+                'results.entity_count_few',
+                'results.entity_count_many',
+                'results.entity_count_other',
+            ]);
+    }
+});
+
 test('calendar planning copy is complete in every supported locale', function () {
     foreach (['en', 'lt', 'ru'] as $locale) {
         $calendar = trans('workspace.calendar', locale: $locale);

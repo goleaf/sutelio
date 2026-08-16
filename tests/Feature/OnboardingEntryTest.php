@@ -69,8 +69,9 @@ test('pending users can render their resumable onboarding page', function () {
             ->where('progress.is_replay', false)
             ->where('preferences.language', $preferences->language)
             ->where('state', [])
-            ->has('copy.title')
-            ->has('copy.description'));
+            ->has('copy.meta.title')
+            ->has('copy.meta.description')
+            ->where('timezones', fn ($timezones): bool => $timezones->contains('Europe/Vilnius')));
 });
 
 test('completed users leave onboarding for their selected start page', function () {

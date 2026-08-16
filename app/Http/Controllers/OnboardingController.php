@@ -20,6 +20,7 @@ use App\Http\Requests\UpdateOnboardingPreferencesRequest;
 use App\Models\User;
 use App\Models\UserPreference;
 use App\Queries\OnboardingQuery;
+use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -45,6 +46,7 @@ class OnboardingController extends Controller
 
         return Inertia::render('onboarding/Index', [
             ...$onboardingQuery->forUser($user, $preferences, $isReplay),
+            'timezones' => DateTimeZone::listIdentifiers(),
             'copy' => is_array($copy) ? $copy : [],
         ]);
     }
@@ -68,11 +70,12 @@ class OnboardingController extends Controller
 
         abort_unless($user instanceof User, 403);
 
-        $saveOnboardingPreferences->handle(
+        $preferences = $saveOnboardingPreferences->handle(
             $user,
             $this->activePreferences($request),
             $request->preferenceData(),
         );
+        $request->session()->put('locale', $preferences->language);
 
         return to_route('onboarding.index');
     }

@@ -180,11 +180,30 @@ test('authenticated content delegates the sole main landmark to the persistent s
         'pages/tasks/Show.vue',
         'pages/workspaces/Index.vue',
         'pages/workspaces/Show.vue',
+        'pages/onboarding/Index.vue',
     ] as $path) {
         expect(File::get(resource_path("js/{$path}")), $path)
             ->not->toContain('<main')
             ->not->toContain('</main>');
     }
+});
+
+test('guided onboarding follows the warm responsive route design contract', function () {
+    $page = File::get(resource_path('js/pages/onboarding/Index.vue'));
+    $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
+
+    expect($page)
+        ->toContain('bg-muted/20')
+        ->toContain('max-w-app')
+        ->toContain('OnboardingShell')
+        ->and($shell)
+        ->toContain('xl:grid-cols-[minmax(15rem,0.34fr)_minmax(0,1fr)]')
+        ->toContain('rounded-panel')
+        ->toContain('border-border/80')
+        ->toContain('bg-card')
+        ->toContain('text-orange-')
+        ->toContain('dark:')
+        ->not->toContain('bg-gradient');
 });
 
 test('reusable task detail content does not introduce a second page heading', function () {

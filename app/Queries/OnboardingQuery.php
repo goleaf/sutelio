@@ -30,8 +30,8 @@ class OnboardingQuery
      *         projects: list<array{id: string, name: string, color: string, icon: string}>,
      *         tasks: list<array{id: string, title: string, project_id: string|null, due_date: string|null}>,
      *         members: list<array{id: string, name: string, role: string|null}>,
-     *         statuses: list<array{id: string, key: string, name: string, translation_key: string|null, color: string}>,
-     *         priorities: list<array{id: string, key: string, name: string, translation_key: string|null, color: string}>
+     *         statuses: list<array{id: string, key: string, name: string, translation_key: string|null, color: string, is_default: bool}>,
+     *         priorities: list<array{id: string, key: string, name: string, translation_key: string|null, color: string, is_default: bool}>
      *     }
      * }
      */
@@ -125,18 +125,24 @@ class OnboardingQuery
                     ? array_values($this->statuses($workspace)->map(fn (TaskStatus $item): array => [
                         'id' => $item->id,
                         'key' => $item->key,
-                        'name' => $item->name,
+                        'name' => is_string($item->translation_key)
+                            ? __($item->translation_key)
+                            : $item->name,
                         'translation_key' => $item->translation_key,
                         'color' => $item->color,
+                        'is_default' => $item->is_default,
                     ])->all())
                     : [],
                 'priorities' => $workspace instanceof Workspace
                     ? array_values($this->priorities($workspace)->map(fn (TaskPriority $item): array => [
                         'id' => $item->id,
                         'key' => $item->key,
-                        'name' => $item->name,
+                        'name' => is_string($item->translation_key)
+                            ? __($item->translation_key)
+                            : $item->name,
                         'translation_key' => $item->translation_key,
                         'color' => $item->color,
+                        'is_default' => $item->is_default,
                     ])->all())
                     : [],
             ],
@@ -216,7 +222,7 @@ class OnboardingQuery
     {
         return $workspace->taskStatuses()
             ->active()
-            ->select(['id', 'workspace_id', 'key', 'name', 'translation_key', 'color', 'position'])
+            ->select(['id', 'workspace_id', 'key', 'name', 'translation_key', 'color', 'position', 'is_default'])
             ->ordered()
             ->limit(self::OPTION_LIMIT)
             ->get();
@@ -227,7 +233,7 @@ class OnboardingQuery
     {
         return $workspace->taskPriorities()
             ->active()
-            ->select(['id', 'workspace_id', 'key', 'name', 'translation_key', 'color', 'position'])
+            ->select(['id', 'workspace_id', 'key', 'name', 'translation_key', 'color', 'position', 'is_default'])
             ->ordered()
             ->limit(self::OPTION_LIMIT)
             ->get();

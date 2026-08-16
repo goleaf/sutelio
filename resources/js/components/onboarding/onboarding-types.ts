@@ -11,8 +11,7 @@ export const orderedOnboardingSteps = [
 
 export type OnboardingStep = (typeof orderedOnboardingSteps)[number];
 export type OnboardingMode = 'select' | 'create';
-export type OnboardingPluralForm =
-    'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
+export type OnboardingPluralForm = 'one' | 'few' | 'many' | 'other';
 
 export type OnboardingProgress = {
     step: OnboardingStep;
@@ -73,6 +72,7 @@ export type OnboardingDefinition = {
     name: string;
     translation_key: string | null;
     color: string;
+    is_default: boolean;
 };
 
 export type OnboardingOptions = {
@@ -125,6 +125,158 @@ export type OnboardingTaskPayload = {
     due_date?: string | null;
 };
 
+export type OnboardingStepCopy = {
+    title: string;
+    description: string;
+};
+
+export type OnboardingCopy = {
+    meta: {
+        eyebrow: string;
+        title: string;
+        description: string;
+        replay_badge: string;
+    };
+    steps: Record<OnboardingStep, OnboardingStepCopy>;
+    actions: {
+        back: string;
+        cancel: string;
+        continue: string;
+        finish: string;
+        skip: string;
+        skip_confirm: string;
+        skip_title: string;
+        skip_description: string;
+        exit_replay: string;
+        retry: string;
+    };
+    status: {
+        step_count: string;
+        percent_complete: string;
+        idle: string;
+        saving: string;
+        saved: string;
+        error: string;
+        resumed: string;
+    };
+    errors: Record<string, string> & {
+        validation_title: string;
+        validation_description: string;
+    };
+    welcome: {
+        intro: string;
+        capture_title: string;
+        capture_description: string;
+        plan_title: string;
+        plan_description: string;
+        collaborate_title: string;
+        collaborate_description: string;
+        privacy: string;
+    };
+    preferences: {
+        description: string;
+        language: string;
+        timezone: string;
+        date_format: string;
+        time_format: string;
+        default_view: string;
+        start_page: string;
+        week_start: string;
+        preview_title: string;
+        preview_description: string;
+        languages: Record<OnboardingPreferences['language'], string>;
+        views: Record<OnboardingPreferences['default_view'], string>;
+        start_pages: Record<OnboardingPreferences['start_page'], string>;
+        week_starts: Record<OnboardingPreferences['week_start'], string>;
+    };
+    workspace: {
+        description: string;
+        choose_existing: string;
+        create_new: string;
+        existing_label: string;
+        name: string;
+        name_placeholder: string;
+        details: string;
+        details_placeholder: string;
+        empty_title: string;
+        empty_description: string;
+        preview_title: string;
+        role: string;
+    };
+    project: {
+        description: string;
+        choose_existing: string;
+        create_new: string;
+        existing_label: string;
+        name: string;
+        name_placeholder: string;
+        details: string;
+        details_placeholder: string;
+        color: string;
+        icon: string;
+        empty_title: string;
+        empty_description: string;
+        preview_title: string;
+    };
+    task: {
+        description: string;
+        choose_existing: string;
+        create_new: string;
+        existing_label: string;
+        title: string;
+        title_placeholder: string;
+        details: string;
+        details_placeholder: string;
+        status: string;
+        priority: string;
+        assignee: string;
+        unassigned: string;
+        due_date: string;
+        empty_title: string;
+        empty_description: string;
+        preview_title: string;
+    };
+    product_map: Record<
+        | 'dashboard_title'
+        | 'dashboard_description'
+        | 'tasks_title'
+        | 'tasks_description'
+        | 'projects_title'
+        | 'projects_description'
+        | 'calendar_title'
+        | 'calendar_description'
+        | 'activity_title'
+        | 'activity_description'
+        | 'notifications_title'
+        | 'notifications_description',
+        string
+    >;
+    safety: {
+        team_title: string;
+        team_description: string;
+        security_title: string;
+        security_description: string;
+        backup_title: string;
+        backup_description: string;
+        manager_note: string;
+        member_note: string;
+    };
+    results: {
+        description: string;
+        ready_title: string;
+        preferences: string;
+        workspace: string;
+        project: string;
+        task: string;
+        next_title: string;
+        next_description: string;
+        entity_count_one: string;
+        entity_count_few: string;
+        entity_count_many: string;
+        entity_count_other: string;
+    };
+};
+
 export function onboardingPercent(step: OnboardingStep): number {
     const position = orderedOnboardingSteps.indexOf(step) + 1;
 
@@ -135,7 +287,11 @@ export function onboardingPluralForm(
     count: number,
     locale: string,
 ): OnboardingPluralForm {
-    return new Intl.PluralRules(locale).select(count);
+    const selected = new Intl.PluralRules(locale).select(count);
+
+    return selected === 'one' || selected === 'few' || selected === 'many'
+        ? selected
+        : 'other';
 }
 
 export function mergeOnboardingDraft(
