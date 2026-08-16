@@ -4578,3 +4578,21 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - Added complete semantic English, Lithuanian, and Russian onboarding catalogs with identical keys/placeholders, full-message action/status/recovery copy, six product-map descriptions, role-aware safety guidance, and locale-aware result count forms. Successful language selection immediately updates the session locale for the redirected step.
 - The previously RED source/localization contract now passes. The expanded onboarding/frontend/localization/design gate passes 197 tests / 1,713 assertions; the standard frontend gate passes 45 tests. Pint, Larastan, Vue type checking, ESLint, Prettier, and the Vite production build pass; the build transformed 3,523 modules in 5.46 seconds.
 - No dependency, schema, host data, generated tracked asset, or APK changed in this phase. Dashboard continuation and Settings replay controls are the next TDD slice; live browser QA follows once those entry points exist.
+
+### Phase 8 Preflight: Honest Continuation And Replay
+
+- Phase 7 was committed as `98fc6d4` and pushed to `origin/main` (`f2852cf..98fc6d4`) before the continuation slice began.
+- Re-read the Dashboard query/controller/page, current-workspace boundary, workspace and database-backup policies, passkey/two-factor model contract, Settings preference page, onboarding lifecycle actions, and generated route topology.
+- Laravel Boost's installed-version documentation reconfirms user-scoped Gate checks, relationship `exists` queries, typed Inertia props, generated Wayfinder actions, and partial form lifecycle behavior.
+- This phase starts with failing coverage for legacy-hidden versus newly completed/skipped visibility, current-workspace scoping, capability-based item omission, real team/security completion facts, per-user dismissal, and non-destructive Settings replay.
+- The Dashboard checklist will report only verifiable facts and permitted destinations. It will appear before task queues on mobile, avoid fabricated percentages, remain dismissible with a 44-pixel control, and preserve all workspace, project, and task entities when replay starts.
+
+### Phase 8 Delivered: Honest Continuation And Replay
+
+- Added a bounded `OnboardingChecklistQuery` that is visible only for newly completed or skipped journeys whose checklist was not dismissed. Legacy backfilled users stay hidden, stale session workspace IDs are resolved through the existing membership-scoped current-workspace query, and growth from one to 120 teammates does not change the Dashboard query count.
+- The checklist exposes only policy-authorized actions. Invite appears only for workspace owners/admins, export only when an accessible workspace exists, application backup only for the configured operator, and account/notification actions remain available without inventing completion percentages.
+- Team completion now means another real current-workspace membership exists. Security completion means confirmed two-factor authentication or a persisted passkey exists. Both states pair visible text with icons; advisory items deliberately make no completion claim.
+- Added an idempotent authenticated-user dismissal action and generated DELETE Wayfinder endpoint. Dismissal changes only that user's checklist timestamp, preserves lifecycle/domain data, returns to the originating page, and removes the card on the next Dashboard response.
+- Added a responsive Warm Precision continuation card before Dashboard focus queues with 44-pixel dismissal, keyboard focus rings, reduced-motion handling, concise live/error status, EN/LT/RU semantic copy, and direct Wayfinder destinations. Settings Preferences now offers a clearly non-destructive, action-scoped replay card for verified users.
+- The failing-first contract produced four missing-prop failures and two missing route/component errors. The completed focused gate passes 77 tests / 1,220 assertions across onboarding, Dashboard, Settings, query budgets, and localization; all 45 standard frontend tests pass.
+- Pint, Larastan, Vue type checking, ESLint, Prettier, and the production Vite build pass. The build transformed 3,525 modules in 6.56 seconds. Live browser review and Android delivery are the next isolated phase.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\TodoResource;
 use App\Models\User;
 use App\Queries\CurrentWorkspaceQuery;
+use App\Queries\OnboardingChecklistQuery;
 use App\Services\DashboardQuery;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +17,7 @@ class DashboardController extends Controller
         Request $request,
         CurrentWorkspaceQuery $currentWorkspaceQuery,
         DashboardQuery $dashboardQuery,
+        OnboardingChecklistQuery $onboardingChecklistQuery,
     ): Response {
         $user = $request->user();
 
@@ -42,6 +44,9 @@ class DashboardController extends Controller
             $data[$key] = $resourceData['data'] ?? [];
         }
 
-        return Inertia::render('Dashboard', $data);
+        return Inertia::render('Dashboard', [
+            ...$data,
+            'onboardingChecklist' => $onboardingChecklistQuery->forUser($user, $workspace),
+        ]);
     }
 }

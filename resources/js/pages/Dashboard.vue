@@ -9,6 +9,8 @@ import {
 } from '@lucide/vue';
 import DashboardTaskQueue from '@/components/dashboard/DashboardTaskQueue.vue';
 import ProductivityChart from '@/components/dashboard/ProductivityChart.vue';
+import OnboardingChecklist from '@/components/onboarding/OnboardingChecklist.vue';
+import type { OnboardingChecklistState } from '@/components/onboarding/OnboardingChecklist.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Button } from '@/components/ui/button';
@@ -29,6 +31,7 @@ defineProps<{
     overdueTasks: Todo[];
     upcomingTasks: Todo[];
     weeklyData: Array<{ date: string; completed: number; created: number }>;
+    onboardingChecklist: OnboardingChecklistState;
 }>();
 const { formatNumber, t } = useUi();
 </script>
@@ -85,6 +88,8 @@ const { formatNumber, t } = useUi();
                         />
                     </template>
                 </WorkspacePageHeader>
+
+                <OnboardingChecklist :checklist="onboardingChecklist" />
 
                 <section aria-labelledby="dashboard-focus-title">
                     <div class="mb-4 max-w-2xl">

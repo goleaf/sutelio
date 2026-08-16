@@ -253,6 +253,140 @@ test('a genuinely pending user cannot bypass the gate with a replay session flag
         ->assertRedirectToRoute('onboarding.index');
 });
 
+test('the continuation checklist is hidden for legacy users and shown after a new completion', function () {
+    $legacyUser = User::factory()->create();
+    UserPreference::factory()->for($legacyUser)->create();
+
+    $this->actingAs($legacyUser)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.show', false));
+
+    $newUser = User::factory()->create();
+    UserPreference::factory()->for($newUser)->create([
+        'onboarding_completed_at' => now(),
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+
+    $this->actingAs($newUser)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.show', true));
+});
+
+test('the continuation checklist uses only current workspace capabilities and real completion facts', function () {
+    $user = User::factory()->withTwoFactor()->create();
+    UserPreference::factory()->for($user)->create([
+        'onboarding_completed_at' => null,
+        'onboarding_skipped_at' => now(),
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+    $currentWorkspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $otherWorkspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    WorkspaceMember::factory()->for($otherWorkspace)->create();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $currentWorkspace->id])
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.show', true)
+            ->where('onboardingChecklist.workspace_id', $currentWorkspace->id)
+            ->where('onboardingChecklist.can_invite', true)
+            ->where('onboardingChecklist.has_team_member', false)
+            ->where('onboardingChecklist.has_security_factor', true)
+            ->where('onboardingChecklist.can_manage_backups', false));
+
+    WorkspaceMember::factory()->for($currentWorkspace)->create();
+
+    $this->get(route('dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.has_team_member', true));
+});
+
+test('the continuation checklist withholds workspace management actions from members', function () {
+    $member = User::factory()->create();
+    UserPreference::factory()->for($member)->create([
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+    $workspace = Workspace::factory()->withOwnerMembership()->create();
+    WorkspaceMember::factory()->for($workspace)->for($member)->member()->create();
+
+    $this->actingAs($member)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.workspace_id', $workspace->id)
+            ->where('onboardingChecklist.can_invite', false)
+            ->where('onboardingChecklist.can_manage_backups', false));
+});
+
+test('a passkey is counted as a real security factor', function () {
+    $user = User::factory()->create();
+    UserPreference::factory()->for($user)->create([
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+    $user->passkeys()->create([
+        'name' => 'Phone',
+        'credential_id' => (string) Str::uuid(),
+        'credential' => [],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.has_security_factor', true));
+});
+
+test('dismissing the continuation checklist updates only the authenticated user', function () {
+    $user = User::factory()->create();
+    $otherUser = User::factory()->create();
+    $preferences = UserPreference::factory()->for($user)->create([
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+    $otherPreferences = UserPreference::factory()->for($otherUser)->create([
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+
+    $this->actingAs($user)
+        ->from(route('dashboard'))
+        ->delete(route('onboarding.checklist.dismiss'))
+        ->assertRedirect(route('dashboard'));
+
+    expect($preferences->fresh()->onboarding_checklist_dismissed_at)->not->toBeNull()
+        ->and($otherPreferences->fresh()->onboarding_checklist_dismissed_at)->toBeNull();
+
+    $this->get(route('dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('onboardingChecklist.show', false));
+});
+
+test('settings replay preserves domain entities and prior completion facts', function () {
+    $user = User::factory()->create();
+    $preferences = UserPreference::factory()->for($user)->create();
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $project = Project::factory()->for($workspace)->create();
+    $task = Todo::factory()->for($workspace)->for($project)->create();
+    $completion = $preferences->onboarding_completed_at;
+
+    $this->actingAs($user)
+        ->get(route('preferences.edit'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('canReplayOnboarding', true));
+
+    $this->post(route('onboarding.restart'))
+        ->assertRedirectToRoute('onboarding.index')
+        ->assertSessionHas('onboarding_replay', true);
+
+    expect($workspace->fresh())->not->toBeNull()
+        ->and($project->fresh())->not->toBeNull()
+        ->and($task->fresh())->not->toBeNull()
+        ->and($preferences->fresh()->onboarding_completed_at?->equalTo($completion))->toBeTrue();
+});
+
 test('onboarding preferences save canonical values and advance to workspace setup', function () {
     [$user, $preferences] = createPendingOnboardingUser([
         'onboarding_step' => OnboardingStep::Preferences->value,

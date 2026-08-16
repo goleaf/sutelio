@@ -9,6 +9,7 @@ use App\Actions\ChooseOnboardingProject;
 use App\Actions\ChooseOnboardingTask;
 use App\Actions\ChooseOnboardingWorkspace;
 use App\Actions\CompleteOnboarding;
+use App\Actions\DismissOnboardingChecklist;
 use App\Actions\RestartOnboarding;
 use App\Actions\SaveOnboardingPreferences;
 use App\Actions\SkipOnboarding;
@@ -176,6 +177,19 @@ class OnboardingController extends Controller
         }
 
         return to_route('onboarding.index');
+    }
+
+    public function dismissChecklist(
+        Request $request,
+        DismissOnboardingChecklist $dismissOnboardingChecklist,
+    ): RedirectResponse {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
+        $dismissOnboardingChecklist->handle($user);
+
+        return back();
     }
 
     private function activePreferences(Request $request): UserPreference

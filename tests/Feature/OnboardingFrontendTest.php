@@ -82,3 +82,29 @@ test('onboarding visible actions and assistive messages come from semantic copy'
         ->toContain('copy.actions')
         ->toContain('copy.status');
 });
+
+test('dashboard continuation and settings replay use accessible policy-aware Wayfinder controls', function () {
+    $dashboard = File::get(resource_path('js/pages/Dashboard.vue'));
+    $checklist = File::get(resource_path('js/components/onboarding/OnboardingChecklist.vue'));
+    $preferences = File::get(resource_path('js/pages/settings/Preferences.vue'));
+
+    expect($dashboard)
+        ->toContain("from '@/components/onboarding/OnboardingChecklist.vue'")
+        ->toContain('<OnboardingChecklist')
+        ->and(strpos($dashboard, '<OnboardingChecklist'))
+        ->toBeLessThan(strpos($dashboard, 'dashboard-focus-title'))
+        ->and($checklist)
+        ->toContain("from '@/actions/App/Http/Controllers/OnboardingController'")
+        ->toContain("from '@/routes/workspaces'")
+        ->toContain('checklist.can_invite')
+        ->toContain('checklist.can_manage_backups')
+        ->toContain('checklist.has_team_member')
+        ->toContain('checklist.has_security_factor')
+        ->toContain('min-h-11')
+        ->toContain('aria-live="polite"')
+        ->not->toContain('percent')
+        ->and($preferences)
+        ->toContain('canReplayOnboarding')
+        ->toContain('restartOnboarding')
+        ->toContain('replayForm.processing');
+});

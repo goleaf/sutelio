@@ -250,6 +250,39 @@ test('onboarding options stay bounded with selected inclusion and a stable query
         ->and($largeQueryCount)->toBeLessThanOrEqual(20);
 });
 
+test('dashboard continuation facts keep a stable query count as the current team grows', function () {
+    $user = User::factory()->create();
+    UserPreference::factory()->for($user)->create([
+        'onboarding_checklist_dismissed_at' => null,
+    ]);
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+
+    $this->actingAs($user)->withSession(['current_workspace_id' => $workspace->id]);
+    $this->get(route('dashboard'))->assertOk();
+
+    $smallQueryCount = sqlitePageQueryCount(
+        fn () => $this->get(route('dashboard')),
+    );
+
+    $members = User::factory()->count(120)->create();
+    $now = now();
+    DB::table('workspace_members')->insert($members->map(fn (User $member): array => [
+        'id' => (string) Str::uuid(),
+        'workspace_id' => $workspace->id,
+        'user_id' => $member->id,
+        'role' => WorkspaceRole::Member->value,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ])->all());
+
+    $largeQueryCount = sqlitePageQueryCount(
+        fn () => $this->get(route('dashboard')),
+    );
+
+    expect($largeQueryCount)->toBe($smallQueryCount)
+        ->and($largeQueryCount)->toBeLessThanOrEqual(20);
+});
+
 test('representative ordered queries use their scoped indexes without unnecessary temporary sorting', function (string $sql, string $index, bool $allowsTemporarySort = false) {
     $plan = collect(DB::select("EXPLAIN QUERY PLAN {$sql}"))->pluck('detail')->implode(' | ');
 

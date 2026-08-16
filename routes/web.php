@@ -43,6 +43,9 @@ Route::middleware(['auth', 'verified'])
         Route::post('onboarding/skip', 'skip')->name('onboarding.skip');
         Route::post('onboarding/complete', 'complete')->name('onboarding.complete');
         Route::post('onboarding/restart', 'restart')->name('onboarding.restart');
+        Route::delete('onboarding/checklist', 'dismissChecklist')
+            ->middleware('onboarding.complete')
+            ->name('onboarding.checklist.dismiss');
     });
 
 Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {

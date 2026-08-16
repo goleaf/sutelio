@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
+import { RotateCcw, Sparkles } from '@lucide/vue';
+import { restart as restartOnboarding } from '@/actions/App/Http/Controllers/OnboardingController';
 import AppearanceTabs from '@/components/AppearanceTabs.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -39,6 +41,7 @@ type PreferenceFields = Pick<
 const props = defineProps<{
     preferences: PreferenceFields;
     timezones: string[];
+    canReplayOnboarding: boolean;
 }>();
 const toast = useToast();
 const { t } = useUi();
@@ -58,6 +61,13 @@ const form = useForm({
     start_page: props.preferences.start_page,
     week_start: props.preferences.week_start,
 });
+const replayForm = useForm({});
+
+function replayOnboarding(): void {
+    replayForm.post(restartOnboarding.url(), {
+        preserveScroll: true,
+    });
+}
 
 function submit() {
     form.put(update.url(), {
@@ -320,5 +330,60 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                 </Button>
             </div>
         </form>
+
+        <Card
+            v-if="canReplayOnboarding"
+            class="overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/60 dark:border-orange-900/60 dark:from-orange-950/30 dark:via-card dark:to-amber-950/20"
+        >
+            <CardHeader class="sm:flex-row sm:items-start sm:justify-between">
+                <div class="flex min-w-0 gap-3">
+                    <span
+                        class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-sm"
+                    >
+                        <Sparkles class="size-5" aria-hidden="true" />
+                    </span>
+                    <div class="space-y-1">
+                        <p
+                            class="text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase dark:text-orange-300"
+                        >
+                            {{ t('settings.preferences.replay.eyebrow') }}
+                        </p>
+                        <CardTitle>{{
+                            t('settings.preferences.replay.title')
+                        }}</CardTitle>
+                        <CardDescription class="max-w-2xl leading-6">
+                            {{ t('settings.preferences.replay.description') }}
+                        </CardDescription>
+                    </div>
+                </div>
+                <Button
+                    type="button"
+                    variant="outline"
+                    class="mt-4 min-h-11 shrink-0 border-orange-300 bg-background/80 sm:mt-0"
+                    :disabled="replayForm.processing"
+                    @click="replayOnboarding"
+                >
+                    <Spinner v-if="replayForm.processing" />
+                    <RotateCcw v-else class="size-4" aria-hidden="true" />
+                    {{ t('settings.preferences.replay.action') }}
+                </Button>
+            </CardHeader>
+            <CardContent v-if="replayForm.processing || replayForm.hasErrors">
+                <p
+                    class="text-sm text-muted-foreground"
+                    :class="{ 'text-destructive': replayForm.hasErrors }"
+                    :role="replayForm.hasErrors ? 'alert' : undefined"
+                    aria-live="polite"
+                >
+                    {{
+                        t(
+                            replayForm.hasErrors
+                                ? 'settings.preferences.replay.error'
+                                : 'settings.preferences.replay.processing',
+                        )
+                    }}
+                </p>
+            </CardContent>
+        </Card>
     </div>
 </template>

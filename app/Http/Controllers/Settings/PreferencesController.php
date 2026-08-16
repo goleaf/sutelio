@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\UserPreference;
 use DateTimeZone;
 use Illuminate\Http\Request;
@@ -13,7 +14,11 @@ class PreferencesController extends Controller
 {
     public function edit(Request $request): Response
     {
-        $preferences = $request->user()->preferences()->first();
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
+        $preferences = $user->preferences()->first();
 
         return Inertia::render('settings/Preferences', [
             'preferences' => [
@@ -21,6 +26,7 @@ class PreferencesController extends Controller
                 ...($preferences?->only(array_keys(UserPreference::defaults())) ?? []),
             ],
             'timezones' => DateTimeZone::listIdentifiers(),
+            'canReplayOnboarding' => $user->hasVerifiedEmail(),
         ]);
     }
 }
