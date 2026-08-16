@@ -4458,3 +4458,10 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 
 - Prettier verification for the two Markdown files and `git diff --check` passed. Complete and staged diff inspection, the coherent semantic documentation commit, and `git push origin main` follow in this design slice.
 - No source, schema, route, runtime data, package, generated asset, or APK changes belong to this design slice.
+
+### Design Git Delivery And Implementation Planning
+
+- `096125c` — `docs: design guided onboarding`; `git push --verbose origin main` exited 0 and reported `50b86c3..096125c main -> main`.
+- Activated the required writing-plans workflow after design approval and mapped persistence, verified-browser entry, scoped/idempotent domain composition, real week-start behavior, responsive Inertia UI, Dashboard continuation, review, canonical docs, and Android APK delivery into atomic RED/GREEN tasks.
+- The implementation plan is recorded in `docs/plans/2026-08-16-guided-onboarding-implementation.md`. This planning slice changes no source, schema, route, package, runtime data, generated asset, or APK.
+- The writing-plans self-review confirmed complete spec-to-task coverage and consistent step/state/route/type names. Placeholder scanning, Prettier verification for the plan/progress files, and `git diff --check` passed; staged diff inspection, the plan commit, and push follow in this slice.
