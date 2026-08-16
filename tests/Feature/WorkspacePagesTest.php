@@ -202,6 +202,33 @@ test('calendar keeps the overdue preview workspace scoped bounded and ordered', 
             ->where('overdueTodos.5.due_date', '2026-08-06'));
 });
 
+test('calendar week boundaries honor the saved first day of week', function (string $weekStart, string $startDate, string $endDate) {
+    [$user, $workspace] = createWarmPrecisionContext();
+    $user->preferences()->update(['week_start' => $weekStart]);
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('calendar', ['view' => 'week', 'date' => '2026-08-16']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('calendar.week_start', $weekStart)
+            ->where('calendar.start_date', $startDate)
+            ->where('calendar.end_date', $endDate));
+})->with([
+    'Sunday first' => ['sunday', '2026-08-16', '2026-08-22'],
+    'Monday first' => ['monday', '2026-08-10', '2026-08-16'],
+]);
+
+test('calendar rotates a local copy of weekday labels for Monday-first users', function () {
+    $monthGrid = file_get_contents(resource_path('js/components/calendar/CalendarMonthGrid.vue'));
+
+    expect($monthGrid)
+        ->toContain('calendar.week_start')
+        ->toContain('copy.value.calendar.weekdays')
+        ->toContain('slice(1)')
+        ->not->toContain('copy.value.calendar.weekdays.shift()');
+});
+
 test('project collection includes workspace scoped task totals', function () {
     [$user, $workspace] = createWarmPrecisionContext();
     $project = Project::factory()->for($workspace)->create(['name' => 'Launch']);

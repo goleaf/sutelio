@@ -458,6 +458,11 @@ return [
             ],
             'time_format' => 'Laiko formatas',
             'timezone' => 'Laiko juosta',
+            'week_start' => 'Pirmoji savaitės diena',
+            'week_starts' => [
+                'monday' => 'Pirmadienis',
+                'sunday' => 'Sekmadienis',
+            ],
             'title' => 'Nuostatos',
         ],
         'security' => [

@@ -30,7 +30,9 @@ class CalendarController extends Controller
         $timezone = is_string($configuredTimezone)
             ? $configuredTimezone
             : (string) config('app.timezone');
-        $calendar = $request->calendarState($timezone);
+        $configuredWeekStart = $user->preferences?->getAttribute('week_start');
+        $weekStart = is_string($configuredWeekStart) ? $configuredWeekStart : 'sunday';
+        $calendar = $request->calendarState($timezone, $weekStart);
 
         $workspace = $currentWorkspaceQuery->forUser(
             $user,

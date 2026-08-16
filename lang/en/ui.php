@@ -458,6 +458,11 @@ return [
             ],
             'time_format' => 'Time Format',
             'timezone' => 'Timezone',
+            'week_start' => 'First day of the week',
+            'week_starts' => [
+                'monday' => 'Monday',
+                'sunday' => 'Sunday',
+            ],
             'title' => 'Preferences',
         ],
         'security' => [

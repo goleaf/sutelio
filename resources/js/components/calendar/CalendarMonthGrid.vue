@@ -17,6 +17,14 @@ const props = defineProps<{
 }>();
 
 const { copy, formatDate, formatNumber } = useWorkspaceUi();
+const weekdays = computed(() => {
+    const labels = [...copy.value.calendar.weekdays];
+    const sunday = labels[0];
+
+    return props.calendar.week_start === 'monday' && sunday !== undefined
+        ? [...labels.slice(1), sunday]
+        : labels;
+});
 const days = computed(() =>
     buildCalendarDays(
         props.calendar.start_date,
@@ -168,7 +176,7 @@ function priorityLabel(todo: CalendarTodo): string {
                 role="row"
             >
                 <div
-                    v-for="weekday in copy.calendar.weekdays"
+                    v-for="weekday in weekdays"
                     :key="weekday"
                     class="px-1 py-3 text-center text-[0.68rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                     role="columnheader"

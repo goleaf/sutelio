@@ -33,6 +33,7 @@ type PreferenceFields = Pick<
     | 'start_page'
     | 'time_format'
     | 'timezone'
+    | 'week_start'
 >;
 
 const props = defineProps<{
@@ -55,6 +56,7 @@ const form = useForm({
     time_format: props.preferences.time_format,
     default_view: props.preferences.default_view,
     start_page: props.preferences.start_page,
+    week_start: props.preferences.week_start,
 });
 
 function submit() {
@@ -277,6 +279,36 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                                 </SelectContent>
                             </Select>
                             <InputError :message="form.errors.time_format" />
+                        </div>
+                        <div class="space-y-2">
+                            <Label for="week-start">{{
+                                t('settings.preferences.week_start')
+                            }}</Label>
+                            <Select
+                                v-model="form.week_start"
+                                :disabled="form.processing"
+                            >
+                                <SelectTrigger
+                                    id="week-start"
+                                    :aria-invalid="
+                                        Boolean(form.errors.week_start)
+                                    "
+                                    ><SelectValue
+                                /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="sunday">{{
+                                        t(
+                                            'settings.preferences.week_starts.sunday',
+                                        )
+                                    }}</SelectItem>
+                                    <SelectItem value="monday">{{
+                                        t(
+                                            'settings.preferences.week_starts.monday',
+                                        )
+                                    }}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.week_start" />
                         </div>
                     </div>
                 </CardContent>

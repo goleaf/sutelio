@@ -8,6 +8,7 @@ export type CalendarState = {
     today_date: string;
     start_date: string;
     end_date: string;
+    week_start: 'sunday' | 'monday';
 };
 
 export type CalendarTodo = Pick<

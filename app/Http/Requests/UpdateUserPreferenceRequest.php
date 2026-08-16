@@ -33,6 +33,7 @@ class UpdateUserPreferenceRequest extends FormRequest
             'theme' => ['sometimes', Rule::in(['system', 'light', 'dark'])],
             'default_view' => ['sometimes', Rule::in(UserPreference::DEFAULT_VIEWS)],
             'start_page' => ['sometimes', Rule::in(UserPreference::START_PAGES)],
+            'week_start' => ['sometimes', Rule::in(UserPreference::WEEK_STARTS)],
             'notification_email' => ['sometimes', 'boolean'],
             'notification_browser' => ['sometimes', 'boolean'],
             'notification_in_app' => ['sometimes', 'boolean'],

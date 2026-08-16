@@ -321,6 +321,7 @@ export interface UserPreference {
     theme: 'system' | 'light' | 'dark';
     default_view: 'list' | 'board' | 'calendar';
     start_page: 'dashboard' | 'tasks' | 'projects' | 'calendar';
+    week_start: 'sunday' | 'monday';
     notification_email: boolean;
     notification_browser: boolean;
     notification_in_app: boolean;

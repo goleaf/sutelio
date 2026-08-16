@@ -17,6 +17,7 @@ test('preferences page is the canonical settings page for preferences and appear
             ->where('preferences.date_format', 'Y-m-d')
             ->where('preferences.time_format', 'H:i')
             ->where('preferences.start_page', 'dashboard')
+            ->where('preferences.week_start', 'sunday')
             ->where('timezones', fn ($timezones): bool => $timezones->contains('Europe/Vilnius')));
 });
 
@@ -68,6 +69,7 @@ test('users can persist every bounded regional and navigation preference', funct
             'time_format' => 'H:i',
             'default_view' => 'board',
             'start_page' => 'tasks',
+            'week_start' => 'monday',
         ])
         ->assertRedirect(route('preferences.edit'))
         ->assertSessionHas('locale', 'lt');
@@ -79,7 +81,8 @@ test('users can persist every bounded regional and navigation preference', funct
         ->and($preferences->date_format)->toBe('d.m.Y')
         ->and($preferences->time_format)->toBe('H:i')
         ->and($preferences->default_view)->toBe('board')
-        ->and($preferences->start_page)->toBe('tasks');
+        ->and($preferences->start_page)->toBe('tasks')
+        ->and($preferences->week_start)->toBe('monday');
 });
 
 test('preference values are allowlisted and validation follows the saved locale', function () {
@@ -95,6 +98,7 @@ test('preference values are allowlisted and validation follows the saved locale'
             'time_format' => 'arbitrary',
             'default_view' => 'arbitrary',
             'start_page' => 'https://example.com',
+            'week_start' => 'arbitrary',
         ])
         ->assertRedirect(route('preferences.edit'))
         ->assertSessionHasErrors([
@@ -104,6 +108,7 @@ test('preference values are allowlisted and validation follows the saved locale'
             'time_format',
             'default_view',
             'start_page',
+            'week_start',
         ]);
 
     expect($response->getSession()->get('errors')->get('timezone')[0])

@@ -4542,3 +4542,20 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - The observed RED filter ran 20 tests with 11 passing, two failures, and seven missing-route errors. The completed persistence/entry/workflow/query-budget filter passes 35 tests / 301 assertions, including invited-member reuse, all three exactly-once paths, foreign and archived rejection, taxonomy/assignee isolation, stale-state rewind, selected inclusion, and data-volume-independent query counts.
 - The prescribed domain regression gate passes 68 tests / 408 assertions across onboarding, query budgets, workspaces, projects, and tasks. Pint passes, Larastan passes with zero errors, and `git diff --check` is clean.
 - No package, migration, generated frontend asset, host SQLite data, or APK changed in this phase. Real week-start behavior is the next isolated TDD slice.
+
+### Phase 5 Preflight: Canonical Week Start
+
+- Phase 4 was committed as `cf5dbce` and pushed to `origin/main` (`f6634d3..cf5dbce`) before this preference/calendar slice began.
+- Re-read the canonical Settings preference request/controller/page, calendar request/controller/state/grid, shared localized weekday catalog, model TypeScript contract, and existing Settings/Workspace page tests.
+- Laravel Boost's installed-version documentation reconfirms Form Request allowlists, automatic Inertia validation redirects/errors, typed page props, and Carbon-backed Laravel date handling.
+- The observed RED gate runs 26 tests with 21 passing and five intended failures for missing persistence/allowlisting, missing `calendar.week_start`, wrong Monday-first range, and absent immutable weekday rotation.
+- This phase will make the saved preference the sole server boundary source and rotate a local copied label array in Vue; it will not mutate shared translations, infer behavior from locale, or change calendar URL semantics.
+
+### Phase 5 Delivered: Canonical Week Start
+
+- Added `week_start` to the canonical Settings validation, Inertia form payload, typed preference model, and English/Lithuanian/Russian semantic catalog. Sunday and Monday are the only accepted values; legacy/missing values retain the existing Sunday default.
+- `CalendarIndexRequest` now derives week and expanded-month boundaries from the saved preference and returns the normalized value in `CalendarState`. For Sunday 2026-08-16, Monday-first produces `2026-08-10..2026-08-16`, while Sunday-first produces `2026-08-16..2026-08-22`.
+- The desktop month grid copies the seven shared localized labels and rotates only that local array for Monday-first users. It does not mutate the reactive translation catalog; mobile and week views inherit the server's chronological range.
+- The initial focused gate produced the intended five failures among 26 tests. The completed Settings/Workspace gate passes 26 tests / 299 assertions, and the localization/design gate passes 133 tests / 796 assertions.
+- Pint, Larastan, Vue type checking, ESLint, Prettier, all 42 discovered frontend tests, and the Vite production build pass. The build transformed 3,501 modules in 5.05 seconds.
+- No dependency, schema, route name, host data, generated tracked asset, or APK changed in this phase. Typed onboarding interaction contracts are the next TDD slice.
