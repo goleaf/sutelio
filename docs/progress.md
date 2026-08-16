@@ -4182,3 +4182,26 @@ Completed. The feature implementation, review corrections, and completion record
 - `c34fe48` — `docs: record data safety center`.
 - `git push --verbose origin main` exited 0 and reported `c08fa2b..c34fe48 main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
 - No force push, history rewrite, destructive Git command, secret, generated build output, migration, dependency, or unrelated deletion was used.
+
+## Task Focus Desk
+
+### Preflight Status
+
+- Began on `main` at `09f94a9` with a clean tracked worktree synchronized with `origin/main` after the completed Data Safety Center delivery.
+- Re-read the repository contract and phase workflow, inspected the task index controller/request/query, Vue coordinator/filter/list/board/pagination components, translations, types, focused tests, and current live Herd task page before implementation.
+- Live QA established the concrete usability gap: 25 task rows expose roughly 80 controls, the 390-by-844 mobile document is 3,217 pixels tall, destructive and bulk controls are permanently prominent, task titles truncate, and already-supported focus filters are not discoverable.
+- Preserved Laravel 13, Inertia 3, Vue 3, TypeScript, Tailwind CSS 4, Wayfinder, Pest, SQLite, workspace isolation, existing task mutations, list/board views, task detail, and conventional pagination. No package, schema, route, policy, or alternate frontend stack is planned.
+- Recorded the approved Progressive Task Focus Desk design in `docs/plans/2026-08-16-task-focus-desk-design.md` and its red-green execution sequence in `docs/plans/2026-08-16-task-focus-desk-implementation.md`.
+- Activated the repository workflow, brainstorming, writing-plans, frontend-design, UI/UX, web-design, Inertia/Vue, Tailwind CSS, Wayfinder, Laravel, TypeScript, Pest, TDD, browser-QA, and code-review guidance. The UI/UX skill's documented search helper is absent from its installed directory, so its embedded rules and the repository design system remain authoritative. Ruflo ToolSearch/MCP tools are not exposed in this session, so no Ruflo execution is claimed.
+
+### Approved Direction
+
+- Add URL-backed Overdue, Completed today, Pinned, and Favorites focus toggles using the existing validated query contract.
+- Reduce the default task queue to completion, open, and overflow actions; reveal checkboxes/page selection only in explicit selection mode and keep delete behind the existing confirmation boundary.
+- Add concise result/filter status, mobile active-filter disclosure, two-line titles, complete translated metadata, 44-pixel targets, visible focus, dark mode, reduced motion, forced-colors support, and English/Lithuanian/Russian semantic copy.
+
+### Pending Verification And Delivery
+
+- Add failing-first Pest and direct TypeScript behavior coverage, implement the approved component/state changes, then run focused and complete backend/frontend/static/build/audit gates.
+- Verify live desktop/mobile list and board behavior, URL reload, filters, selection, task detail, delete confirmation, focus restoration, overflow, contrast, reduced motion, forced colors, long localization, and current logs.
+- Complete independent review, resolve all Critical/High/Medium findings, record exact results and limitations here, commit only phase files, and push `main` to `origin/main`.
