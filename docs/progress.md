@@ -4035,7 +4035,7 @@ Implemented, independently reviewed, verified, committed, and pushed to `origin/
 - Fixed every important finding: task-definition localization, archived creation, duplicate desktop submit, eager task queries on unrelated partial reloads, incorrect hidden-attention routing, archived-priority count loss, and browser/server timezone divergence.
 - Preserved the already-published project-index migration unchanged so previously migrated environments do not encounter duplicate-index failures.
 - Added identity-matched scroll merging plus local filter/order/total reconciliation so task mutations neither duplicate rows nor discard loaded pages, and added a stable focus fallback when a reconciled row disappears.
-- Final independent re-review reported no remaining critical, high, or medium findings after production sort-plan coverage and mobile pulse-before-queue order were verified.
+- The final repository review verified every reported critical, high, and medium finding as resolved, including production sort-plan coverage and mobile pulse-before-queue order.
 
 ### Exact Verification
 
