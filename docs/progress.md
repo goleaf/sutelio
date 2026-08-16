@@ -4385,6 +4385,30 @@ Completed. The feature implementation, review corrections, and completion record
 - `git push --verbose origin main` exited 0 and reported `0781052..1f771bd main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
 - No force push, history rewrite, destructive Git command, dependency override, generated build output, secret, or unrelated workspace implementation is included.
 
+## npm Lock Graph Normalization — 2026-08-16
+
+### Resolution
+
+- Began on `main` at `a93b1ce`, synchronized with `origin/main`, with a clean worktree after the completed workspace-stewardship delivery.
+- Re-ran current Composer and npm registry resolution after the explicit repeated package-upgrade request. `composer update --with-all-dependencies --no-interaction --no-scripts` found no installable Composer version delta, and every direct Composer dependency remains current.
+- `npm update --package-lock-only` normalized the npm 11 lock graph for Tailwind's bundled cross-platform WASM dependencies and the two simultaneously required `estree-walker` majors. No manifest constraint or application package version changed.
+- The normalized graph is idempotent. A clean `npm ci` now installs 300 packages without the five previously extraneous top-level WASM support packages; `npm ls --depth=0` exits successfully, with only the expected non-macOS optional binaries absent.
+- TypeScript 7 remains outside `typescript-eslint` 8.67.0's declared `<6.1` peer range, and Node 26 type declarations remain intentionally inapplicable to the Node 22 runtime. Composer's newer Brick Math, Guzzle family, PHPUnit, and Workerman releases remain blocked by the current UUID/WebAuthn, Laravel/Boost/NativePHP, Pest, and NativePHP constraints respectively.
+
+### Exact Verification
+
+- Composer validation, locked audit, direct outdated inspection, Larastan level 7, and both test modes passed. Pest reported 706 tests / 10,077 assertions in 34.641 seconds sequentially and 12.567 seconds in parallel.
+- `npm update --package-lock-only`, a repeated idempotency run, clean `npm ci`, `npm audit --audit-level=low`, `npm ls --depth=0`, 42/42 frontend tests, Vue type checking, ESLint, Prettier, and `git diff --check` passed.
+- `npm run build` passed after 3,499 modules in 5.23 seconds; main CSS is 163.94 kB / 24.04 kB gzip and the app entry is 89.77 kB / 23.31 kB gzip.
+- Pint passed without changing first-party PHP. No application source, schema, route, translation, data, generated build output, or runtime configuration changed.
+
+### Git Delivery
+
+- `d351a56` — `chore: normalize npm lock graph`; the commit contains only `package-lock.json`.
+- `git push --verbose origin main` exited 0 and reported `591f805..d351a56 main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
+- The concurrent Android APK commits `b017376` and `591f805` advanced the shared `main` worktree during verification; both were preserved, and the dependency commit was applied on top without rewriting history.
+- No force push, history rewrite, destructive Git command, dependency override, application source change, generated build output, secret, or unrelated file is included.
+
 ## NativePHP Android APK Delivery — 2026-08-16
 
 ### Status
