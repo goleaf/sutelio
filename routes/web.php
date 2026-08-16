@@ -32,8 +32,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class)->name('home');
 
 Route::middleware(['auth', 'verified'])
-    ->get('onboarding', [OnboardingController::class, 'index'])
-    ->name('onboarding.index');
+    ->controller(OnboardingController::class)
+    ->group(function (): void {
+        Route::get('onboarding', 'index')->name('onboarding.index');
+        Route::patch('onboarding/progress', 'progress')->name('onboarding.progress');
+        Route::post('onboarding/skip', 'skip')->name('onboarding.skip');
+        Route::post('onboarding/complete', 'complete')->name('onboarding.complete');
+        Route::post('onboarding/restart', 'restart')->name('onboarding.restart');
+    });
 
 Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

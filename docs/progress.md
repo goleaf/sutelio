@@ -4505,3 +4505,22 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - `php artisan route:list -vv` confirms onboarding has `auth` then `verified` without the completion gate, while Dashboard has `auth`, `verified`, then `EnsureOnboardingIsComplete`; settings retain their existing verification behavior and add only the completion gate.
 - Pint, Larastan, Vue type checking, ESLint, Prettier, and the Vite production build pass. The build transformed 3,501 modules and generated the real onboarding chunk in the ignored build output.
 - This phase intentionally publishes only the usable onboarding GET boundary. Progress and domain mutation routes will be added atomically with their validated actions in the next lifecycle and scoped-composition slices, avoiding public placeholder endpoints.
+
+### Phase 3 Preflight: Resumable Lifecycle
+
+- Phase 2 was committed as `21c8cde` and pushed to `origin/main` (`f2c32b4..21c8cde`) before lifecycle mutations began.
+- Re-read the approved state machine, controller/query boundary, preference casts/defaults, start-page routing, session behavior, and existing Form Request/action conventions.
+- Laravel Boost's installed-version documentation confirms backed-enum validation through `Rule::enum`, Form Request authorization, translated validation failures, transactional rollback, and explicit session `put`/`forget` semantics.
+- This slice will begin with failing tests for legal adjacency, invalid jumps, reload resume, required skip/completion, manual replay, replay abandonment, missing-preference restart, and non-forcing version behavior.
+- Lifecycle actions will lock only the user's preference row inside short SQLite transactions. They will not create or delete workspace data, and replay will preserve prior completion/skip/checklist facts so it can never re-enable the automatic gate.
+
+### Phase 3 Delivered: Resumable Lifecycle
+
+- Added an authorized `AdvanceOnboardingRequest` with backed-enum validation plus focused transactional actions for adjacent progress, completion, required skip, and restart/replay.
+- Progress locks the preference row, permits only one step forward or backward, records the first start time, rejects jumps with semantic localized errors, and persists the cursor for reload resume.
+- Required Skip moves to Results, clears only resumable draft state, records a skip timestamp, and follows the saved start page. Completion is accepted only from Results, clears skip/draft state, records completion, and follows the same canonical start-page map.
+- Restart creates a new run UUID/current content version and resets only cursor/draft/start time. Existing completion, skip, and checklist facts remain intact; a legacy user without preferences receives a completed baseline before replay, while a genuinely pending user remains required and cannot bypass the gate with a forged replay session flag.
+- Added usable auth/verified routes for progress, skip, complete, and restart alongside the existing index route. Completed users may mutate only during an active replay; leaving replay for normal application navigation is always allowed.
+- The observed lifecycle RED filter ran eight tests with one pass and seven missing-route errors. The complete lifecycle suite passes 11 tests / 97 assertions, including adjacent back/forward movement, invalid jumps/values, resume, required skip, guarded completion, completed/skipped replay, legacy restart, version behavior, and mutation authorization.
+- The expanded persistence/entry/lifecycle/auth/localization/architecture gate passes 57 tests / 5,802 assertions. Pint, Larastan, Vue type checking, ESLint, and `php artisan route:list --path=onboarding` pass; the route list now reports the five implemented lifecycle endpoints.
+- No workspace, project, task, taxonomy, package, migration, host data, or generated asset changed in this phase. Scoped domain composition and idempotent create/select routes are the next TDD slice.
