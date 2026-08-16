@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\MarkAllNotificationsRead;
 use App\Actions\MarkNotificationRead;
 use App\Http\Requests\NotificationIndexRequest;
+use App\Http\Resources\NotificationInboxResource;
 use App\Models\User;
 use App\Queries\NotificationIndexQuery;
 use Illuminate\Http\RedirectResponse;
@@ -12,7 +15,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class NotificationController extends Controller
+final class NotificationController extends Controller
 {
     public function index(
         NotificationIndexRequest $request,
@@ -21,18 +24,20 @@ class NotificationController extends Controller
         $user = $request->user();
 
         abort_unless($user instanceof User, 403);
+        $user->loadMissing('preferences');
 
         return Inertia::render('notifications/Index', [
-            'notifications' => $notificationIndexQuery->forUser(
-                $user,
-                $request->status(),
-                $request->perPage(),
+            'notifications' => fn () => NotificationInboxResource::collection(
+                $notificationIndexQuery->forUser(
+                    $user,
+                    $request->status(),
+                    $request->kind(),
+                    $request->perPage(),
+                ),
             ),
-            'stats' => $notificationIndexQuery->statsForUser($user),
-            'filters' => [
-                'status' => $request->status(),
-                'per_page' => $request->perPage(),
-            ],
+            'stats' => fn (): array => $notificationIndexQuery->statsForUser($user),
+            'filters' => fn (): array => $request->state(),
+            'today' => $request->today(),
         ]);
     }
 

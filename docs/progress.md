@@ -4059,3 +4059,24 @@ Implemented, independently reviewed, verified, committed, and pushed to `origin/
 - `d392d6c` — `docs: record project operations workspace`.
 - `git push origin main` succeeded: `a983291..d392d6c main -> main`. This final status-only documentation update follows in the same delivery.
 - No force push, history rewrite, destructive Git command, secret, generated build output, or unrelated deletion was used.
+
+## Notification Command Center
+
+### Status
+
+In progress. The Structured Signal Stream design and repository-grounded implementation plan are approved and committed; test-first implementation is the active phase.
+
+### Protected Baseline And Decisions
+
+- Began on `main` from the completed Project Operations delivery with a clean tracked tree and preserved all prior work.
+- Inspected the notification controller, request, query, actions, notification payloads, routes, translations, tests, live SQLite schema/indexes, user timezone preferences, and current Herd page before implementation.
+- Preserved Laravel 13, Inertia 3, Vue 3, TypeScript, Tailwind CSS 4, Wayfinder, Pest, SQLite, the existing notification schema, and the Warm Precision design system. No dependency, migration, alternate frontend stack, or new notification lifecycle is planned.
+- Selected server-owned notification semantics, user-scoped read operations, deterministic bounded pagination, URL-backed status/kind filters, and user-timezone Today/Earlier grouping. Content sniffing, snooze, dismiss, delete, bulk selection, push infrastructure, WebSockets, and Redis remain explicit non-goals.
+- Recorded the approved design and implementation sequence in `docs/plans/2026-08-16-notification-command-center-design.md` and `docs/plans/2026-08-16-notification-command-center-implementation.md`.
+- Laravel Boost version-specific documentation and the repository's Laravel, Inertia/Vue, Tailwind, Wayfinder, Pest, TDD, frontend-design, and accessibility skills guide the phase. Ruflo MCP tools are not exposed in this session, so no Ruflo execution is claimed.
+
+### Delivery State
+
+- `fa0923c` — `docs: design notification command center`.
+- `266beec` — `docs: plan notification command center`.
+- The first design push attempt failed because GitHub port 443 was unreachable; push will be retried after implementation and the exact result recorded here.
