@@ -10,17 +10,11 @@ const props = defineProps<{
     pagination: PaginatedResponse<Todo>;
     processing: boolean;
 }>();
-const emit = defineEmits<{ navigate: [] }>();
+const emit = defineEmits<{ navigate: [processing: boolean] }>();
 const { formatNumber, t } = useUi();
 
-function navigate(event: MouseEvent): void {
-    if (props.processing) {
-        event.preventDefault();
-
-        return;
-    }
-
-    emit('navigate');
+function preventWhileProcessing(): boolean {
+    return !props.processing;
 }
 </script>
 
@@ -53,7 +47,9 @@ function navigate(event: MouseEvent): void {
                     preserve-scroll
                     preserve-state
                     :aria-disabled="processing"
-                    @click="navigate"
+                    @before="preventWhileProcessing"
+                    @start="emit('navigate', true)"
+                    @finish="emit('navigate', false)"
                 >
                     <ChevronLeft class="size-4" aria-hidden="true" />
                     {{ t('tasks.pagination.previous') }}
@@ -82,7 +78,9 @@ function navigate(event: MouseEvent): void {
                     preserve-scroll
                     preserve-state
                     :aria-disabled="processing"
-                    @click="navigate"
+                    @before="preventWhileProcessing"
+                    @start="emit('navigate', true)"
+                    @finish="emit('navigate', false)"
                 >
                     {{ t('tasks.pagination.next') }}
                     <ChevronRight class="size-4" aria-hidden="true" />

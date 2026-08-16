@@ -587,7 +587,10 @@ return [
             'upload_progress' => 'Uploading: :progress%',
         ],
         'filters' => [
-            'active_count' => 'Active filters: :count',
+            'active_count_few' => ':count active filters',
+            'active_count_many' => ':count active filters',
+            'active_count_one' => ':count active filter',
+            'active_count_other' => ':count active filters',
             'all_projects' => 'All projects',
             'all_priorities' => 'All Priority',
             'all_statuses' => 'All Status',

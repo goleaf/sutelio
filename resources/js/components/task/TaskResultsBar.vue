@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CheckSquare2, X } from '@lucide/vue';
+import { taskPluralForm } from '@/components/task/task-focus';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useUi } from '@/composables/useUi';
@@ -20,7 +21,14 @@ const emit = defineEmits<{
     selectPage: [selected: boolean];
     updateSelectionMode: [enabled: boolean];
 }>();
-const { formatNumber, t } = useUi();
+const { formatNumber, locale, t } = useUi();
+
+function activeFilterSummary(count: number): string {
+    return t(
+        `tasks.filters.active_count_${taskPluralForm(count, locale.value)}`,
+        { count: formatNumber(count) },
+    );
+}
 </script>
 
 <template>
@@ -41,11 +49,7 @@ const { formatNumber, t } = useUi();
                 v-if="activeFilterCount"
                 class="mt-0.5 text-xs text-muted-foreground tabular-nums"
             >
-                {{
-                    t('tasks.filters.active_count', {
-                        count: formatNumber(activeFilterCount),
-                    })
-                }}
+                {{ activeFilterSummary(activeFilterCount) }}
             </p>
         </div>
 

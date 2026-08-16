@@ -17,6 +17,8 @@ import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedCon
 import {
     activeTaskFilterCount,
     clearTaskFilters,
+    mergeTaskFilterState,
+    taskPluralForm,
     toggleTaskFocusFilter,
 } from '@/components/task/task-focus';
 import type { TaskFocusFilter } from '@/components/task/task-focus';
@@ -48,7 +50,7 @@ const props = defineProps<{
     processing: boolean;
 }>();
 const emit = defineEmits<{ update: [filters: TodoFilters] }>();
-const { t } = useUi();
+const { locale, t } = useUi();
 const { statuses, priorities } = useTaskDefinitions(
     () => props.taskDefinitions,
 );
@@ -88,6 +90,12 @@ const focusOptions = computed(() => [
 const activeFilterCount = computed(() =>
     activeTaskFilterCount(currentFilters()),
 );
+const activeFilterLabel = computed(() =>
+    t(
+        `tasks.filters.active_count_${taskPluralForm(activeFilterCount.value, locale.value)}`,
+        { count: activeFilterCount.value },
+    ),
+);
 
 watch(
     () => props.filters,
@@ -96,7 +104,7 @@ watch(
         projectId.value = filters.project_id ?? 'all';
         status.value = filters.status ?? 'all';
         priority.value = filters.priority ?? 'all';
-        sort.value = filters.sort ?? 'default';
+        sort.value = filters.sort || 'default';
         direction.value = filters.direction ?? 'asc';
         perPage.value = String(filters.per_page ?? 50) as '100' | '25' | '50';
         view.value = filters.view ?? 'list';
@@ -111,7 +119,7 @@ watch(
 );
 
 function currentFilters(): TodoFilters {
-    return {
+    return mergeTaskFilterState(props.filters, {
         search: search.value.trim() || undefined,
         project_id: projectId.value === 'all' ? undefined : projectId.value,
         status: status.value === 'all' ? undefined : status.value,
@@ -124,7 +132,7 @@ function currentFilters(): TodoFilters {
         is_favorite: focusFilters.value.is_favorite || undefined,
         is_pinned: focusFilters.value.is_pinned || undefined,
         overdue: focusFilters.value.overdue || undefined,
-    };
+    });
 }
 
 function apply(): void {
@@ -197,9 +205,7 @@ function setView(nextView: 'board' | 'list'): void {
                     class="min-h-11 flex-1 justify-between md:hidden"
                     :aria-label="
                         activeFilterCount
-                            ? t('tasks.filters.active_count', {
-                                  count: activeFilterCount,
-                              })
+                            ? activeFilterLabel
                             : t('tasks.filters.filters')
                     "
                     aria-haspopup="dialog"

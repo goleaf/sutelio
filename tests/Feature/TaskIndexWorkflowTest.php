@@ -7,6 +7,7 @@ use App\Models\Todo;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMember;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\ValidationException;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -156,6 +157,29 @@ test('task focus accepts Inertia boolean query serialization', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->where('filters.overdue', true)
+            ->where('stats.total', 1)
+            ->has('todos.data', 1)
+            ->where('todos.data.0.id', $matching->id));
+});
+
+test('completed today follows the authenticated user timezone across UTC midnight', function () {
+    [$user, $workspace] = taskIndexWorkspace();
+    $user->preferences()->create(['timezone' => 'Europe/Vilnius']);
+    $this->travelTo(CarbonImmutable::parse('2026-08-16 21:30:00', 'UTC'));
+
+    $matching = Todo::factory()->for($workspace)->completed()->create([
+        'completed_at' => CarbonImmutable::parse('2026-08-16 21:15:00', 'UTC'),
+    ]);
+    Todo::factory()->for($workspace)->completed()->create([
+        'completed_at' => CarbonImmutable::parse('2026-08-16 20:30:00', 'UTC'),
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('todos.index', ['completed_today' => 'true']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.completed_today', true)
             ->where('stats.total', 1)
             ->has('todos.data', 1)
             ->where('todos.data.0.id', $matching->id));

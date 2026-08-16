@@ -5,7 +5,9 @@ import type { TodoFilters } from '../types/api.ts';
 import {
     activeTaskFilterCount,
     clearTaskFilters,
+    mergeTaskFilterState,
     restoreTaskFocus,
+    taskPluralForm,
     toggleTaskFocusFilter,
 } from './task/task-focus.ts';
 
@@ -58,6 +60,39 @@ test('clearing task filters preserves only presentation defaults', () => {
     );
 });
 
+test('visible task controls preserve URL-backed filters they do not render', () => {
+    assert.deepEqual(
+        mergeTaskFilterState(
+            {
+                ...defaults,
+                assigned_to: 'member-id',
+                due_date_from: '2026-08-01',
+                label_id: 'label-id',
+                tag_id: 'tag-id',
+            },
+            { overdue: true, view: 'board' },
+        ),
+        {
+            ...defaults,
+            assigned_to: 'member-id',
+            due_date_from: '2026-08-01',
+            label_id: 'label-id',
+            overdue: true,
+            tag_id: 'tag-id',
+            view: 'board',
+        },
+    );
+});
+
+test('active task filter counts select locale-aware plural forms', () => {
+    assert.equal(taskPluralForm(1, 'en-US'), 'one');
+    assert.equal(taskPluralForm(2, 'lt-LT'), 'few');
+    assert.equal(taskPluralForm(10, 'lt-LT'), 'other');
+    assert.equal(taskPluralForm(21, 'ru-RU'), 'one');
+    assert.equal(taskPluralForm(24, 'ru-RU'), 'few');
+    assert.equal(taskPluralForm(25, 'ru-RU'), 'many');
+});
+
 test('pagination exits selection mode before visiting another task page', () => {
     const pagination = readFileSync(
         new URL('./task/TaskPagination.vue', import.meta.url),
@@ -68,13 +103,16 @@ test('pagination exits selection mode before visiting another task page', () => 
         'utf8',
     );
     const page = readFileSync(
-        new URL('../Pages/tasks/Index.vue', import.meta.url),
+        new URL('../pages/tasks/Index.vue', import.meta.url),
         'utf8',
     );
 
-    assert.match(pagination, /emit\('navigate'\)/);
-    assert.match(panel, /@navigate="emit\('navigate'\)"/);
-    assert.match(page, /@navigate="setSelectionMode\(false\)"/);
+    assert.match(pagination, /@before="preventWhileProcessing"/);
+    assert.match(pagination, /@start="emit\('navigate', true\)"/);
+    assert.match(pagination, /@finish="emit\('navigate', false\)"/);
+    assert.match(panel, /@navigate="emit\('navigate', \$event\)"/);
+    assert.match(page, /@navigate="handlePagination"/);
+    assert.match(page, /filtering\.value = processing/);
 });
 
 test('task focus restoration prefers a connected origin and falls back safely', () => {

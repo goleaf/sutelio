@@ -7,6 +7,7 @@ use App\Concerns\HasUuid;
 use App\Enums\TodoPriority;
 use App\Enums\TodoStatus;
 use BackedEnum;
+use Carbon\CarbonImmutable;
 use Database\Factories\TodoFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -197,9 +198,13 @@ class Todo extends Model
      * @param  Builder<Todo>  $query
      * @return Builder<Todo>
      */
-    public function scopeCompletedToday(Builder $query): Builder
+    public function scopeCompletedToday(Builder $query, string $timezone): Builder
     {
-        return $query->whereDate('completed_at', now()->toDateString());
+        $localToday = CarbonImmutable::now($timezone)->startOfDay();
+
+        return $query
+            ->where('completed_at', '>=', $localToday->utc()->toDateTimeString())
+            ->where('completed_at', '<', $localToday->addDay()->utc()->toDateTimeString());
     }
 
     public function statusKey(): string

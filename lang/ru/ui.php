@@ -587,7 +587,10 @@ return [
             'upload_progress' => 'Загрузка: :progress%',
         ],
         'filters' => [
-            'active_count' => 'Активные фильтры: :count',
+            'active_count_few' => ':count активных фильтра',
+            'active_count_many' => ':count активных фильтров',
+            'active_count_one' => ':count активный фильтр',
+            'active_count_other' => ':count активных фильтров',
             'all_projects' => 'Все проекты',
             'all_priorities' => 'Все приоритеты',
             'all_statuses' => 'Все статусы',

@@ -251,6 +251,9 @@ test('task detail entry points share the complete collaboration surface', functi
 
     expect(File::get(resource_path('js/pages/tasks/Index.vue')))
         ->toContain('taskDetailTrigger.value =')
-        ->toContain('taskDetailTrigger.value?.focus()')
+        ->toContain('if (!selectedTodo.value)')
+        ->toContain('restoreTaskFocus')
+        ->toContain('taskQueueFallback')
+        ->toContain('restoreFocus(taskDetailTrigger.value)')
         ->toContain('@close="closeTaskDetail"');
 });

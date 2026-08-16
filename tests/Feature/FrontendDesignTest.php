@@ -428,8 +428,12 @@ test('task rows use progressive semantic actions without a nested full-row overl
     expect(File::get(resource_path("js/{$file}")))
         ->toContain('selectionMode')
         ->toContain('DropdownMenu')
+        ->toContain('rememberActionTrigger')
+        ->toContain('actionTriggers.get(todo.id)')
         ->toContain("t('tasks.index.open_task'")
         ->toContain('min-h-11')
+        ->toContain('whitespace-normal')
+        ->toContain('break-all')
         ->toContain('focus-visible:ring-orange-500')
         ->not->toContain('absolute inset-0 z-10');
 })->with([

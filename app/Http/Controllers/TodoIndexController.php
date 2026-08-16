@@ -59,9 +59,11 @@ class TodoIndexController extends Controller
         $this->authorize('view', $workspace);
 
         $filters = $request->filters();
+        $timezone = $request->timezone();
         $todos = $todoIndexQuery->todos(
             $workspace,
             $filters,
+            $timezone,
             $request->sort(),
             $request->direction(),
             $request->perPage(),
@@ -70,7 +72,7 @@ class TodoIndexController extends Controller
         return Inertia::render('tasks/Index', [
             'todos' => TodoResource::collection($todos),
             'filters' => $request->state(),
-            'stats' => $todoIndexQuery->stats($workspace, $filters),
+            'stats' => $todoIndexQuery->stats($workspace, $filters, $timezone),
             'projects' => ProjectResource::collection($todoIndexQuery->projects($workspace)),
             'workspace' => ['id' => $workspace->id],
             'taskDefinitions' => [

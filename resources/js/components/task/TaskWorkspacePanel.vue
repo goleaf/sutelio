@@ -35,10 +35,10 @@ const emit = defineEmits<{
     clearFilters: [];
     clearSelection: [];
     create: [];
-    delete: [todo: Todo];
+    delete: [todo: Todo, trigger?: HTMLElement | null];
     move: [todo: Todo, status: TaskStatusDefinition];
-    navigate: [];
-    select: [todo: Todo];
+    navigate: [processing: boolean];
+    select: [todo: Todo, trigger?: HTMLElement | null];
     selectPage: [selected: boolean];
     toggleCompletion: [todo: Todo];
     toggleSelection: [todo: Todo];
@@ -59,6 +59,14 @@ function handleEmptyAction(): void {
 
 function forwardMove(todo: Todo, status: TaskStatusDefinition): void {
     emit('move', todo, status);
+}
+
+function forwardSelect(todo: Todo, trigger?: HTMLElement | null): void {
+    emit('select', todo, trigger);
+}
+
+function forwardDelete(todo: Todo, trigger?: HTMLElement | null): void {
+    emit('delete', todo, trigger);
 }
 </script>
 
@@ -107,8 +115,8 @@ function forwardMove(todo: Todo, status: TaskStatusDefinition): void {
                 :selected-ids="selectedIds"
                 :busy-todo-id="busyTodoId"
                 :selection-mode="selectionMode"
-                @delete="emit('delete', $event)"
-                @select="emit('select', $event)"
+                @delete="forwardDelete"
+                @select="forwardSelect"
                 @toggle-completion="emit('toggleCompletion', $event)"
                 @toggle-selection="emit('toggleSelection', $event)"
             />
@@ -116,7 +124,7 @@ function forwardMove(todo: Todo, status: TaskStatusDefinition): void {
                 v-if="todos.data.length"
                 :pagination="todos"
                 :processing="filtering"
-                @navigate="emit('navigate')"
+                @navigate="emit('navigate', $event)"
             />
             <EmptyState
                 v-else

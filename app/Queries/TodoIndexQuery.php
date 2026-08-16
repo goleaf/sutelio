@@ -27,11 +27,12 @@ class TodoIndexQuery
     public function todos(
         Workspace $workspace,
         array $filters,
+        string $timezone,
         ?string $sort,
         ?string $direction,
         int $perPage,
     ): LengthAwarePaginator {
-        $query = $this->filtered($workspace, $filters)
+        $query = $this->filtered($workspace, $filters, $timezone)
             ->with(['project', 'assignee', 'labels', 'tags', 'statusDefinition', 'priorityDefinition'])
             ->active();
 
@@ -44,9 +45,9 @@ class TodoIndexQuery
      * @param  array{search?: string|null, project_id?: string|null, status?: string|null, priority?: string|null, assigned_to?: string|null, label_id?: string|null, tag_id?: string|null, is_pinned?: bool|null, is_favorite?: bool|null, due_date_from?: string|null, due_date_to?: string|null, overdue?: bool|null, completed_today?: bool|null}  $filters
      * @return array{total: int, pending: int, completed: int}
      */
-    public function stats(Workspace $workspace, array $filters): array
+    public function stats(Workspace $workspace, array $filters, string $timezone): array
     {
-        $counts = (array) $this->filtered($workspace, $filters)
+        $counts = (array) $this->filtered($workspace, $filters, $timezone)
             ->active()
             ->toBase()
             ->selectRaw('COUNT(*) AS total')
@@ -83,11 +84,12 @@ class TodoIndexQuery
      * @param  array{search?: string|null, project_id?: string|null, status?: string|null, priority?: string|null, assigned_to?: string|null, label_id?: string|null, tag_id?: string|null, is_pinned?: bool|null, is_favorite?: bool|null, due_date_from?: string|null, due_date_to?: string|null, overdue?: bool|null, completed_today?: bool|null}  $filters
      * @return Builder<Todo>
      */
-    private function filtered(Workspace $workspace, array $filters): Builder
+    private function filtered(Workspace $workspace, array $filters, string $timezone): Builder
     {
         return $this->filterService->apply(
             $workspace->todos()->getQuery(),
             $filters,
+            $timezone,
         );
     }
 }

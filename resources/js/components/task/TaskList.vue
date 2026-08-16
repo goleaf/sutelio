@@ -29,13 +29,14 @@ const props = defineProps<{
     selectionMode: boolean;
 }>();
 const emit = defineEmits<{
-    delete: [todo: Todo];
-    select: [todo: Todo];
+    delete: [todo: Todo, trigger: HTMLElement | null];
+    select: [todo: Todo, trigger: HTMLElement | null];
     toggleCompletion: [todo: Todo];
     toggleSelection: [todo: Todo];
 }>();
 const { formatDate, t } = useUi();
 const selected = computed(() => new Set(props.selectedIds));
+const actionTriggers = new Map<string, HTMLElement>();
 
 const isOverdue = (todo: Todo): boolean =>
     isTodoOverdue(todo.due_date, todo.is_completed);
@@ -59,6 +60,30 @@ function dueLabel(todo: Todo): string {
     return isOverdue(todo)
         ? t('tasks.index.due_overdue', { date })
         : t('tasks.index.due_on', { date });
+}
+
+function eventTarget(event: Event): HTMLElement | null {
+    return event.currentTarget instanceof HTMLElement
+        ? event.currentTarget
+        : null;
+}
+
+function selectFromRow(todo: Todo, event: Event): void {
+    emit('select', todo, eventTarget(event));
+}
+
+function rememberActionTrigger(todo: Todo, open: boolean): void {
+    if (open && document.activeElement instanceof HTMLElement) {
+        actionTriggers.set(todo.id, document.activeElement);
+    }
+}
+
+function selectFromActions(todo: Todo): void {
+    emit('select', todo, actionTriggers.get(todo.id) ?? null);
+}
+
+function deleteFromActions(todo: Todo): void {
+    emit('delete', todo, actionTriggers.get(todo.id) ?? null);
 }
 </script>
 
@@ -121,7 +146,7 @@ function dueLabel(todo: Todo): string {
                 type="button"
                 class="min-h-11 min-w-0 cursor-pointer rounded-lg py-1 text-left focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
                 :aria-label="t('tasks.index.open_task', { title: todo.title })"
-                @click="emit('select', todo)"
+                @click="selectFromRow(todo, $event)"
             >
                 <span
                     :class="[
@@ -141,7 +166,7 @@ function dueLabel(todo: Todo): string {
                     </span>
                     <Badge
                         v-if="todo.status_definition || todo.status"
-                        class="inline-flex"
+                        class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
                         variant="outline"
                         :style="{
                             borderColor: statusColor(todo),
@@ -152,7 +177,7 @@ function dueLabel(todo: Todo): string {
                     </Badge>
                     <Badge
                         v-if="todo.priority_definition || todo.priority"
-                        class="inline-flex"
+                        class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
                         variant="outline"
                         :style="{
                             borderColor: priorityColor(todo),
@@ -163,7 +188,7 @@ function dueLabel(todo: Todo): string {
                     </Badge>
                     <Badge
                         v-if="todo.due_date"
-                        class="inline-flex"
+                        class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
                         :class="
                             isOverdue(todo)
                                 ? 'border-red-500/50 text-red-700 dark:text-red-300'
@@ -176,7 +201,7 @@ function dueLabel(todo: Todo): string {
                 </span>
             </button>
 
-            <DropdownMenu>
+            <DropdownMenu @update:open="rememberActionTrigger(todo, $event)">
                 <DropdownMenuTrigger :as-child="true">
                     <Button
                         type="button"
@@ -196,7 +221,7 @@ function dueLabel(todo: Todo): string {
                 <DropdownMenuContent align="end" class="w-52">
                     <DropdownMenuItem
                         class="min-h-11"
-                        @select="emit('select', todo)"
+                        @select="selectFromActions(todo)"
                     >
                         <PanelRightOpen class="size-4" aria-hidden="true" />
                         {{ t('tasks.index.open') }}
@@ -205,7 +230,7 @@ function dueLabel(todo: Todo): string {
                     <DropdownMenuItem
                         variant="destructive"
                         class="min-h-11"
-                        @select="emit('delete', todo)"
+                        @select="deleteFromActions(todo)"
                     >
                         <Trash2 class="size-4" aria-hidden="true" />
                         {{ t('common.actions.delete') }}

@@ -112,6 +112,17 @@ class TodoIndexRequest extends FormRequest
         return (int) ($this->validated('per_page') ?? 50);
     }
 
+    public function timezone(): string
+    {
+        $user = $this->user();
+        $timezone = $user instanceof User ? $user->preferences?->timezone : null;
+        $fallback = config('app.timezone', 'UTC');
+
+        return is_string($timezone)
+            ? $timezone
+            : (is_string($fallback) ? $fallback : 'UTC');
+    }
+
     public function view(): string
     {
         $view = $this->validated('view');

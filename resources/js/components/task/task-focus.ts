@@ -8,6 +8,8 @@ export interface TaskFocusTarget {
     isConnected: boolean;
 }
 
+export type TaskPluralForm = 'few' | 'many' | 'one' | 'other';
+
 const narrowingFilterKeys = [
     'assigned_to',
     'completed_today',
@@ -47,6 +49,26 @@ export function toggleTaskFocusFilter(
     }
 
     return nextFilters;
+}
+
+export function mergeTaskFilterState(
+    filters: TodoFilters,
+    changes: TodoFilters,
+): TodoFilters {
+    return { ...filters, ...changes };
+}
+
+export function taskPluralForm(count: number, locale: string): TaskPluralForm {
+    const category = new Intl.PluralRules(locale).select(count);
+
+    switch (category) {
+        case 'few':
+        case 'many':
+        case 'one':
+            return category;
+        default:
+            return 'other';
+    }
 }
 
 export function clearTaskFilters(filters: TodoFilters): TodoFilters {

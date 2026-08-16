@@ -587,7 +587,10 @@ return [
             'upload_progress' => 'Įkeliama: :progress%',
         ],
         'filters' => [
-            'active_count' => 'Aktyvūs filtrai: :count',
+            'active_count_few' => ':count aktyvūs filtrai',
+            'active_count_many' => ':count aktyvių filtrų',
+            'active_count_one' => ':count aktyvus filtras',
+            'active_count_other' => ':count aktyvių filtrų',
             'all_projects' => 'Visi projektai',
             'all_priorities' => 'Visi prioritetai',
             'all_statuses' => 'Visos būsenos',

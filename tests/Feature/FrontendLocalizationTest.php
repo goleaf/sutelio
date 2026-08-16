@@ -45,7 +45,10 @@ test('data safety messages preserve locale parity', function () {
 
 test('task focus desk copy is complete in every supported locale', function () {
     $requiredKeys = [
-        'filters.active_count',
+        'filters.active_count_few',
+        'filters.active_count_many',
+        'filters.active_count_one',
+        'filters.active_count_other',
         'filters.completed_today',
         'filters.favorites',
         'filters.focus',

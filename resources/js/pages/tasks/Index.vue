@@ -100,6 +100,14 @@ function setSelectionMode(enabled: boolean): void {
     }
 }
 
+function handlePagination(processing: boolean): void {
+    if (processing) {
+        setSelectionMode(false);
+    }
+
+    filtering.value = processing;
+}
+
 function activeElement(): HTMLElement | null {
     return document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -110,12 +118,17 @@ function restoreFocus(origin: HTMLElement | null): void {
     void nextTick(() => restoreTaskFocus(origin, taskQueueFallback.value));
 }
 
-async function selectTodo(todo: Todo): Promise<void> {
+async function selectTodo(
+    todo: Todo,
+    trigger: HTMLElement | null = activeElement(),
+): Promise<void> {
     if (!props.workspace.id || detailRequest.processing) {
         return;
     }
 
-    taskDetailTrigger.value = activeElement();
+    if (!selectedTodo.value) {
+        taskDetailTrigger.value = trigger ?? activeElement();
+    }
 
     try {
         const response = await detailRequest.get(
@@ -245,8 +258,11 @@ function performBulkAction(
     );
 }
 
-function requestDelete(todo: Todo): void {
-    confirmationTrigger.value = activeElement();
+function requestDelete(
+    todo: Todo,
+    trigger: HTMLElement | null = activeElement(),
+): void {
+    confirmationTrigger.value = trigger ?? activeElement();
     todoToDelete.value = todo;
 }
 
@@ -363,7 +379,7 @@ function deleteTodo(): void {
                         @create="showCreateDialog = true"
                         @delete="requestDelete"
                         @move="moveTodo"
-                        @navigate="setSelectionMode(false)"
+                        @navigate="handlePagination"
                         @select="selectTodo"
                         @select-page="selectPage"
                         @toggle-completion="toggleCompletion"
