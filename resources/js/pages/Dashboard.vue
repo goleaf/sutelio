@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import {
     AlertTriangle,
-    Calendar,
+    ArrowRight,
     CalendarClock,
     CheckCircle2,
     ListChecks,
 } from '@lucide/vue';
+import DashboardTaskQueue from '@/components/dashboard/DashboardTaskQueue.vue';
 import ProductivityChart from '@/components/dashboard/ProductivityChart.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
+import { Button } from '@/components/ui/button';
 import { useUi } from '@/composables/useUi';
+import { index as todoIndex } from '@/routes/todos';
 import type { Todo } from '@/types/models';
 
 defineProps<{
@@ -30,19 +30,7 @@ defineProps<{
     upcomingTasks: Todo[];
     weeklyData: Array<{ date: string; completed: number; created: number }>;
 }>();
-const { formatDate: formatLocalizedDate, formatNumber, t } = useUi();
-
-function formatDate(date: string | null): string {
-    if (!date) {
-        return '';
-    }
-
-    return formatLocalizedDate(date, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-    });
-}
+const { formatNumber, t } = useUi();
 </script>
 
 <template>
@@ -62,6 +50,14 @@ function formatDate(date: string | null): string {
                         })
                     "
                 >
+                    <template #actions>
+                        <Button as-child size="lg">
+                            <Link :href="todoIndex()" prefetch>
+                                {{ t('dashboard.review_tasks') }}
+                                <ArrowRight class="size-4" aria-hidden="true" />
+                            </Link>
+                        </Button>
+                    </template>
                     <template #metrics>
                         <WorkspaceMetric
                             :label="t('tasks.stats.total')"
@@ -90,178 +86,54 @@ function formatDate(date: string | null): string {
                     </template>
                 </WorkspacePageHeader>
 
-                <div class="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-                    <Card class="overflow-hidden">
-                        <CardHeader class="flex flex-row items-center gap-3">
-                            <div
-                                class="flex size-9 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-300"
-                            >
-                                <CalendarClock
-                                    class="size-4"
-                                    aria-hidden="true"
-                                />
-                            </div>
-                            <CardTitle class="text-base">
-                                {{ t('dashboard.today_tasks') }}
-                            </CardTitle>
-                            <Badge variant="secondary" class="ml-auto">
-                                {{ formatNumber(stats.today_count) }}
-                            </Badge>
-                        </CardHeader>
-                        <CardContent>
-                            <div
-                                v-if="todayTasks.length === 0"
-                                class="py-4 text-sm text-muted-foreground"
-                            >
-                                {{ t('dashboard.no_today') }}
-                            </div>
-                            <div v-else class="space-y-2">
-                                <div
-                                    v-for="todo in todayTasks"
-                                    :key="todo.id"
-                                    class="flex items-center gap-3 rounded-xl border border-border/80 bg-background p-3"
-                                >
-                                    <div
-                                        class="size-2 shrink-0 rounded-full"
-                                        :style="{
-                                            backgroundColor:
-                                                safeDefinitionColor(
-                                                    todo.priority_definition
-                                                        ?.color,
-                                                ),
-                                        }"
-                                    />
-                                    <div class="min-w-0 flex-1">
-                                        <p class="truncate text-sm font-medium">
-                                            {{ todo.title }}
-                                        </p>
-                                        <p
-                                            class="text-xs text-muted-foreground"
-                                        >
-                                            {{ formatDate(todo.due_date) }}
-                                        </p>
-                                    </div>
-                                    <Badge variant="outline">
-                                        {{
-                                            todo.status_definition?.name ??
-                                            todo.status
-                                        }}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                <section aria-labelledby="dashboard-focus-title">
+                    <div class="mb-4 max-w-2xl">
+                        <h2
+                            id="dashboard-focus-title"
+                            class="text-xl font-semibold tracking-[-0.025em] sm:text-2xl"
+                        >
+                            {{ t('dashboard.focus_title') }}
+                        </h2>
+                        <p
+                            class="mt-1.5 text-sm leading-6 text-muted-foreground"
+                        >
+                            {{ t('dashboard.focus_description') }}
+                        </p>
+                    </div>
 
-                    <Card class="overflow-hidden">
-                        <CardHeader class="flex flex-row items-center gap-3">
-                            <div
-                                class="flex size-9 items-center justify-center rounded-xl bg-red-500/10 text-red-600 dark:text-red-300"
-                            >
-                                <AlertTriangle
-                                    class="size-4"
-                                    aria-hidden="true"
-                                />
-                            </div>
-                            <CardTitle class="text-base">
-                                {{ t('dashboard.overdue_tasks') }}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div
-                                v-if="overdueTasks.length === 0"
-                                class="py-4 text-sm text-muted-foreground"
-                            >
-                                {{ t('dashboard.no_overdue') }}
-                            </div>
-                            <div v-else class="space-y-2">
-                                <div
-                                    v-for="todo in overdueTasks"
-                                    :key="todo.id"
-                                    class="flex items-center gap-3 rounded-xl border border-border/80 bg-background p-3"
-                                >
-                                    <div
-                                        class="size-2 shrink-0 rounded-full"
-                                        :style="{
-                                            backgroundColor:
-                                                safeDefinitionColor(
-                                                    todo.priority_definition
-                                                        ?.color,
-                                                ),
-                                        }"
-                                    />
-                                    <div class="min-w-0 flex-1">
-                                        <p class="truncate text-sm font-medium">
-                                            {{ todo.title }}
-                                        </p>
-                                        <p
-                                            class="text-xs text-muted-foreground"
-                                        >
-                                            {{ formatDate(todo.due_date) }}
-                                        </p>
-                                    </div>
-                                    <Badge variant="destructive">
-                                        {{ t('dashboard.overdue') }}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <div
+                        class="grid items-start gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.75fr)]"
+                    >
+                        <DashboardTaskQueue
+                            :title="t('dashboard.overdue_tasks')"
+                            :description="t('dashboard.overdue_guidance')"
+                            :empty-message="t('dashboard.no_overdue')"
+                            :todos="overdueTasks"
+                            :count="stats.overdue_count"
+                            tone="overdue"
+                            :featured="true"
+                        />
 
-                    <Card class="overflow-hidden">
-                        <CardHeader class="flex flex-row items-center gap-3">
-                            <div
-                                class="flex size-9 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-300"
-                            >
-                                <Calendar class="size-4" aria-hidden="true" />
-                            </div>
-                            <CardTitle class="text-base">
-                                {{ t('dashboard.upcoming_tasks') }}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div
-                                v-if="upcomingTasks.length === 0"
-                                class="py-4 text-sm text-muted-foreground"
-                            >
-                                {{ t('dashboard.no_upcoming') }}
-                            </div>
-                            <div v-else class="space-y-2">
-                                <div
-                                    v-for="todo in upcomingTasks"
-                                    :key="todo.id"
-                                    class="flex items-center gap-3 rounded-xl border border-border/80 bg-background p-3"
-                                >
-                                    <div
-                                        class="size-2 shrink-0 rounded-full"
-                                        :style="{
-                                            backgroundColor:
-                                                safeDefinitionColor(
-                                                    todo.priority_definition
-                                                        ?.color,
-                                                ),
-                                        }"
-                                    />
-                                    <div class="min-w-0 flex-1">
-                                        <p class="truncate text-sm font-medium">
-                                            {{ todo.title }}
-                                        </p>
-                                        <p
-                                            class="text-xs text-muted-foreground"
-                                        >
-                                            {{ formatDate(todo.due_date) }}
-                                        </p>
-                                    </div>
-                                    <Badge variant="outline">
-                                        {{
-                                            todo.status_definition?.name ??
-                                            todo.status
-                                        }}
-                                    </Badge>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                        <div class="grid gap-5">
+                            <DashboardTaskQueue
+                                :title="t('dashboard.today_tasks')"
+                                :description="t('dashboard.today_guidance')"
+                                :empty-message="t('dashboard.no_today')"
+                                :todos="todayTasks"
+                                :count="stats.today_count"
+                                tone="today"
+                            />
+                            <DashboardTaskQueue
+                                :title="t('dashboard.upcoming_tasks')"
+                                :description="t('dashboard.upcoming_guidance')"
+                                :empty-message="t('dashboard.no_upcoming')"
+                                :todos="upcomingTasks"
+                                :count="upcomingTasks.length"
+                                tone="upcoming"
+                            />
+                        </div>
+                    </div>
+                </section>
 
                 <ProductivityChart :data="weeklyData" />
             </div>

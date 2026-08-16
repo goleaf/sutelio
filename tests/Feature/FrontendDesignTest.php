@@ -20,16 +20,53 @@ test('primary workspace pages use the shared warm precision header', function (s
     'workspaces' => 'workspaces/Index.vue',
 ]);
 
-test('dashboard renders the complete workspace information supplied by its page props', function () {
+test('dashboard renders the complete workspace command center supplied by its page props', function () {
     $source = File::get(resource_path('js/pages/Dashboard.vue'));
 
     expect($source)
         ->toContain('formatNumber(stats.today_count)')
         ->toContain('formatNumber(stats.completed_today)')
         ->toContain('formatNumber(stats.completion_rate)')
-        ->toContain('v-for="todo in todayTasks"')
+        ->toContain("import DashboardTaskQueue from '@/components/dashboard/DashboardTaskQueue.vue'")
+        ->toContain("import { index as todoIndex } from '@/routes/todos'")
+        ->toContain(':href="todoIndex()"')
+        ->toContain('<template #actions>')
+        ->toContain('xl:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.75fr)]')
+        ->toContain(':featured="true"')
         ->toContain('<ProductivityChart :data="weeklyData" />')
         ->not->toContain('day.completed / maxWeekly');
+});
+
+test('dashboard task queues provide localized accessible Wayfinder navigation', function () {
+    $source = File::get(resource_path('js/components/dashboard/DashboardTaskQueue.vue'));
+
+    expect($source)
+        ->toContain("import { Link } from '@inertiajs/vue3'")
+        ->toContain("import { show as showTodo } from '@/routes/todos'")
+        ->toContain(':href="showTodo(todo)"')
+        ->toContain('prefetch')
+        ->toContain('@container')
+        ->toContain('@2xl:grid-cols-2')
+        ->toContain('min-h-11')
+        ->toContain('focus-visible:ring-2')
+        ->toContain("t('common.states.unassigned')")
+        ->toContain("t('dashboard.open_task',");
+});
+
+test('weekly productivity exposes honest reduced-motion bars and a semantic data table', function () {
+    $source = File::get(resource_path('js/components/dashboard/ProductivityChart.vue'));
+
+    expect($source)
+        ->toContain('const completedTotal = computed')
+        ->toContain('const createdTotal = computed')
+        ->toContain('value === 0')
+        ->toContain("? '0%'")
+        ->toContain('motion-reduce:transition-none')
+        ->toContain('<table')
+        ->toContain('<caption')
+        ->toContain("t('dashboard.weekly_table_caption')")
+        ->toContain("t('dashboard.weekly_totals'")
+        ->toContain("t('dashboard.no_weekly_activity')");
 });
 
 test('every active page header action uses the shared large button contract', function (string $page, int $actionCount) {
