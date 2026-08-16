@@ -140,10 +140,7 @@ function refreshOperations(includeTodos = true): void {
         only.unshift('todos', 'filters');
     }
 
-    router.reload({
-        only,
-        preserveScroll: true,
-    });
+    router.reload({ only });
 }
 
 async function selectTodo(task: Pick<ProjectTask, 'id'>): Promise<void> {

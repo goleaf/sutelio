@@ -167,7 +167,7 @@ test('representative ordered queries use their scoped indexes without unnecessar
     ],
     'project tasks sorted by due date' => [
         "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 ORDER BY due_date IS NULL, due_date, position, id LIMIT 25",
-        'todos_workspace_project_archive_completion_due_index',
+        'todos_workspace_project_archive_due_position_index',
         true,
     ],
     'project tasks sorted by priority definition' => [
@@ -177,7 +177,7 @@ test('representative ordered queries use their scoped indexes without unnecessar
     ],
     'project tasks sorted by recent update' => [
         "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 ORDER BY updated_at DESC, id LIMIT 25",
-        'todos_workspace_project_archive_completion_due_index',
+        'todos_workspace_project_archive_updated_index',
         true,
     ],
     'calendar' => [
