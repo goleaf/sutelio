@@ -3715,3 +3715,69 @@ Completed and ready for delivery.
 - Implementation commit `e50ae53` (`feat: complete task detail collaboration`) was pushed successfully to `origin/main`.
 - This progress record will be committed separately as `docs: record task detail collaboration` and pushed to `origin/main`.
 - The pre-existing Task Detail, Task Index build-repair, and Herd upload progress edits remain preserved and excluded from this phase's staged changes.
+
+## Dashboard Command Center Design
+
+### Status
+
+Completed and ready for delivery.
+
+### Before-Phase Baseline
+
+- The dashboard placed today, overdue, and upcoming tasks in equal-height columns, so one long queue forced large empty regions into the other two cards.
+- Dashboard task rows were static presentation rather than keyboard-accessible navigation into task detail.
+- The weekly activity card showed paired bars and screen-reader summaries, but it had no visible semantic table equivalent and rendered non-zero-height bars for zero values.
+- Seeded weeks with no activity displayed fourteen zero labels across a mostly empty plot instead of an intentional empty state.
+
+### Delivered Scope And Decisions
+
+- Reframed the dashboard as a refined daily command center while preserving the shared warm-orange shell and existing workspace-scoped Inertia prop contract.
+- Added a generated-Wayfinder header action into the complete task index and reusable task queues whose rows navigate to task detail with Inertia prefetching, project/date context, visible keyboard focus, and 64-pixel live touch targets.
+- Replaced the equal-height three-column grid with an asymmetric bento layout: overdue work is dominant, while today and upcoming queues remain compact supporting cards.
+- Used a Tailwind CSS 4 container query so the featured overdue queue becomes two columns only when its own card has enough room; tablet and mobile remain single-column.
+- Rebuilt weekly activity around localized totals, honest zero-height bars, reduced-motion transitions, a polished no-activity state, and a visible captioned seven-row data table that does not rely on color.
+- Added complete English, Lithuanian, and Russian semantic copy for the new focus, queue, navigation, and weekly-summary surfaces.
+
+### Changed Files
+
+- `resources/js/pages/Dashboard.vue`.
+- `resources/js/components/dashboard/DashboardTaskQueue.vue`.
+- `resources/js/components/dashboard/ProductivityChart.vue`.
+- `lang/en/ui.php`, `lang/lt/ui.php`, and `lang/ru/ui.php`.
+- `tests/Feature/FrontendDesignTest.php`.
+- `docs/plans/2026-08-16-dashboard-command-center-design.md` and `docs/progress.md`.
+
+### Migrations And Packages
+
+- No migration, backend query/controller, route, Composer package, or npm package changed.
+- The installed UI/UX skill's optional search database script was absent, so its embedded accessibility, interaction, responsive, contrast, and chart-table rules were applied directly.
+
+### Verification
+
+- Test-first red state confirmed the missing queue/navigation component and weekly table/totals contracts: 118 of 121 design tests passed, with two expected failures and one expected missing-file error.
+- Focused dashboard, design, and localization coverage passed: 131 tests and 687 assertions.
+- `vendor/bin/pint --dirty --format agent`: passed.
+- `php artisan test --compact`: passed, 569 tests and 3,396 assertions.
+- `composer run types:check`: passed with zero PHPStan errors.
+- `npm run test:frontend`: passed, 13 tests.
+- `npm run types:check`, `npm run lint:check`, and `npm run format:check`: passed.
+- `npm run build`: passed after transforming 3,429 modules; only the optional `fontaine` notice and plugin timing advisory were emitted.
+- `composer validate --strict --no-check-publish`: passed.
+- `git diff HEAD --check` and staged diff verification: passed.
+- Live Herd desktop light-mode QA verified one `h1`, two logical `h2` sections, ten direct task links, generated navigation to `/tasks`, a two-column featured queue, and a seven-row activity table with zero horizontal overflow at 1,440 pixels.
+- Live Herd mobile QA at 390 x 844 verified a single-column reading order, 64-pixel task targets, a 322-pixel-contained table, and zero document-level horizontal overflow.
+- Live Herd dark-mode QA verified the complete dashboard with dark theme tokens and zero overflow; the prior browser appearance setting was restored afterward.
+- Live page automation captured no console or page errors. Recent Boost browser logs contain only unrelated July 19 security-page entries and no errors from this dashboard phase.
+
+### Known Limitations And Next Work
+
+- The dashboard still receives its existing eager page props; deferred aggregate loading remains a separate Phase 10 performance decision rather than a visual-only change.
+- The dashboard intentionally shows the bounded ten-item overdue preview while the aggregate badge may be higher; the prominent task-index action provides the complete queue.
+- `composer audit --no-interaction` still reports eight advisories in the existing locked Guzzle and CommonMark packages, and `npm audit --omit=dev` still reports one high Nano ID plus one moderate PostCSS advisory. Dependency upgrades require separate approval.
+- Remaining Phase 10 work includes projects, workspaces, calendar ranges/views, activity taxonomy/filter/privacy, and workspace-switch client-state cancellation.
+
+### Git Delivery
+
+- Design commit `7f90145` (`docs: design dashboard command center`) was pushed successfully to `origin/main`.
+- Implementation commit `4a8eee6` (`feat: enhance dashboard with task queues and productivity insights`) was pushed successfully to `origin/main`.
+- This progress record will be committed separately as `docs: record dashboard command center` and pushed to `origin/main`.
