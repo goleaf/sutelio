@@ -171,16 +171,16 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
         </div>
 
         <div
-            class="sticky bottom-0 z-20 -mx-4 mt-5 border-t border-border/80 bg-background/95 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:-mx-6 sm:px-6 xl:static xl:mx-0 xl:border-0 xl:bg-transparent xl:px-0 xl:pt-4 xl:pb-0 xl:backdrop-blur-none"
+            class="sticky bottom-0 z-20 -mx-4 mt-5 border-t border-border/80 bg-background/95 px-4 pt-3 pb-[max(1rem,var(--safe-area-inset-bottom))] backdrop-blur-sm sm:-mx-6 sm:px-6 xl:static xl:mx-0 xl:border-0 xl:bg-transparent xl:px-0 xl:pt-4 xl:pb-0 xl:backdrop-blur-none"
         >
             <div
-                class="mx-auto flex max-w-app flex-wrap items-center gap-2 xl:justify-end"
+                class="mx-auto grid max-w-app grid-cols-2 items-center gap-2 sm:flex xl:justify-end"
             >
                 <Button
                     type="button"
                     variant="ghost"
                     size="lg"
-                    class="min-h-11"
+                    class="col-span-2 min-h-11 justify-self-start sm:col-auto"
                     :disabled="processing"
                     @click="skipOpen = true"
                 >
@@ -190,12 +190,15 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                             : copy.actions.skip
                     }}
                 </Button>
-                <span class="min-w-0 flex-1" aria-hidden="true" />
+                <span
+                    class="hidden min-w-0 flex-1 sm:block"
+                    aria-hidden="true"
+                />
                 <Button
                     type="button"
                     variant="outline"
                     size="lg"
-                    class="min-h-11"
+                    class="min-h-11 w-full sm:w-auto"
                     :disabled="!canBack || processing"
                     @click="emit('back')"
                 >
@@ -205,7 +208,7 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                     type="submit"
                     form="onboarding-step-form"
                     size="lg"
-                    class="min-h-11 min-w-32"
+                    class="min-h-11 w-full min-w-32 sm:w-auto"
                     :disabled="processing"
                 >
                     <Spinner v-if="processing" />

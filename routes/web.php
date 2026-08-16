@@ -48,6 +48,10 @@ Route::middleware(['auth', 'verified'])
             ->name('onboarding.checklist.dismiss');
     });
 
+Route::get('workspace-invitations/{invitation}/accept', WorkspaceInvitationAcceptanceController::class)
+    ->middleware(['auth', 'verified', 'signed', 'throttle:6,1'])
+    ->name('workspace-invitations.accept');
+
 Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -86,10 +90,6 @@ Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function (
         ->name('workspaces.removeMember');
     Route::post('workspaces/{workspace}/ownership', WorkspaceOwnershipController::class)
         ->name('workspaces.transferOwnership');
-    Route::get('workspace-invitations/{invitation}/accept', WorkspaceInvitationAcceptanceController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('workspace-invitations.accept');
-
     // Projects
     Route::get('workspaces/{workspace}/projects', [ProjectIndexController::class, 'workspace'])->name('projects.index');
     Route::post('workspaces/{workspace}/projects', [ProjectController::class, 'store'])->name('projects.store');

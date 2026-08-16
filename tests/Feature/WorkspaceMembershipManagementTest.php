@@ -5,6 +5,7 @@ use App\Actions\TransferWorkspaceOwnership;
 use App\Actions\UpdateWorkspaceMemberRole;
 use App\Enums\WorkspaceRole;
 use App\Models\User;
+use App\Models\UserPreference;
 use App\Models\Workspace;
 use App\Models\WorkspaceInvitation;
 use App\Models\WorkspaceMember;
@@ -205,6 +206,41 @@ test('only the invited email can accept once through the expiring signed flow', 
         ->assertJsonStructure(['error' => ['details' => ['email']]]);
 
     expect(WorkspaceInvitation::query()->firstOrFail()->accepted_at)->not->toBeNull();
+});
+
+test('pending onboarding users can accept their invitation before entering the guided flow', function () {
+    Notification::fake();
+    ['owner' => $owner, 'workspace' => $workspace] = createMembershipManagementWorkspace();
+    $invitedUser = User::factory()->create(['email' => 'guided-invitee@example.com']);
+    UserPreference::factory()->for($invitedUser)->pendingOnboarding()->create();
+
+    $this->actingAs($owner)->postJson(route('api.v1.workspace-invitations.store', $workspace, false), [
+        'email' => $invitedUser->email,
+        'role' => WorkspaceRole::Member->value,
+    ])->assertCreated();
+
+    $notification = null;
+    Notification::assertSentOnDemand(
+        WorkspaceInvitationNotification::class,
+        function (WorkspaceInvitationNotification $sent) use (&$notification): bool {
+            $notification = $sent;
+
+            return true;
+        },
+    );
+
+    expect($notification)->toBeInstanceOf(WorkspaceInvitationNotification::class);
+
+    $this->actingAs($invitedUser)
+        ->get($notification->acceptUrl())
+        ->assertRedirect(route('workspaces.members', $workspace));
+
+    expect(WorkspaceMember::query()
+        ->where('workspace_id', $workspace->id)
+        ->where('user_id', $invitedUser->id)
+        ->where('role', WorkspaceRole::Member)
+        ->exists())->toBeTrue()
+        ->and(WorkspaceInvitation::query()->firstOrFail()->accepted_at)->not->toBeNull();
 });
 
 test('expired and cancelled invitations cannot be accepted and resend rotates the secret', function () {

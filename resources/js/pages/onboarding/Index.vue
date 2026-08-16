@@ -31,7 +31,6 @@ import SafetyStep from '@/components/onboarding/SafetyStep.vue';
 import TaskStep from '@/components/onboarding/TaskStep.vue';
 import WelcomeStep from '@/components/onboarding/WelcomeStep.vue';
 import WorkspaceStep from '@/components/onboarding/WorkspaceStep.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
 
 const props = defineProps<{
     progress: OnboardingProgress;
@@ -347,7 +346,7 @@ function skip(): void {
 </script>
 
 <template>
-    <AppLayout>
+    <div>
         <Head :title="activeCopy.title" />
 
         <div class="min-h-full bg-muted/20 px-4 py-4 sm:px-6 sm:py-6 lg:p-8">
@@ -458,5 +457,5 @@ function skip(): void {
                 </OnboardingShell>
             </div>
         </div>
-    </AppLayout>
+    </div>
 </template>
