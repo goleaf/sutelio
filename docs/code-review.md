@@ -12,7 +12,7 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - [x] User-facing text exists in all three locales; errors/loading/focus/mobile/reduced-motion and private-file paths are handled.
 - [x] Focused and complete quality gates, the documented coverage attempt/blocker, fresh seed, browser logs/workflows, route/config/view cache, boot/API/HTTP smoke, and audit commands have observed results.
 - [x] Requirements, compliance, implementation plan, current audit, changelog, deployment, operations, known limitations, and progress match final code.
-- [ ] Semantic commits are coherent, hashes recorded, and push output observed without rewriting history.
+- [x] Semantic commits are coherent, hashes recorded, and push output observed without rewriting history.
 
 ## Final Findings
 

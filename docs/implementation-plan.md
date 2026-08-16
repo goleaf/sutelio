@@ -97,6 +97,6 @@ Requirements: all active requirements, `docs-traceability-001`, `git-delivery-00
 - [x] Compare baseline/final tests, advisories, query budgets, assets, build time, migration/seed time, and coverage availability.
 - [x] Re-read every first-party Markdown and synchronize versions, behavior, commands, paths, requirements, compliance, plan, changelog, audit resolution, and genuine limitations.
 - [x] Inspect `git status`, complete diff, staged diff, secrets/generated artifacts, lock files, and preservation of the pre-existing dashboard change.
-- [ ] Commit coherent phase-owned files on `main`, record hashes, push `origin main`, and report the observed result.
+- [x] Commit coherent phase-owned files on `main`, record hashes, push `origin main`, and report the observed result.
 
 Completion is prohibited while an applicable item above remains unchecked unless its requirement is explicitly marked `blocked by external dependency` with current evidence in `docs/known-limitations.md`.

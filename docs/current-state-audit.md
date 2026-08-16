@@ -81,7 +81,7 @@ No critical workspace-isolation, backup path, known-password invitation, unrestr
 
 ## Final Modernization Result
 
-The modernization closed every baseline risk that is controllable in the repository. The two external constraints are documented in `docs/known-limitations.md`: NativePHP Mobile 4.2 embeds PHP 8.4, and the installed Herd PHP 8.5 runtime has no coverage driver.
+The modernization closed every baseline risk that is controllable in the repository. The remaining upstream/environment limitations are documented in `docs/known-limitations.md`: NativePHP Mobile 4.2 embeds PHP 8.4, the installed Herd PHP 8.5 runtime has no coverage driver and exposes PHP 8.5.0 rather than the current patch, and protected store-signing credentials are unavailable on this workstation.
 
 | Area                  | Final observed result                                                                                                                                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
