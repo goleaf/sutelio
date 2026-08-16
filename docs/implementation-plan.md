@@ -127,3 +127,15 @@ Requirements: `ui-accessibility-001`, `test-architecture-001`, `docs-traceabilit
 - [x] Run focused and full PHP/frontend quality gates, synchronize canonical documentation, inspect the final diff, commit the coherent phase, and push `main` to `origin`.
 
 Verification: focused frontend architecture tests, Vue type/lint/format checks, production build, authenticated browser landmark matrix, full PHP/frontend gates, and final Git inspection. Rollback is a direct semantic-wrapper reversal; no dependency, schema, data, route, policy, or public response contract changes.
+
+## Post-Modernization Dependency Refresh — 2026-08-16
+
+Requirements: `sys-runtime-001`, `sec-deps-001`, `test-static-001`, `ops-deployment-001`, `git-delivery-001`.
+
+- [x] Refresh every Composer package to the latest stable release permitted by the Laravel 13, NativePHP Mobile 4, Pest 5, PHP 8.4 mobile, and PHP 8.5 web compatibility envelope.
+- [x] Refresh every npm package to the latest stable release permitted by Node 22 and the installed TypeScript, ESLint, Inertia, Vue, Tailwind, and Vite peer contracts.
+- [x] Preserve the existing Composer/npm package set and single npm lock file; document upstream major-version ceilings rather than overriding them with incompatible direct constraints.
+- [x] Run dependency audits, application boot, static analysis, full backend/frontend tests, production build, isolated migration/seeding, cache, route, HTTP, and diff gates.
+- [ ] Keep the concurrent workspace-stewardship implementation outside the dependency commit, synchronize package evidence, commit the coherent package slice, and push `main`.
+
+Verification: Composer validate/audit/outdated and dependency blockers, npm audit/outdated and peer metadata, Pint, Larastan, full and parallel Pest, frontend tests/types/lint/format/build, isolated SQLite migration/seed/integrity, application cache/route/view/HTTP smoke, and final Git inspection. Rollback is a direct manifest/lock/documentation commit reversal; no schema or production data changes are planned.

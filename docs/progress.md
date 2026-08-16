@@ -4292,3 +4292,38 @@ Completed. The feature implementation, review corrections, and completion record
 - `9226b46` — `fix: enforce authenticated landmark integrity`.
 - The first `git push --verbose origin main` attempt failed after 79.051 seconds because GitHub port 443 was unreachable; no remote state changed. The immediate non-force retry exited 0 and reported `f6d2813..9226b46 main -> main`, updating the local tracking ref.
 - This final status-only documentation commit follows in the same verified delivery. No force push, history rewrite, destructive Git command, secret, generated build output, dependency, migration, or unrelated deletion was used.
+
+## Compatible Dependency Refresh — 2026-08-16
+
+### Preflight Status
+
+- Began on `main` at `0781052`, synchronized with `origin/main`, while preserving 16 unstaged/untracked workspace-stewardship implementation files (1,015 insertions / 359 deletions) that predate and remain outside this dependency phase.
+- Re-read the repository contract, canonical requirements/architecture/compliance/plan, latest progress evidence, package manifests, package workflow, and relevant Laravel/Inertia/Vue/Tailwind/Wayfinder/Pest guidance; searched installed-version documentation before changing dependencies.
+- The Herd site and `herd php` use PHP 8.5.0; the shell shim currently resolves PHP 8.4.16, which remains inside the intentional `>=8.4 <8.6` Composer envelope required by NativePHP Mobile's embedded PHP 8.4 runtime. Node is 22.21.1, npm is 11.9.0, and Composer is 2.10.1.
+- Baseline `composer validate --strict --no-check-publish`, locked Composer audit, and npm audit passed with no advisories or abandoned packages. Every direct Composer dependency is current.
+- Authoritative Composer metadata identified one compatible lock update (`phpstan/phpstan` 2.2.5 to 2.2.8). Newer `brick/math`, Guzzle family, Workerman, and PHPUnit releases are incompatible with current upstream Laravel, NativePHP, WebAuthn/UUID, or Pest constraints and will not be forced into the graph.
+- npm metadata identified no safe direct update: TypeScript 7.0.2 is outside `typescript-eslint` 8.67.0's `>=4.8.4 <6.1.0` peer range, `@types/node` remains on current major 22 for the Node 22 runtime, and absent Linux/Windows native optional packages are platform-specific rather than missing required installs.
+- The dependency refresh will update only compatible Composer/npm lock state, then run the complete package, backend, frontend, database, runtime, and Git gates before delivery.
+
+### Delivered Dependency State
+
+- `composer update --with-all-dependencies --no-interaction` completed with one lock operation: `phpstan/phpstan` 2.2.5 to stable 2.2.8. No manifest constraint, production package, package set, npm version, platform requirement, or application source changed.
+- `npm update` found no compatible package-version delta. Its incidental dependency-hoisting-only lock rewrite was not retained; a clean `npm ci` restored the committed graph and passed its zero-vulnerability audit.
+- Final direct Composer metadata reports every dependency current. Remaining newer transitive releases are upstream-incompatible: Brick Math 0.19.1 is rejected by UUID/WebAuthn, Guzzle 8 and its Promise/PSR-7 majors by Laravel/Boost/NativePHP, URI Template 2 by Laravel, Workerman 5 by NativePHP, and PHPUnit 13.3.1 by Pest 5.1.1.
+- Final npm metadata reports only non-macOS optional native packages, Node 26 types against the intentional Node 22 runtime, and TypeScript 7 outside `typescript-eslint` 8.67.0's declared `<6.1` peer range. No compatible JavaScript update remains.
+
+### Exact Verification
+
+- `composer validate --strict --no-check-publish`, install dry-run, locked audit, direct outdated check, and final audit passed: zero advisories, zero abandoned packages, and every direct dependency current. PHPStan reports installed stable 2.2.8.
+- `composer run types:check -- --memory-limit=1G` passed Larastan level 7 with zero errors. The exhaustive PHP 8.5 syntax sweep passed 421 first-party PHP files.
+- `herd php artisan test --compact` and `herd php artisan test --parallel --compact` each passed 706 tests / 10,081 assertions in 43.059 seconds and 10.100 seconds respectively. The assertion delta belongs to the preserved concurrent workspace-stewardship changes, not this lock update.
+- `npm ci`, npm audit, 42/42 frontend tests, Vue type checking, ESLint, and the production Vite build passed. The build transformed 3,499 modules in 16.17 seconds; main CSS is 162.56 kB / 23.83 kB gzip and the app entry is 89.77 kB / 23.31 kB gzip.
+- Dependency-owned Markdown passes Prettier and the combined worktree passes `git diff --check`. Repository-wide `npm run format:check` reports only the unrelated preserved `resources/js/pages/workspaces/Index.vue` work-in-progress file; this dependency phase does not rewrite or stage it.
+- An isolated allowlisted SQLite file migrated all 34 migrations, seeded twice, retained 3 users / 1 workspace / 25 tasks, returned `ok` from `PRAGMA integrity_check`, and returned no foreign-key violations. Both temporary directories, including the intentionally rejected outside-allowlist attempt, were moved to Trash.
+- PHP 8.4.16 booted the application for NativePHP compatibility; Herd PHP 8.5.0 passed application boot, config/route/view cache builds, 266 first-party route registration, all SQLite health checks, and the four-task schedule. Login returned 200 after HTTPS redirect and the unauthenticated API user contract returned 401.
+- The required coverage attempt remains externally blocked with `Code coverage driver not available. Did you install Xdebug or PCOV?`. Laravel Boost browser logs contain historical entries only; no package-version change required a new interactive browser migration.
+
+### Git Delivery
+
+- The coherent dependency slice consists of `composer.lock`, `CHANGELOG.md`, `docs/code-review.md`, `docs/implementation-plan.md`, and this progress entry. The already staged/unstaged workspace-stewardship implementation remains preserved outside the commit.
+- Commit and push status follow after final staged-diff inspection; no force push, history rewrite, destructive Git command, dependency override, generated build output, or secret is included.

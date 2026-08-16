@@ -44,3 +44,11 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - The shell remains the single landmark owner; the ten nested wrappers are neutral `div` surfaces with unchanged classes, and reusable task-detail content now uses `h2` beneath the page/sheet title hierarchy.
 - Failing-first source regressions cover both contracts. The focused frontend design/architecture gate passes 129 tests / 5,935 assertions.
 - The final desktop/mobile browser matrix covers 11 routes at two widths. All 22 checks expose one `main`, one `h1`, zero overflow, and no current console, page, failed-request, or HTTP error.
+
+## Compatible Dependency Refresh Follow-Up
+
+- Complete stable Composer resolution upgraded `phpstan/phpstan` from 2.2.5 to 2.2.8. Composer validation/install simulation/audit pass, no direct dependency is outdated, no package is abandoned, and Larastan level 7 reports zero errors with the upgraded engine.
+- No npm package version changed: every direct package remains current inside the Node 22, TypeScript/ESLint, Laravel/Inertia/Vue, Tailwind, Vite, and NativePHP peer envelope. The package lock remains reproducible through `npm ci`, and npm audit reports zero vulnerabilities.
+- Newer transitive Composer releases are intentionally blocked by current upstream constraints: Laravel/Boost/NativePHP require Guzzle 7, Laravel requires URI Template 1, NativePHP requires Workerman 4, UUID/WebAuthn require Brick Math through 0.18, and Pest 5.1.1 conflicts with PHPUnit above 13.3.0.
+- TypeScript 7 is outside `typescript-eslint` 8.67.0's declared `<6.1` peer range, and `@types/node` remains on major 22 to match the project runtime. Non-macOS native Rollup/Tailwind/Lightning CSS entries are optional platform packages, not missing application dependencies.
+- The combined worktree passed 706 Pest tests / 10,081 assertions sequentially and in parallel, 42 frontend tests, Vue types, ESLint, build, syntax, isolated migration/repeat seed/integrity, runtime cache/route/database-health, and HTTP smoke. Repository-wide Prettier reports only the preserved concurrent `resources/js/pages/workspaces/Index.vue` edit; dependency-owned documentation passes Prettier and `git diff --check`.
