@@ -3,8 +3,14 @@
 declare(strict_types=1);
 
 use App\Enums\OnboardingStep;
+use App\Enums\WorkspaceRole;
+use App\Models\Project;
+use App\Models\Todo;
 use App\Models\User;
 use App\Models\UserPreference;
+use App\Models\Workspace;
+use App\Models\WorkspaceMember;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -245,4 +251,312 @@ test('a genuinely pending user cannot bypass the gate with a replay session flag
         ->withSession(['onboarding_replay' => true])
         ->get(route('dashboard'))
         ->assertRedirectToRoute('onboarding.index');
+});
+
+test('onboarding preferences save canonical values and advance to workspace setup', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Preferences->value,
+    ]);
+
+    $this->actingAs($user)
+        ->put(route('onboarding.preferences'), [
+            'language' => 'lt',
+            'timezone' => 'Europe/Vilnius',
+            'date_format' => 'd.m.Y',
+            'time_format' => 'H:i',
+            'default_view' => 'board',
+            'start_page' => 'tasks',
+            'week_start' => 'monday',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirectToRoute('onboarding.index');
+
+    $preferences->refresh();
+
+    expect($preferences->language)->toBe('lt')
+        ->and($preferences->timezone)->toBe('Europe/Vilnius')
+        ->and($preferences->date_format)->toBe('d.m.Y')
+        ->and($preferences->default_view)->toBe('board')
+        ->and($preferences->start_page)->toBe('tasks')
+        ->and($preferences->week_start)->toBe('monday')
+        ->and($preferences->onboardingStep())->toBe(OnboardingStep::Workspace);
+});
+
+test('an invited member can select an accessible workspace without creating another', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Workspace->value,
+    ]);
+    $owner = User::factory()->create();
+    $workspace = Workspace::factory()->for($owner, 'owner')->withOwnerMembership()->create();
+    WorkspaceMember::factory()->for($workspace)->for($user)->create([
+        'role' => WorkspaceRole::Member,
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('onboarding.workspace'), [
+            'mode' => 'select',
+            'workspace_id' => $workspace->id,
+            'request_key' => (string) Str::uuid(),
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertSessionHas('current_workspace_id', $workspace->id)
+        ->assertRedirectToRoute('onboarding.index');
+
+    $preferences->refresh();
+
+    expect($user->workspaces()->count())->toBe(1)
+        ->and($preferences->onboarding_state)->toMatchArray([
+            'workspace_id' => $workspace->id,
+        ])
+        ->and($preferences->onboardingStep())->toBe(OnboardingStep::Project);
+});
+
+test('workspace creation is exactly once per onboarding run and rejects foreign selection', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Workspace->value,
+    ]);
+    $foreign = Workspace::factory()->withOwnerMembership()->create();
+    $payload = [
+        'mode' => 'create',
+        'name' => 'My first workspace',
+        'description' => 'A focused place to begin.',
+        'request_key' => (string) Str::uuid(),
+    ];
+
+    $this->actingAs($user)->post(route('onboarding.workspace'), $payload)->assertRedirect();
+    $this->post(route('onboarding.workspace'), $payload)->assertRedirect();
+
+    expect($user->workspaces()->where('name', 'My first workspace')->count())->toBe(1)
+        ->and(DB::table('onboarding_operations')->where('step', 'workspace')->count())->toBe(1);
+
+    $selectedWorkspaceId = $preferences->fresh()->onboarding_state['workspace_id'] ?? null;
+
+    expect($selectedWorkspaceId)->toBeString()
+        ->and(session('current_workspace_id'))->toBe($selectedWorkspaceId);
+
+    $this->from(route('onboarding.index'))
+        ->post(route('onboarding.workspace'), [
+            'mode' => 'select',
+            'workspace_id' => $foreign->id,
+            'request_key' => (string) Str::uuid(),
+        ])
+        ->assertSessionHasErrors('workspace_id');
+
+    expect($preferences->fresh()->onboarding_state['workspace_id'] ?? null)
+        ->toBe($selectedWorkspaceId);
+});
+
+test('project selection is scoped to the chosen workspace and excludes archived projects', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Project->value,
+    ]);
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $project = Project::factory()->for($workspace)->active()->create();
+    $archived = Project::factory()->for($workspace)->archived()->create();
+    $foreignProject = Project::factory()->create();
+    $preferences->update(['onboarding_state' => ['workspace_id' => $workspace->id]]);
+
+    $this->actingAs($user)
+        ->post(route('onboarding.project'), [
+            'mode' => 'select',
+            'project_id' => $project->id,
+            'request_key' => (string) Str::uuid(),
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($preferences->fresh()->onboarding_state)->toMatchArray([
+        'workspace_id' => $workspace->id,
+        'project_id' => $project->id,
+    ])->and($preferences->fresh()->onboardingStep())->toBe(OnboardingStep::Task);
+
+    foreach ([$archived, $foreignProject] as $invalidProject) {
+        $this->from(route('onboarding.index'))
+            ->post(route('onboarding.project'), [
+                'mode' => 'select',
+                'project_id' => $invalidProject->id,
+                'request_key' => (string) Str::uuid(),
+            ])
+            ->assertSessionHasErrors('project_id');
+    }
+
+    expect($preferences->fresh()->onboarding_state['project_id'] ?? null)->toBe($project->id);
+});
+
+test('project creation is exactly once per run and a new replay may create another project', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Project->value,
+    ]);
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $preferences->update(['onboarding_state' => ['workspace_id' => $workspace->id]]);
+    $payload = [
+        'mode' => 'create',
+        'name' => 'Launch',
+        'description' => 'Prepare the first launch.',
+        'color' => '#f97316',
+        'icon' => 'rocket',
+        'request_key' => (string) Str::uuid(),
+    ];
+
+    $this->actingAs($user)->post(route('onboarding.project'), $payload)->assertRedirect();
+    $this->post(route('onboarding.project'), [
+        ...$payload,
+        'request_key' => (string) Str::uuid(),
+    ])->assertRedirect();
+
+    expect($workspace->projects()->where('name', 'Launch')->count())->toBe(1)
+        ->and(DB::table('onboarding_operations')->where('step', 'project')->count())->toBe(1);
+
+    $preferences->update([
+        'onboarding_run_id' => (string) Str::uuid(),
+        'onboarding_step' => OnboardingStep::Project->value,
+        'onboarding_state' => ['workspace_id' => $workspace->id],
+    ]);
+
+    $this->post(route('onboarding.project'), [
+        ...$payload,
+        'request_key' => (string) Str::uuid(),
+    ])->assertRedirect();
+
+    expect($workspace->projects()->where('name', 'Launch')->count())->toBe(2)
+        ->and(DB::table('onboarding_operations')->where('step', 'project')->count())->toBe(2);
+});
+
+test('task selection is limited to an active task in the selected project', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Task->value,
+    ]);
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $project = Project::factory()->for($workspace)->create();
+    $otherProject = Project::factory()->for($workspace)->create();
+    $task = Todo::factory()->for($workspace)->for($project)->create();
+    $archived = Todo::factory()->for($workspace)->for($project)->archived()->create();
+    $mixedProjectTask = Todo::factory()->for($workspace)->for($otherProject)->create();
+    $foreignTask = Todo::factory()->create();
+    $preferences->update(['onboarding_state' => [
+        'workspace_id' => $workspace->id,
+        'project_id' => $project->id,
+    ]]);
+
+    $this->actingAs($user)
+        ->post(route('onboarding.task'), [
+            'mode' => 'select',
+            'task_id' => $task->id,
+            'request_key' => (string) Str::uuid(),
+        ])
+        ->assertSessionHasNoErrors();
+
+    expect($preferences->fresh()->onboarding_state)->toMatchArray([
+        'workspace_id' => $workspace->id,
+        'project_id' => $project->id,
+        'task_id' => $task->id,
+    ])->and($preferences->fresh()->onboardingStep())->toBe(OnboardingStep::ProductMap);
+
+    foreach ([$archived, $mixedProjectTask, $foreignTask] as $invalidTask) {
+        $this->from(route('onboarding.index'))
+            ->post(route('onboarding.task'), [
+                'mode' => 'select',
+                'task_id' => $invalidTask->id,
+                'request_key' => (string) Str::uuid(),
+            ])
+            ->assertSessionHasErrors('task_id');
+    }
+
+    expect($preferences->fresh()->onboarding_state['task_id'] ?? null)->toBe($task->id);
+});
+
+test('task creation is exactly once and validates scoped definitions and assignee', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Task->value,
+    ]);
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $project = Project::factory()->for($workspace)->create();
+    $member = User::factory()->create();
+    WorkspaceMember::factory()->for($workspace)->for($member)->create();
+    $status = $workspace->taskStatuses()->active()->where('is_default', true)->firstOrFail();
+    $priority = $workspace->taskPriorities()->active()->where('is_default', true)->firstOrFail();
+    $foreignWorkspace = Workspace::factory()->withOwnerMembership()->create();
+    $foreignStatus = $foreignWorkspace->taskStatuses()->active()->firstOrFail();
+    $foreignPriority = $foreignWorkspace->taskPriorities()->active()->firstOrFail();
+    $foreignUser = User::factory()->create();
+    $preferences->update(['onboarding_state' => [
+        'workspace_id' => $workspace->id,
+        'project_id' => $project->id,
+    ]]);
+    $payload = [
+        'mode' => 'create',
+        'title' => 'Ship the first milestone',
+        'description' => 'A concrete first task.',
+        'status_id' => $status->id,
+        'priority_id' => $priority->id,
+        'assigned_to' => $member->id,
+        'due_date' => '2026-08-20',
+        'request_key' => (string) Str::uuid(),
+    ];
+
+    $this->actingAs($user)->post(route('onboarding.task'), $payload)->assertRedirect();
+    $this->post(route('onboarding.task'), [
+        ...$payload,
+        'request_key' => (string) Str::uuid(),
+    ])->assertRedirect();
+
+    $task = $workspace->todos()->where('title', 'Ship the first milestone')->sole();
+
+    expect($task->project_id)->toBe($project->id)
+        ->and($task->assigned_to)->toBe($member->id)
+        ->and($task->status_id)->toBe($status->id)
+        ->and($task->priority_id)->toBe($priority->id)
+        ->and(DB::table('onboarding_operations')->where('step', 'task')->count())->toBe(1);
+
+    foreach ([
+        ['status_id' => $foreignStatus->id],
+        ['priority_id' => $foreignPriority->id],
+        ['assigned_to' => $foreignUser->id],
+    ] as $invalid) {
+        $this->from(route('onboarding.index'))
+            ->post(route('onboarding.task'), [
+                ...$payload,
+                ...$invalid,
+                'request_key' => (string) Str::uuid(),
+            ])
+            ->assertSessionHasErrors(array_key_first($invalid));
+    }
+
+    expect($workspace->todos()->where('title', 'Ship the first milestone')->count())->toBe(1);
+});
+
+test('stale saved selections recover to the nearest safe onboarding step', function () {
+    [$user, $preferences] = createPendingOnboardingUser([
+        'onboarding_step' => OnboardingStep::Safety->value,
+        'onboarding_state' => [
+            'workspace_id' => (string) Str::uuid(),
+            'project_id' => (string) Str::uuid(),
+            'task_id' => (string) Str::uuid(),
+        ],
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('onboarding.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('progress.step', OnboardingStep::Workspace->value)
+            ->where('recovery', 'workspace_unavailable')
+            ->where('state', []));
+
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $archivedProject = Project::factory()->for($workspace)->archived()->create();
+    $preferences->update([
+        'onboarding_step' => OnboardingStep::Safety->value,
+        'onboarding_state' => [
+            'workspace_id' => $workspace->id,
+            'project_id' => $archivedProject->id,
+        ],
+    ]);
+
+    $this->get(route('onboarding.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('progress.step', OnboardingStep::Project->value)
+            ->where('recovery', 'project_unavailable')
+            ->where('state.workspace_id', $workspace->id)
+            ->missing('state.project_id'));
 });

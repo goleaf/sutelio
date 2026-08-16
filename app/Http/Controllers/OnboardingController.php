@@ -5,10 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\AdvanceOnboarding;
+use App\Actions\ChooseOnboardingProject;
+use App\Actions\ChooseOnboardingTask;
+use App\Actions\ChooseOnboardingWorkspace;
 use App\Actions\CompleteOnboarding;
 use App\Actions\RestartOnboarding;
+use App\Actions\SaveOnboardingPreferences;
 use App\Actions\SkipOnboarding;
 use App\Http\Requests\AdvanceOnboardingRequest;
+use App\Http\Requests\StoreOnboardingProjectRequest;
+use App\Http\Requests\StoreOnboardingTaskRequest;
+use App\Http\Requests\StoreOnboardingWorkspaceRequest;
+use App\Http\Requests\UpdateOnboardingPreferencesRequest;
 use App\Models\User;
 use App\Models\UserPreference;
 use App\Queries\OnboardingQuery;
@@ -36,7 +44,7 @@ class OnboardingController extends Controller
         $copy = __('onboarding');
 
         return Inertia::render('onboarding/Index', [
-            ...$onboardingQuery->forPreferences($preferences, $isReplay),
+            ...$onboardingQuery->forUser($user, $preferences, $isReplay),
             'copy' => is_array($copy) ? $copy : [],
         ]);
     }
@@ -48,6 +56,84 @@ class OnboardingController extends Controller
         $preferences = $this->activePreferences($request);
 
         $advanceOnboarding->handle($preferences, $request->targetStep());
+
+        return to_route('onboarding.index');
+    }
+
+    public function preferences(
+        UpdateOnboardingPreferencesRequest $request,
+        SaveOnboardingPreferences $saveOnboardingPreferences,
+    ): RedirectResponse {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
+        $saveOnboardingPreferences->handle(
+            $user,
+            $this->activePreferences($request),
+            $request->preferenceData(),
+        );
+
+        return to_route('onboarding.index');
+    }
+
+    public function workspace(
+        StoreOnboardingWorkspaceRequest $request,
+        ChooseOnboardingWorkspace $chooseOnboardingWorkspace,
+    ): RedirectResponse {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
+        $workspace = $chooseOnboardingWorkspace->handle(
+            $user,
+            $this->activePreferences($request),
+            $request->mode(),
+            $request->workspaceId(),
+            $request->workspaceData(),
+            $request->requestKey(),
+        );
+        $request->session()->put('current_workspace_id', $workspace->id);
+
+        return to_route('onboarding.index');
+    }
+
+    public function project(
+        StoreOnboardingProjectRequest $request,
+        ChooseOnboardingProject $chooseOnboardingProject,
+    ): RedirectResponse {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
+        $chooseOnboardingProject->handle(
+            $user,
+            $this->activePreferences($request),
+            $request->mode(),
+            $request->projectId(),
+            $request->projectData(),
+            $request->requestKey(),
+        );
+
+        return to_route('onboarding.index');
+    }
+
+    public function task(
+        StoreOnboardingTaskRequest $request,
+        ChooseOnboardingTask $chooseOnboardingTask,
+    ): RedirectResponse {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
+        $chooseOnboardingTask->handle(
+            $user,
+            $this->activePreferences($request),
+            $request->mode(),
+            $request->taskId(),
+            $request->taskData(),
+            $request->requestKey(),
+        );
 
         return to_route('onboarding.index');
     }

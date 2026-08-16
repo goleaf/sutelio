@@ -4524,3 +4524,21 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - The observed lifecycle RED filter ran eight tests with one pass and seven missing-route errors. The complete lifecycle suite passes 11 tests / 97 assertions, including adjacent back/forward movement, invalid jumps/values, resume, required skip, guarded completion, completed/skipped replay, legacy restart, version behavior, and mutation authorization.
 - The expanded persistence/entry/lifecycle/auth/localization/architecture gate passes 57 tests / 5,802 assertions. Pint, Larastan, Vue type checking, ESLint, and `php artisan route:list --path=onboarding` pass; the route list now reports the five implemented lifecycle endpoints.
 - No workspace, project, task, taxonomy, package, migration, host data, or generated asset changed in this phase. Scoped domain composition and idempotent create/select routes are the next TDD slice.
+
+### Phase 4 Preflight: Scoped Guided Creation
+
+- Phase 3 was committed as `f6634d3` and pushed to `origin/main` (`21c8cde..f6634d3`) before domain composition began.
+- Re-read the workspace/project/task models, policies, factories, schema/indexes, task-definition triggers, current create requests/controllers/actions, preference update action, and page-query budget harness.
+- Laravel Boost's installed-version documentation confirms scoped `Rule::exists` constraints, UUID validation, Form Request safe data, Eloquent relationship scopes, unique constraints, and retryable transactions on SQLite.
+- This phase will start with failing select/create, cross-workspace, archived/stale identifier, custom definition/assignee, bounded-options, query-budget, and duplicate-submission tests.
+- Existing `CreateWorkspace`, `CreateProject`, `CreateTodo`, `UpdateUserPreferences`, policies, task-definition transition logic, and workspace membership boundaries remain authoritative. Onboarding actions will coordinate them and persist only scoped IDs/safe draft state.
+
+### Phase 4 Delivered: Scoped Guided Creation
+
+- Added four authorized, scoped Form Requests and thin controller endpoints for personal preferences plus choose-or-create workspace, project, and task steps. Successful workspace selection also updates the existing `current_workspace_id` session contract.
+- Composed the existing `UpdateUserPreferences`, `CreateWorkspace`, `CreateProject`, and `CreateTodo` actions through focused onboarding coordinators. Workspace-owned identifiers are re-resolved from the authenticated user's memberships, then the selected active project/task aggregate; foreign, mixed, archived, deleted, and unavailable identifiers fail validation without changing saved progress.
+- Added a retryable exactly-once operation ledger coordinator. Its unique user/version/run/step boundary reuses the first successful result even when a browser retry supplies a different request UUID, while a new replay run may intentionally create another entity.
+- Expanded the onboarding query into a normalized page contract with canonical preferences, selected IDs only, stale-selection recovery, and bounded options for workspaces, projects, tasks, members, statuses, and priorities. Every option collection is capped at 100, keeps a valid selected record inside the cap, selects only required columns, and performs no query in a row loop.
+- The observed RED filter ran 20 tests with 11 passing, two failures, and seven missing-route errors. The completed persistence/entry/workflow/query-budget filter passes 35 tests / 301 assertions, including invited-member reuse, all three exactly-once paths, foreign and archived rejection, taxonomy/assignee isolation, stale-state rewind, selected inclusion, and data-volume-independent query counts.
+- The prescribed domain regression gate passes 68 tests / 408 assertions across onboarding, query budgets, workspaces, projects, and tasks. Pint passes, Larastan passes with zero errors, and `git diff --check` is clean.
+- No package, migration, generated frontend asset, host SQLite data, or APK changed in this phase. Real week-start behavior is the next isolated TDD slice.

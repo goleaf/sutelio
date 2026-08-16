@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\OnboardingStep;
 use App\Enums\WorkspaceRole;
 use App\Models\ActivityLog;
 use App\Models\Checklist;
@@ -9,6 +10,7 @@ use App\Models\ChecklistItem;
 use App\Models\Project;
 use App\Models\Todo;
 use App\Models\User;
+use App\Models\UserPreference;
 use App\Models\Workspace;
 use App\Models\WorkspaceMember;
 use App\Queries\ProjectDetailQuery;
@@ -16,6 +18,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use Inertia\Testing\AssertableInertia as Assert;
 
 /** @param Closure(): TestResponse $request */
 function sqlitePageQueryCount(Closure $request): int
@@ -129,6 +132,122 @@ test('major pages keep bounded query counts as workspace data grows', function (
     foreach ($larger as $page => $queryCount) {
         expect($queryCount, "{$page} query budget")->toBeLessThanOrEqual(35);
     }
+});
+
+test('onboarding options stay bounded with selected inclusion and a stable query count', function () {
+    $user = User::factory()->create();
+    $preferences = UserPreference::factory()->for($user)->pendingOnboarding()->create([
+        'onboarding_step' => OnboardingStep::Task->value,
+    ]);
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create([
+        'name' => 'ZZZ selected workspace',
+    ]);
+    $project = Project::factory()->for($workspace)->create([
+        'name' => 'ZZZ selected project',
+        'position' => 10_000,
+    ]);
+    $task = Todo::factory()->for($workspace)->for($project)->create([
+        'title' => 'ZZZ selected task',
+        'position' => 10_000,
+    ]);
+    $preferences->update(['onboarding_state' => [
+        'workspace_id' => $workspace->id,
+        'project_id' => $project->id,
+        'task_id' => $task->id,
+    ]]);
+
+    $this->actingAs($user)->withSession(['current_workspace_id' => $workspace->id]);
+    $this->get(route('onboarding.index'))->assertOk();
+
+    $smallQueryCount = sqlitePageQueryCount(
+        fn () => $this->get(route('onboarding.index')),
+    );
+
+    $now = now();
+    $extraWorkspaces = collect(range(1, 110))->map(function (int $index) use ($now, $user): array {
+        $id = (string) Str::uuid();
+
+        return [
+            'id' => $id,
+            'name' => sprintf('AAA workspace %03d', $index),
+            'slug' => 'query-budget-'.$index.'-'.$id,
+            'description' => null,
+            'owner_id' => $user->id,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+    });
+    DB::table('workspaces')->insert($extraWorkspaces->all());
+    DB::table('workspace_members')->insert($extraWorkspaces->map(fn (array $item): array => [
+        'id' => (string) Str::uuid(),
+        'workspace_id' => $item['id'],
+        'user_id' => $user->id,
+        'role' => WorkspaceRole::Owner->value,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ])->all());
+
+    $extraProjects = collect(range(1, 110))->map(fn (int $index): array => [
+        'id' => (string) Str::uuid(),
+        'workspace_id' => $workspace->id,
+        'name' => sprintf('AAA project %03d', $index),
+        'description' => null,
+        'color' => '#6366f1',
+        'icon' => 'folder',
+        'is_archived' => false,
+        'position' => $index,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ]);
+    DB::table('projects')->insert($extraProjects->all());
+
+    $defaultStatus = $workspace->taskStatuses()->where('is_default', true)->firstOrFail();
+    $defaultPriority = $workspace->taskPriorities()->where('is_default', true)->firstOrFail();
+    DB::table('todos')->insert(collect(range(1, 110))->map(fn (int $index): array => [
+        'id' => (string) Str::uuid(),
+        'workspace_id' => $workspace->id,
+        'project_id' => $project->id,
+        'title' => sprintf('AAA task %03d', $index),
+        'status' => $defaultStatus->key,
+        'status_id' => $defaultStatus->id,
+        'priority' => $defaultPriority->key,
+        'priority_id' => $defaultPriority->id,
+        'position' => $index,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ])->all());
+
+    $members = User::factory()->count(110)->create();
+    DB::table('workspace_members')->insert($members->map(fn (User $member): array => [
+        'id' => (string) Str::uuid(),
+        'workspace_id' => $workspace->id,
+        'user_id' => $member->id,
+        'role' => WorkspaceRole::Member->value,
+        'created_at' => $now,
+        'updated_at' => $now,
+    ])->all());
+
+    $response = $this->get(route('onboarding.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('options.workspaces', 100)
+            ->has('options.projects', 100)
+            ->has('options.tasks', 100)
+            ->has('options.members', 100)
+            ->has('options.statuses', 3)
+            ->has('options.priorities', 5));
+    $props = $response->inertiaProps('options');
+
+    expect(collect($props['workspaces'])->pluck('id'))->toContain($workspace->id)
+        ->and(collect($props['projects'])->pluck('id'))->toContain($project->id)
+        ->and(collect($props['tasks'])->pluck('id'))->toContain($task->id);
+
+    $largeQueryCount = sqlitePageQueryCount(
+        fn () => $this->get(route('onboarding.index')),
+    );
+
+    expect($largeQueryCount)->toBe($smallQueryCount)
+        ->and($largeQueryCount)->toBeLessThanOrEqual(20);
 });
 
 test('representative ordered queries use their scoped indexes without unnecessary temporary sorting', function (string $sql, string $index, bool $allowsTemporarySort = false) {

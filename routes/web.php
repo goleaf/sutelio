@@ -36,6 +36,10 @@ Route::middleware(['auth', 'verified'])
     ->group(function (): void {
         Route::get('onboarding', 'index')->name('onboarding.index');
         Route::patch('onboarding/progress', 'progress')->name('onboarding.progress');
+        Route::put('onboarding/preferences', 'preferences')->name('onboarding.preferences');
+        Route::post('onboarding/workspace', 'workspace')->name('onboarding.workspace');
+        Route::post('onboarding/project', 'project')->name('onboarding.project');
+        Route::post('onboarding/task', 'task')->name('onboarding.task');
         Route::post('onboarding/skip', 'skip')->name('onboarding.skip');
         Route::post('onboarding/complete', 'complete')->name('onboarding.complete');
         Route::post('onboarding/restart', 'restart')->name('onboarding.restart');

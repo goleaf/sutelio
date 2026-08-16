@@ -53,6 +53,7 @@ test('onboarding requires authentication and verification', function () {
 test('pending users can render their resumable onboarding page', function () {
     $user = User::factory()->create();
     $preferences = UserPreference::factory()->for($user)->pendingOnboarding()->create([
+        'language' => 'lt',
         'onboarding_state' => ['language' => 'lt'],
     ]);
 
@@ -66,7 +67,8 @@ test('pending users can render their resumable onboarding page', function () {
             ->where('progress.total', 8)
             ->where('progress.percent', 13)
             ->where('progress.is_replay', false)
-            ->where('state', $preferences->onboarding_state)
+            ->where('preferences.language', $preferences->language)
+            ->where('state', [])
             ->has('copy.title')
             ->has('copy.description'));
 });

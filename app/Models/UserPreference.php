@@ -117,6 +117,14 @@ class UserPreference extends Model
             : OnboardingStep::tryFrom((string) $step) ?? OnboardingStep::Welcome;
     }
 
+    /** @return array<string, mixed> */
+    public function onboardingState(): array
+    {
+        $state = $this->getAttribute('onboarding_state');
+
+        return is_array($state) ? $state : [];
+    }
+
     public static function startRoute(?string $startPage): string
     {
         return self::START_PAGE_ROUTES[$startPage ?? 'dashboard'] ?? 'dashboard';
