@@ -250,6 +250,7 @@ return [
             'title' => 'Database Backup',
         ],
         'export' => [
+            'confirm_import' => 'Import reviewed file',
             'description' => 'Export your data or import from a file',
             'export_description' => 'Download your workspace data',
             'export_title' => 'Export',
@@ -259,7 +260,13 @@ return [
             'import_json' => 'Import JSON',
             'import_success' => 'Import completed',
             'import_title' => 'Import',
+            'preview_description' => 'Nothing has been changed yet. Import only after reviewing these validated counts.',
+            'preview_projects' => 'Projects',
+            'preview_tasks' => 'Tasks',
+            'preview_title' => 'Import ready for review',
+            'preview_version' => 'Schema version',
             'title' => 'Export & Import',
+            'upload_progress' => 'Import file upload progress',
         ],
         'navigation' => [
             'backup' => 'Backup',

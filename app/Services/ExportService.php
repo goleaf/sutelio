@@ -18,6 +18,8 @@ class ExportService
 {
     private const CHUNK_SIZE = 250;
 
+    private const SCHEMA_VERSION = ImportService::SCHEMA_VERSION;
+
     /** @throws JsonException */
     public function stream(Workspace $workspace, string $format): void
     {
@@ -45,7 +47,7 @@ class ExportService
     /** @throws JsonException */
     private function streamJson(Workspace $workspace): void
     {
-        echo '{"workspace":';
+        echo '{"version":'.self::SCHEMA_VERSION.',"workspace":';
         $this->writeJson($workspace->only(['name', 'description']));
         echo ',"projects":[';
 

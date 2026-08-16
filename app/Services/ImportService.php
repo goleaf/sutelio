@@ -15,246 +15,265 @@ class ImportService
 {
     public const MAX_RECORDS = 1_000;
 
+    public const SCHEMA_VERSION = 1;
+
     public function __construct(
         private readonly CreateProject $createProject,
         private readonly CreateTodo $createTodo,
     ) {}
 
-    /** @return array{projects: int, todos: int} */
-    public function importFromJson(Workspace $workspace, string $json): array
+    /** @return array{version: int, projects: int, todos: int} */
+    public function previewFromJson(Workspace $workspace, string $json): array
     {
-        return DB::transaction(function () use ($workspace, $json): array {
-            $this->ensureUtf8($json);
-
-            try {
-                $data = json_decode($json, true, 64, JSON_THROW_ON_ERROR);
-            } catch (JsonException $exception) {
-                $this->invalidFile(__('data_transfer.import.invalid_json', [
-                    'message' => $exception->getMessage(),
-                ]));
-            }
-
-            if (! is_array($data) || array_is_list($data)) {
-                $this->invalidFile(__('data_transfer.import.json_object'));
-            }
-
-            $unknownKeys = array_diff(array_keys($data), ['workspace', 'projects', 'todos']);
-
-            if ($unknownKeys !== []) {
-                $this->invalidFile(__('data_transfer.import.unsupported_top_level'));
-            }
-
-            $this->validateJsonWorkspace($data['workspace'] ?? null);
-            $projects = $this->recordList($data['projects'] ?? [], 'projects');
-            $todos = $this->recordList($data['todos'] ?? [], 'todos');
-
-            if (count($projects) + count($todos) > self::MAX_RECORDS) {
-                $this->invalidFile(__('data_transfer.import.record_limit'));
-            }
-
-            $imported = ['projects' => 0, 'todos' => 0];
-            /** @var array<string, string> $projectIdsByName */
-            $projectIdsByName = $workspace->projects()->pluck('id', 'name')->all();
-
-            foreach ($projects as $index => $projectData) {
-                $recordLabel = __('data_transfer.import.project_record', ['number' => $index + 1]);
-                $validatedProject = $this->validateRecord(
-                    $projectData,
-                    [
-                        'name' => ['required', 'string', 'max:255'],
-                        'description' => ['nullable', 'string', 'max:1000'],
-                        'color' => ['sometimes', 'string', 'max:7'],
-                        'icon' => ['sometimes', 'string', 'max:50'],
-                    ],
-                    $recordLabel,
-                    ['name', 'description', 'color', 'icon'],
-                );
-
-                $project = $this->createProject->handle(
-                    $workspace,
-                    $this->projectData($validatedProject, $recordLabel),
-                );
-                $projectIdsByName[$project->name] = $project->id;
-                $imported['projects']++;
-            }
-
-            foreach ($todos as $index => $todoData) {
-                $validatedTodo = $this->validateRecord(
-                    $todoData,
-                    [
-                        'title' => ['required', 'string', 'max:255'],
-                        'description' => ['nullable', 'string'],
-                        'status' => [
-                            'sometimes',
-                            Rule::exists('task_statuses', 'key')
-                                ->where('workspace_id', $workspace->id)
-                                ->where('is_archived', 0),
-                        ],
-                        'priority' => [
-                            'sometimes',
-                            Rule::exists('task_priorities', 'key')
-                                ->where('workspace_id', $workspace->id)
-                                ->where('is_archived', 0),
-                        ],
-                        'due_date' => ['nullable', 'date_format:Y-m-d'],
-                        'project' => ['nullable', 'string', 'max:255'],
-                        'labels' => ['sometimes', 'array', 'max:100'],
-                        'labels.*' => ['string', 'max:255'],
-                        'tags' => ['sometimes', 'array', 'max:100'],
-                        'tags.*' => ['string', 'max:255'],
-                        'checklists' => ['sometimes', 'array', 'max:100'],
-                        'checklists.*' => ['array:name,items'],
-                        'checklists.*.name' => ['required', 'string', 'max:255'],
-                        'checklists.*.items' => ['sometimes', 'array', 'max:500'],
-                        'checklists.*.items.*' => ['array:content,checked'],
-                        'checklists.*.items.*.content' => ['required', 'string', 'max:1000'],
-                        'checklists.*.items.*.checked' => ['required', 'boolean'],
-                    ],
-                    __('data_transfer.import.task_record', ['number' => $index + 1]),
-                    [
-                        'title',
-                        'description',
-                        'status',
-                        'priority',
-                        'due_date',
-                        'project',
-                        'labels',
-                        'tags',
-                        'checklists',
-                    ],
-                );
-
-                $projectName = $validatedTodo['project'] ?? null;
-                $projectId = $this->resolveProjectId(
-                    $projectName,
-                    $projectIdsByName,
-                    __('data_transfer.import.task_record', ['number' => $index + 1]),
-                );
-
-                $this->createTodo->handle($workspace, [
-                    'title' => $validatedTodo['title'],
-                    'description' => $validatedTodo['description'] ?? null,
-                    'status' => $validatedTodo['status'] ?? $workspace->taskStatuses()
-                        ->where('is_default', true)->value('key'),
-                    'priority' => $validatedTodo['priority'] ?? $workspace->taskPriorities()
-                        ->where('is_default', true)->value('key'),
-                    'due_date' => $validatedTodo['due_date'] ?? null,
-                    'project_id' => $projectId,
-                ]);
-                $imported['todos']++;
-            }
-
-            return $imported;
-        });
+        return $this->processJson($workspace, $json, false);
     }
 
-    public function importFromCsv(Workspace $workspace, string $csv): int
+    /** @return array{version: int, projects: int, todos: int} */
+    public function importFromJson(Workspace $workspace, string $json): array
     {
-        return DB::transaction(function () use ($workspace, $csv): int {
-            $this->ensureUtf8($csv);
+        return DB::transaction(
+            fn (): array => $this->processJson($workspace, $json, true),
+        );
+    }
 
-            $handle = fopen('php://temp', 'r+');
+    /** @return array{version: int, projects: int, todos: int} */
+    public function previewFromCsv(Workspace $workspace, string $csv): array
+    {
+        return $this->processCsv($workspace, $csv, false);
+    }
 
-            if ($handle === false || fwrite($handle, $csv) === false) {
-                $this->invalidFile(__('data_transfer.import.csv_unreadable'));
+    /** @return array{version: int, projects: int, todos: int} */
+    public function importFromCsv(Workspace $workspace, string $csv): array
+    {
+        return DB::transaction(
+            fn (): array => $this->processCsv($workspace, $csv, true),
+        );
+    }
+
+    /** @return array{version: int, projects: int, todos: int} */
+    private function processJson(Workspace $workspace, string $json, bool $persist): array
+    {
+        $this->ensureUtf8($json);
+
+        try {
+            $data = json_decode($json, true, 64, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            $this->invalidFile(__('data_transfer.import.invalid_json', [
+                'message' => $exception->getMessage(),
+            ]));
+        }
+
+        if (! is_array($data) || array_is_list($data)) {
+            $this->invalidFile(__('data_transfer.import.json_object'));
+        }
+
+        $unknownKeys = array_diff(array_keys($data), ['version', 'workspace', 'projects', 'todos']);
+
+        if ($unknownKeys !== []) {
+            $this->invalidFile(__('data_transfer.import.unsupported_top_level'));
+        }
+
+        $version = $data['version'] ?? self::SCHEMA_VERSION;
+
+        if ($version !== self::SCHEMA_VERSION) {
+            $this->invalidFile(__('data_transfer.import.unsupported_version', [
+                'version' => is_scalar($version) ? (string) $version : '?',
+            ]));
+        }
+
+        $this->validateJsonWorkspace($data['workspace'] ?? null);
+        $projects = $this->recordList($data['projects'] ?? [], 'projects');
+        $todos = $this->recordList($data['todos'] ?? [], 'todos');
+
+        if (count($projects) + count($todos) > self::MAX_RECORDS) {
+            $this->invalidFile(__('data_transfer.import.record_limit'));
+        }
+
+        $definitions = $this->taskDefinitions($workspace);
+        $result = ['version' => self::SCHEMA_VERSION, 'projects' => 0, 'todos' => 0];
+        /** @var array<string, string> $projectIdsByName */
+        $projectIdsByName = $workspace->projects()->pluck('id', 'name')->all();
+
+        foreach ($projects as $index => $projectData) {
+            $recordLabel = __('data_transfer.import.project_record', ['number' => $index + 1]);
+            $validatedProject = $this->validateRecord(
+                $projectData,
+                [
+                    'name' => ['required', 'string', 'max:255'],
+                    'description' => ['nullable', 'string', 'max:1000'],
+                    'color' => ['sometimes', 'string', 'max:7'],
+                    'icon' => ['sometimes', 'string', 'max:50'],
+                ],
+                $recordLabel,
+                ['name', 'description', 'color', 'icon'],
+            );
+            $projectAttributes = $this->projectData($validatedProject, $recordLabel);
+
+            if ($persist) {
+                $project = $this->createProject->handle($workspace, $projectAttributes);
+                $projectIdsByName[$project->name] = $project->id;
+            } else {
+                $projectIdsByName[$projectAttributes['name']] = $projectAttributes['name'];
             }
 
-            rewind($handle);
+            $result['projects']++;
+        }
 
-            try {
-                $headers = fgetcsv($handle, escape: '');
-
-                if (! is_array($headers)) {
-                    $this->invalidFile(__('data_transfer.import.csv_header_required'));
-                }
-
-                $headers[0] = ltrim((string) $headers[0], "\xEF\xBB\xBF");
-                $normalizedHeaders = array_map($this->normalizeCsvHeader(...), $headers);
-                $allowedHeaders = [
+        foreach ($todos as $index => $todoData) {
+            $recordLabel = __('data_transfer.import.task_record', ['number' => $index + 1]);
+            $validatedTodo = $this->validateRecord(
+                $todoData,
+                [
+                    'title' => ['required', 'string', 'max:255'],
+                    'description' => ['nullable', 'string'],
+                    'status' => ['sometimes', Rule::in($definitions['statuses'])],
+                    'priority' => ['sometimes', Rule::in($definitions['priorities'])],
+                    'due_date' => ['nullable', 'date_format:Y-m-d'],
+                    'project' => ['nullable', 'string', 'max:255'],
+                    'labels' => ['sometimes', 'array', 'max:100'],
+                    'labels.*' => ['string', 'max:255'],
+                    'tags' => ['sometimes', 'array', 'max:100'],
+                    'tags.*' => ['string', 'max:255'],
+                    'checklists' => ['sometimes', 'array', 'max:100'],
+                    'checklists.*' => ['array:name,items'],
+                    'checklists.*.name' => ['required', 'string', 'max:255'],
+                    'checklists.*.items' => ['sometimes', 'array', 'max:500'],
+                    'checklists.*.items.*' => ['array:content,checked'],
+                    'checklists.*.items.*.content' => ['required', 'string', 'max:1000'],
+                    'checklists.*.items.*.checked' => ['required', 'boolean'],
+                ],
+                $recordLabel,
+                [
                     'title',
+                    'description',
                     'status',
                     'priority',
                     'due_date',
                     'project',
-                    'assigned_to',
-                    'description',
-                ];
+                    'labels',
+                    'tags',
+                    'checklists',
+                ],
+            );
+            $projectId = $this->resolveProjectId(
+                $validatedTodo['project'] ?? null,
+                $projectIdsByName,
+                $recordLabel,
+            );
 
-                if (count($normalizedHeaders) !== count(array_unique($normalizedHeaders))) {
-                    $this->invalidFile(__('data_transfer.import.csv_duplicate_headers'));
+            if ($persist) {
+                $this->createTodo->handle($workspace, [
+                    'title' => $validatedTodo['title'],
+                    'description' => $validatedTodo['description'] ?? null,
+                    'status' => $validatedTodo['status'] ?? $definitions['default_status'],
+                    'priority' => $validatedTodo['priority'] ?? $definitions['default_priority'],
+                    'due_date' => $validatedTodo['due_date'] ?? null,
+                    'project_id' => $projectId,
+                ]);
+            }
+
+            $result['todos']++;
+        }
+
+        return $result;
+    }
+
+    /** @return array{version: int, projects: int, todos: int} */
+    private function processCsv(Workspace $workspace, string $csv, bool $persist): array
+    {
+        $this->ensureUtf8($csv);
+        $handle = fopen('php://temp', 'r+');
+
+        if ($handle === false || fwrite($handle, $csv) === false) {
+            $this->invalidFile(__('data_transfer.import.csv_unreadable'));
+        }
+
+        rewind($handle);
+
+        try {
+            $headers = fgetcsv($handle, escape: '');
+
+            if (! is_array($headers)) {
+                $this->invalidFile(__('data_transfer.import.csv_header_required'));
+            }
+
+            $headers[0] = ltrim((string) $headers[0], "\xEF\xBB\xBF");
+            $normalizedHeaders = array_map($this->normalizeCsvHeader(...), $headers);
+            $allowedHeaders = [
+                'title',
+                'status',
+                'priority',
+                'due_date',
+                'project',
+                'assigned_to',
+                'description',
+            ];
+
+            if (count($normalizedHeaders) !== count(array_unique($normalizedHeaders))) {
+                $this->invalidFile(__('data_transfer.import.csv_duplicate_headers'));
+            }
+
+            if (! in_array('title', $normalizedHeaders, true)) {
+                $this->invalidFile(__('data_transfer.import.csv_title_required'));
+            }
+
+            if (array_diff($normalizedHeaders, $allowedHeaders) !== []) {
+                $this->invalidFile(__('data_transfer.import.csv_unsupported_columns'));
+            }
+
+            $definitions = $this->taskDefinitions($workspace);
+            /** @var array<string, string> $projectIdsByName */
+            $projectIdsByName = $workspace->projects()->pluck('id', 'name')->all();
+            $result = ['version' => self::SCHEMA_VERSION, 'projects' => 0, 'todos' => 0];
+            $rowNumber = 1;
+
+            while (($row = fgetcsv($handle, escape: '')) !== false) {
+                $rowNumber++;
+
+                if ($this->isBlankCsvRow($row)) {
+                    continue;
                 }
 
-                if (! in_array('title', $normalizedHeaders, true)) {
-                    $this->invalidFile(__('data_transfer.import.csv_title_required'));
+                if (++$result['todos'] > self::MAX_RECORDS) {
+                    $this->invalidFile(__('data_transfer.import.csv_record_limit'));
                 }
 
-                if (array_diff($normalizedHeaders, $allowedHeaders) !== []) {
-                    $this->invalidFile(__('data_transfer.import.csv_unsupported_columns'));
+                if (count($row) !== count($normalizedHeaders)) {
+                    $this->invalidFile(__('data_transfer.import.csv_column_count', [
+                        'number' => $rowNumber,
+                    ]));
                 }
 
-                /** @var array<string, string> $projectIdsByName */
-                $projectIdsByName = $workspace->projects()->pluck('id', 'name')->all();
-                $imported = 0;
-                $rowNumber = 1;
+                /** @var array<string, string|null> $rowData */
+                $rowData = array_combine($normalizedHeaders, $row);
+                $validatedTodo = $this->validateRecord(
+                    [
+                        'title' => $rowData['title'] ?? null,
+                        'status' => ($rowData['status'] ?? '') ?: $definitions['default_status'],
+                        'priority' => ($rowData['priority'] ?? '') ?: $definitions['default_priority'],
+                        'due_date' => ($rowData['due_date'] ?? '') ?: null,
+                        'project' => ($rowData['project'] ?? '') ?: null,
+                        'description' => ($rowData['description'] ?? '') ?: null,
+                    ],
+                    [
+                        'title' => ['required', 'string', 'max:255'],
+                        'status' => ['required', Rule::in($definitions['statuses'])],
+                        'priority' => ['required', Rule::in($definitions['priorities'])],
+                        'due_date' => ['nullable', 'date_format:Y-m-d'],
+                        'project' => ['nullable', 'string', 'max:255'],
+                        'description' => ['nullable', 'string'],
+                    ],
+                    __('data_transfer.import.csv_row', ['number' => $rowNumber]),
+                    ['title', 'status', 'priority', 'due_date', 'project', 'description'],
+                );
 
-                while (($row = fgetcsv($handle, escape: '')) !== false) {
-                    $rowNumber++;
+                $projectId = $this->resolveProjectId(
+                    $validatedTodo['project'] ?? null,
+                    $projectIdsByName,
+                    __('data_transfer.import.csv_row', ['number' => $rowNumber]),
+                );
 
-                    if ($this->isBlankCsvRow($row)) {
-                        continue;
-                    }
-
-                    if (++$imported > self::MAX_RECORDS) {
-                        $this->invalidFile(__('data_transfer.import.csv_record_limit'));
-                    }
-
-                    if (count($row) !== count($normalizedHeaders)) {
-                        $this->invalidFile(__('data_transfer.import.csv_column_count', [
-                            'number' => $rowNumber,
-                        ]));
-                    }
-
-                    /** @var array<string, string|null> $rowData */
-                    $rowData = array_combine($normalizedHeaders, $row);
-                    $validatedTodo = $this->validateRecord(
-                        [
-                            'title' => $rowData['title'] ?? null,
-                            'status' => ($rowData['status'] ?? '') ?: $workspace->taskStatuses()
-                                ->where('is_default', true)->value('key'),
-                            'priority' => ($rowData['priority'] ?? '') ?: $workspace->taskPriorities()
-                                ->where('is_default', true)->value('key'),
-                            'due_date' => ($rowData['due_date'] ?? '') ?: null,
-                            'project' => ($rowData['project'] ?? '') ?: null,
-                            'description' => ($rowData['description'] ?? '') ?: null,
-                        ],
-                        [
-                            'title' => ['required', 'string', 'max:255'],
-                            'status' => [
-                                'required',
-                                Rule::exists('task_statuses', 'key')
-                                    ->where('workspace_id', $workspace->id)
-                                    ->where('is_archived', 0),
-                            ],
-                            'priority' => [
-                                'required',
-                                Rule::exists('task_priorities', 'key')
-                                    ->where('workspace_id', $workspace->id)
-                                    ->where('is_archived', 0),
-                            ],
-                            'due_date' => ['nullable', 'date_format:Y-m-d'],
-                            'project' => ['nullable', 'string', 'max:255'],
-                            'description' => ['nullable', 'string'],
-                        ],
-                        __('data_transfer.import.csv_row', ['number' => $rowNumber]),
-                        ['title', 'status', 'priority', 'due_date', 'project', 'description'],
-                    );
-
-                    $projectId = $this->resolveProjectId(
-                        $validatedTodo['project'] ?? null,
-                        $projectIdsByName,
-                        __('data_transfer.import.csv_row', ['number' => $rowNumber]),
-                    );
-
+                if ($persist) {
                     $this->createTodo->handle($workspace, [
                         'title' => $validatedTodo['title'],
                         'description' => $validatedTodo['description'] ?? null,
@@ -264,12 +283,57 @@ class ImportService
                         'project_id' => $projectId,
                     ]);
                 }
-
-                return $imported;
-            } finally {
-                fclose($handle);
             }
-        });
+
+            return $result;
+        } finally {
+            fclose($handle);
+        }
+    }
+
+    /**
+     * @return array{
+     *     statuses: list<string>,
+     *     priorities: list<string>,
+     *     default_status: string,
+     *     default_priority: string
+     * }
+     */
+    private function taskDefinitions(Workspace $workspace): array
+    {
+        $statuses = array_values(
+            $workspace->taskStatuses()
+                ->where('is_archived', false)
+                ->pluck('key')
+                ->map(fn (mixed $key): string => (string) $key)
+                ->all(),
+        );
+        $priorities = array_values(
+            $workspace->taskPriorities()
+                ->where('is_archived', false)
+                ->pluck('key')
+                ->map(fn (mixed $key): string => (string) $key)
+                ->all(),
+        );
+        $defaultStatus = $workspace->taskStatuses()
+            ->where('is_archived', false)
+            ->where('is_default', true)
+            ->value('key');
+        $defaultPriority = $workspace->taskPriorities()
+            ->where('is_archived', false)
+            ->where('is_default', true)
+            ->value('key');
+
+        if (! is_string($defaultStatus) || ! is_string($defaultPriority)) {
+            $this->invalidFile(__('data_transfer.import.workspace_configuration'));
+        }
+
+        return [
+            'statuses' => $statuses,
+            'priorities' => $priorities,
+            'default_status' => $defaultStatus,
+            'default_priority' => $defaultPriority,
+        ];
     }
 
     private function ensureUtf8(string $content): void

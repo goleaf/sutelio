@@ -144,14 +144,15 @@ test('remaining active secondary actions reuse the shared large control rhythm',
         ->not->toContain('class="min-h-11 rounded-xl"');
 });
 
-test('data import exposes an inert shared loading state', function () {
+test('data import exposes inert preview and execution loading states', function () {
     expect(File::get(resource_path('js/pages/settings/Export.vue')))
         ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('const importingFormat = ref<ImportFormat | null>(null)')
-        ->toContain(':disabled="Boolean(importingFormat)"')
-        ->toContain(':aria-busy="importingFormat === format"')
-        ->toContain('<Spinner v-if="importingFormat === format" />')
-        ->toContain('onFinish: () =>')
+        ->toContain('const previewRequest = useHttp<ImportPayload, ImportPreviewResponse>')
+        ->toContain('const importRequest = useHttp<ImportPayload, ImportResponse>')
+        ->toContain('previewRequest.processing ||')
+        ->toContain(':aria-busy="importRequest.processing"')
+        ->toContain('<Spinner v-if="importRequest.processing" />')
+        ->toContain('previewRequest.progress || importRequest.progress')
         ->toContain('pointer-events-none opacity-50');
 });
 

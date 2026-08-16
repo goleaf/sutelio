@@ -199,6 +199,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Export/Import
     Route::get('workspaces/{workspace}/export/{format}', [ExportController::class, 'export'])->name('export');
+    Route::post('workspaces/{workspace}/import/preview', [ImportController::class, 'preview'])
+        ->name('import.preview');
     Route::post('workspaces/{workspace}/import', [ImportController::class, 'import'])->name('import');
 
     // Application database backups

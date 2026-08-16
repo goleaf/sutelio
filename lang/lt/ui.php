@@ -250,6 +250,7 @@ return [
             'title' => 'Duomenų bazės atsarginė kopija',
         ],
         'export' => [
+            'confirm_import' => 'Importuoti patikrintą failą',
             'description' => 'Eksportuokite duomenis arba importuokite juos iš failo',
             'export_description' => 'Atsisiųskite darbo erdvės duomenis',
             'export_title' => 'Eksportas',
@@ -259,7 +260,13 @@ return [
             'import_json' => 'Importuoti JSON',
             'import_success' => 'Importas baigtas',
             'import_title' => 'Importas',
+            'preview_description' => 'Kol kas niekas nepakeista. Importuokite tik peržiūrėję patikrintus kiekius.',
+            'preview_projects' => 'Projektai',
+            'preview_tasks' => 'Užduotys',
+            'preview_title' => 'Importas paruoštas peržiūrai',
+            'preview_version' => 'Schemos versija',
             'title' => 'Eksportas ir importas',
+            'upload_progress' => 'Importo failo įkėlimo eiga',
         ],
         'navigation' => [
             'backup' => 'Atsarginė kopija',

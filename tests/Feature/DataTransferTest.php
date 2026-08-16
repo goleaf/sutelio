@@ -7,6 +7,7 @@ use App\Models\Workspace;
 use App\Models\WorkspaceMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -32,6 +33,135 @@ function jsonImportFile(array $payload): UploadedFile
         json_encode($payload, JSON_THROW_ON_ERROR),
     );
 }
+
+test('workspace JSON import preview validates counts without writing records', function () {
+    [$user, $workspace] = createDataTransferWorkspace();
+
+    $this->actingAs($user)
+        ->postJson(route('import.preview', $workspace), [
+            'format' => 'json',
+            'file' => jsonImportFile([
+                'version' => 1,
+                'projects' => [
+                    ['name' => 'Preview project'],
+                ],
+                'todos' => [
+                    ['title' => 'First preview task', 'project' => 'Preview project'],
+                    ['title' => 'Second preview task'],
+                ],
+            ]),
+        ])
+        ->assertOk()
+        ->assertJsonPath('preview.format', 'json')
+        ->assertJsonPath('preview.version', 1)
+        ->assertJsonPath('preview.projects', 1)
+        ->assertJsonPath('preview.todos', 2);
+
+    expect($workspace->projects()->count())->toBe(0)
+        ->and($workspace->todos()->count())->toBe(0);
+});
+
+test('workspace CSV import preview validates counts without writing records', function () {
+    [$user, $workspace] = createDataTransferWorkspace();
+    $csv = implode("\n", [
+        'Title,Status,Priority,Due Date,Project,Assigned To,Description',
+        'First preview task,pending,none,,,,',
+        'Second preview task,pending,none,,,,',
+    ]);
+
+    $this->actingAs($user)
+        ->postJson(route('import.preview', $workspace), [
+            'format' => 'csv',
+            'file' => UploadedFile::fake()->createWithContent('workspace-import.csv', $csv),
+        ])
+        ->assertOk()
+        ->assertJsonPath('preview.format', 'csv')
+        ->assertJsonPath('preview.version', 1)
+        ->assertJsonPath('preview.projects', 0)
+        ->assertJsonPath('preview.todos', 2);
+
+    expect($workspace->todos()->count())->toBe(0);
+});
+
+test('workspace import execution remains separate from preview', function () {
+    [$user, $workspace] = createDataTransferWorkspace();
+    $payload = [
+        'version' => 1,
+        'projects' => [['name' => 'Imported project']],
+        'todos' => [['title' => 'Imported task', 'project' => 'Imported project']],
+    ];
+
+    $this->actingAs($user)
+        ->postJson(route('import.preview', $workspace), [
+            'format' => 'json',
+            'file' => jsonImportFile($payload),
+        ])
+        ->assertOk();
+
+    expect($workspace->projects()->count())->toBe(0)
+        ->and($workspace->todos()->count())->toBe(0);
+
+    $this->actingAs($user)
+        ->postJson(route('import', $workspace), [
+            'format' => 'json',
+            'file' => jsonImportFile($payload),
+        ])
+        ->assertOk()
+        ->assertJsonPath('imported.version', 1)
+        ->assertJsonPath('imported.projects', 1)
+        ->assertJsonPath('imported.todos', 1);
+
+    expect($workspace->projects()->where('name', 'Imported project')->exists())->toBeTrue()
+        ->and($workspace->todos()->where('title', 'Imported task')->exists())->toBeTrue();
+});
+
+test('workspace import rejects unsupported schema versions without writes', function (string $routeName) {
+    [$user, $workspace] = createDataTransferWorkspace();
+
+    $this->actingAs($user)
+        ->postJson(route($routeName, $workspace), [
+            'format' => 'json',
+            'file' => jsonImportFile([
+                'version' => 99,
+                'projects' => [['name' => 'Unsupported project']],
+                'todos' => [],
+            ]),
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('file');
+
+    expect($workspace->projects()->count())->toBe(0)
+        ->and($workspace->todos()->count())->toBe(0);
+})->with(['import.preview', 'import']);
+
+test('workspace import preview and execution enforce workspace permissions', function (string $routeName) {
+    [, $workspace] = createDataTransferWorkspace();
+    $outsider = User::factory()->create();
+
+    $this->actingAs($outsider)
+        ->postJson(route($routeName, $workspace), [
+            'format' => 'json',
+            'file' => jsonImportFile([
+                'version' => 1,
+                'projects' => [['name' => 'Forbidden project']],
+                'todos' => [],
+            ]),
+        ])
+        ->assertForbidden();
+
+    expect($workspace->projects()->count())->toBe(0);
+})->with(['import.preview', 'import']);
+
+test('settings import UI requires a successful preview before execution', function () {
+    $page = File::get(resource_path('js/pages/settings/Export.vue'));
+
+    expect($page)
+        ->toContain('importPreview')
+        ->toContain('previewRequest')
+        ->toContain('confirmImport')
+        ->toContain("t('settings.export.preview_title')")
+        ->toContain("t('settings.export.confirm_import')");
+});
 
 test('workspace import rejects files larger than five mebibytes', function () {
     [$user, $workspace] = createDataTransferWorkspace();
@@ -246,7 +376,9 @@ test('workspace export contains only records from the authorized workspace', fun
         ->not->toContain('Foreign workspace project');
 
     if ($format === 'json') {
-        expect(json_decode($content, true, 512, JSON_THROW_ON_ERROR))->toBeArray();
+        expect(json_decode($content, true, 512, JSON_THROW_ON_ERROR))
+            ->toBeArray()
+            ->toHaveKey('version', 1);
     }
 })->with(['json', 'csv', 'markdown']);
 
