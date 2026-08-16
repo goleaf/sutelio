@@ -25,6 +25,7 @@ Current token domains include background/surface/foreground/muted, border/input/
 - Task/workspace identity changes reset local drafts and pending state. Array indexes are not durable keys for mutable lists.
 - Notification filters are canonical URL state coordinated by the page, while focused filter/feed/row components consume typed immutable props. Partial visits cancel superseded requests, refresh the user-local day boundary, and request only inbox props; row/browser presentation shares one localized content resolver.
 - Data Safety settings keep workspace transfer and application backup on separate authorized routes. Export remains available to workspace members, import controls are rendered only for policy-authorized managers, standalone HTTP validation results never trigger success effects, and destructive restore remains operator/password-confirmation gated.
+- Guided onboarding uses one typed Inertia form coordinator and eight focused step components. Step props remain immutable, drafts resynchronize from server identity, generated Wayfinder actions own every request, superseded visits are cancelled, and the sticky save/status/action regions expose saving, saved, resumed, error, pending, and confirmation states without blocking unrelated controls.
 
 ## Accessibility And Responsive Requirements
 
@@ -37,6 +38,8 @@ Mobile-first layouts are verified from 390 px through desktop/wide screens. Side
 Notification read-state and kind filters are named pressed-button groups, not tablists. The signal stream uses ordered Today/Earlier headings, explicit non-color read labels, one concise result live region, connected-node focus restoration, and 44-pixel controls at both tested widths.
 
 Settings navigation uses a current-section dropdown below `lg` and the established vertical navigation at desktop. Long localized section names wrap, and Data Safety scope banners distinguish the current workspace from the application database with text and icons rather than color alone.
+
+Guided onboarding uses a wide-screen progress rail and a compact sticky mobile progress header. At 390 px, Skip occupies its own row and Back/Continue share equal columns; all journey actions are at least 44 px, safe-area spacing is explicit, localized content wraps without overflow, and one server-backed validation summary receives focus before field-level links.
 
 ## Tailwind Feature Applicability
 

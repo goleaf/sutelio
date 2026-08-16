@@ -22,6 +22,7 @@ Static complete class names are required. String interpolation such as `bg-${sta
 - Reka/shadcn-style primitives own dialogs, sheets, menus, selects, checkboxes, focus traps, and keyboard semantics.
 - Shared workspace components own page headers, metrics, segmented controls, empty states, dialog surfaces, and confirmations.
 - Feature components own task, project, calendar, dashboard, activity, and workspace composition.
+- Onboarding components own the Warm Guided Route shell plus one semantic component per step; they reuse shared buttons, controls, previews, confirmation dialogs, and application layout ownership rather than creating a parallel design system.
 - Settings Data Safety uses the shared current-section menu and scope banner, then composes workspace transfer and operator backup as separate permission-aware pages.
 - Tailwind utilities and tokens style components; a static visual fragment does not become a server component.
 
@@ -44,4 +45,4 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 | View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
 | Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
 
-Final `npm run build` transformed 3,489 modules in 4.76 seconds. Main application CSS is 162.18 kB (23.91 kB gzip), the application entry is 89.59 kB (23.23 kB gzip), the Data Safety export chunk is 14.10 kB (4.28 kB gzip), and the backup chunk is 6.52 kB (2.52 kB gzip).
+The guided-onboarding production build transformed 3,525 modules in 6.15 seconds. Main application CSS is 160.86 kB (23.64 kB gzip), the application entry is 90.28 kB (23.48 kB gzip), the onboarding page chunk is 39.74 kB (10.09 kB gzip), the Data Safety export chunk is 14.10 kB (4.29 kB gzip), and the backup chunk is 6.53 kB (2.53 kB gzip).

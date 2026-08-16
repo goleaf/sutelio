@@ -13,6 +13,7 @@ All notable project changes are documented here.
 
 ### Architecture And Security
 
+- Added a versioned, resumable guided-onboarding state machine with verified-user gating, run-scoped idempotent workspace/project/task composition, authorization-aware invitation discovery, safe replay, and populated-data migration behavior.
 - Enabled strict Eloquent behavior outside production and corrected partial-model projections, locale/request state, private avatar serialization, route endpoint closures, and service-locator usage exposed by the stricter contract.
 - Added a typed user-scoped notification request/query/resource boundary with semantic filters, deterministic pagination, safe legacy payloads, batched authorization for task destinations, and idempotent read mutations.
 - Added typed activity category/filter/query/resource boundaries, workspace-safe activity filtering, bounded infinite scrolling, and two rollback-safe workspace-leading activity indexes.
@@ -21,6 +22,8 @@ All notable project changes are documented here.
 
 ### Interface, Accessibility, And Localization
 
+- Added a complete eight-step Warm Guided Route for new users, an honest dismissible Dashboard continuation checklist, Settings replay, role-aware safety guidance, and immediate English/Lithuanian/Russian preference rendering across desktop and mobile.
+- Verified onboarding heading/validation focus, 44-pixel mobile actions, stable Back/Continue layout, safe-area handling, reduced motion, dark and forced-colors modes, and zero 390-pixel horizontal overflow.
 - Centralized authenticated document semantics in the persistent application shell: ten nested page/settings `main` landmarks were removed, reusable task detail now begins at `h2`, and automated plus 22-route desktop/mobile checks enforce one `main` and one `h1` per page.
 - Consolidated repeated container, radius, shadow, and semantic status values into the Tailwind 4 CSS-first Warm Precision token system.
 - Rebuilt notifications as a responsive Structured Signal Stream with URL-backed status/kind filters, Today/Earlier grouping in the saved timezone, shared localized row/browser content, focused pending/empty states, and accessible pressed-button groups.
@@ -33,8 +36,8 @@ All notable project changes are documented here.
 - Completed valid factories for all 17 models with 30 meaningful states/helpers and a 55-case factory/state/seeder contract.
 - Added a non-destructive, production-guarded `DemoSeeder`; fresh migration and repeated deterministic seeding complete with valid foreign keys.
 - Added six rollback-safe project-operation indexes with production-query-plan coverage for workspace/project filters and position, due-date, updated, and priority-definition sorts.
-- Replaced brittle/example-only checks with semantic architecture and application coverage. The final suite passes 706 tests with 10,027 assertions sequentially and in parallel. All 38 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
-- Upgraded NativePHP's generated Android project and verified a debug APK with minSdk 31 and targetSdk 36. Production signing remains a release-environment responsibility.
+- Replaced brittle/example-only checks with semantic architecture and application coverage. The current suite passes 760 tests with 11,347 assertions sequentially and in parallel. All 45 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
+- Upgraded NativePHP's generated Android project and verified a fresh onboarding-capable debug APK with minSdk 31, targetSdk 36, v2 debug signature, ZIP alignment/integrity, embedded onboarding sources/translations, and no host SQLite database. Production signing remains a release-environment responsibility.
 
 ### Documentation
 

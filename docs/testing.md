@@ -4,11 +4,11 @@ Pest is the sole primary PHP test style. Feature tests cover framework-integrate
 
 ## Test Organization
 
-- `tests/Feature/Auth` and settings security/profile: Fortify, sessions, reset/verification/two-factor/passkeys/preferences.
+- `tests/Feature/Auth`, onboarding, and settings security/profile: Fortify, sessions, reset/verification/two-factor/passkeys/preferences, entry gating, resume, skip, replay, scoped/idempotent composition, and continuation.
 - Workspace/project/task/child feature files: policies, validation, state transitions, isolation, files, recurrence/reminders, notifications, transfer/backup.
 - `tests/Feature/Api`: API v1 envelope, auth, ability, policy, resource, validation, and domain parity.
 - Schema/runtime/query/architecture files: migrations/FKs/indexes, SQLite health, application boundaries, resource typing, query counts, NativePHP, design/localization contracts.
-- `resources/js/**/*.test.ts`: typed frontend state, CRUD and task/workspace interaction behavior.
+- `resources/js/**/*.test.ts`: typed frontend state, onboarding progress/draft/plural contracts, CRUD and task/workspace interaction behavior.
 
 ## Per-Pass Workflow
 
@@ -44,7 +44,7 @@ The seeding test suite is the preferred proof when configuration needs a file-ba
 
 ## Coverage And Assertions
 
-Critical identity, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the final behavioral suite passes 706 tests / 10,027 assertions sequentially and in parallel, and the frontend suite passes 38/38.
+Critical identity, onboarding, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the current behavioral suite passes 760 tests / 11,347 assertions sequentially and in parallel, and the discovered frontend suite passes 45/45.
 
 ## Browser Verification
 
@@ -55,3 +55,5 @@ The 2026-08-16 final smoke covered login, password confirmation, repeated keyboa
 The final Notification Command Center pass repeated the authenticated notification route at 1440x1000 and 390x844. Keyboard-activated read/kind filters produced and cleared canonical URL state, filtered empty state rendered correctly, both filter groups exposed pressed-button group semantics, the page retained one `main` and one `h1`, 44-pixel controls, zero overflow, reduced-motion suppression, and zero current console/page/request failures.
 
 The authenticated landmark-integrity pass added a source-level regression in `FrontendDesignTest.php` and exercised 11 representative routes at both 1440x1000 and 390x844. All 22 composed-DOM checks returned one shell-owned `main`, one page `h1`, zero horizontal overflow, and zero captured console, page, request, or HTTP error; the matrix includes task/project/workspace detail and nested profile settings layouts.
+
+The guided-onboarding smoke registered and verified real disposable users, resumed after logout/login, changed EN/LT/RU preferences, created and preserved real workspace/project/task records, accepted a pre-registration signed invitation before the completion gate, exercised required skip and replay/exit, and verified Dashboard checklist visibility/dismissal. Desktop and 390x844 mobile checks covered heading/validation focus, keyboard submission, 44-pixel actions, one landmark/heading, no overflow, and dark/reduced-motion/forced-colors modes.

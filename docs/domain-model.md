@@ -8,12 +8,14 @@
 - `Todo` belongs to one workspace, optional project/assignee/parent, one status definition, and one priority definition. It owns checklists, comments, reminders, attachments, recurrence configuration/occurrences, and subtasks; it has workspace labels/tags through pivots.
 - `TaskStatus` and `TaskPriority` are ordered workspace definitions used by tasks.
 - `WorkspaceInvitation` is an expiring, digest-backed, single-use membership offer.
+- `UserPreference` owns onboarding version, run, step, resumable draft, start/completion/skip, and checklist-dismissal facts; `OnboardingOperation` owns one run-scoped idempotency key and resulting entity identity.
 - `ActivityLog` records normalized facts for a workspace. Database notifications are private to their user.
 
 ## Primary Workflows And State Transitions
 
 - Workspace: create -> configure -> invite/manage members -> optionally transfer ownership -> duplicate or delete with policy/confirmation.
 - Invitation: issue/resend -> accept once before expiry, or cancel/expire.
+- Onboarding: pending Welcome -> adjacent guided steps -> Results -> complete, or required skip -> Results. Completed/skipped users may restart a replay without re-enabling the automatic gate or deleting domain data.
 - Project: active -> archived; duplicate and delete are explicit actions.
 - Task: create/update -> complete/uncomplete, archive, favorite/pin, reorder, duplicate, or delete. Parent links cannot self-reference or cycle.
 - Reminder: pending -> claimed -> delivered or failed; pending/failed items may be cancelled under policy. Claim/delivery is idempotent.
@@ -30,5 +32,6 @@
 5. Recurrence occurrence identity and invitation acceptance are replay safe.
 6. File/database operations define compensation or cleanup for partial failure.
 7. User preferences affect presentation and boundaries, not stored canonical timestamps or authorization.
+8. Onboarding step movement is adjacent and versioned; persisted workspace/project/task identifiers are re-authorized on every read/write, and one run/request key may create at most one domain entity.
 
 The table-level realization is in `docs/data-model.md`; permissions are in `docs/authorization.md`; requirement IDs are in `docs/requirements.md`.

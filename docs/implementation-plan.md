@@ -139,3 +139,17 @@ Requirements: `sys-runtime-001`, `sec-deps-001`, `test-static-001`, `ops-deploym
 - [x] Keep the concurrent workspace-stewardship implementation outside the dependency commit, synchronize package evidence, commit the coherent package slice, and push `main`.
 
 Verification: Composer validate/audit/outdated and dependency blockers, npm audit/outdated and peer metadata, Pint, Larastan, full and parallel Pest, frontend tests/types/lint/format/build, isolated SQLite migration/seed/integrity, application cache/route/view/HTTP smoke, and final Git inspection. Rollback is a direct manifest/lock/documentation commit reversal; no schema or production data changes are planned.
+
+## Post-Modernization Product Delivery — Guided Onboarding
+
+Requirements: `sys-onboarding-001`, `sys-user-002`, `sys-workspace-002`, `ui-*`, `i18n-*`, `data-integrity-001`, `test-feature-001`, `ops-deployment-001`, `git-delivery-001`.
+
+- [x] Approve and record an eight-step verified-user journey with resume, required skip, role/invitation adaptation, manual replay, and honest Dashboard continuation.
+- [x] Add populated-safe versioned preference lifecycle state and a run/request-scoped idempotency ledger; keep existing users complete and new Fortify registrations pending.
+- [x] Implement adjacent lifecycle transitions, completion/skip/restart, bounded authorized option queries, and scoped preference/workspace/project/task selection or creation through canonical actions.
+- [x] Implement the responsive Warm Guided Route, immediate EN/LT/RU preference rendering, accessible validation/focus/status/confirmation states, Dashboard checklist, and Settings replay.
+- [x] Resolve runtime review findings for single layout ownership, pre-onboarding signed invitation acceptance, stable 390-pixel action layout, safe-area CSS architecture, and representative browser modes.
+- [x] Verify focused/full/parallel Pest, Pint, Larastan, frontend behavior/types/lint/format/build, dependency audits, isolated SQLite migration/seed/rollback, live additive migration, real desktop/mobile browser journeys, and canonical traceability.
+- [x] Build and independently inspect the final onboarding-capable NativePHP Android debug APK, record its hash/manifest/signature/alignment/archive evidence, then commit and push the final documentation state.
+
+Verification and rollback details are recorded in `docs/plans/2026-08-16-guided-onboarding-implementation.md` and `docs/progress.md`. The migration down path removes only onboarding lifecycle storage; runtime rollback must preserve any workspace/project/task entities already created by users.

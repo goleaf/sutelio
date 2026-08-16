@@ -4,12 +4,13 @@ The executable schema is the ordered migration set under `database/migrations`. 
 
 ## Identity And Framework Tables
 
-| Tables                                                       | Ownership / notable integrity                                                                                           |
-| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| `users`, `passkeys`, `user_preferences`                      | UUID users; passkeys/preferences cascade to their user; email is unique; sensitive fields are hidden/cast intentionally |
-| `personal_access_tokens`, `notifications`                    | UUID-compatible morph identifiers; tokens belong to users and expose hashed token material only                         |
-| `password_reset_tokens`, `sessions`                          | Framework identity/session lifecycle; session records use indexed user/last-activity fields                             |
-| `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs` | Database-backed framework cache/locks/queue; no Redis requirement                                                       |
+| Tables                                                       | Ownership / notable integrity                                                                                                                                                                   |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `users`, `passkeys`, `user_preferences`                      | UUID users; passkeys/preferences cascade to their user; email is unique; preferences include presentation plus versioned onboarding run/step/state/lifecycle timestamps and checklist dismissal |
+| `onboarding_operations`                                      | UUID operation ledger keyed uniquely by user + run UUID + request key; records operation kind and optional created entity identity for retry-safe guided creation                               |
+| `personal_access_tokens`, `notifications`                    | UUID-compatible morph identifiers; tokens belong to users and expose hashed token material only                                                                                                 |
+| `password_reset_tokens`, `sessions`                          | Framework identity/session lifecycle; session records use indexed user/last-activity fields                                                                                                     |
+| `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs` | Database-backed framework cache/locks/queue; no Redis requirement                                                                                                                               |
 
 ## Workspace Domain
 
@@ -34,6 +35,7 @@ The executable schema is the ordered migration set under `database/migrations`. 
 - Indexes were added from actual scoped query shapes and query-budget tests, not every column. Ordering prioritizes equality workspace/owner/status filters before range/order columns.
 - Money is not a current domain value; no float/decimal monetary representation exists.
 - Canonical timestamps are stored by Laravel/SQLite and formatted using user locale/timezone.
+- The onboarding migration is populated-safe: existing preference rows are marked complete/dismissed, while real Fortify registrations explicitly start pending. Rollback removes only the added lifecycle columns/table.
 
 ## Migration Verification
 
