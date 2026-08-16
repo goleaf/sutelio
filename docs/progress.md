@@ -4414,4 +4414,6 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 
 ### Git Delivery
 
-- The documentation-only commit and exact non-force push result are recorded after delivery. No dependency, schema, application source, host SQLite data, signing secret, or generated binary is committed.
+- `b017376` — `docs: record android apk delivery`.
+- `git push --verbose origin main` exited 0 and reported `a93b1ce..b017376 main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
+- No dependency, schema, application source, host SQLite data, signing secret, generated binary, force push, history rewrite, or unrelated file is committed.
