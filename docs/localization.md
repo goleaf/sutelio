@@ -17,3 +17,5 @@ Locale comes from the authenticated user's preference or the documented fallback
 7. Run `php artisan test --compact tests/Feature/FrontendLocalizationTest.php` plus affected page/notification tests, then frontend type/lint/format/build checks.
 
 Tests verify locale key shape, placeholder parity, fallback, critical page rendering, localized validation and notifications, and locale/timezone-aware output. A missing human-quality translation must retain key parity and use the documented fallback honestly; it must never return a raw key in a critical flow.
+
+Notification rows and browser delivery must call the shared typed content resolver so reminder titles/bodies and safe fallbacks cannot diverge. Today/Earlier grouping uses the server-provided date key derived from the saved IANA timezone; browser-local clock/timezone guesses are not a localization boundary.

@@ -19,7 +19,9 @@ On 2026-08-16, Chromium automation verified guest login, password confirmation, 
 
 The route matrix ran at 1440x1000 and 390x844. Every checked page returned 200 (security intentionally rendered password confirmation until confirmed), contained one `h1`, had zero horizontal overflow, and produced no captured console/page error. Reduced-motion, dark media, and forced-colors emulation were active in the final dashboard check. The activity filter exposed `aria-pressed=true` on the selected category at desktop and inside the mobile dialog.
 
-Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizationTest.php`, `ActivityIntelligenceFrontendTest.php`, Vue type checking, ESLint, the production build, and the browser checks recorded in `docs/progress.md`.
+The Notification Command Center follow-up verified one `main` and one `h1`, semantic pressed-button groups rather than invalid tab semantics, keyboard Space activation, selected-state exposure, a complete filtered-empty state, 44-pixel controls, reduced-motion transition suppression, focus fallback, and zero overflow at 1,440 and 390 pixels. The browser captured no current console, page, or failed-request error during filter and clear interactions.
+
+Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizationTest.php`, `ActivityIntelligenceFrontendTest.php`, `NotificationCommandCenterFrontendTest.php`, `NotificationInbox.test.ts`, Vue type checking, ESLint, the production build, and the browser checks recorded in `docs/progress.md`.
 
 ## Manual Release Review
 

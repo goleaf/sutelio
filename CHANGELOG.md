@@ -13,6 +13,7 @@ All notable project changes are documented here.
 ### Architecture And Security
 
 - Enabled strict Eloquent behavior outside production and corrected partial-model projections, locale/request state, private avatar serialization, route endpoint closures, and service-locator usage exposed by the stricter contract.
+- Added a typed user-scoped notification request/query/resource boundary with semantic filters, deterministic pagination, safe legacy payloads, batched authorization for task destinations, and idempotent read mutations.
 - Added typed activity category/filter/query/resource boundaries, workspace-safe activity filtering, bounded infinite scrolling, and two rollback-safe workspace-leading activity indexes.
 - Added a typed project operations request/query/resource boundary with workspace-scoped filter identifiers, server-enforced archived-project creation rules, localized task definitions, deferred partial-reload queries, and identity-matched scroll refreshes.
 - Reduced the Inertia Blade shell to presentation-only markup, moved theme boot logic to a first-party external asset, and expanded automated guards against Blade PHP/data/service calls, Livewire/Volt, unsafe environment access, debug calls, route action closures, and dynamic Tailwind interpolation.
@@ -20,6 +21,7 @@ All notable project changes are documented here.
 ### Interface, Accessibility, And Localization
 
 - Consolidated repeated container, radius, shadow, and semantic status values into the Tailwind 4 CSS-first Warm Precision token system.
+- Rebuilt notifications as a responsive Structured Signal Stream with URL-backed status/kind filters, Today/Earlier grouping in the saved timezone, shared localized row/browser content, focused pending/empty states, and accessible pressed-button groups.
 - Added responsive, keyboard-accessible activity intelligence filters and verified critical routes at desktop/mobile widths, reduced motion, dark media, and forced colors without overflow or current console errors.
 - Rebuilt project detail as a responsive operations workspace with a bounded task queue, URL-backed desktop/mobile filters, complete-project metrics, priority and attention summaries, accessible task/project actions, and mobile-first information order.
 - Preserved stable English, Lithuanian, and Russian translation keys and locale-aware presentation across changed interfaces.
@@ -29,7 +31,7 @@ All notable project changes are documented here.
 - Completed valid factories for all 17 models with 30 meaningful states/helpers and a 55-case factory/state/seeder contract.
 - Added a non-destructive, production-guarded `DemoSeeder`; fresh migration and repeated deterministic seeding complete with valid foreign keys.
 - Added six rollback-safe project-operation indexes with production-query-plan coverage for workspace/project filters and position, due-date, updated, and priority-definition sorts.
-- Replaced brittle/example-only checks with semantic architecture and application coverage. The final suite passes 667 tests with 9,330 assertions sequentially and in parallel. All 23 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
+- Replaced brittle/example-only checks with semantic architecture and application coverage. The final suite passes 683 tests with 9,539 assertions sequentially and in parallel. All 27 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
 - Upgraded NativePHP's generated Android project and verified a debug APK with minSdk 31 and targetSdk 36. Production signing remains a release-environment responsibility.
 
 ### Documentation

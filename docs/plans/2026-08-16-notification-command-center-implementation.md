@@ -1,5 +1,9 @@
 # Notification Command Center Implementation Plan
 
+## Status
+
+Completed and verified on 2026-08-16. All seven tasks were executed; exact focused/full commands, browser evidence, review corrections, commits, and push results are recorded in `docs/progress.md`.
+
 ## Objective
 
 Deliver the approved Structured Signal Stream design as an isolated phase on `main`: typed user-scoped notification data, URL-backed status and kind filters, timezone-aware Today/Earlier grouping, focused accessible Vue components, English/Lithuanian/Russian copy, tests, live browser QA, progress documentation, commits, and pushes.

@@ -8,6 +8,7 @@ This document describes implemented controls; dated historical findings live und
 - Sanctum API tokens are hashed and ability scoped. API login/register are rate limited; every protected API route combines authentication, ability, policy, validation, and workspace scope.
 - Invitation tokens are random, digest-backed, expiring, purpose/owner bound, single-use, cancellable, and replay-safe. Invitations do not create known-password accounts.
 - Policies and aggregate-scoped queries/actions prevent direct-object and cross-workspace access. Exact mixed ID sets fail before writes.
+- Notification reads and mutations are anchored to the authenticated user's relation. Optional task destinations are emitted only after one batched query proves current workspace ownership or membership; foreign, deleted, empty, and malformed identifiers produce no actionable URL.
 - CSRF/origin/framework request-forgery protection remains enabled. Redirects are controlled; Vue/Blade output is escaped by default; no first-party rich-HTML rendering contract exists.
 - Avatar/attachment/import inputs validate size, content/MIME pair, dimensions/shape where applicable, and use generated private paths. Downloads authorize at request time.
 - Import is bounded and transactional; CSV export neutralizes spreadsheet formulas; exports stream; backups use opaque IDs, consistent SQLite snapshots, private storage, owner policy, restore confirmation, locking, integrity validation, and rollback safety.
@@ -20,7 +21,7 @@ This document describes implemented controls; dated historical findings live und
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | Account enumeration / brute force | Fortify and API rate limits; auth feature tests                                                                |
 | Session fixation/logout           | Laravel session regeneration/invalidation tests                                                                |
-| Tenant leakage / IDOR             | policies, scoped Form Requests/actions/queries, attacker/victim web/API tests                                  |
+| Tenant leakage / IDOR             | policies, scoped Form Requests/actions/queries, attacker/victim web/API tests, foreign notification/task-link tests |
 | Mass assignment                   | validated explicit data passed to actions; model fillable/guarded contracts reviewed                           |
 | XSS / raw HTML                    | escaped Vue/Blade output; no trusted rich-text feature; architecture scan                                      |
 | SQL/command injection             | Eloquent/query builder bindings; no user-controlled shell execution                                            |

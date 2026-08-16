@@ -27,6 +27,8 @@ route + middleware
 
 Routes contain no product queries. Controllers do not call controllers or branch between Inertia and JSON presentation. Actions represent one operation and own short transactional boundaries. Services exist for substantial reusable domain or integration logic, not one-line framework wrappers. Query objects start from an authorized user/workspace relation and own eager loading, aggregates, deterministic ordering, and pagination. API Resources serialize only already-loaded data. Policies do not query when supplied loaded relationships can decide.
 
+The notification inbox follows the same read boundary: the request normalizes URL state, the query starts from the authenticated user's notification relation and batches task-destination authorization, the resource emits a query-free typed presentation contract, and Vue renders only the resulting semantic fields. Read-one/all remain separate idempotent actions.
+
 ## State And Ownership
 
 Workspace membership is the tenant boundary. Every project, task, taxonomy, activity, and child-resource identifier is resolved through the route workspace, task, or parent aggregate. Exact submitted sets must have the same cardinality as the authorized reload before mutation. Frontend visibility mirrors policies but never replaces them.

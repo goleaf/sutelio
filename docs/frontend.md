@@ -21,12 +21,15 @@ Current token domains include background/surface/foreground/muted, border/input/
 - Dialogs/sheets/menus use Reka focus trap, Escape, accessible name, return focus, viewport-safe scrolling, and touch targets.
 - Navigation remains functional as normal same-origin links through Inertia and Wayfinder. Custom integrations must initialize/teardown across Inertia navigation; no current long-lived third-party widget requires `@persist`-style behavior.
 - Task/workspace identity changes reset local drafts and pending state. Array indexes are not durable keys for mutable lists.
+- Notification filters are canonical URL state coordinated by the page, while focused filter/feed/row components consume typed immutable props. Partial visits cancel superseded requests, refresh the user-local day boundary, and request only inbox props; row/browser presentation shares one localized content resolver.
 
 ## Accessibility And Responsive Requirements
 
 Critical pages use semantic headings, labels/descriptions, associated errors, accessible names for icon controls, visible focus, natural DOM order, keyboard alternatives, status announcements, non-color cues, reduced motion, and forced-colors-aware critical controls. Native semantics are preferred to redundant ARIA.
 
 Mobile-first layouts are verified from 390 px through desktop/wide screens. Sidebars, dialogs, lists, filters, calendars, long names, and translated expansion must not create horizontal page overflow. Hover is never the sole affordance; touch targets and keyboard access coexist.
+
+Notification read-state and kind filters are named pressed-button groups, not tablists. The signal stream uses ordered Today/Earlier headings, explicit non-color read labels, one concise result live region, connected-node focus restoration, and 44-pixel controls at both tested widths.
 
 ## Tailwind Feature Applicability
 

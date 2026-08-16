@@ -108,3 +108,11 @@ Completion is prohibited while an applicable item above remains unchecked unless
 - [x] Resolve every independent review finding with backend, frontend, localization, lifecycle, timezone, and architecture regressions.
 - [x] Verify responsive desktop/mobile behavior, dark/reduced-motion presentation, URL filtering, clear state, task detail, focus semantics, and zero current browser errors/overflow.
 - [x] Synchronize requirements, performance evidence, current state, changelog, review, plan, and progress records.
+
+## Post-Modernization Drift Closure — Notification Command Center
+
+- [x] Replace content-sniffing presentation with a typed user-scoped request/query/resource boundary, deterministic bounded pages, global inbox totals, and semantic notification kinds.
+- [x] Prove idempotent user-only mutations, safe legacy payloads, foreign task-link rejection, batched task authorization, stats-only partial-query omission, and the production unread-reminder index plan.
+- [x] Split the Vue page into typed filter/feed/row/helper components with URL state, cancellation, Today/Earlier grouping, shared row/browser content, focused pending/empty states, and EN/LT/RU copy.
+- [x] Resolve review and live-browser findings for local-midnight refresh, Lithuanian grammar, pressed-button group semantics, one page landmark/heading, 44-pixel controls, reduced motion, and zero desktop/mobile overflow or current browser errors.
+- [x] Synchronize the stable notification requirement, compliance, architecture, frontend, security, localization, accessibility, testing, performance, audit, review, changelog, plan, limitation, and progress records.

@@ -30,3 +30,10 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - The already-published project-index migration remains unchanged, avoiding a duplicate-index deployment hazard in environments that had already applied it.
 - Scroll reloads match tasks on `data.id`, preventing duplicate merged rows while preserving already loaded page context. Local mutation reconciliation removes rows that leave active filters, reorders changed rows, keeps totals accurate, and restores focus to a stable queue target when the originating row disappears.
 - The final repository review verified that every reported critical, high, and medium finding was resolved. Focused source, response-metadata, localization, and browser regressions guard the corrected contracts.
+
+## Notification Command Center Follow-Up
+
+- No critical/high security, user-scope, query, or data-integrity defect remained after the typed inbox implementation.
+- Medium review findings were fixed by sharing localized reminder/fallback content between rows and browser delivery and refreshing the user-local `today` boundary on every partial visit.
+- Browser inspection found and fixed invalid tablist semantics around pressed filter buttons and the nested page `main` landmark. The final accessibility tree exposes named button groups, one main landmark, one page heading, and no current console/page/request failure.
+- Regression coverage now proves foreign task IDs cannot emit links, action authorization is one batched query for a 20-row page, stats-only reloads skip the paginator/resource query, and the production unread-reminder plan uses the existing scoped index.

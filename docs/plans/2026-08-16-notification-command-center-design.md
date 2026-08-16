@@ -2,7 +2,7 @@
 
 ## Status
 
-Approved on 2026-08-16 from the recommended Structured Signal Stream direction.
+Delivered and verified on 2026-08-16 from the approved Structured Signal Stream direction. Implementation evidence is recorded in `docs/progress.md` and the stable requirement remains `sys-notification-001`.
 
 ## Objective
 
