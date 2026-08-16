@@ -24,6 +24,25 @@ test('frontend translations cover every supported locale', function () {
     }
 });
 
+test('data safety messages preserve locale parity', function () {
+    $paths = [
+        'settings.backup',
+        'settings.export',
+        'settings.navigation',
+    ];
+
+    foreach ($paths as $path) {
+        $englishKeys = collect(Arr::dot(data_get(trans('ui', locale: 'en'), $path)))
+            ->keys()
+            ->all();
+
+        foreach (['lt', 'ru'] as $locale) {
+            expect(collect(Arr::dot(data_get(trans('ui', locale: $locale), $path)))->keys()->all())
+                ->toBe($englishKeys, "The {$locale} {$path} messages are out of sync.");
+        }
+    }
+});
+
 test('every application translation catalog has locale parity', function () {
     $catalogs = collect(File::files(lang_path('en')))
         ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))

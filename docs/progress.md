@@ -4121,3 +4121,61 @@ Completed. The feature implementation, review corrections, and completion record
 - `f437e6b` — `fix: close notification command center review`; `git push origin main` succeeded with `c46f801..f437e6b main -> main`.
 - `c99068a` — `docs: record notification command center`; `git push origin main` succeeded with `f437e6b..c99068a main -> main`.
 - No force push, history rewrite, destructive Git command, secret, generated build output, migration rewrite, or unrelated deletion was used.
+
+## Data Safety Center
+
+### Preflight Status
+
+- Began from the completed Notification Command Center delivery on `main`; the tracked worktree was clean and the branch was two documentation commits ahead of `origin/main` after recording the approved Data Safety Center design and implementation plan.
+- Inspected the canonical requirements and design/accessibility/security/operations documents, current settings layout, workspace export/import and operator backup routes/controllers/actions, translations, focused tests, live SQLite scope, and both live Herd settings routes before implementation.
+- Live QA established the concrete responsive defect: at 390 pixels the horizontal settings navigation hides the active Export / Import section off-screen. Desktop export/import remained functional with no current console error; an ordinary user correctly received 403 from the operator-only backup route.
+- Preserved the separate capability boundaries: `/settings/export` remains scoped to the authorized current workspace, while `/settings/backup` remains limited to the configured, recently password-confirmed application operator. No route, policy, schema, storage protocol, dependency, or database requirement will change.
+- Recorded the approved coordinated two-route “Warm Custody Chain” design in `docs/plans/2026-08-16-data-safety-center-design.md` and the test-first execution sequence in `docs/plans/2026-08-16-data-safety-center-implementation.md`.
+- Activated the repository workflow, brainstorming, frontend-design, UI/UX, web-design, Inertia/Vue, Tailwind CSS, Wayfinder, Laravel, Pest, and TDD guidance. The UI/UX skill’s optional search script is not present in its installed package, so its embedded guidance and the repository design system are the source of truth. Ruflo ToolSearch/MCP tools are not exposed in this session, so no Ruflo execution is claimed.
+
+### Approved Direction
+
+- Replace the clipped mobile settings strip with an accessible current-section dropdown while retaining the desktop vertical navigation and existing capability-aware item list.
+- Give both routes a shared scope/risk language without combining them: workspace transfer uses Select → Review → Confirm and safe authorized download links; application backup uses a verified snapshot inventory and an explicit destructive restore boundary.
+- Preserve Warm Precision tokens, English/Lithuanian/Russian semantic messages, locale-aware dates/numbers, dark mode, reduced motion, visible focus, non-color state cues, 44-pixel targets, and ordinary download semantics.
+
+### Delivered Interface And Authorization
+
+- Replaced the clipped small-screen settings strip with a Reka-backed current-section dropdown while preserving the capability-aware desktop navigation. The trigger exposes its action and current destination, every link uses `aria-current`, controls are at least 44 pixels, and long translated labels wrap instead of truncating.
+- Added a shared typed scope banner that separates current-workspace transfer from application-database recovery through complete text, icons, and static semantic tones.
+- Rebuilt workspace transfer as documented JSON/CSV/Markdown download cards and a Select → Review → Confirm import sequence with file metadata, binary size formatting, progress, validation errors, concise live status, stable cancel/success focus restoration, and matching visual/DOM action order.
+- Preserved the real authorization split: every workspace member can export, but the settings controller derives `canImport` from `WorkspacePolicy::update`; non-managers receive a localized explanation and no active upload controls. The configured operator alone receives the application-backup bridge.
+- Made the transfer boundary explicit before upload: import recreates projects and core task fields, but does not recreate labels, tags, checklists, assignees, attachments, comments, history, members, or workspace settings. No backend format or storage protocol was changed.
+- Rebuilt the operator backup presentation around an application-scope warning, locale-aware verified snapshot inventory, ordinary authorized download links, and explicit destructive restore risk while retaining the existing password confirmation, lock, integrity, rollback, and opaque-ID boundaries.
+- Added complete semantic English, Lithuanian, and Russian copy, including locale-aware backup plurals, and preserved the fixed Warm Precision light/dark/system design without a dependency, migration, or alternate frontend stack.
+
+### Correctness And Independent Review
+
+- Added typed pure helpers and discovered direct TypeScript tests for import stages, binary sizes, locale plural categories, and successful standalone HTTP response recognition.
+- Confirmed from the installed Inertia 3.6.1 implementation and version-specific documentation that `useHttp` resolves HTTP 422 after populating validation errors. Both preview and execution now guard the resolved response before advancing, announcing success, or clearing the reviewed file.
+- Added owner/member page-prop coverage and a separate restricted presentation so read-only members never upload a file only to receive a predictable authorization failure.
+- The first independent read-only review found the false-success 422 path, misleading full-transfer copy, missing import capability state, Russian few-form grammar, and mobile label truncation. All were fixed with failing-first regressions.
+- The fix-only review confirmed no remaining Critical, High, or Medium findings and made no edits.
+
+### Exact Verification
+
+- Focused transfer/backup/data-safety/design/localization gate: 177 tests / 1,116 assertions passed. Full `php artisan test --parallel --compact`: 693 tests / 9,799 assertions passed.
+- `npm run test:frontend`: 31/31 passed, including four Data Safety behavior cases visibly discovered by the standard command.
+- `vendor/bin/pint --dirty --format agent`, Larastan through `composer run types:check -- --memory-limit=1G`, Vue type checking, ESLint, Prettier verification, and `git diff --check` passed.
+- `npm run build`: passed after 3,489 modules in 4.76 seconds; main CSS 162.18 kB / 23.91 kB gzip, app entry 89.59 kB / 23.23 kB gzip, Export 14.10 kB / 4.28 kB gzip, and Backup 6.52 kB / 2.52 kB gzip.
+- `composer validate --strict --no-check-publish`, `composer audit --locked --no-interaction`, and `npm audit --audit-level=low` passed with no vulnerability advisories.
+- `php artisan test --compact --coverage` remains externally blocked because the Herd runtime has no Xdebug or PCOV driver; it exits with `Code coverage driver not available`.
+- Live Herd QA passed at 1,440-pixel desktop, 390-by-844 mobile dark/reduced-motion, forced colors, and simulated long Lithuanian labels with one heading, 44-pixel navigation/controls, zero horizontal overflow, and no current console/page errors. Real JSON preview/cancel restored focus.
+- A final mobile browser regression intercepted execution with a production-shaped HTTP 422: the localized validation error appeared, the selected filename and review preview remained visible, no success toast appeared, page overflow stayed zero, and no page error occurred. Evidence: `data-safety-import-422-mobile-final.png` in the browser QA temporary directory.
+- Recent Laravel Boost browser logs contain only older unrelated entries and no Data Safety Center error.
+
+### Known Limitations
+
+- The local runtime cannot generate a numeric coverage report without Xdebug or PCOV.
+- The configured-operator backup page was not mutated during live QA; ordinary-user denial returned 403, while the authorized inventory, create/download/restore presentation and policy paths are covered by focused tests.
+
+### Git Delivery
+
+- `7838c16` — `docs: design data safety center`.
+- `46c1ce5` — `docs: plan data safety center`.
+- Implementation, documentation-record, and push status are pending the final isolated commits below.

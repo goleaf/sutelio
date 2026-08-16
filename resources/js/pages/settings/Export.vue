@@ -1,25 +1,47 @@
 <script setup lang="ts">
-import { Head, setLayoutProps, useHttp } from '@inertiajs/vue3';
-import { Download, FileCheck2, Upload } from '@lucide/vue';
-import { ref } from 'vue';
+import { Head, Link, setLayoutProps, useHttp, usePage } from '@inertiajs/vue3';
+import {
+    Braces,
+    Check,
+    CircleAlert,
+    Download,
+    FileCheck2,
+    FileText,
+    LockKeyhole,
+    Table2,
+    Upload,
+} from '@lucide/vue';
+import type { LucideIcon } from '@lucide/vue';
+import { computed, nextTick, ref } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
 import InputError from '@/components/InputError.vue';
+import {
+    formatDataSize,
+    hasSuccessfulHttpResponse,
+    importStage,
+} from '@/components/settings/data/data-safety';
+import type {
+    ExportFormat,
+    ImportFormat,
+} from '@/components/settings/data/data-safety';
+import DataScopeBanner from '@/components/settings/data/DataScopeBanner.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
+    CardDescription,
     CardHeader,
     CardTitle,
-    CardDescription,
 } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import { exportMethod, importMethod } from '@/routes';
+import { edit as editBackup } from '@/routes/backup';
 import { preview as importPreview } from '@/routes/import';
 import type { SettingsLayoutProps } from '@/types';
 import type { Workspace } from '@/types/models';
 
-type ImportFormat = 'json' | 'csv';
 type ImportPayload = { file: File | null; format: ImportFormat };
 type ImportSummary = { version: number; projects: number; todos: number };
 type ImportPreview = ImportSummary & { format: ImportFormat };
@@ -28,12 +50,54 @@ type ImportResponse = {
     imported: ImportSummary | { version: number; todos_imported: number };
 };
 
-const props = defineProps<{ workspace: Workspace }>();
+const props = defineProps<{ canImport: boolean; workspace: Workspace }>();
+const page = usePage();
 const toast = useToast();
 const { formatNumber, t } = useUi();
-const importFormats: ImportFormat[] = ['json', 'csv'];
+const exportFormats: Array<{
+    description: string;
+    icon: LucideIcon;
+    label: string;
+    value: ExportFormat;
+}> = [
+    {
+        value: 'json',
+        label: t('settings.export.formats.json_label'),
+        description: t('settings.export.formats.json_description'),
+        icon: Braces,
+    },
+    {
+        value: 'csv',
+        label: t('settings.export.formats.csv_label'),
+        description: t('settings.export.formats.csv_description'),
+        icon: Table2,
+    },
+    {
+        value: 'markdown',
+        label: t('settings.export.formats.markdown_label'),
+        description: t('settings.export.formats.markdown_description'),
+        icon: FileText,
+    },
+];
+const importFormats: Array<{
+    description: string;
+    label: string;
+    value: ImportFormat;
+}> = [
+    {
+        value: 'json',
+        label: t('settings.export.import_json'),
+        description: t('settings.export.import_json_description'),
+    },
+    {
+        value: 'csv',
+        label: t('settings.export.import_csv'),
+        description: t('settings.export.import_csv_description'),
+    },
+];
 const selectedImportFile = ref<File | null>(null);
 const selectedImportFormat = ref<ImportFormat | null>(null);
+const primaryImportInput = ref<HTMLInputElement | null>(null);
 const preview = ref<ImportPreview | null>(null);
 const previewRequest = useHttp<ImportPayload, ImportPreviewResponse>({
     file: null,
@@ -43,6 +107,13 @@ const importRequest = useHttp<ImportPayload, ImportResponse>({
     file: null,
     format: 'json',
 });
+const currentImportStage = computed(() =>
+    importStage({
+        previewing: previewRequest.processing,
+        importing: importRequest.processing,
+        hasPreview: preview.value !== null,
+    }),
+);
 
 setLayoutProps<SettingsLayoutProps>({
     settingsEyebrow: t('account.menu.settings'),
@@ -50,19 +121,46 @@ setLayoutProps<SettingsLayoutProps>({
     settingsDescription: t('settings.export.description'),
 });
 
-function exportData(format: string) {
-    window.location.href = exportMethod([props.workspace.id, format]).url;
+function announceExport(format: ExportFormat): void {
     toast.success(
         t('settings.export.exporting', { format: format.toUpperCase() }),
     );
 }
 
-function clearImportSelection(): void {
+function capturePrimaryImportInput(
+    element: Element | ComponentPublicInstance | null,
+): void {
+    if (element instanceof HTMLInputElement) {
+        primaryImportInput.value = element;
+    }
+}
+
+async function clearImportSelection(restoreFocus = false): Promise<void> {
     selectedImportFile.value = null;
     selectedImportFormat.value = null;
     preview.value = null;
     previewRequest.resetAndClearErrors();
     importRequest.resetAndClearErrors();
+
+    if (restoreFocus) {
+        await nextTick();
+        primaryImportInput.value?.focus();
+    }
+}
+
+function importStepState(index: number): 'complete' | 'current' | 'pending' {
+    const currentIndex =
+        currentImportStage.value === 'select'
+            ? 0
+            : currentImportStage.value === 'importing'
+              ? 2
+              : 1;
+
+    if (index < currentIndex) {
+        return 'complete';
+    }
+
+    return index === currentIndex ? 'current' : 'pending';
 }
 
 async function handleImport(event: Event, format: ImportFormat): Promise<void> {
@@ -70,6 +168,7 @@ async function handleImport(event: Event, format: ImportFormat): Promise<void> {
 
     if (
         !input.files?.length ||
+        !props.canImport ||
         previewRequest.processing ||
         importRequest.processing
     ) {
@@ -90,6 +189,15 @@ async function handleImport(event: Event, format: ImportFormat): Promise<void> {
         const response = await previewRequest.post(
             importPreview(props.workspace.id).url,
         );
+
+        if (!hasSuccessfulHttpResponse(response, previewRequest.hasErrors)) {
+            if (!previewRequest.hasErrors) {
+                toast.error(t('common.errors.generic'));
+            }
+
+            return;
+        }
+
         preview.value = response.preview;
     } catch {
         if (!previewRequest.hasErrors) {
@@ -103,6 +211,7 @@ async function confirmImport(): Promise<void> {
         !selectedImportFile.value ||
         !selectedImportFormat.value ||
         !preview.value ||
+        !props.canImport ||
         importRequest.processing
     ) {
         return;
@@ -112,9 +221,20 @@ async function confirmImport(): Promise<void> {
     importRequest.format = selectedImportFormat.value;
 
     try {
-        await importRequest.post(importMethod(props.workspace.id).url);
+        const response = await importRequest.post(
+            importMethod(props.workspace.id).url,
+        );
+
+        if (!hasSuccessfulHttpResponse(response, importRequest.hasErrors)) {
+            if (!importRequest.hasErrors) {
+                toast.error(t('common.errors.generic'));
+            }
+
+            return;
+        }
+
         toast.success(t('settings.export.import_success'));
-        clearImportSelection();
+        await clearImportSelection(true);
     } catch {
         if (!importRequest.hasErrors) {
             toast.error(t('common.errors.generic'));
@@ -125,7 +245,21 @@ async function confirmImport(): Promise<void> {
 
 <template>
     <Head :title="t('settings.export.title')" />
+
     <div class="space-y-6">
+        <DataScopeBanner
+            scope="workspace"
+            :label="t('settings.export.scope_label')"
+            :title="t('settings.export.scope_title')"
+            :description="
+                t('settings.export.scope_description', {
+                    workspace: workspace.name,
+                })
+            "
+        >
+            <template #status>{{ t('settings.export.scope_status') }}</template>
+        </DataScopeBanner>
+
         <Card>
             <CardHeader>
                 <CardTitle>{{ t('settings.export.export_title') }}</CardTitle>
@@ -135,18 +269,38 @@ async function confirmImport(): Promise<void> {
             </CardHeader>
             <CardContent class="grid gap-3 sm:grid-cols-3">
                 <Button
-                    v-for="format in ['json', 'csv', 'markdown']"
-                    :key="format"
+                    v-for="format in exportFormats"
+                    :key="format.value"
+                    :as-child="true"
                     variant="outline"
-                    class="min-h-20 justify-start rounded-2xl bg-muted/20 px-4 hover:border-orange-500/25 hover:bg-orange-500/[0.05]"
-                    @click="exportData(format)"
+                    class="h-auto min-h-24 justify-start rounded-2xl bg-muted/20 p-0 text-left whitespace-normal hover:border-orange-500/25 hover:bg-orange-500/[0.05]"
                 >
-                    <span
-                        class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                    <a
+                        :href="
+                            exportMethod([props.workspace.id, format.value]).url
+                        "
+                        class="flex h-full w-full items-start gap-3 px-4 py-4"
+                        @click="announceExport(format.value)"
                     >
-                        <Download class="size-4" aria-hidden="true" />
-                    </span>
-                    <span class="font-semibold uppercase">{{ format }}</span>
+                        <span
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                        >
+                            <component
+                                :is="format.icon"
+                                class="size-4"
+                                aria-hidden="true"
+                            />
+                        </span>
+                        <span class="min-w-0">
+                            <span class="block font-semibold">{{
+                                format.label
+                            }}</span>
+                            <span
+                                class="mt-1 block text-xs leading-5 text-muted-foreground"
+                                >{{ format.description }}</span
+                            >
+                        </span>
+                    </a>
                 </Button>
             </CardContent>
         </Card>
@@ -158,12 +312,65 @@ async function confirmImport(): Promise<void> {
                     t('settings.export.import_description')
                 }}</CardDescription>
             </CardHeader>
-            <CardContent class="space-y-4">
+            <CardContent v-if="canImport" class="space-y-5">
+                <ol
+                    class="grid grid-cols-3 gap-2"
+                    :aria-label="t('settings.export.import_title')"
+                >
+                    <li
+                        v-for="(step, index) in [
+                            t('settings.export.steps.select'),
+                            t('settings.export.steps.review'),
+                            t('settings.export.steps.confirm'),
+                        ]"
+                        :key="step"
+                        class="min-w-0"
+                    >
+                        <div
+                            :class="[
+                                'flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-center text-[10px] leading-tight font-medium transition-colors motion-reduce:transition-none sm:min-h-11 sm:flex-row sm:justify-start sm:gap-2 sm:px-3 sm:text-left sm:text-xs',
+                                importStepState(index) === 'current'
+                                    ? 'border-orange-500/30 bg-orange-500/[0.07] text-orange-900 dark:text-orange-100'
+                                    : importStepState(index) === 'complete'
+                                      ? 'border-emerald-500/25 bg-emerald-500/[0.06] text-emerald-900 dark:text-emerald-100'
+                                      : 'border-border/70 bg-muted/30 text-muted-foreground',
+                            ]"
+                            :aria-current="
+                                importStepState(index) === 'current'
+                                    ? 'step'
+                                    : undefined
+                            "
+                        >
+                            <span
+                                class="flex size-6 shrink-0 items-center justify-center rounded-full bg-background text-[11px] font-semibold ring-1 ring-border/70"
+                            >
+                                <Check
+                                    v-if="importStepState(index) === 'complete'"
+                                    class="size-3.5"
+                                    aria-hidden="true"
+                                />
+                                <span v-else>{{ index + 1 }}</span>
+                            </span>
+                            <span class="break-words">{{ step }}</span>
+                        </div>
+                    </li>
+                </ol>
+
+                <div
+                    class="flex gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-3 text-sm text-muted-foreground"
+                >
+                    <CircleAlert
+                        class="mt-0.5 size-4 shrink-0 text-orange-700 dark:text-orange-300"
+                        aria-hidden="true"
+                    />
+                    <p>{{ t('settings.export.import_limitations') }}</p>
+                </div>
+
                 <div class="grid gap-3 sm:grid-cols-2">
                     <label
                         v-for="format in importFormats"
-                        :key="format"
-                        class="inline-flex min-h-20 cursor-pointer items-center gap-3 rounded-2xl border border-border bg-muted/20 px-4 text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-orange-500 hover:border-orange-500/25 hover:bg-orange-500/[0.05] motion-reduce:transition-none"
+                        :key="format.value"
+                        class="inline-flex min-h-24 cursor-pointer items-start gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-orange-500 hover:border-orange-500/25 hover:bg-orange-500/[0.05] motion-reduce:transition-none"
                         :class="{
                             'pointer-events-none opacity-50':
                                 previewRequest.processing ||
@@ -175,31 +382,44 @@ async function confirmImport(): Promise<void> {
                         "
                         :aria-busy="
                             previewRequest.processing &&
-                            selectedImportFormat === format
+                            selectedImportFormat === format.value
                         "
                     >
                         <input
+                            :ref="
+                                format.value === 'json'
+                                    ? capturePrimaryImportInput
+                                    : undefined
+                            "
                             type="file"
-                            :accept="`.${format}`"
+                            :accept="`.${format.value}`"
                             class="sr-only"
                             :disabled="
                                 previewRequest.processing ||
                                 importRequest.processing
                             "
-                            @change="handleImport($event, format)"
+                            @change="handleImport($event, format.value)"
                         />
                         <span
-                            class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
                         >
                             <Spinner
                                 v-if="
                                     previewRequest.processing &&
-                                    selectedImportFormat === format
+                                    selectedImportFormat === format.value
                                 "
                             />
                             <Upload v-else class="size-4" aria-hidden="true" />
                         </span>
-                        {{ t(`settings.export.import_${format}`) }}
+                        <span class="min-w-0">
+                            <span class="block font-semibold">{{
+                                format.label
+                            }}</span>
+                            <span
+                                class="mt-1 block text-xs leading-5 text-muted-foreground"
+                                >{{ format.description }}</span
+                            >
+                        </span>
                     </label>
                 </div>
 
@@ -214,6 +434,15 @@ async function confirmImport(): Promise<void> {
                     :aria-label="t('settings.export.upload_progress')"
                 />
 
+                <p class="sr-only" aria-live="polite">
+                    <template v-if="currentImportStage === 'previewing'">
+                        {{ t('settings.export.previewing') }}
+                    </template>
+                    <template v-else-if="currentImportStage === 'importing'">
+                        {{ t('settings.export.importing') }}
+                    </template>
+                </p>
+
                 <InputError
                     :message="
                         previewRequest.errors.file || importRequest.errors.file
@@ -221,82 +450,175 @@ async function confirmImport(): Promise<void> {
                 />
 
                 <section
-                    v-if="preview"
-                    class="rounded-2xl border border-orange-500/20 bg-orange-500/[0.05] p-4"
-                    aria-live="polite"
+                    v-if="selectedImportFile"
+                    class="rounded-2xl border border-border/80 bg-background p-4"
+                    :aria-labelledby="
+                        preview ? 'import-preview-title' : undefined
+                    "
                 >
-                    <div class="flex items-start gap-3">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
                         <span
                             class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
                         >
                             <FileCheck2 class="size-4" aria-hidden="true" />
                         </span>
-                        <div class="min-w-0 flex-1">
-                            <h3 class="font-semibold">
-                                {{ t('settings.export.preview_title') }}
-                            </h3>
-                            <p
-                                class="mt-1 truncate text-sm text-muted-foreground"
-                            >
-                                {{ selectedImportFile?.name }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-3">
-                        <div class="rounded-xl bg-background/70 p-3">
-                            <dt class="text-muted-foreground">
-                                {{ t('settings.export.preview_projects') }}
-                            </dt>
-                            <dd class="mt-1 text-lg font-semibold">
-                                {{ formatNumber(preview.projects) }}
-                            </dd>
-                        </div>
-                        <div class="rounded-xl bg-background/70 p-3">
-                            <dt class="text-muted-foreground">
-                                {{ t('settings.export.preview_tasks') }}
-                            </dt>
-                            <dd class="mt-1 text-lg font-semibold">
-                                {{ formatNumber(preview.todos) }}
-                            </dd>
-                        </div>
-                        <div class="rounded-xl bg-background/70 p-3">
-                            <dt class="text-muted-foreground">
-                                {{ t('settings.export.preview_version') }}
-                            </dt>
-                            <dd class="mt-1 text-lg font-semibold">
-                                {{ formatNumber(preview.version) }}
-                            </dd>
-                        </div>
-                    </dl>
-
-                    <p class="mt-4 text-sm text-muted-foreground">
-                        {{ t('settings.export.preview_description') }}
-                    </p>
-
-                    <div
-                        class="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
-                    >
+                        <dl
+                            class="grid min-w-0 flex-1 gap-3 text-sm sm:grid-cols-3"
+                        >
+                            <div class="min-w-0">
+                                <dt class="text-xs text-muted-foreground">
+                                    {{ t('settings.export.file_name') }}
+                                </dt>
+                                <dd class="mt-1 truncate font-medium">
+                                    {{ selectedImportFile?.name }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted-foreground">
+                                    {{ t('settings.export.file_size') }}
+                                </dt>
+                                <dd class="mt-1 font-medium">
+                                    {{
+                                        formatDataSize(
+                                            selectedImportFile.size,
+                                            formatNumber,
+                                        )
+                                    }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="text-xs text-muted-foreground">
+                                    {{ t('settings.export.file_format') }}
+                                </dt>
+                                <dd class="mt-1 font-medium uppercase">
+                                    {{ selectedImportFormat }}
+                                </dd>
+                            </div>
+                        </dl>
                         <Button
                             type="button"
                             variant="ghost"
-                            :disabled="importRequest.processing"
-                            @click="clearImportSelection"
+                            class="min-h-11 shrink-0"
+                            :disabled="
+                                previewRequest.processing ||
+                                importRequest.processing
+                            "
+                            @click="clearImportSelection(true)"
                         >
-                            {{ t('common.actions.cancel') }}
-                        </Button>
-                        <Button
-                            type="button"
-                            :disabled="importRequest.processing"
-                            :aria-busy="importRequest.processing"
-                            @click="confirmImport"
-                        >
-                            <Spinner v-if="importRequest.processing" />
-                            <Upload v-else class="size-4" aria-hidden="true" />
-                            {{ t('settings.export.confirm_import') }}
+                            {{ t('settings.export.clear_file') }}
                         </Button>
                     </div>
+
+                    <div
+                        v-if="preview"
+                        class="mt-4 border-t border-border/70 pt-4"
+                    >
+                        <h3 id="import-preview-title" class="font-semibold">
+                            {{ t('settings.export.preview_title') }}
+                        </h3>
+                        <p class="mt-1 text-sm text-muted-foreground">
+                            {{ t('settings.export.preview_description') }}
+                        </p>
+
+                        <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                            <div class="rounded-xl bg-muted/45 p-3">
+                                <dt class="text-muted-foreground">
+                                    {{ t('settings.export.preview_projects') }}
+                                </dt>
+                                <dd class="mt-1 text-lg font-semibold">
+                                    {{ formatNumber(preview.projects) }}
+                                </dd>
+                            </div>
+                            <div class="rounded-xl bg-muted/45 p-3">
+                                <dt class="text-muted-foreground">
+                                    {{ t('settings.export.preview_tasks') }}
+                                </dt>
+                                <dd class="mt-1 text-lg font-semibold">
+                                    {{ formatNumber(preview.todos) }}
+                                </dd>
+                            </div>
+                            <div class="rounded-xl bg-muted/45 p-3">
+                                <dt class="text-muted-foreground">
+                                    {{ t('settings.export.preview_version') }}
+                                </dt>
+                                <dd class="mt-1 text-lg font-semibold">
+                                    {{ formatNumber(preview.version) }}
+                                </dd>
+                            </div>
+                        </dl>
+
+                        <div
+                            class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end"
+                        >
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                class="min-h-11"
+                                :disabled="importRequest.processing"
+                                @click="clearImportSelection(true)"
+                            >
+                                {{ t('common.actions.cancel') }}
+                            </Button>
+                            <Button
+                                type="button"
+                                class="min-h-11"
+                                :disabled="importRequest.processing"
+                                :aria-busy="importRequest.processing"
+                                @click="confirmImport"
+                            >
+                                <Spinner v-if="importRequest.processing" />
+                                <Upload
+                                    v-else
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
+                                {{ t('settings.export.confirm_import') }}
+                            </Button>
+                        </div>
+                    </div>
                 </section>
+            </CardContent>
+            <CardContent v-else>
+                <div
+                    class="flex gap-3 rounded-xl border border-border/80 bg-muted/35 p-4"
+                >
+                    <span
+                        class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-background text-muted-foreground ring-1 ring-border/70"
+                    >
+                        <LockKeyhole class="size-4" aria-hidden="true" />
+                    </span>
+                    <div class="min-w-0">
+                        <h3 class="font-semibold">
+                            {{ t('settings.export.import_restricted_title') }}
+                        </h3>
+                        <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                            {{
+                                t(
+                                    'settings.export.import_restricted_description',
+                                )
+                            }}
+                        </p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+
+        <Card v-if="page.props.capabilities.manageDatabaseBackups">
+            <CardHeader>
+                <CardTitle>{{
+                    t('settings.export.operator_backup_title')
+                }}</CardTitle>
+                <CardDescription>{{
+                    t('settings.export.operator_backup_description')
+                }}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button :as-child="true" variant="outline" class="min-h-11">
+                    <Link :href="editBackup.url()">
+                        <Download class="size-4" aria-hidden="true" />
+                        {{ t('settings.export.operator_backup_action') }}
+                    </Link>
+                </Button>
             </CardContent>
         </Card>
     </div>

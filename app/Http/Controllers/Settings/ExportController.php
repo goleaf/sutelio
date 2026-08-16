@@ -22,6 +22,7 @@ class ExportController extends Controller
 
         return Inertia::render('settings/Export', [
             'workspace' => $workspace,
+            'canImport' => $user->can('update', $workspace),
         ]);
     }
 }

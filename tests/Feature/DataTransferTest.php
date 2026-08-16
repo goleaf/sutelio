@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
@@ -161,6 +162,34 @@ test('settings import UI requires a successful preview before execution', functi
         ->toContain('confirmImport')
         ->toContain("t('settings.export.preview_title')")
         ->toContain("t('settings.export.confirm_import')");
+});
+
+test('settings workspace transfer exposes import access only to workspace managers', function () {
+    [$owner, $workspace] = createDataTransferWorkspace();
+    $member = User::factory()->create();
+    WorkspaceMember::query()->create([
+        'workspace_id' => $workspace->id,
+        'user_id' => $member->id,
+        'role' => 'member',
+    ]);
+
+    $this->actingAs($owner)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('export.edit'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('settings/Export')
+            ->where('workspace.id', $workspace->id)
+            ->where('canImport', true));
+
+    $this->actingAs($member)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('export.edit'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('settings/Export')
+            ->where('workspace.id', $workspace->id)
+            ->where('canImport', false));
 });
 
 test('workspace import rejects files larger than five mebibytes', function () {

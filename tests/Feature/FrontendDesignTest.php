@@ -750,7 +750,7 @@ test('segmented and inline controls respect reduced motion', function (string $c
 })->with([
     'appearance tabs' => 'components/AppearanceTabs.vue',
     'shared segmented button' => 'components/shared/WorkspaceSegmentedButton.vue',
-    'settings navigation' => 'layouts/settings/Layout.vue',
+    'settings navigation' => 'components/settings/SettingsSectionMenu.vue',
     'two factor challenge toggle' => 'pages/auth/TwoFactorChallenge.vue',
 ]);
 
