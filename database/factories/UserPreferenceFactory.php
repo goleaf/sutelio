@@ -16,6 +16,8 @@ class UserPreferenceFactory extends Factory
 
     public function definition(): array
     {
+        $now = now();
+
         return [
             'user_id' => UserFactory::new(),
             'timezone' => fake()->timezone(),
@@ -25,10 +27,21 @@ class UserPreferenceFactory extends Factory
             'theme' => 'system',
             'default_view' => 'list',
             'start_page' => 'dashboard',
+            'week_start' => 'sunday',
             'notification_email' => true,
             'notification_browser' => true,
             'notification_in_app' => true,
+            ...UserPreference::pendingOnboardingDefaults(),
+            'onboarding_step' => 'results',
+            'onboarding_started_at' => $now,
+            'onboarding_completed_at' => $now,
+            'onboarding_checklist_dismissed_at' => $now,
         ];
+    }
+
+    public function pendingOnboarding(): static
+    {
+        return $this->state(fn (): array => UserPreference::pendingOnboardingDefaults());
     }
 
     public function lithuanian(): static

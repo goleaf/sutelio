@@ -4465,3 +4465,23 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - Activated the required writing-plans workflow after design approval and mapped persistence, verified-browser entry, scoped/idempotent domain composition, real week-start behavior, responsive Inertia UI, Dashboard continuation, review, canonical docs, and Android APK delivery into atomic RED/GREEN tasks.
 - The implementation plan is recorded in `docs/plans/2026-08-16-guided-onboarding-implementation.md`. This planning slice changes no source, schema, route, package, runtime data, generated asset, or APK.
 - The writing-plans self-review confirmed complete spec-to-task coverage and consistent step/state/route/type names. Placeholder scanning, Prettier verification for the plan/progress files, and `git diff --check` passed; staged diff inspection, the plan commit, and push follow in this slice.
+
+## Guided Onboarding Implementation — 2026-08-16
+
+### Phase 1 Preflight: Persistence And Registration
+
+- Began implementation on clean `main` at `c4c72ec`, synchronized with `origin/main`, after the approved design and implementation-plan commits.
+- Activated executing-plans, test-driven-development, Pest, Laravel best practices, Fortify, database design, Inertia Vue, Wayfinder, Tailwind CSS, frontend-design, and UI/UX Pro Max for their relevant boundaries. The repository's explicit `main` requirement overrides executing-plans' generic worktree preference.
+- UI/UX Pro Max's bundled instructions reference a `scripts/search.py` asset that is absent from both installed skill copies. Its documented accessibility, touch, responsive, motion, contrast, and Vue guidance remains applicable; no dependency or generated design-system folder will be introduced as a workaround.
+- Reconfirmed the live SQLite `user_preferences` schema and searched installed-version Laravel 13/Fortify migration, registration, middleware, Inertia validation, and Wayfinder documentation before code changes.
+- Phase 1 will begin with an observed failing Pest contract, then add one new populated-safe reversible SQLite migration, stable onboarding step/value semantics, complete-by-default factory state, and explicitly pending real Fortify registrations.
+- No existing migration will be rewritten. The phase will preserve the existing Fortify redirect, SQLite-only runtime, PHP 8.4 NativePHP compatibility, and all unrelated work.
+
+### Phase 1 Delivered: Persistence And Registration
+
+- Added a stable eight-case `OnboardingStep` enum with deterministic positions and rounded progress, then extended `user_preferences` with Sunday/Monday week start plus versioned, resumable onboarding state and lifecycle timestamps.
+- Added the bounded `onboarding_operations` idempotency ledger. The populated-data migration marks every existing preference row complete and dismisses its checklist while assigning a unique run UUID; ordinary factories mirror that legacy-safe state.
+- Kept only real Fortify registrations pending by composing the existing canonical preference defaults with explicit onboarding defaults. The existing successful registration redirect remains unchanged.
+- The observed RED gate reported one failure and four errors for the absent schema, enum, model predicate, and pending factory state. The completed focused gate passes 21 tests / 125 assertions across onboarding persistence, registration, settings preferences, and database schema integrity.
+- A clean in-memory SQLite migration ran all 35 migrations successfully, including the populated-safe onboarding migration. Pint passed after ordering one import, and Larastan passed with zero errors after the enum helper was aligned with Eloquent's runtime cast contract.
+- No route, controller, frontend, translation, dependency, host data, or generated asset changed in this phase. Verified-browser entry routing is the next isolated TDD slice.

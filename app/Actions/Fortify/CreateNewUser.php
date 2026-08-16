@@ -33,7 +33,10 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => $input['password'],
             ]);
 
-            $user->preferences()->create(UserPreference::defaults());
+            $user->preferences()->create([
+                ...UserPreference::defaults(),
+                ...UserPreference::pendingOnboardingDefaults(),
+            ]);
 
             return $user;
         });

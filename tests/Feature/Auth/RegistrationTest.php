@@ -26,5 +26,11 @@ test('new users can register', function () {
         'user_id' => auth()->id(),
         'language' => 'en',
         'timezone' => 'UTC',
+        'week_start' => 'sunday',
+        'onboarding_step' => 'welcome',
+        'onboarding_completed_at' => null,
+        'onboarding_skipped_at' => null,
     ]);
+
+    expect(auth()->user()?->preferences()->value('onboarding_run_id'))->not->toBeNull();
 });
