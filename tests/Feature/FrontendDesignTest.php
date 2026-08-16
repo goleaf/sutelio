@@ -16,9 +16,17 @@ test('primary workspace pages use the shared warm precision header', function (s
     'projects' => 'projects/Index.vue',
     'tasks' => 'tasks/Index.vue',
     'task detail' => 'tasks/Show.vue',
-    'project detail' => 'projects/Show.vue',
     'workspaces' => 'workspaces/Index.vue',
 ]);
+
+test('project operations compose the shared warm precision header', function () {
+    expect(File::get(resource_path('js/pages/projects/Show.vue')))
+        ->toContain('ProjectOperationsHeader')
+        ->toContain('bg-muted/20')
+        ->toContain('max-w-app')
+        ->and(File::get(resource_path('js/components/project/ProjectOperationsHeader.vue')))
+        ->toContain('WorkspacePageHeader');
+});
 
 test('dashboard renders the complete workspace command center supplied by its page props', function () {
     $source = File::get(resource_path('js/pages/Dashboard.vue'));
@@ -86,25 +94,41 @@ test('every active page header action uses the shared large button contract', fu
 })->with([
     'notifications' => ['notifications/Index.vue', 1],
     'projects' => ['projects/Index.vue', 1],
-    'project detail' => ['projects/Show.vue', 5],
     'tasks' => ['tasks/Index.vue', 1],
     'task detail' => ['tasks/Show.vue', 1],
     'workspaces' => ['workspaces/Index.vue', 1],
 ]);
 
+test('project operations keep only primary and overflow actions in the header action group', function () {
+    $source = File::get(resource_path('js/components/project/ProjectOperationsHeader.vue'));
+    $actions = Str::betweenFirst(
+        $source,
+        '<template #actions>',
+        '</template>',
+    );
+
+    expect(substr_count($actions, 'size="lg"'))
+        ->toBe(2)
+        ->and($source)
+        ->toContain('<template #back>')
+        ->toContain('DropdownMenu');
+});
+
 test('header mutations expose shared inert loading states', function () {
     $notifications = File::get(resource_path('js/pages/notifications/Index.vue'));
     $project = File::get(resource_path('js/pages/projects/Show.vue'));
+    $projectHeader = File::get(resource_path('js/components/project/ProjectOperationsHeader.vue'));
     $task = File::get(resource_path('js/components/task/TaskDetailContent.vue'));
 
     expect($notifications)
         ->toContain("import { Spinner } from '@/components/ui/spinner'")
         ->toContain('<Spinner v-if="markingAll" />')
         ->and($project)
-        ->toContain("type ProjectHeaderAction = 'duplicate' | 'archive' | 'restore'")
-        ->toContain('const processingProjectAction = ref<ProjectHeaderAction | null>(null)')
-        ->toContain('v-if="processingProjectAction ===')
-        ->toContain('onFinish: () =>')
+        ->toContain("type ProjectHeaderAction = 'archive' | 'duplicate' | 'restore'")
+        ->toContain('const processingAction = ref<ProjectHeaderAction | null>(null)')
+        ->toContain('finally {')
+        ->and($projectHeader)
+        ->toContain('v-if="processingAction ===')
         ->and($task)
         ->toContain('completionRequest.processing')
         ->toContain('<Spinner v-if="completionRequest.processing" />')
@@ -395,7 +419,7 @@ test('task interfaces use accessible application controls', function () {
         ->and(File::get(resource_path('js/components/task/TaskList.vue')))
         ->toContain('<Checkbox')
         ->not->toContain('type="checkbox"')
-        ->and(File::get(resource_path('js/pages/projects/Show.vue')))
+        ->and(File::get(resource_path('js/components/project/ProjectTaskQueue.vue')))
         ->toContain('<Checkbox')
         ->not->toContain('type="checkbox"');
 });
@@ -409,8 +433,15 @@ test('task rows preserve whole-row selection through a keyboard focusable overla
         ->not->toContain('class="group grid cursor-pointer');
 })->with([
     'task index list' => 'components/task/TaskList.vue',
-    'project task list' => 'pages/projects/Show.vue',
 ]);
+
+test('project task rows use one semantic keyboard target without nested overlays', function () {
+    expect(File::get(resource_path('js/components/project/ProjectTaskQueue.vue')))
+        ->toContain("t('projects.show.actions.open_task'")
+        ->toContain('focus-visible:ring-2')
+        ->toContain('<Checkbox')
+        ->not->toContain('absolute inset-0 z-10');
+});
 
 test('segmented controls use the projects muted and card surface contract', function () {
     expect(File::get(resource_path('js/components/shared/WorkspaceSegmentedControl.vue')))
@@ -800,11 +831,17 @@ test('list pages share the warm precision empty state', function (string $page) 
 })->with([
     'notifications' => 'notifications/Index.vue',
     'projects' => 'projects/Index.vue',
-    'project detail' => 'projects/Show.vue',
     'tasks' => 'tasks/Index.vue',
     'workspaces' => 'workspaces/Index.vue',
     'backups' => 'settings/Backup.vue',
 ]);
+
+test('project operations queue owns the warm precision empty states', function () {
+    expect(File::get(resource_path('js/components/project/ProjectTaskQueue.vue')))
+        ->toContain('EmptyState')
+        ->toContain("t('projects.show.empty_filtered')")
+        ->toContain("t('projects.show.empty')");
+});
 
 test('guest authentication uses the same left rail hierarchy as projects', function () {
     expect(File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue')))

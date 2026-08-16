@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\WorkspaceRole;
 use App\Models\ActivityLog;
 use App\Models\Checklist;
@@ -9,6 +11,8 @@ use App\Models\Todo;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMember;
+use App\Queries\ProjectDetailQuery;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
@@ -144,6 +148,38 @@ test('representative ordered queries use their scoped indexes without unnecessar
         "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 ORDER BY position, id",
         'todos_workspace_project_archive_position_index',
     ],
+    'project tasks by status' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 AND status_id = 'status' ORDER BY position, id LIMIT 25",
+        'todos_workspace_project_archive_status_position_index',
+    ],
+    'project tasks by priority' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 AND priority_id = 'priority' ORDER BY position, id LIMIT 25",
+        'todos_workspace_project_archive_priority_position_index',
+    ],
+    'project tasks by assignee' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 AND assigned_to = 'user' ORDER BY position, id LIMIT 25",
+        'todos_workspace_project_archive_assignee_position_index',
+    ],
+    'project tasks by deadline attention' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 AND completed_at IS NULL AND due_date IS NOT NULL AND due_date <= '2026-08-23' ORDER BY due_date, (SELECT position FROM task_priorities WHERE task_priorities.id = todos.priority_id), position, id LIMIT 5",
+        'todos_workspace_project_archive_completion_due_index',
+        true,
+    ],
+    'project tasks sorted by due date' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 ORDER BY due_date IS NULL, due_date, position, id LIMIT 25",
+        'todos_workspace_project_archive_completion_due_index',
+        true,
+    ],
+    'project tasks sorted by priority definition' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 ORDER BY (SELECT position FROM task_priorities WHERE task_priorities.id = todos.priority_id), position, id LIMIT 25",
+        'todos_workspace_project_archive_priority_position_index',
+        true,
+    ],
+    'project tasks sorted by recent update' => [
+        "SELECT id FROM todos WHERE workspace_id = 'workspace' AND project_id = 'project' AND is_archived = 0 ORDER BY updated_at DESC, id LIMIT 25",
+        'todos_workspace_project_archive_completion_due_index',
+        true,
+    ],
     'calendar' => [
         "SELECT id FROM todos WHERE workspace_id = 'workspace' AND is_archived = 0 AND due_date IS NOT NULL ORDER BY due_date, id",
         'todos_workspace_archive_due_index',
@@ -177,4 +213,49 @@ test('representative ordered queries use their scoped indexes without unnecessar
         "SELECT id FROM notifications WHERE notifiable_type = 'App\\Models\\User' AND notifiable_id = 'user' ORDER BY created_at DESC, id DESC LIMIT 20",
         'notifications_notifiable_created_index',
     ],
+]);
+
+test('project operation sort queries use scoped production indexes', function (string $sort, string $index, bool $allowsTemporarySort = false) {
+    $user = User::factory()->create();
+    $workspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();
+    $project = Project::factory()->for($workspace)->create();
+    Todo::factory()->pending()->for($workspace)->for($project)->create();
+    $connection = DB::connection();
+    $connection->flushQueryLog();
+    $connection->enableQueryLog();
+
+    try {
+        app(ProjectDetailQuery::class)->todos($workspace, $project->id, [
+            'search' => null,
+            'status' => null,
+            'priority' => null,
+            'assignee' => null,
+            'attention' => 'all',
+            'sort' => $sort,
+        ], CarbonImmutable::parse('2026-08-16'));
+
+        $pageQuery = collect($connection->getQueryLog())->first(
+            fn (array $query): bool => str_contains($query['query'], 'order by'),
+        );
+    } finally {
+        $connection->disableQueryLog();
+    }
+
+    expect($pageQuery)->toBeArray();
+
+    $plan = collect(DB::select(
+        "EXPLAIN QUERY PLAN {$pageQuery['query']}",
+        $pageQuery['bindings'],
+    ))->pluck('detail')->implode(' | ');
+
+    expect($plan)->toContain($index);
+
+    if (! $allowsTemporarySort) {
+        expect($plan)->not->toContain('USE TEMP B-TREE FOR ORDER BY');
+    }
+})->with([
+    'position sort' => ['position', 'todos_workspace_project_archive_position_index'],
+    'due-date sort' => ['due_date', 'todos_workspace_project_archive_due_position_index'],
+    'updated sort' => ['updated', 'todos_workspace_project_archive_updated_index'],
+    'priority-definition sort' => ['priority', 'todos_workspace_project_archive_', true],
 ]);

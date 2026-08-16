@@ -30,7 +30,9 @@ class StoreTodoRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'project_id' => [
                 'nullable', 'uuid',
-                Rule::exists('projects', 'id')->where('workspace_id', $workspaceId),
+                Rule::exists('projects', 'id')
+                    ->where('workspace_id', $workspaceId)
+                    ->where('is_archived', 0),
             ],
             'assigned_to' => [
                 'nullable', 'uuid',

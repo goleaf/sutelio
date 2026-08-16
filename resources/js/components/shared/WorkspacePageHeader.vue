@@ -23,12 +23,18 @@ defineProps<{
             class="relative flex flex-col gap-6 px-6 py-7 sm:px-8 lg:flex-row lg:items-end lg:justify-between lg:px-10 lg:py-9"
         >
             <div class="max-w-3xl">
+                <div v-if="$slots.back" class="mb-3">
+                    <slot name="back" />
+                </div>
                 <p
                     class="flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.22em] text-orange-700 uppercase dark:text-orange-300"
                 >
                     <span class="size-1.5 rounded-full bg-orange-500" />
                     {{ eyebrow }}
                 </p>
+                <div v-if="$slots.badges" class="mt-3 flex flex-wrap gap-2">
+                    <slot name="badges" />
+                </div>
                 <h1
                     class="mt-4 text-3xl font-semibold tracking-[-0.04em] text-balance sm:text-4xl"
                 >

@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\ArchiveProject;
 use App\Actions\CreateProject;
 use App\Actions\DuplicateProject;
 use App\Actions\UpdateProject;
+use App\Http\Requests\ProjectShowRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectTaskResource;
 use App\Http\Resources\TaskPriorityResource;
 use App\Http\Resources\TaskStatusResource;
-use App\Http\Resources\TodoResource;
 use App\Models\Project;
 use App\Models\Workspace;
 use App\Queries\ProjectDetailQuery;
@@ -23,20 +26,43 @@ use Inertia\Response;
 class ProjectController extends Controller
 {
     public function show(
-        Request $request,
+        ProjectShowRequest $request,
         Workspace $workspace,
         Project $project,
         ProjectDetailQuery $projectDetailQuery,
     ): Response {
         $this->authorize('view', $project);
+        $filters = $request->filters($workspace);
+        $today = $request->today();
+        $metrics = null;
+        $resolveMetrics = function () use ($projectDetailQuery, $workspace, $project, $today, &$metrics): array {
+            return $metrics ??= $projectDetailQuery->metrics($workspace, $project->id, $today);
+        };
 
         return Inertia::render('projects/Show', [
             'project' => new ProjectResource($project),
-            'todos' => TodoResource::collection(
-                $projectDetailQuery->todos($workspace, $project->id),
-            )->resolve($request),
+            'todos' => Inertia::scroll(fn () => ProjectTaskResource::collection(
+                $projectDetailQuery->todos($workspace, $project->id, $filters, $today),
+            )),
+            'metrics' => $resolveMetrics,
+            'filters' => $request->state(),
+            'today' => $today->toDateString(),
+            'attentionTasks' => fn (): array => [
+                'data' => ProjectTaskResource::collection(
+                    $projectDetailQuery->attentionTasks($workspace, $project->id, $today),
+                )->resolve($request),
+                'total' => $resolveMetrics()['attention'],
+            ],
+            'assignees' => fn (): array => $projectDetailQuery->assignees(
+                $workspace,
+                $filters['assignee'],
+            ),
+            'priorityDistribution' => fn (): array => $projectDetailQuery->priorityDistribution(
+                $workspace,
+                $project->id,
+            ),
             'workspace' => ['id' => $workspace->id],
-            'taskDefinitions' => [
+            'taskDefinitions' => fn (): array => [
                 'statuses' => TaskStatusResource::collection(
                     $projectDetailQuery->statuses($workspace),
                 )->resolve($request),
