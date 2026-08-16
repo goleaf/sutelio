@@ -43,4 +43,4 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 | View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
 | Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
 
-Final `npm run build` transformed 3,468 modules in 5.15 seconds. Application CSS is 154.98 kB (24.23 kB gzip) plus 2.57 kB (0.48 kB gzip) of font CSS, remaining within the baseline envelope while adding shared radius/container/shadow/status tokens and the activity interface.
+Final `npm run build` transformed 3,477 modules in 4.11 seconds. Main application CSS is 159.22 kB (23.65 kB gzip), the application entry is 87.25 kB (22.73 kB gzip), and the project-detail chunk is 90.58 kB (15.93 kB gzip), remaining reviewable while adding the responsive Project Operations Workspace.

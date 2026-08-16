@@ -100,3 +100,11 @@ Requirements: all active requirements, `docs-traceability-001`, `git-delivery-00
 - [x] Commit coherent phase-owned files on `main`, record hashes, push `origin main`, and report the observed result.
 
 Completion is prohibited while an applicable item above remains unchecked unless its requirement is explicitly marked `blocked by external dependency` with current evidence in `docs/known-limitations.md`.
+
+## Post-Modernization Drift Closure — Project Operations
+
+- [x] Implement the accepted Project Operations design/plan with scoped request/query/resource boundaries and bounded Inertia scroll results.
+- [x] Add rollback-safe filter/sort indexes and verify simplified plus production-generated SQLite query plans.
+- [x] Resolve every independent review finding with backend, frontend, localization, lifecycle, timezone, and architecture regressions.
+- [x] Verify responsive desktop/mobile behavior, dark/reduced-motion presentation, URL filtering, clear state, task detail, focus semantics, and zero current browser errors/overflow.
+- [x] Synchronize requirements, performance evidence, current state, changelog, review, plan, and progress records.

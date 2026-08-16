@@ -4000,3 +4000,60 @@ Complete for every repository-controlled requirement. `main` is synchronized wit
 - 1 partially implemented (`sys-runtime-001`) only because NativePHP Mobile 4.2 embeds PHP 8.4 while web/CI runs PHP 8.5.
 - 1 blocked by external dependency (`test-coverage-001`) because Herd has no Xdebug or PCOV driver.
 - 2 not applicable with documented reason (`sys-livewire-001`, `sys-flux-001`) because the governing repository contract requires Inertia/Vue and Flux is neither installed nor licensed.
+
+## Project Operations Workspace
+
+### Status
+
+Implemented, independently reviewed, and verified. The final progress/documentation commit and push are the only remaining delivery bookkeeping at the time this entry is authored.
+
+### Protected Baseline And Decisions
+
+- Began on `main` with a clean tracked tree at `045f4e1`, one commit ahead of `origin/main`; preserved the pre-existing design `6758a46` and implementation-plan `045f4e1` commits.
+- Re-read governing repository and canonical docs, inspected project/task routes, requests, actions, policies, models, schema, factories, seeders, translations, Vue components, tests, and the live SQLite schema before implementation.
+- Preserved the repository-mandated Laravel 13/Inertia 3/Vue 3/TypeScript/Tailwind 4/Wayfinder/Pest/SQLite stack. No package, alternate frontend framework, or second database/cache dependency was added.
+- Laravel Boost version-specific documentation guided Inertia partial reload, manual scroll, cancellation, request validation, and pagination behavior. Ruflo MCP tools were not exposed in this session, so no claim of Ruflo execution is made.
+
+### Delivered Backend And Data Scope
+
+- Added `ProjectShowRequest`, `ProjectTaskResource`, and the focused `ProjectDetailQuery` boundary for normalized URL search/status/priority/assignee/attention/sort state.
+- Scoped every identifier and task read to the authorized routed workspace/project; archived status/priority filters and foreign identifiers fail validation without leaking data.
+- Replaced the unbounded project collection with deterministic 25-row manual Inertia pagination, bounded eager loading, complete-project metrics, five-row attention preview, 100-row assignee cap plus selected member, and complete active/referenced-archived priority distribution.
+- Deferred scroll evaluation so project-only partial reloads execute no task query and matched scroll items by durable `data.id` so reloads preserve loaded context without duplicates.
+- Enforced archived-project task creation server-side, localized built-in row definitions, and serialized the user-preference date boundary so client overdue labels agree with server metrics.
+- Added six rollback-safe workspace/project-leading indexes for status, priority, assignee, completion/deadline, due-date ordering, and updated ordering. Real generated SQL and representative filters are checked with SQLite query plans.
+
+### Delivered Interface
+
+- Split project detail into focused header, pulse, filters, queue, and typed pure-helper modules while reusing existing task detail/create and confirmation components.
+- Added shareable URL filters, request cancellation, duplicate-safe scroll merging, loading/empty/filtered-empty/end states, optimistic deletion context, accurate attention continuation, localized counts, and action-specific feedback.
+- Preserved the fixed Warm Precision design with semantic Tailwind tokens, mobile-first pulse-before-queue reading order, right-rail desktop layout, 44-pixel controls, visible focus, reduced motion, dark mode, non-color state text/icons, and English/Lithuanian/Russian copy.
+
+### Independent Review Resolution
+
+- No critical security, workspace-isolation, rollback, or data-leak issue was found.
+- Fixed every important finding: task-definition localization, archived creation, duplicate desktop submit, eager task queries on unrelated partial reloads, incorrect hidden-attention routing, archived-priority count loss, and browser/server timezone divergence.
+- Preserved the already-published project-index migration unchanged so previously migrated environments do not encounter duplicate-index failures.
+- Added identity-matched scroll merging plus local filter/order/total reconciliation so task mutations neither duplicate rows nor discard loaded pages, and added a stable focus fallback when a reconciled row disappears.
+- Final independent re-review reported no remaining critical, high, or medium findings after production sort-plan coverage and mobile pulse-before-queue order were verified.
+
+### Exact Verification
+
+- Focused Project Operations/page-query/frontend architecture gate: 51 tests and 376 assertions passed after review fixes.
+- Full `php artisan test --compact`: 667 tests / 9,330 assertions passed in 42.685 seconds. Full `php artisan test --compact --parallel`: 667 tests / 9,330 assertions passed in 9.018 seconds.
+- `php artisan test --compact --coverage`: exited with `Code coverage driver not available. Did you install Xdebug or PCOV?`; `test-coverage-001` remains the documented environment-only blocker.
+- `vendor/bin/pint --dirty --format agent`, Larastan level 7 through `composer run types:check`, Vue type checking, ESLint, and Prettier verification passed.
+- `npm run test:frontend`: 23/23 passed. `npm run build`: passed after 3,477 modules in 4.11 seconds; main CSS 159.22 kB / 23.65 kB gzip, app entry 87.25 kB / 22.73 kB gzip, project-detail chunk 90.58 kB / 15.93 kB gzip.
+- Isolated file-backed SQLite verification migrated all 34 migrations, seeded twice, produced 3 users and 25 tasks, returned `ok` from `PRAGMA integrity_check`, and returned no foreign-key violations; the explicit temporary database was removed afterward.
+- Live Herd desktop QA at 1,440 pixels verified the project route, URL search/reload/clear, one-result filtering, task-detail dialog, semantic heading/action structure, and zero horizontal overflow or captured console/page errors.
+- Live Herd mobile QA at 390 by 844 with dark media and reduced motion verified pulse-before-filter/queue DOM order, mobile filter Sheet open/escape close, zero overflow, and no captured console/page errors. Recent Boost logs contain only older unrelated entries and no Project Operations error.
+
+### Git Delivery
+
+- `6758a46` — `docs: design project operations workspace`.
+- `045f4e1` — `docs: plan project operations workspace`.
+- `a983291` — `feat: enhance project operations with detailed task metrics and filtering capabilities`, pushed to `origin/main` by the concurrent repository process while the shared worktree was being verified.
+- `12fae3a` — follow-up removal of an invalid Inertia reload option and corrected sort-plan expectations; local at the time this record is authored.
+- `aac592c` — `fix: preserve project task identity across reloads`; local at the time this record is authored.
+- `4ab3a6e` — `fix: reconcile project task mutations`; local at the time this record is authored.
+- No force push, history rewrite, destructive Git command, secret, generated build output, or unrelated deletion was used.

@@ -37,4 +37,4 @@ The graph covers owner/admin/member permission boundaries, ownership/non-ownersh
 
 Exact tests and final counts are recorded in `docs/compliance-matrix.md` and the final `docs/progress.md` entry.
 
-Final verification covers 17 factory mappings, 17 default factory creates, 30 meaningful states, typed helper state, schema foreign keys, complete demo creation, repeat-run table-count identity, all three locales, owner/admin/member roles, and the production guard. A separate file-backed SQLite run migrated all 33 migrations, seeded twice, produced 3 users/1 workspace/25 tasks, and returned no foreign-key violations.
+Final verification covers 17 factory mappings, 17 default factory creates, 30 meaningful states, typed helper state, schema foreign keys, complete demo creation, repeat-run table-count identity, all three locales, owner/admin/member roles, and the production guard. A separate file-backed SQLite run migrated all 34 migrations, seeded twice, produced 3 users/1 workspace/25 tasks, passed `PRAGMA integrity_check`, and returned no foreign-key violations.

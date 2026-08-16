@@ -20,3 +20,13 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - The activity feature was designed/planned by a concurrent repository workflow and remained uncommitted while the modernization was active. It was preserved, integrated, verified, and committed separately as `494459d`; it is not misrepresented as baseline code.
 - `npm outdated` reports only non-macOS optional binaries, Node 26 types against the intentional Node 22 runtime, and TypeScript 7 before the installed typescript-eslint line declares compatibility. No compatible direct package update remains.
 - The only unexecuted quality measurement is percentage coverage because the installed Herd PHP 8.5 runtime has neither Xdebug nor PCOV. NativePHP's embedded PHP 8.4 and store signing credentials are separate external/runtime limitations, recorded with exact evidence.
+
+## Project Operations Follow-Up Review
+
+- Independent review found no critical security, workspace-isolation, migration-rollback, or data-leak defect.
+- Important findings were fixed: built-in definition names now localize in task rows; archived projects reject direct task creation; desktop filters submit once; non-task partial reloads do not execute task queries; hidden attention work opens the correct category; referenced archived priorities remain visible; and due-state labels use the same server preference-date boundary as metrics.
+- The mobile DOM now places project pulse context before filters and the queue, while desktop CSS positions the pulse in the right rail without changing screen-reader order.
+- Production sort SQL is captured and explained against real generated queries. Position, due-date, and updated sorts avoid unnecessary temporary sorting; the related-definition priority sort remains project-index scoped with a documented bounded SQLite temporary sort.
+- The already-published project-index migration remains unchanged, avoiding a duplicate-index deployment hazard in environments that had already applied it.
+- Scroll reloads match tasks on `data.id`, preventing duplicate merged rows while preserving already loaded page context. Local mutation reconciliation removes rows that leave active filters, reorders changed rows, keeps totals accurate, and restores focus to a stable queue target when the originating row disappears.
+- Final independent re-review reported no remaining critical, high, or medium findings. Focused source, response-metadata, localization, and browser regressions guard the resolved contracts.
