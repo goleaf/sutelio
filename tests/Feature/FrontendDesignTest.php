@@ -165,13 +165,15 @@ test('the shared state surface supports accessible loading and error variants', 
 
 test('remaining active secondary actions reuse the shared large control rhythm', function () {
     $emptyState = File::get(resource_path('js/components/shared/EmptyState.vue'));
-    $calendar = File::get(resource_path('js/pages/calendar/Index.vue'));
+    $calendarNavigator = File::get(
+        resource_path('js/components/calendar/CalendarPeriodNavigator.vue'),
+    );
     $taskDetail = File::get(resource_path('js/components/task/TaskDetailContent.vue'));
 
     expect($emptyState)
         ->toContain('size="lg"')
         ->not->toContain('bg-orange-600 text-white hover:bg-orange-700')
-        ->and($calendar)
+        ->and($calendarNavigator)
         ->toContain('size="lg"')
         ->not->toContain('class="min-h-11 cursor-pointer rounded-xl"')
         ->and(substr_count($taskDetail, 'size="lg"'))
@@ -423,15 +425,15 @@ test('segmented controls use the projects muted and card surface contract', func
         ->not->toContain('bg-white');
 });
 
-test('active filter pages reuse the shared segmented controls', function (string $page) {
-    expect(File::get(resource_path("js/pages/{$page}")))
+test('active filter pages reuse the shared segmented controls', function (string $component) {
+    expect(File::get(resource_path("js/{$component}")))
         ->toContain('WorkspaceSegmentedControl')
         ->toContain('WorkspaceSegmentedButton');
 })->with([
-    'activity filters' => 'activity/Index.vue',
-    'calendar view switcher' => 'calendar/Index.vue',
-    'notification filters' => 'notifications/Index.vue',
-    'project filters' => 'projects/Index.vue',
+    'activity filters' => 'pages/activity/Index.vue',
+    'calendar view switcher' => 'components/calendar/CalendarPeriodNavigator.vue',
+    'notification filters' => 'pages/notifications/Index.vue',
+    'project filters' => 'pages/projects/Index.vue',
 ]);
 
 test('shared segmented controls preserve the projects visual and accessibility contract', function () {
@@ -448,20 +450,58 @@ test('shared segmented controls preserve the projects visual and accessibility c
 });
 
 test('shared segmented filter consumers keep the correct selection semantics', function () {
+    $calendarNavigator = File::get(
+        resource_path('js/components/calendar/CalendarPeriodNavigator.vue'),
+    );
+
     expect(File::get(resource_path('js/pages/projects/Index.vue')))
         ->toContain('role="tab"')
         ->toContain(':aria-selected="activeFilter === filter.value"')
         ->and(File::get(resource_path('js/pages/notifications/Index.vue')))
         ->toContain('role="tab"')
         ->toContain(':aria-selected="filters.status ===')
-        ->and(File::get(resource_path('js/pages/calendar/Index.vue')))
+        ->and($calendarNavigator)
         ->toContain(':label="copy.common.filters"')
         ->toContain('role="tab"')
-        ->toContain(':aria-selected="view === option"')
+        ->toContain(':aria-selected="calendar.view === option"')
         ->and(File::get(resource_path('js/pages/activity/Index.vue')))
         ->toContain('role="group"')
         ->toContain('vertical')
         ->toContain(':aria-pressed="activeFilter === filter.value"');
+});
+
+test('calendar planning workspace uses URL state and focused accessible components', function () {
+    $page = File::get(resource_path('js/pages/calendar/Index.vue'));
+    $navigator = File::get(resource_path('js/components/calendar/CalendarPeriodNavigator.vue'));
+    $month = File::get(resource_path('js/components/calendar/CalendarMonthGrid.vue'));
+    $attention = File::get(resource_path('js/components/calendar/CalendarAttentionRail.vue'));
+
+    expect($page)
+        ->toContain('router')
+        ->toContain("import { calendar as calendarRoute } from '@/routes'")
+        ->toContain('CalendarPeriodNavigator')
+        ->toContain('CalendarMonthGrid')
+        ->toContain('CalendarWeekView')
+        ->toContain('CalendarAgendaView')
+        ->toContain('CalendarAttentionRail')
+        ->toContain('preserveScroll: true')
+        ->toContain('replace: true')
+        ->not->toContain('const currentDate = ref(new Date())')
+        ->not->toContain("const view = ref<CalendarView>('month')")
+        ->and($navigator)
+        ->toContain('aria-busy')
+        ->toContain('min-h-11')
+        ->toContain('focus-visible:ring-orange-500')
+        ->toContain('motion-reduce:transition-none')
+        ->and($month)
+        ->toContain('md:hidden')
+        ->toContain('md:grid')
+        ->toContain('min-h-11')
+        ->toContain('prefetch')
+        ->and($attention)
+        ->toContain('todoIndex')
+        ->toContain('overdue: true')
+        ->toContain('prefetch');
 });
 
 test('notification surfaces expose server pagination direct links and honest browser limits', function () {

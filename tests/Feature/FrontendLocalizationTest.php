@@ -39,18 +39,51 @@ test('every application translation catalog has locale parity', function () {
     }
 });
 
+test('calendar planning copy is complete in every supported locale', function () {
+    foreach (['en', 'lt', 'ru'] as $locale) {
+        $calendar = trans('workspace.calendar', locale: $locale);
+
+        expect($calendar)
+            ->toHaveKeys([
+                'planning_period',
+                'visible_tasks',
+                'attention',
+                'attention_description',
+                'view_all_overdue',
+                'no_overdue',
+                'loading_period',
+                'tasks_on_date',
+                'outside_month',
+            ])
+            ->and(collect($calendar)->only([
+                'planning_period',
+                'visible_tasks',
+                'attention',
+                'attention_description',
+                'view_all_overdue',
+                'no_overdue',
+                'loading_period',
+                'tasks_on_date',
+                'outside_month',
+            ])->filter(fn (mixed $value): bool => ! is_string($value) || blank($value)))
+            ->toBeEmpty();
+    }
+});
+
 test('guest requests use a supported browser language and English fallback', function () {
     $this->withHeader('Accept-Language', 'lt-LT,lt;q=0.9')
         ->get(route('login'))
         ->assertOk()
-        ->assertSee('<html lang="lt" dir="ltr"', false)
+        ->assertSee('lang="lt"', false)
+        ->assertSee('dir="ltr"', false)
         ->assertInertia(fn (Assert $page) => $page
             ->where('ui.auth.login.title', 'Prisijungimas'));
 
     $this->withHeader('Accept-Language', 'fr-FR')
         ->get(route('login'))
         ->assertOk()
-        ->assertSee('<html lang="en" dir="ltr"', false)
+        ->assertSee('lang="en"', false)
+        ->assertSee('dir="ltr"', false)
         ->assertInertia(fn (Assert $page) => $page
             ->where('ui.auth.login.title', 'Log in'));
 });

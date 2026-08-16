@@ -103,6 +103,15 @@ export interface WorkspaceUiCopy {
         status_pending: string;
         status_in_progress: string;
         status_completed: string;
+        planning_period: string;
+        visible_tasks: string;
+        attention: string;
+        attention_description: string;
+        view_all_overdue: string;
+        no_overdue: string;
+        loading_period: string;
+        tasks_on_date: string;
+        outside_month: string;
         weekdays: string[];
     };
     projects: {

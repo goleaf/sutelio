@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\UserPreference;
 use App\Models\Workspace;
 use App\Models\WorkspaceMember;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -91,10 +92,114 @@ test('calendar returns normalized dated tasks only from the selected workspace',
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('calendar/Index')
+            ->where('calendar.view', 'month')
             ->has('todos', 1)
             ->where('todos.0.id', $todo->id)
             ->where('todos.0.due_date', now()->addDay()->toDateString())
             ->where('todos.0.project.name', 'Current project'));
+});
+
+test('calendar exposes normalized month state and only the visible grid range', function () {
+    $this->travelTo(Carbon::parse('2026-08-16 10:00:00', 'Europe/Vilnius'));
+    [$user, $workspace] = createWarmPrecisionContext();
+
+    $rangeStart = Todo::factory()->for($workspace)->create([
+        'title' => 'Range start',
+        'due_date' => '2026-07-26',
+    ]);
+    $rangeEnd = Todo::factory()->for($workspace)->create([
+        'title' => 'Range end',
+        'due_date' => '2026-09-05',
+    ]);
+    Todo::factory()->for($workspace)->create([
+        'title' => 'Before range',
+        'due_date' => '2026-07-25',
+    ]);
+    Todo::factory()->for($workspace)->create([
+        'title' => 'After range',
+        'due_date' => '2026-09-06',
+    ]);
+    Todo::factory()->for(Workspace::factory()->create())->create([
+        'title' => 'Foreign range task',
+        'due_date' => '2026-08-16',
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('calendar', ['view' => 'month', 'date' => '2026-08-16']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('calendar/Index')
+            ->where('calendar.view', 'month')
+            ->where('calendar.anchor_date', '2026-08-16')
+            ->where('calendar.today_date', '2026-08-16')
+            ->where('calendar.start_date', '2026-07-26')
+            ->where('calendar.end_date', '2026-09-05')
+            ->has('todos', 2)
+            ->where('todos.0.id', $rangeStart->id)
+            ->where('todos.1.id', $rangeEnd->id));
+});
+
+test('calendar exposes exact bounded week and agenda ranges', function (string $view, string $startDate, string $endDate) {
+    [$user, $workspace] = createWarmPrecisionContext();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('calendar', ['view' => $view, 'date' => '2026-08-19']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('calendar.view', $view)
+            ->where('calendar.anchor_date', '2026-08-19')
+            ->where('calendar.start_date', $startDate)
+            ->where('calendar.end_date', $endDate));
+})->with([
+    'week' => ['week', '2026-08-16', '2026-08-22'],
+    'agenda' => ['agenda', '2026-08-19', '2026-09-18'],
+]);
+
+test('calendar rejects invalid URL state', function (array $query, string $field) {
+    [$user, $workspace] = createWarmPrecisionContext();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->from(route('calendar'))
+        ->get(route('calendar', $query))
+        ->assertRedirect(route('calendar'))
+        ->assertSessionHasErrors($field);
+})->with([
+    'view' => [['view' => 'year', 'date' => '2026-08-16'], 'view'],
+    'date' => [['view' => 'month', 'date' => '16-08-2026'], 'date'],
+]);
+
+test('calendar keeps the overdue preview workspace scoped bounded and ordered', function () {
+    $this->travelTo(Carbon::parse('2026-08-16 10:00:00', 'Europe/Vilnius'));
+    [$user, $workspace] = createWarmPrecisionContext();
+
+    foreach (range(1, 8) as $day) {
+        Todo::factory()->pending()->for($workspace)->create([
+            'title' => "Overdue {$day}",
+            'due_date' => "2026-08-0{$day}",
+        ]);
+    }
+
+    Todo::factory()->completed()->for($workspace)->create([
+        'title' => 'Completed overdue task',
+        'due_date' => '2026-07-01',
+    ]);
+    Todo::factory()->pending()->for(Workspace::factory()->create())->create([
+        'title' => 'Foreign overdue task',
+        'due_date' => '2026-06-01',
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('calendar', ['view' => 'week', 'date' => '2026-08-16']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('overdueCount', 8)
+            ->has('overdueTodos', 6)
+            ->where('overdueTodos.0.due_date', '2026-08-01')
+            ->where('overdueTodos.5.due_date', '2026-08-06'));
 });
 
 test('project collection includes workspace scoped task totals', function () {

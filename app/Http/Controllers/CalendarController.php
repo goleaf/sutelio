@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CalendarIndexRequest;
 use App\Models\Project;
 use App\Models\TaskPriority;
 use App\Models\TaskStatus;
@@ -9,7 +10,7 @@ use App\Models\Todo;
 use App\Models\User;
 use App\Queries\CalendarQuery;
 use App\Queries\CurrentWorkspaceQuery;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,7 +18,7 @@ use Inertia\Response;
 class CalendarController extends Controller
 {
     public function index(
-        Request $request,
+        CalendarIndexRequest $request,
         CurrentWorkspaceQuery $currentWorkspaceQuery,
         CalendarQuery $calendarQuery,
     ): Response {
@@ -25,16 +26,56 @@ class CalendarController extends Controller
 
         abort_unless($user instanceof User, 403);
 
+        $configuredTimezone = $user->preferences?->getAttribute('timezone');
+        $timezone = is_string($configuredTimezone)
+            ? $configuredTimezone
+            : (string) config('app.timezone');
+        $calendar = $request->calendarState($timezone);
+
         $workspace = $currentWorkspaceQuery->forUser(
             $user,
             $request->session()->get('current_workspace_id'),
         );
 
         if (! $workspace) {
-            return Inertia::render('calendar/Index', ['todos' => []]);
+            return Inertia::render('calendar/Index', [
+                'calendar' => $calendar,
+                'todos' => [],
+                'overdueTodos' => [],
+                'overdueCount' => 0,
+            ]);
         }
 
-        $todos = $calendarQuery->datedTodos($workspace)
+        $todos = $calendarQuery->forRange(
+            $workspace,
+            $calendar['start_date'],
+            $calendar['end_date'],
+        );
+        $today = $calendar['today_date'];
+        $overdueTodos = $calendarQuery->overduePreview(
+            $workspace,
+            $today,
+        );
+        $overdueCount = $calendarQuery->overdueCount(
+            $workspace,
+            $today,
+        );
+
+        return Inertia::render('calendar/Index', [
+            'calendar' => $calendar,
+            'todos' => $this->serializeTodos($todos),
+            'overdueTodos' => $this->serializeTodos($overdueTodos),
+            'overdueCount' => $overdueCount,
+        ]);
+    }
+
+    /**
+     * @param  Collection<int, Todo>  $todos
+     * @return array<int, array<string, mixed>>
+     */
+    private function serializeTodos(Collection $todos): array
+    {
+        return $todos
             ->map(function (Todo $todo): array {
                 $project = $todo->getRelation('project');
                 $statusDefinition = $todo->getRelation('statusDefinition');
@@ -73,7 +114,5 @@ class CalendarController extends Controller
                 ];
             })
             ->all();
-
-        return Inertia::render('calendar/Index', ['todos' => $todos]);
     }
 }
