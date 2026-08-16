@@ -4559,3 +4559,12 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - The initial focused gate produced the intended five failures among 26 tests. The completed Settings/Workspace gate passes 26 tests / 299 assertions, and the localization/design gate passes 133 tests / 796 assertions.
 - Pint, Larastan, Vue type checking, ESLint, Prettier, all 42 discovered frontend tests, and the Vite production build pass. The build transformed 3,501 modules in 5.05 seconds.
 - No dependency, schema, route name, host data, generated tracked asset, or APK changed in this phase. Typed onboarding interaction contracts are the next TDD slice.
+
+### Phase 6 Delivered: Typed Onboarding Interaction Contract
+
+- Phase 5 was committed as `18d432b` and pushed to `origin/main` (`cf5dbce..18d432b`) before the frontend contract slice began.
+- Re-read the existing frontend behavior tests, Inertia page/layout conventions, generated onboarding Wayfinder actions, shared Warm Precision design assertions, and localization parity harness. Laravel Boost reconfirmed typed Inertia props/forms, automatic validation-error lifecycle, direct Wayfinder form/visit support, and Tailwind reduced-motion variants.
+- Added a discovered top-level Node test and a pure TypeScript onboarding contract: stable eight-step order, honest rounded progress, typed page/options/payload shapes, immutable safe draft merging with dependent-ID invalidation, recovery codes, and locale-aware plural categories.
+- The frontend RED gate first failed because the helper module was absent. The completed standard `npm run test:frontend` gate now visibly includes all three onboarding cases and passes 45 tests; Vue type checking and ESLint also pass.
+- Added failing-first Pest contracts for the upcoming Vue slice covering component boundaries, one page heading, AppLayout ownership, generated Wayfinder actions, form processing/errors, connected focus handoff, semantic progress/status/validation, 44-pixel targets, mobile safe-area actions, reduced motion, forced colors, Warm Precision composition, semantic copy, locale key/placeholder parity, and representative plural forms.
+- The source/localization contract correctly remains RED against the intentionally minimal placeholder page: 139 tests ran with 133 passing, two assertion failures, and four missing-component errors. The next slice implements those exact components and catalogs before the Pest contract is committed.
