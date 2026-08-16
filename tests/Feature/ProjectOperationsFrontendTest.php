@@ -18,6 +18,7 @@ test('project operations use scoped Wayfinder visits and manual result loading',
         ->toContain('router.cancelAll()')
         ->toContain("only: ['todos', 'filters']")
         ->toContain("reset: ['todos']")
+        ->toContain('hiddenTaskIds')
         ->and($queue)
         ->toContain('InfiniteScroll')
         ->toContain('manual')

@@ -43,7 +43,7 @@ class ProjectController extends Controller
             'project' => new ProjectResource($project),
             'todos' => Inertia::scroll(fn () => ProjectTaskResource::collection(
                 $projectDetailQuery->todos($workspace, $project->id, $filters, $today),
-            )),
+            ))->matchOn('data.id'),
             'metrics' => $resolveMetrics,
             'filters' => $request->state(),
             'today' => $today->toDateString(),

@@ -71,6 +71,22 @@ test('project task results are bounded deterministic and keep page two reachable
             ->where('todos.links.next', fn (?string $url): bool => is_string($url) && str_contains($url, 'page=2')));
 });
 
+test('project scroll results match task identity when refreshed', function () {
+    ['owner' => $owner, 'workspace' => $workspace, 'project' => $project] = projectOperationsContext();
+    Todo::factory()->for($workspace)->for($project)->create();
+    $headers = ['X-Inertia' => 'true'];
+    $version = app(HandleInertiaRequests::class)->version(request());
+
+    if (is_string($version)) {
+        $headers['X-Inertia-Version'] = $version;
+    }
+
+    $this->actingAs($owner)
+        ->get(route('projects.show', [$workspace, $project]), $headers)
+        ->assertOk()
+        ->assertJsonPath('matchPropsOn.0', 'todos.data.id');
+});
+
 test('project task filters are scoped and preserved in pagination links', function () {
     ['owner' => $owner, 'workspace' => $workspace, 'project' => $project, 'pending' => $pending, 'high' => $high, 'low' => $low] = projectOperationsContext();
     $assignee = User::factory()->create(['name' => 'Assigned Collaborator']);
