@@ -4384,3 +4384,34 @@ Completed. The feature implementation, review corrections, and completion record
 - `1f771bd` — `chore: refresh compatible dependencies`; the explicit pathspec committed only the five dependency-owned files and preserved every concurrent staged/unstaged workspace-stewardship file.
 - `git push --verbose origin main` exited 0 and reported `0781052..1f771bd main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
 - No force push, history rewrite, destructive Git command, dependency override, generated build output, secret, or unrelated workspace implementation is included.
+
+## NativePHP Android APK Delivery — 2026-08-16
+
+### Status
+
+Complete. A fresh installable debug APK was generated from current `main`; the ignored NativePHP build output remains local and the delivery record is the only tracked change.
+
+### Preflight And Build Contract
+
+- Began on clean `main` synchronized with `origin/main`. NativePHP Mobile is 4.2.0, the Android build uses Temurin JDK 17 and Android build-tools 36.0.0, and the configured SDK contract remains compile 36 / minimum 31 / target 36.
+- Re-read the repository NativePHP contract and prior Android 12 build evidence, searched current NativePHP v4 Android build/package documentation, and verified the embedded Laravel/SQLite model remains intact.
+- `APP_ENV=testing DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test --compact tests/Feature/NativePhpMobileTest.php` passed 19 tests / 326 assertions. `php artisan native:validate --no-interaction` passed with the expected warning that this web-view application has no `app/NativeComponents` classes.
+- `npm run build:android` passed after 3,499 modules in 5.90 seconds and produced the current Android-mode frontend assets.
+
+### Build Diagnosis And Resolution
+
+- The first `php artisan native:run android codex-build-only --build=debug --no-tty --no-interaction` attempt stopped during copied-bundle Composer discovery because NativePHP correctly excludes the host `database/database.sqlite`, while the application safety guard rejects a missing file before the Android runtime exists.
+- A minimal copied-bundle reproduction proved that `DB_DATABASE=:memory:` lets Composer package discovery boot safely. The final build used that build-process-only override; no safety guard was weakened, no host database entered the bundle, and NativePHP will create the device database before migrations on first launch.
+- The final native command completed Laravel copying, Composer installation, authoritative autoloading, cleanup, a 40.48 MB Laravel archive, and Gradle `assembleDebug`. The intentional non-device ADB serial then reported only the expected install failure because no Android device is attached; APK compilation was already complete.
+
+### Artifact Verification
+
+- Artifact: `nativephp/android/app/build/outputs/apk/debug/app-debug.apk`; 96,770,304 bytes (approximately 92.3 MiB), generated at `2026-08-16T20:44:10+0300`.
+- SHA-256: `8ebbaf6c77bf90291b348dbdaf5f04ea5acebe38ee02ed48d1fed3c5af79738f`.
+- `aapt dump badging` reports package `com.goleaf.xiaomimimo`, label `Xiaomi Mimo`, version `DEBUG` / code 1, compile SDK 36, minimum SDK 31, and target SDK 36.
+- `apksigner verify --verbose --print-certs` passed with Android APK Signature Scheme v2 and the local Android debug certificate. `zipalign -c -v 4` and complete `unzip -t` integrity verification passed.
+- The nested Laravel archive contains the latest Workspace Stewardship navigation/taxonomy components and no `database/database.sqlite`. Git confirms the APK is ignored by `/nativephp`, so the 96.8 MB binary is not committed.
+
+### Git Delivery
+
+- The documentation-only commit and exact non-force push result are recorded after delivery. No dependency, schema, application source, host SQLite data, signing secret, or generated binary is committed.
