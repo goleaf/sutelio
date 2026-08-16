@@ -302,13 +302,12 @@ export interface Reminder {
 
 export interface ActivityLog {
     id: string;
-    user_id: string | null;
-    workspace_id: string | null;
     subject_type: string;
     subject_id: string;
+    subject_label: string | null;
+    changed_field: string | null;
     event: string;
-    properties: Record<string, unknown> | null;
-    user?: User;
+    user: Pick<User, 'id' | 'name'> | null;
     created_at: string;
 }
 

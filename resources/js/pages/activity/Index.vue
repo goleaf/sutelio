@@ -1,197 +1,89 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, InfiniteScroll, router } from '@inertiajs/vue3';
+import { History, LoaderCircle, Sparkles, UsersRound } from '@lucide/vue';
+import { ref } from 'vue';
 import {
-    Activity,
-    Archive,
-    CheckCircle2,
-    CirclePlus,
-    History,
-    PackageOpen,
-    PenLine,
-    Pin,
-    RotateCcw,
-    Sparkles,
-    Star,
-    Trash2,
-    UsersRound,
-} from '@lucide/vue';
-import { computed, ref } from 'vue';
-import type { Component } from 'vue';
-import EmptyState from '@/components/shared/EmptyState.vue';
+    activityPluralForm,
+    buildActivityQuery,
+    hasActivityFilters,
+} from '@/components/activity/activity-types';
+import type {
+    ActivityCategory,
+    ActivityContributor,
+    ActivityFilters,
+    ActivityMetrics,
+    ActivityPaginator,
+} from '@/components/activity/activity-types';
+import ActivityFilterPanel from '@/components/activity/ActivityFilterPanel.vue';
+import ActivityTimeline from '@/components/activity/ActivityTimeline.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
-import WorkspaceSegmentedButton from '@/components/shared/WorkspaceSegmentedButton.vue';
-import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedControl.vue';
+import { Button } from '@/components/ui/button';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
-import type { ActivityLog } from '@/types/models';
+import { activity as currentActivity } from '@/routes';
+import { index as workspaceActivity } from '@/routes/activity';
 
-type ActivityFilter = 'all' | 'created' | 'updated' | 'completed';
+const props = defineProps<{
+    activities: ActivityPaginator;
+    metrics: ActivityMetrics;
+    filters: ActivityFilters;
+    categories: Exclude<ActivityCategory, 'all'>[];
+    contributors: ActivityContributor[];
+    workspace: { id: string; name: string } | null;
+}>();
+const { copy, formatNumber, locale } = useWorkspaceUi();
+const filtering = ref(false);
 
-const props = defineProps<{ activities: { data: ActivityLog[] } }>();
-const { copy, formatDate, formatNumber } = useWorkspaceUi();
-const activeFilter = ref<ActivityFilter>('all');
+function filterUrl(filters: ActivityFilters): string {
+    const options = { query: buildActivityQuery(filters) };
 
-const filteredActivities = computed(() => {
-    if (activeFilter.value === 'all') {
-        return props.activities.data;
+    return props.workspace
+        ? workspaceActivity.url(props.workspace.id, options)
+        : currentActivity.url(options);
+}
+
+function updateFilters(filters: ActivityFilters): void {
+    if (filterUrl(filters) === filterUrl(props.filters)) {
+        return;
     }
 
-    return props.activities.data.filter(
-        (activity) => activity.event === activeFilter.value,
+    router.cancelAll();
+    router.visit(filterUrl(filters), {
+        only: ['activities', 'filters'],
+        reset: ['activities'],
+        preserveScroll: true,
+        preserveState: true,
+        replace: true,
+        onStart: () => {
+            filtering.value = true;
+        },
+        onFinish: () => {
+            filtering.value = false;
+        },
+    });
+}
+
+function resultSummary(): string {
+    const plural = activityPluralForm(
+        props.activities.meta.total,
+        locale.value,
     );
-});
+    const template = (() => {
+        switch (plural) {
+            case 'one':
+                return copy.value.activity.result_summary_one;
+            case 'few':
+                return copy.value.activity.result_summary_few;
+            case 'many':
+                return copy.value.activity.result_summary_many;
+            default:
+                return copy.value.activity.result_summary_other;
+        }
+    })();
 
-const contributors = computed(
-    () =>
-        new Set(
-            props.activities.data
-                .map((activity) => activity.user?.id)
-                .filter(Boolean),
-        ).size,
-);
-
-const recentChanges = computed(() => {
-    const threshold = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
-    return props.activities.data.filter(
-        (activity) => new Date(activity.created_at).getTime() >= threshold,
-    ).length;
-});
-
-const filters = computed(() => [
-    {
-        value: 'all' as const,
-        label: copy.value.activity.filter_all,
-        count: props.activities.data.length,
-    },
-    {
-        value: 'created' as const,
-        label: copy.value.activity.filter_created,
-        count: props.activities.data.filter(
-            (activity) => activity.event === 'created',
-        ).length,
-    },
-    {
-        value: 'updated' as const,
-        label: copy.value.activity.filter_updated,
-        count: props.activities.data.filter(
-            (activity) => activity.event === 'updated',
-        ).length,
-    },
-    {
-        value: 'completed' as const,
-        label: copy.value.activity.filter_completed,
-        count: props.activities.data.filter(
-            (activity) => activity.event === 'completed',
-        ).length,
-    },
-]);
-
-const groupedActivities = computed(() => {
-    const groups = new Map<string, ActivityLog[]>();
-
-    filteredActivities.value.forEach((activity) => {
-        const key = dateKey(activity.created_at);
-        groups.set(key, [...(groups.get(key) ?? []), activity]);
-    });
-
-    return Array.from(groups.entries()).map(([key, activities]) => ({
-        key,
-        label: groupLabel(activities[0]?.created_at ?? ''),
-        activities,
-    }));
-});
-
-function dateKey(value: string | Date): string {
-    return formatDate(value, {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    });
-}
-
-function groupLabel(value: string): string {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (dateKey(value) === dateKey(today)) {
-        return copy.value.activity.today;
-    }
-
-    if (dateKey(value) === dateKey(yesterday)) {
-        return copy.value.activity.yesterday;
-    }
-
-    return formatDate(value, {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-    });
-}
-
-function eventLabel(event: string): string {
-    const labels = copy.value.activity as unknown as Record<string, string>;
-
-    return labels[`event_${event}`] ?? copy.value.activity.event_changed;
-}
-
-function subjectLabel(activity: ActivityLog): string {
-    const subject = activity.subject_type.split('\\').pop()?.toLowerCase();
-    const labels = copy.value.activity as unknown as Record<string, string>;
-
-    return labels[`subject_${subject}`] ?? copy.value.activity.subject_item;
-}
-
-function subjectDetail(activity: ActivityLog): string | null {
-    const title = activity.properties?.title;
-    const name = activity.properties?.name;
-
-    if (typeof title === 'string') {
-        return title;
-    }
-
-    return typeof name === 'string' ? name : null;
-}
-
-function initials(name: string): string {
-    return name
-        .split(' ')
-        .map((part) => part[0])
-        .join('')
-        .slice(0, 2)
-        .toLocaleUpperCase();
-}
-
-function eventIcon(event: string): Component {
-    return (
-        {
-            created: CirclePlus,
-            updated: PenLine,
-            completed: CheckCircle2,
-            uncompleted: RotateCcw,
-            deleted: Trash2,
-            restored: RotateCcw,
-            archived: Archive,
-            unarchived: PackageOpen,
-            pinned: Pin,
-            unpinned: Pin,
-            favorited: Star,
-            unfavorited: Star,
-        }[event] ?? Activity
-    );
-}
-
-function eventTone(event: string): string {
-    return (
-        {
-            created: 'bg-orange-500/12 text-orange-700 dark:text-orange-300',
-            updated: 'bg-sky-500/12 text-sky-700 dark:text-sky-300',
-            completed:
-                'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300',
-            deleted: 'bg-red-500/12 text-red-700 dark:text-red-300',
-            archived: 'bg-violet-500/12 text-violet-700 dark:text-violet-300',
-        }[event] ?? 'bg-foreground/6 text-foreground/70'
+    return template.replace(
+        ':count',
+        formatNumber(props.activities.meta.total, { useGrouping: true }),
     );
 }
 </script>
@@ -200,7 +92,7 @@ function eventTone(event: string): string {
     <Head :title="copy.activity.title" />
 
     <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-        <div class="mx-auto flex max-w-[1480px] flex-col gap-6">
+        <div class="mx-auto flex max-w-app flex-col gap-6">
             <WorkspacePageHeader
                 :eyebrow="copy.common.workspace_intelligence"
                 :title="copy.activity.title"
@@ -209,19 +101,19 @@ function eventTone(event: string): string {
                 <template #metrics>
                     <WorkspaceMetric
                         :label="copy.activity.total_actions"
-                        :value="formatNumber(activities.data.length)"
+                        :value="formatNumber(metrics.recorded_actions)"
                         :icon="History"
                         tone="orange"
                     />
                     <WorkspaceMetric
                         :label="copy.activity.contributors"
-                        :value="formatNumber(contributors)"
+                        :value="formatNumber(metrics.contributors)"
                         :icon="UsersRound"
                         tone="blue"
                     />
                     <WorkspaceMetric
                         :label="copy.activity.recent_changes"
-                        :value="formatNumber(recentChanges)"
+                        :value="formatNumber(metrics.recent_changes)"
                         :icon="Sparkles"
                         tone="emerald"
                     />
@@ -231,165 +123,94 @@ function eventTone(event: string): string {
             <div
                 class="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]"
             >
-                <aside
-                    class="min-w-0 overflow-hidden rounded-[1.5rem] border border-border/80 bg-card p-3 lg:sticky lg:top-6"
-                >
-                    <WorkspaceSegmentedControl
-                        role="group"
-                        :label="copy.common.filters"
-                        vertical
-                    >
-                        <WorkspaceSegmentedButton
-                            v-for="filter in filters"
-                            :key="filter.value"
-                            :aria-pressed="activeFilter === filter.value"
-                            :active="activeFilter === filter.value"
-                            wide
-                            @click="activeFilter = filter.value"
-                        >
-                            <span>{{ filter.label }}</span>
-                            <span
-                                class="text-xs text-muted-foreground tabular-nums opacity-65"
-                            >
-                                {{ formatNumber(filter.count) }}
-                            </span>
-                        </WorkspaceSegmentedButton>
-                    </WorkspaceSegmentedControl>
-                </aside>
+                <ActivityFilterPanel
+                    :filters="filters"
+                    :categories="categories"
+                    :contributors="contributors"
+                    :processing="filtering"
+                    @update="updateFilters"
+                />
 
                 <section
-                    class="min-w-0 rounded-[1.5rem] border border-border/80 bg-card px-4 py-5 shadow-[0_20px_60px_-52px_rgba(15,23,42,0.6)] sm:px-6 sm:py-7"
-                    aria-live="polite"
+                    class="min-w-0 overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel"
+                    :aria-busy="filtering"
                 >
                     <div
-                        class="mb-7 flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-5"
+                        class="flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-4 sm:px-6"
+                        aria-live="polite"
                     >
-                        <p class="text-sm font-medium">
-                            {{ copy.activity.showing }}
-                            <span class="text-orange-600 dark:text-orange-400">
-                                {{ formatNumber(filteredActivities.length) }}
-                            </span>
-                        </p>
+                        <div>
+                            <p class="text-sm font-semibold">
+                                {{ copy.activity.result_count }}
+                            </p>
+                            <p class="mt-0.5 text-xs text-muted-foreground">
+                                {{ resultSummary() }}
+                            </p>
+                        </div>
                         <div
+                            v-if="filtering"
+                            class="flex items-center gap-2 text-xs font-medium text-muted-foreground"
+                            role="status"
+                        >
+                            <LoaderCircle
+                                class="size-4 animate-spin motion-reduce:animate-none"
+                                aria-hidden="true"
+                            />
+                            {{ copy.activity.updating_results }}
+                        </div>
+                        <div
+                            v-else
                             class="flex items-center gap-2 text-xs text-muted-foreground"
                         >
-                            <span class="size-2 rounded-full bg-emerald-500" />
-                            {{ copy.activity.recent_changes }}
+                            <span
+                                class="size-2 rounded-full bg-emerald-500"
+                                aria-hidden="true"
+                            />
+                            {{ copy.activity.workspace_ledger }}
                         </div>
                     </div>
 
-                    <div v-if="groupedActivities.length" class="space-y-9">
-                        <section
-                            v-for="group in groupedActivities"
-                            :key="group.key"
-                            class="grid gap-4 md:grid-cols-[8rem_minmax(0,1fr)]"
-                        >
-                            <h2
-                                class="pt-1 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
-                            >
-                                {{ group.label }}
-                            </h2>
+                    <InfiniteScroll data="activities" manual>
+                        <div class="px-4 py-6 sm:px-6 sm:py-7">
+                            <ActivityTimeline
+                                :activities="activities.data"
+                                :filtered="hasActivityFilters(filters)"
+                            />
+                        </div>
 
+                        <template #next="{ loading, fetch, hasMore }">
                             <div
-                                class="relative space-y-3 before:absolute before:top-5 before:bottom-5 before:left-5 before:w-px before:bg-border"
+                                v-if="activities.data.length"
+                                class="flex min-h-20 items-center justify-center border-t border-border/70 px-4 py-4"
                             >
-                                <article
-                                    v-for="activityItem in group.activities"
-                                    :key="activityItem.id"
-                                    class="group relative grid animate-in grid-cols-[2.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-transparent p-2 transition-colors duration-200 fade-in slide-in-from-bottom-2 hover:border-border hover:bg-muted/35 motion-reduce:animate-none sm:grid-cols-[2.5rem_minmax(0,1fr)_auto] sm:items-center"
+                                <Button
+                                    v-if="hasMore"
+                                    type="button"
+                                    variant="outline"
+                                    class="min-w-40 motion-reduce:transition-none"
+                                    :disabled="loading"
+                                    @click="fetch"
                                 >
-                                    <div
-                                        :class="[
-                                            'relative z-10 flex size-10 items-center justify-center rounded-2xl ring-4 ring-card',
-                                            eventTone(activityItem.event),
-                                        ]"
-                                    >
-                                        <component
-                                            :is="eventIcon(activityItem.event)"
-                                            class="size-4.5"
-                                            aria-hidden="true"
-                                        />
-                                    </div>
-
-                                    <div class="min-w-0 py-0.5">
-                                        <p
-                                            class="text-sm leading-6 break-words text-foreground/90"
-                                        >
-                                            <span
-                                                class="font-semibold text-foreground"
-                                            >
-                                                {{
-                                                    activityItem.user?.name ??
-                                                    copy.common.system
-                                                }}
-                                            </span>
-                                            {{ eventLabel(activityItem.event) }}
-                                            <span class="font-medium">
-                                                {{ subjectLabel(activityItem) }}
-                                            </span>
-                                            <span
-                                                v-if="
-                                                    subjectDetail(activityItem)
-                                                "
-                                                class="text-muted-foreground"
-                                            >
-                                                “{{
-                                                    subjectDetail(activityItem)
-                                                }}”
-                                            </span>
-                                        </p>
-                                        <p
-                                            class="mt-0.5 text-xs text-muted-foreground"
-                                        >
-                                            {{
-                                                formatDate(
-                                                    activityItem.created_at,
-                                                    {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                    },
-                                                )
-                                            }}
-                                        </p>
-                                    </div>
-
-                                    <div
-                                        class="col-start-2 flex items-center gap-2 sm:col-start-auto"
-                                    >
-                                        <span
-                                            class="rounded-full border border-border/80 bg-background px-2.5 py-1 text-[0.68rem] font-semibold tracking-wide text-muted-foreground uppercase"
-                                        >
-                                            {{ eventLabel(activityItem.event) }}
-                                        </span>
-                                        <span
-                                            class="hidden size-7 items-center justify-center rounded-full bg-muted text-[0.65rem] font-semibold text-muted-foreground sm:flex"
-                                            :title="
-                                                activityItem.user?.name ??
-                                                copy.common.system
-                                            "
-                                        >
-                                            {{
-                                                initials(
-                                                    activityItem.user?.name ??
-                                                        copy.common.system,
-                                                )
-                                            }}
-                                        </span>
-                                    </div>
-                                </article>
+                                    <LoaderCircle
+                                        v-if="loading"
+                                        class="size-4 animate-spin motion-reduce:animate-none"
+                                        aria-hidden="true"
+                                    />
+                                    {{
+                                        loading
+                                            ? copy.activity.loading_older
+                                            : copy.activity.load_older
+                                    }}
+                                </Button>
+                                <p
+                                    v-else
+                                    class="text-xs font-medium text-muted-foreground"
+                                >
+                                    {{ copy.activity.end_of_activity }}
+                                </p>
                             </div>
-                        </section>
-                    </div>
-
-                    <EmptyState
-                        v-else
-                        :title="copy.activity.empty_title"
-                        :description="copy.activity.empty_description"
-                    >
-                        <template #icon>
-                            <History class="size-7" aria-hidden="true" />
                         </template>
-                    </EmptyState>
+                    </InfiniteScroll>
                 </section>
             </div>
         </div>

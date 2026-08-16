@@ -127,11 +127,14 @@ test('major pages keep bounded query counts as workspace data grows', function (
     }
 });
 
-test('representative ordered queries use their scoped indexes without temporary sorting', function (string $sql, string $index) {
+test('representative ordered queries use their scoped indexes without unnecessary temporary sorting', function (string $sql, string $index, bool $allowsTemporarySort = false) {
     $plan = collect(DB::select("EXPLAIN QUERY PLAN {$sql}"))->pluck('detail')->implode(' | ');
 
-    expect($plan)->toContain($index)
-        ->not->toContain('USE TEMP B-TREE FOR ORDER BY');
+    expect($plan)->toContain($index);
+
+    if (! $allowsTemporarySort) {
+        expect($plan)->not->toContain('USE TEMP B-TREE FOR ORDER BY');
+    }
 })->with([
     'task index' => [
         "SELECT id FROM todos WHERE workspace_id = 'workspace' AND is_archived = 0 ORDER BY is_pinned DESC, position, id LIMIT 50",
@@ -160,6 +163,15 @@ test('representative ordered queries use their scoped indexes without temporary 
     'activity' => [
         "SELECT id FROM activity_logs WHERE workspace_id = 'workspace' ORDER BY created_at DESC, id DESC LIMIT 50",
         'activity_logs_workspace_created_index',
+    ],
+    'activity by actor' => [
+        "SELECT id FROM activity_logs INDEXED BY activity_logs_workspace_user_created_index WHERE workspace_id = 'workspace' AND user_id = 'user' ORDER BY created_at DESC, id DESC LIMIT 20",
+        'activity_logs_workspace_user_created_index',
+    ],
+    'activity by event category' => [
+        "SELECT id FROM activity_logs INDEXED BY activity_logs_workspace_event_created_index WHERE workspace_id = 'workspace' AND event IN ('updated', 'attached', 'detached') ORDER BY created_at DESC, id DESC LIMIT 20",
+        'activity_logs_workspace_event_created_index',
+        true,
     ],
     'notifications' => [
         "SELECT id FROM notifications WHERE notifiable_type = 'App\\Models\\User' AND notifiable_id = 'user' ORDER BY created_at DESC, id DESC LIMIT 20",
