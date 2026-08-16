@@ -57,6 +57,17 @@ test('pending onboarding state is explicit and resumable', function () {
         ->and($preferences->week_start)->toBe('sunday');
 });
 
+test('legacy preference rows without an onboarding run are not forced into onboarding', function () {
+    $user = User::factory()->create();
+    $preferences = UserPreference::create([
+        'user_id' => $user->id,
+        ...UserPreference::defaults(),
+    ]);
+
+    expect($preferences->onboarding_run_id)->toBeNull()
+        ->and($preferences->requiresOnboarding())->toBeFalse();
+});
+
 test('fortify registration creates a pending onboarding preference row', function () {
     $this->post(route('register.store'), [
         'name' => 'First Run User',

@@ -103,7 +103,8 @@ class UserPreference extends Model
 
     public function requiresOnboarding(): bool
     {
-        return $this->onboarding_completed_at === null
+        return $this->onboarding_run_id !== null
+            && $this->onboarding_completed_at === null
             && $this->onboarding_skipped_at === null;
     }
 

@@ -4485,3 +4485,23 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - The observed RED gate reported one failure and four errors for the absent schema, enum, model predicate, and pending factory state. The completed focused gate passes 21 tests / 125 assertions across onboarding persistence, registration, settings preferences, and database schema integrity.
 - A clean in-memory SQLite migration ran all 35 migrations successfully, including the populated-safe onboarding migration. Pint passed after ordering one import, and Larastan passed with zero errors after the enum helper was aligned with Eloquent's runtime cast contract.
 - No route, controller, frontend, translation, dependency, host data, or generated asset changed in this phase. Verified-browser entry routing is the next isolated TDD slice.
+
+### Phase 2 Preflight: Verified Browser Entry
+
+- Phase 1 was committed as `f2c32b4` and pushed to `origin/main` (`c4c72ec..f2c32b4`) before this slice began.
+- Re-read the current web/settings route topology, Fortify verification tests, middleware bootstrap, Inertia shared-prop/layout boundary, controller/query conventions, and architecture contracts.
+- Laravel Boost's installed-version documentation confirms `auth` then `verified` middleware ordering, the `verification.notice` redirect contract, ordered route-group middleware, and Inertia endpoint assertions for real page components and nested props.
+- This phase will add one narrow middleware alias, onboarding routes outside the gate, a thin index controller/query boundary, a real minimal Inertia page, and failing-first coverage for pending, unverified, complete, legacy, recovery, and API behavior.
+- The automatic gate remains browser-only and applies only after authentication and verification. It will not change API responses, verification/password recovery endpoints, or the completed-user start-page contract.
+
+### Phase 2 Delivered: Verified Browser Entry
+
+- Added the missing `MustVerifyEmail` contract to the existing user model, making the already configured Laravel/Fortify `verified` middleware enforce the intended boundary instead of silently passing unverified users.
+- Registered a narrow `onboarding.complete` alias and applied it after authentication/verification to normal application and settings routes. The real `GET /onboarding` endpoint remains outside that gate, while API and Fortify recovery/verification routes are unchanged.
+- Added a thin onboarding controller plus focused query object. Explicitly pending users receive a localized Inertia `onboarding/Index` page with truthful step, position, total, percentage, replay, and resumable-state props; completed and legacy users return to their saved/default start page without a loop.
+- Tightened `requiresOnboarding()` so a row is pending only when it has an explicit onboarding run UUID and no completion/skip timestamp. This preserves the approved legacy behavior for rows created without onboarding state while Fortify registrations remain explicitly pending.
+- Added the first semantic English, Lithuanian, and Russian onboarding catalog entries and a single-root Warm Precision placeholder page; the complete responsive journey composition will replace this bounded shell in the dedicated frontend phase.
+- The observed RED gate ran 16 tests with 9 passing, two behavior failures, and five missing-route errors. The final expanded entry/auth/localization/persistence/architecture gate passes 48 tests / 5,671 assertions.
+- `php artisan route:list -vv` confirms onboarding has `auth` then `verified` without the completion gate, while Dashboard has `auth`, `verified`, then `EnsureOnboardingIsComplete`; settings retain their existing verification behavior and add only the completion gate.
+- Pint, Larastan, Vue type checking, ESLint, Prettier, and the Vite production build pass. The build transformed 3,501 modules and generated the real onboarding chunk in the ignored build output.
+- This phase intentionally publishes only the usable onboarding GET boundary. Progress and domain mutation routes will be added atomically with their validated actions in the next lifecycle and scoped-composition slices, avoiding public placeholder endpoints.

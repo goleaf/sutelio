@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\User;
+use App\Models\UserPreference;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
+use Inertia\Testing\AssertableInertia;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
@@ -35,6 +37,24 @@ test('email can be verified', function () {
 
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
     $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+});
+
+test('a newly registered pending user enters onboarding after verification', function () {
+    $user = User::factory()->unverified()->create();
+    UserPreference::factory()->for($user)->pendingOnboarding()->create();
+
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->id, 'hash' => sha1($user->email)],
+    );
+
+    $this->actingAs($user)
+        ->followingRedirects()
+        ->get($verificationUrl)
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('onboarding/Index'));
 });
 
 test('email is not verified with invalid hash', function () {

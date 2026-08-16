@@ -10,7 +10,7 @@ use App\Http\Controllers\WellKnownPasskeyController;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'onboarding.complete'])->group(function () {
     Route::redirect('settings', '/settings/profile');
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -25,7 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/members', [MembersController::class, 'edit'])->name('members.edit');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/backup', [BackupController::class, 'edit'])

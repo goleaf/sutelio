@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\EnsureOnboardingIsComplete;
 use App\Http\Middleware\HandleApiVersion;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -46,6 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'abilities' => CheckAbilities::class,
             'api.version' => HandleApiVersion::class,
+            'onboarding.complete' => EnsureOnboardingIsComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

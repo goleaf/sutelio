@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LabelController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectIndexController;
 use App\Http\Controllers\TagController;
@@ -30,7 +31,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])
+    ->get('onboarding', [OnboardingController::class, 'index'])
+    ->name('onboarding.index');
+
+Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('tasks', TodoIndexController::class)->name('todos.index');
