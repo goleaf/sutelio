@@ -136,6 +136,6 @@ Requirements: `sys-runtime-001`, `sec-deps-001`, `test-static-001`, `ops-deploym
 - [x] Refresh every npm package to the latest stable release permitted by Node 22 and the installed TypeScript, ESLint, Inertia, Vue, Tailwind, and Vite peer contracts.
 - [x] Preserve the existing Composer/npm package set and single npm lock file; document upstream major-version ceilings rather than overriding them with incompatible direct constraints.
 - [x] Run dependency audits, application boot, static analysis, full backend/frontend tests, production build, isolated migration/seeding, cache, route, HTTP, and diff gates.
-- [ ] Keep the concurrent workspace-stewardship implementation outside the dependency commit, synchronize package evidence, commit the coherent package slice, and push `main`.
+- [x] Keep the concurrent workspace-stewardship implementation outside the dependency commit, synchronize package evidence, commit the coherent package slice, and push `main`.
 
 Verification: Composer validate/audit/outdated and dependency blockers, npm audit/outdated and peer metadata, Pint, Larastan, full and parallel Pest, frontend tests/types/lint/format/build, isolated SQLite migration/seed/integrity, application cache/route/view/HTTP smoke, and final Git inspection. Rollback is a direct manifest/lock/documentation commit reversal; no schema or production data changes are planned.
