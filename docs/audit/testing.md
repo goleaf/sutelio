@@ -1,5 +1,7 @@
 # Testing And Quality Audit
 
+> Historical audit (2026-07). Its counts and gaps are obsolete. Use `docs/testing.md`, `docs/current-state-audit.md`, and `docs/compliance-matrix.md` for current evidence.
+
 ## Suite Inventory
 
 The repository contains 25 Pest test files plus `tests/Pest.php`, `tests/TestCase.php`, and one unit example. The phase-0 complete run passed 111 tests with 329 assertions.

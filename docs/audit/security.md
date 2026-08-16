@@ -1,5 +1,7 @@
 # Security Audit
 
+> Historical audit (2026-07). Use `docs/security.md`, `docs/current-state-audit.md`, and `docs/compliance-matrix.md` for implemented controls and current findings.
+
 ## Threat Model
 
 The primary tenant boundary is an authorized workspace. Attackers considered here are unauthenticated clients, authenticated users outside a workspace, lower-role workspace members, API tokens with excessive permissions, and users submitting IDs/files from another workspace or filesystem location.

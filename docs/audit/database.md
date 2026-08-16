@@ -1,5 +1,7 @@
 # Database And Domain Integrity Audit
 
+> Historical audit (2026-07). Findings were subsequently addressed in corrective migrations and tests. Use `docs/current-state-audit.md`, `docs/data-model.md`, and `docs/compliance-matrix.md` for current status.
+
 ## Runtime Diagnostics
 
 The live application connection and schema were inspected through Laravel Boost and Laravel's configured SQLite connection on 2026-07-19.

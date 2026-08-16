@@ -1,5 +1,7 @@
 # Frontend Audit
 
+> Historical audit (2026-07). Findings were subsequently addressed through Wayfinder, localization, state, design, and accessibility phases. Use `docs/frontend.md` and `docs/compliance-matrix.md` for current status.
+
 ## Scope And Inventory
 
 The Vue application uses 24 Inertia pages, 8 layouts, 156 Vue components, 9 composables, 5 Pinia stores, 8 type modules, and 3 library modules. All pages use Vue 3 single-file components; the application bootstrap is `resources/js/app.ts`.

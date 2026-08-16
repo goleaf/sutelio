@@ -1,25 +1,53 @@
-# Testing
+# Testing And Quality Gates
 
-## Existing Suite
+Pest is the sole primary PHP test style. Feature tests cover framework-integrated behavior; unit tests cover pure domain logic; frontend Node tests cover Vue state/interaction contracts; browser checks cover focus, layout, console, and flows that source/HTTP tests cannot prove. External requests are always faked.
 
-The repository uses Pest 4 with feature coverage for authentication, workspaces, projects, todos, checklists, comments, labels/tags, dashboard/activity, settings, and the unversioned API. The suite is primarily backend HTTP coverage; no dedicated Vue component or browser accessibility suite was found.
+## Test Organization
 
-## Phase Gate
+- `tests/Feature/Auth` and settings security/profile: Fortify, sessions, reset/verification/two-factor/passkeys/preferences.
+- Workspace/project/task/child feature files: policies, validation, state transitions, isolation, files, recurrence/reminders, notifications, transfer/backup.
+- `tests/Feature/Api`: API v1 envelope, auth, ability, policy, resource, validation, and domain parity.
+- Schema/runtime/query/architecture files: migrations/FKs/indexes, SQLite health, application boundaries, resource typing, query counts, NativePHP, design/localization contracts.
+- `resources/js/**/*.test.ts`: typed frontend state, CRUD and task/workspace interaction behavior.
 
-Every implementation phase must add or update focused Pest tests, run the smallest relevant subset first, and then run:
+## Per-Pass Workflow
 
-```text
-vendor/bin/pint --dirty --format agent
-vendor/bin/phpstan analyse
+1. Add or update a focused regression test and observe the relevant failure when practical.
+2. Implement the smallest coherent change.
+3. Run the focused test, `vendor/bin/pint --dirty --format agent` for PHP, scoped Larastan, and relevant frontend checks.
+4. Inspect the diff, update `docs/progress.md`, plan, and compliance matrix.
+5. Expand to the complete gate only after the focused pass is green.
+
+## Commands
+
+```bash
+vendor/bin/pint --format agent
+composer run types:check
 php artisan test --compact
+php artisan test --parallel --compact
+php artisan test --coverage
+npm run test:frontend
 npm run types:check
 npm run lint:check
 npm run format:check
 npm run build
 ```
 
-Documentation-only phases do not require fabricated behavior tests, but must still run applicable repository checks and report existing failures without deleting tests.
+Migration and seeding checks must use isolated testing SQLite databases. Never run `migrate:fresh` against the local working database:
 
-## Priority Gaps
+```bash
+DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan migrate --force
+APP_ENV=testing DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan db:seed --force
+```
 
-Cross-workspace attacks, role permutations, mixed-ID bulk operations, nested ownership, backup/restore, import rollback, attachment security, recurrence, reminders, localization, accessibility-critical Vue behavior, query counts, and concurrent SQLite writes need explicit coverage.
+The seeding test suite is the preferred proof when configuration needs a file-backed connection or multiple runs.
+
+## Coverage And Assertions
+
+Critical identity, workspace isolation, policy, token, backup/restore, recurrence/reminder, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --min=0 --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the final behavioral suite passes 627 tests / 8,958 assertions sequentially and in parallel.
+
+## Browser Verification
+
+Use the existing browser automation/Boost logs rather than installing a duplicate framework. Critical smoke includes login, navigation, dashboard, tasks, project/task detail, workspaces/members, settings/security/backup/import, validation and dialogs at representative mobile/tablet/desktop widths, keyboard focus, dark/system mode, reduced motion, long translations, no horizontal overflow, and no fresh console/page errors.
+
+The 2026-08-16 final smoke covered login, password confirmation, repeated keyboard Inertia navigation, dashboard/tasks/projects/calendar/activity/notifications/workspaces/profile/preferences/security at 1440x1000 and 390x844, activity URL filtering and mobile sheet state, reduced motion, dark media, and forced colors. Every checked page had one `h1`, no horizontal overflow, and no captured console/page error.

@@ -1,80 +1,83 @@
 # Architecture
 
-## Supported System
+## Runtime Shape
 
-Laravel owns routing, session and token authentication, authorization, validation, persistence, scheduling, and Inertia responses. Vue 3 pages use `<script setup lang="ts">`, the Composition API, existing Reka/shadcn-style primitives, Pinia only for shared state, and Wayfinder for typed Laravel routes. SQLite is the only supported relational database.
+Laravel owns routing, Fortify/Sanctum authentication, authorization, validation, transactions, persistence, scheduling, files, notifications, versioned JSON, and Inertia page responses. Vue 3 pages use `<script setup lang="ts">`, the Composition API, typed Inertia props, Pinia only for genuine shared state, Wayfinder-generated routes/actions, Reka-based components, and Tailwind CSS 4. SQLite is the sole relational database. NativePHP packages the same Laravel application for mobile with its embedded runtime.
 
-## Source-Of-Truth Boundaries
+## Module Boundaries
 
-### HTTP Presentation
+- Identity: registration/login/verification/reset/passkeys/two-factor/profile/preferences.
+- Workspace administration: workspaces, membership, invitations, ownership, statuses, and priorities.
+- Planning: projects, tasks, hierarchy, bulk operations, list/dashboard/calendar.
+- Collaboration: checklists, comments, labels, tags, attachments, activity, notifications.
+- Automation: recurrence generation, reminder claiming/delivery/failure/cancellation.
+- Data operations: versioned import preview/execution, streamed export, SQLite backup/restore/health.
+- API: `/api/v1` controllers/resources/errors/abilities reusing the same actions and policies.
 
-- Page controllers accept authorized, validated input and return Inertia responses or redirects.
-- API controllers live under a versioned boundary and return consistent Eloquent API Resources/errors.
-- A controller never calls another controller or selects presentation based on `expectsJson()`.
-- Route closures are limited to static redirects or protocol metadata; they do not resolve workspaces or execute product queries.
-- Nested route bindings are scoped to their parent when the URL expresses containment.
+## Request And Domain Flow
 
-### Domain Writes
+```text
+route + middleware
+  -> authorized Form Request (or policy-authorized parameterless command)
+  -> thin web/API controller
+  -> one injected action for a write OR one scoped query object for a read
+  -> Eloquent/SQLite transaction and explicit side effects
+  -> Inertia props/redirect OR API Resource/stable error envelope
+```
 
-- Every domain write uses an authorizing Form Request or a policy-authorized command with no request payload.
-- State-changing use cases live in injected action classes.
-- Multi-record and aggregate writes validate the complete workspace-scoped record set before a short transaction.
-- Completion, archive, recurrence, reorder, ownership, import, and deletion are explicit transitions, not arbitrary attribute arrays.
-- Activity is emitted through one documented taxonomy at the successful transaction boundary.
+Routes contain no product queries. Controllers do not call controllers or branch between Inertia and JSON presentation. Actions represent one operation and own short transactional boundaries. Services exist for substantial reusable domain or integration logic, not one-line framework wrappers. Query objects start from an authorized user/workspace relation and own eager loading, aggregates, deterministic ordering, and pagination. API Resources serialize only already-loaded data. Policies do not query when supplied loaded relationships can decide.
 
-### Domain Reads
+## State And Ownership
 
-- Focused query objects own task index/detail, project index/detail, dashboard, calendar, activity, and notification reads.
-- Queries start from an already authorized workspace/user relation, select required columns, eager-load required relationships, calculate counts/aggregates, paginate, and apply deterministic secondary ordering.
-- API Resources and model accessors never execute queries. Resources use only already-loaded relations/counts.
-- User timezone boundaries are calculated in application code and supplied as canonical query bounds compatible with SQLite.
+Workspace membership is the tenant boundary. Every project, task, taxonomy, activity, and child-resource identifier is resolved through the route workspace, task, or parent aggregate. Exact submitted sets must have the same cardinality as the authorized reload before mutation. Frontend visibility mirrors policies but never replaces them.
 
-### Authorization And Isolation
+Inertia props are immutable inputs. Editable Vue drafts synchronize by durable entity identity and reset when the task/workspace changes. Async interactions expose action-specific progress, duplicate prevention, validation, recoverable failure, and completion. Wayfinder is the only application route-generation mechanism.
 
-- The workspace role enum remains the role source; policies implement the documented owner/admin/member permission matrix.
-- Related UUID existence is insufficient. Project, assignee, parent, labels, tags, reminders, attachments, children, reorder IDs, and bulk IDs must belong to the authorized workspace/aggregate.
-- Submitted ID sets are exact: one missing or foreign ID rejects the whole operation.
-- Frontend visibility mirrors but never replaces backend authorization.
+## Data And Runtime Processes
 
-### Frontend State
+SQLite uses foreign keys, WAL, configured synchronous/busy/cache/checkpoint behavior, local filesystem placement, and an application health command. Migrations are SQLite-compatible and populated-safe. Recurrence and reminder processing is bounded and idempotent; reminder claims use persisted lifecycle state. Database-backed queues/scheduling are allowed and require deployment configuration, but Redis is not required.
 
-- Inertia page props are immutable inputs. Local editable state synchronizes by record identity and resets transient state when context closes/changes.
-- URL query parameters are the reproducible source for list view/filter/sort/range state; user preferences supply defaults.
-- Async interactions expose processing, duplicate prevention, validation, failure, success where useful, and rollback/restoration.
-- Dialogs and drawers use the existing Reka primitives for focus trap, Escape, initial/return focus, accessible naming, keyboard behavior, reduced motion, and responsive layouts.
-- Semantic translation keys and centralized locale/timezone formatters own all user-facing copy and formatting.
+Files use configured disks and generated names. Avatars, attachments, and backups are private. Import is bounded and transactional; exports stream; backups are SQLite-consistent and restore under authorization, password confirmation, integrity validation, and locking.
 
-### External API
+## Frontend And Design
 
-- The target prefix is `/api/v1`; unversioned compatibility routes, if retained, call the same controllers/actions and carry explicit deprecation metadata.
-- Successful items use `data` plus optional `meta`; collections use `data`, pagination `links`, and pagination `meta`.
-- Errors contain a stable machine code, localized safe message, validation fields when applicable, and request identifier.
-- Sanctum abilities separate workspace read/write, task read/write, export, and attachment access. Browser session and token behavior are tested independently.
+The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded white/dark surfaces, orange focus/action accents, mobile-first responsive layouts, reduced-motion rules, and light/dark/system color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs.
 
-### SQLite And Files
+Livewire, Volt, and Flux are not architectural layers. Adding them would create a second page/state/request/component/testing/localization system and violates the repository contract.
 
-- SQLite configuration is validated once at connection/startup, not before every query.
-- Runtime pragmas are environment-configurable only when supported by installed Laravel/PDO versions.
-- Corrective migrations must be SQLite-compatible and safe for populated databases.
-- The main DB, WAL, and SHM reside on a local SQLite-compatible filesystem.
-- Backups use a consistent SQLite backup mechanism, atomic private storage, integrity verification, opaque inventory IDs, and a guarded restore protocol.
-- Attachments use private generated storage paths and safe download headers; import/export are bounded, versioned, and workspace-scoped.
+## PHP 8.5 Applicability
 
-## Current Architecture Delta
+| Feature                      | Decision                                                  | Reason / location / evidence                                                                                   |
+| ---------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Web runtime on PHP 8.5       | Used and verified                                         | Herd PHP 8.5.0 runs the site, full/parallel Pest suites, Artisan caches, SQLite health, and HTTP smokes        |
+| URI extension                | Candidate only for future user-controlled URL integration | No current server-side URL-fetch or normalization domain requires a new abstraction                            |
+| Clone-with                   | Not applicable                                            | No materially improved immutable wither found in current domain objects                                        |
+| Pipe operator                | Not applicable                                            | Current action/query flows are clearer as methods/collections and must remain PHP 8.4 compatible for NativePHP |
+| `#[NoDiscard]`               | Not applicable while mobile is PHP 8.4                    | New 8.5-only attributes would break NativePHP's embedded runtime                                               |
+| `#[Override]`                | Not applicable while mobile is PHP 8.4                    | Same cross-runtime syntax/attribute compatibility constraint                                                   |
+| `array_first` / `array_last` | Prefer Laravel `Arr` methods                              | Laravel 13 documents polyfill/helper conflicts and mobile remains PHP 8.4                                      |
+| Persistent cURL share        | Not applicable                                            | No measured external HTTP connection-reuse requirement                                                         |
 
-The current implementation violates several target boundaries: domain queries/controller resolution live in shortcut closures; web/API controllers duplicate behavior; todo index mixes Inertia and JSON; write paths bypass actions or policies; resources/accessors can trigger queries; API responses and token permissions are inconsistent; custom global route resolution competes with Wayfinder; and the live schema lacks intended domain FKs.
+## Laravel 13 Feature Applicability
 
-The ordered correction path is `docs/implementation-roadmap.md`. Authorization/isolation work must land before route/controller deduplication, and query contracts must land before index removal/addition or broad frontend reconstruction.
+| Feature                                   | Decision                                           | Evidence / reason                                                                             |
+| ----------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Modern bootstrap middleware/exceptions    | Used                                               | `bootstrap/app.php`, API exception contract tests                                             |
+| Origin-aware request forgery protection   | Framework defaults preserved and verified          | No cross-site embedded workflow justifies relaxation; CSRF/origin security tests remain green |
+| Controller/authorization/queue attributes | Evaluate only on materially changed endpoints/jobs | Existing middleware/policies are explicit and tested; avoid decorative migration              |
+| API Resources                             | Used                                               | `app/Http/Resources`, API contract suite                                                      |
+| JSON:API Resources                        | Not applicable                                     | Existing clients use a stable custom `/api/v1` envelope, not full JSON:API                    |
+| `Cache::touch`                            | Not applicable                                     | No application cache item needs sliding expiration                                            |
+| AI/vector/semantic search                 | Not applicable                                     | No product requirement or provider contract                                                   |
+| Realtime infrastructure                   | Not applicable                                     | Notifications/reminders use database state and scheduled delivery                             |
+| Image manipulation additions              | Not applicable                                     | Current avatar validation/storage does not require transformed variants                       |
 
-## Decision Log
+Important decisions are also captured under `docs/decisions` when they cannot be derived directly from requirements.
 
-| Decision                                                              | Rationale                                                          | Status              |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------- |
-| Preserve Laravel 13/Inertia 3/Vue 3/Wayfinder/SQLite                  | Permanent repository contract and installed stack                  | Final               |
-| Keep page and API controllers separate but share actions/queries      | Prevent presentation branching without duplicating domain behavior | Target for phase 3  |
-| Repair authorization before refactoring routes/controllers            | Avoid reproducing insecure semantics behind cleaner abstractions   | Sequencing decision |
-| Derive indexes from final query objects and query plans               | Avoid speculative write-cost increases                             | Sequencing decision |
-| Use one translation architecture and English fallback                 | Stable keys and parity across three locales                        | Target for phase 7  |
-| Do not remove apparently dead frontend code/dependencies during audit | Reference tracing and feature decisions are not complete           | Audit safeguard     |
+## Modernization Decisions Applied
 
-No production architecture was changed in prompt 1.
+- Eloquent strict mode is enabled outside production; projection and two-factor access paths now handle intentionally missing attributes explicitly instead of disabling strictness.
+- Providers/controllers receive collaborators through dependency injection. Route endpoint closures and first-party service-locator calls were removed from the modified application layer.
+- API and Inertia Resources expose explicit safe fields; the shared user payload no longer serializes private avatar storage paths.
+- Activity reads use validated URL filters, workspace-scoped contributor checks, safe resource presentation, deterministic pagination, and server aggregates.
+- The Blade shell is presentation-only; the parser-blocking theme initializer lives in `public/theme.js`, and automated architecture tests reject Blade PHP/data/service access.

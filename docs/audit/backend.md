@@ -1,5 +1,7 @@
 # Backend Audit
 
+> Historical audit (2026-07). Findings were subsequently addressed in many phases. Use `docs/current-state-audit.md` and `docs/compliance-matrix.md` for current status.
+
 ## Scope And Method
 
 This report is a read-only audit of the source and the Artisan route table on 2026-07-19. Line references identify the inspected implementation, not a proposed implementation. `web+verified` means the `web`, `auth`, and `verified` middleware stack; `api+sanctum` means the `api` and `auth:sanctum` stack.

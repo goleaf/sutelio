@@ -1511,41 +1511,41 @@ Completed with every requested verification command passing.
 
 ### Exact Verification Results
 
-| Command | Exit | Current status |
-| --- | ---: | --- |
-| `vendor/bin/pint --dirty --format agent` | 0 | Passed with no reported findings. |
-| `php artisan test --compact` | 0 | Passed: 332 tests and 1,442 assertions. |
-| `vendor/bin/phpstan analyse --no-progress` | 0 | Passed with zero errors. |
-| `npm run types:check` | 0 | Passed with zero Vue/TypeScript errors. |
-| `npm run lint:check` | 0 | Passed with zero ESLint errors or warnings. |
-| `npm run format:check` | 0 | Passed; all files under `resources/` match Prettier style. |
-| `npm run build` | 0 | Passed; Vite transformed 3,362 modules and built the production bundle. The optional `fontaine` fallback notice remains non-blocking. |
+| Command                                    | Exit | Current status                                                                                                                        |
+| ------------------------------------------ | ---: | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `vendor/bin/pint --dirty --format agent`   |    0 | Passed with no reported findings.                                                                                                     |
+| `php artisan test --compact`               |    0 | Passed: 332 tests and 1,442 assertions.                                                                                               |
+| `vendor/bin/phpstan analyse --no-progress` |    0 | Passed with zero errors.                                                                                                              |
+| `npm run types:check`                      |    0 | Passed with zero Vue/TypeScript errors.                                                                                               |
+| `npm run lint:check`                       |    0 | Passed with zero ESLint errors or warnings.                                                                                           |
+| `npm run format:check`                     |    0 | Passed; all files under `resources/` match Prettier style.                                                                            |
+| `npm run build`                            |    0 | Passed; Vite transformed 3,362 modules and built the production bundle. The optional `fontaine` fallback notice remains non-blocking. |
 
 ### Original Critical Findings
 
-| Finding from `docs/current-state.md` | Status | Current evidence and next work |
-| --- | --- | --- |
-| Bulk task updates/deletes accept global IDs and execute unscoped `Todo::whereIn(...)`. | Open | `BulkActionRequest`, `BulkUpdateTodos`, and `BulkDeleteTodos` still accept/query global IDs. Scope the exact submitted set through the authorized workspace and reject mixed/foreign IDs atomically with regression tests. |
-| Task relationships and label/tag attachment accept globally existing foreign IDs. | Open | Todo requests still use global `exists` rules for projects, assignees, parents, labels, and tags; attach actions still sync global label/tag IDs. Add workspace-scoped validation and cross-workspace rollback tests. |
-| Checklist, label, tag, reminder, and attachment writes lack complete policy authorization. | Partially resolved | Attachment upload/download/delete now uses an authorized request plus `AttachmentPolicy`; checklist, label, tag, and reminder-create mutations still lack complete policy/scoped-child authorization. Finish policies and attacker/victim API/web tests for every child type. |
-| Backup endpoints lack owner policy/path safety and copy only the main WAL-mode SQLite file. | Open | `BackupController` still exposes physical paths and accepts route filenames; `BackupService` still uses direct `File::copy()` for the main database. Redesign backup/restore around owner authorization, canonical identifiers, SQLite-safe snapshots, validation, and isolated restore tests. |
-| Invitations create users with the known password `password` and no acceptance token. | Open | `InviteToWorkspace` still calls `firstOrCreate()` with `bcrypt('password')`; no invitation model/token acceptance flow exists. Replace account creation with expiring single-use invitations and acceptance tests. |
-| Live SQLite domain referential integrity is not enforced. | Partially resolved | The applied corrective migration now enforces foreign keys across the core workspace domain, and the live database passes `PRAGMA foreign_key_check`; todo parent links and UUID-backed passkey/notification/Sanctum morph references remain incomplete, and domain `CHECK` constraints are still absent. Finish those schema contracts with populated-upgrade and integrity tests. |
+| Finding from `docs/current-state.md`                                                        | Status             | Current evidence and next work                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bulk task updates/deletes accept global IDs and execute unscoped `Todo::whereIn(...)`.      | Open               | `BulkActionRequest`, `BulkUpdateTodos`, and `BulkDeleteTodos` still accept/query global IDs. Scope the exact submitted set through the authorized workspace and reject mixed/foreign IDs atomically with regression tests.                                                                                                                                                          |
+| Task relationships and label/tag attachment accept globally existing foreign IDs.           | Open               | Todo requests still use global `exists` rules for projects, assignees, parents, labels, and tags; attach actions still sync global label/tag IDs. Add workspace-scoped validation and cross-workspace rollback tests.                                                                                                                                                               |
+| Checklist, label, tag, reminder, and attachment writes lack complete policy authorization.  | Partially resolved | Attachment upload/download/delete now uses an authorized request plus `AttachmentPolicy`; checklist, label, tag, and reminder-create mutations still lack complete policy/scoped-child authorization. Finish policies and attacker/victim API/web tests for every child type.                                                                                                       |
+| Backup endpoints lack owner policy/path safety and copy only the main WAL-mode SQLite file. | Open               | `BackupController` still exposes physical paths and accepts route filenames; `BackupService` still uses direct `File::copy()` for the main database. Redesign backup/restore around owner authorization, canonical identifiers, SQLite-safe snapshots, validation, and isolated restore tests.                                                                                      |
+| Invitations create users with the known password `password` and no acceptance token.        | Open               | `InviteToWorkspace` still calls `firstOrCreate()` with `bcrypt('password')`; no invitation model/token acceptance flow exists. Replace account creation with expiring single-use invitations and acceptance tests.                                                                                                                                                                  |
+| Live SQLite domain referential integrity is not enforced.                                   | Partially resolved | The applied corrective migration now enforces foreign keys across the core workspace domain, and the live database passes `PRAGMA foreign_key_check`; todo parent links and UUID-backed passkey/notification/Sanctum morph references remain incomplete, and domain `CHECK` constraints are still absent. Finish those schema contracts with populated-upgrade and integrity tests. |
 
 ### Original High Findings
 
-| Finding from `docs/current-state.md` | Status | Current evidence and next work |
-| --- | --- | --- |
-| Workspace member removal uses an undefined variable and can remove final ownership. | Resolved | The controller now uses the bound `userId`, rejects owner/self removal, verifies membership, and focused settings-member tests cover normal removal and owner protection. |
-| Workspace switching stores a session ID that `User::currentWorkspace()` ignores. | Resolved | `currentWorkspace()` now accepts the selected ID, verifies it through the user's membership relation, and callers pass `current_workspace_id`; navigation/page tests cover selected-workspace behavior. |
-| API tokens have unrestricted abilities and API login lacks an explicit limiter. | Open | Auth still creates tokens without abilities and the API login/register routes have no explicit throttle. Define abilities, enforce them per route/action, and add login-rate and token-scope tests. |
-| Nested project/task-child route binding is not scoped to the parent workspace/task. | Open | Routes still bind many projects, todos, checklists, labels, tags, reminders, and attachments globally without scoped bindings or equivalent parent checks. Add scoped bindings plus mismatched-parent tests. |
-| Web/API controllers duplicate behavior, mix Inertia/JSON, and return inconsistent envelopes. | Open | Separate web/API controllers still duplicate domain paths; `TodoController` still branches on `expectsJson()` and endpoint envelopes differ. Consolidate through shared actions/query objects and one versioned JSON contract. |
-| Route closures resolve workspaces, query todos, manufacture props, and invoke controllers. | Open | The main web routes still call controllers through `app(...)` from closures and perform workspace/query/presentation work. Move them to named controller/query-object endpoints. |
-| Model progress accessors and dashboard/project/recurrence paths have excessive-query risks. | Open | `Todo::progress` and `Checklist::progress` still execute queries; dashboard weekly metrics issue per-day queries and no query-budget tests exist. Replace accessor queries with loaded aggregates/query objects and add deterministic query-count coverage. |
-| Import/export/upload workflows lack boundary, content, streaming, and rollback controls. | Resolved | Imports now enforce size/type/record/structure boundaries and transactions; attachments enforce authorized MIME/extension/size pairs; exports stream workspace-scoped lazy queries and neutralize CSV formulas. `DataTransferTest` covers these controls. |
-| Board mode is selectable but not rendered, with mixed/inaccessible drag behavior. | Partially resolved | The unavailable board selector and unused `@dnd-kit` imports were removed, leaving the supported task list honest. The dormant `BoardView` still relies on native pointer drag and has no keyboard-accessible implementation; either remove it or complete the accessible board phase. |
-| Frontend copy/locale/routes and task-detail draft state are inconsistent. | Resolved | Application copy is supplied through English/Lithuanian/Russian catalogs, date/number helpers use user locale/timezone with English fallback, generated Wayfinder routes replace the custom helper/hardcoded settings paths, and task identity changes reset detail/comment/checklist drafts with regression coverage. |
+| Finding from `docs/current-state.md`                                                         | Status             | Current evidence and next work                                                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workspace member removal uses an undefined variable and can remove final ownership.          | Resolved           | The controller now uses the bound `userId`, rejects owner/self removal, verifies membership, and focused settings-member tests cover normal removal and owner protection.                                                                                                                                              |
+| Workspace switching stores a session ID that `User::currentWorkspace()` ignores.             | Resolved           | `currentWorkspace()` now accepts the selected ID, verifies it through the user's membership relation, and callers pass `current_workspace_id`; navigation/page tests cover selected-workspace behavior.                                                                                                                |
+| API tokens have unrestricted abilities and API login lacks an explicit limiter.              | Open               | Auth still creates tokens without abilities and the API login/register routes have no explicit throttle. Define abilities, enforce them per route/action, and add login-rate and token-scope tests.                                                                                                                    |
+| Nested project/task-child route binding is not scoped to the parent workspace/task.          | Open               | Routes still bind many projects, todos, checklists, labels, tags, reminders, and attachments globally without scoped bindings or equivalent parent checks. Add scoped bindings plus mismatched-parent tests.                                                                                                           |
+| Web/API controllers duplicate behavior, mix Inertia/JSON, and return inconsistent envelopes. | Open               | Separate web/API controllers still duplicate domain paths; `TodoController` still branches on `expectsJson()` and endpoint envelopes differ. Consolidate through shared actions/query objects and one versioned JSON contract.                                                                                         |
+| Route closures resolve workspaces, query todos, manufacture props, and invoke controllers.   | Open               | The main web routes still call controllers through `app(...)` from closures and perform workspace/query/presentation work. Move them to named controller/query-object endpoints.                                                                                                                                       |
+| Model progress accessors and dashboard/project/recurrence paths have excessive-query risks.  | Open               | `Todo::progress` and `Checklist::progress` still execute queries; dashboard weekly metrics issue per-day queries and no query-budget tests exist. Replace accessor queries with loaded aggregates/query objects and add deterministic query-count coverage.                                                            |
+| Import/export/upload workflows lack boundary, content, streaming, and rollback controls.     | Resolved           | Imports now enforce size/type/record/structure boundaries and transactions; attachments enforce authorized MIME/extension/size pairs; exports stream workspace-scoped lazy queries and neutralize CSV formulas. `DataTransferTest` covers these controls.                                                              |
+| Board mode is selectable but not rendered, with mixed/inaccessible drag behavior.            | Partially resolved | The unavailable board selector and unused `@dnd-kit` imports were removed, leaving the supported task list honest. The dormant `BoardView` still relies on native pointer drag and has no keyboard-accessible implementation; either remove it or complete the accessible board phase.                                 |
+| Frontend copy/locale/routes and task-detail draft state are inconsistent.                    | Resolved           | Application copy is supplied through English/Lithuanian/Russian catalogs, date/number helpers use user locale/timezone with English fallback, generated Wayfinder routes replace the custom helper/hardcoded settings paths, and task identity changes reset detail/comment/checklist drafts with regression coverage. |
 
 ### Next Phase Starting Point
 
@@ -1936,16 +1936,16 @@ No migration or Composer/npm package change was made.
 ### Changed Files
 
 - `resources/js/pages/activity/Index.vue`
-  - aligned the filter rail with the shared muted/card segmented-control treatment.
+    - aligned the filter rail with the shared muted/card segmented-control treatment.
 - `resources/js/components/AppearanceTabs.vue`
-  - replaced legacy neutral/white states with shared semantic surface tokens and orange focus states.
+    - replaced legacy neutral/white states with shared semantic surface tokens and orange focus states.
 - `resources/js/pages/tasks/Index.vue`
 - `resources/js/pages/projects/Show.vue`
-  - preserved whole-row task selection through a keyboard-focusable overlay button while keeping nested checkbox and delete controls independently interactive.
+    - preserved whole-row task selection through a keyboard-focusable overlay button while keeping nested checkbox and delete controls independently interactive.
 - `tests/Feature/FrontendDesignTest.php`
-  - added structural coverage for task-row keyboard interaction and shared segmented-control styling.
+    - added structural coverage for task-row keyboard interaction and shared segmented-control styling.
 - `docs/progress.md`
-  - recorded the audit, implementation, verification, limitations, and delivery state.
+    - recorded the audit, implementation, verification, limitations, and delivery state.
 
 ### Verification
 
@@ -2043,29 +2043,29 @@ No migration or Composer/npm package change was made.
 ### Changed Files
 
 - `resources/js/app.ts`
-  - changed the Inertia progress indicator from legacy gray to the `/projects` orange accent.
+    - changed the Inertia progress indicator from legacy gray to the `/projects` orange accent.
 - `resources/js/components/PasswordInput.vue`
-  - made the visibility toggle keyboard reachable, localized, state-aware, and visually aligned with the shared input focus treatment.
+    - made the visibility toggle keyboard reachable, localized, state-aware, and visually aligned with the shared input focus treatment.
 - `resources/js/components/TextLink.vue`
 - `resources/js/components/UserInfo.vue`
-  - replaced the remaining neutral link and avatar-fallback accents with the warm orange semantic treatment.
+    - replaced the remaining neutral link and avatar-fallback accents with the warm orange semantic treatment.
 - `resources/js/components/ui/breadcrumb/Breadcrumb.vue`
 - `resources/js/components/ui/input-otp/InputOTPSlot.vue`
 - `resources/js/components/ui/sidebar/SidebarRail.vue`
 - `resources/js/components/ui/spinner/Spinner.vue`
-  - aligned shared feedback/focus surfaces and localized their accessible names.
+    - aligned shared feedback/focus surfaces and localized their accessible names.
 - `resources/js/pages/auth/Login.vue`
 - `resources/js/pages/auth/Register.vue`
 - `resources/js/pages/auth/TwoFactorChallenge.vue`
-  - removed manual positive tab ordering and normalized inline authentication actions.
+    - removed manual positive tab ordering and normalized inline authentication actions.
 - `lang/en/ui.php`
 - `lang/lt/ui.php`
 - `lang/ru/ui.php`
-  - added stable interaction and accessibility copy in every supported language.
+    - added stable interaction and accessibility copy in every supported language.
 - `tests/Feature/FrontendDesignTest.php`
-  - added shared interaction, focus, progress-accent, and translation coverage.
+    - added shared interaction, focus, progress-accent, and translation coverage.
 - `docs/progress.md`
-  - recorded this phase and its verification state.
+    - recorded this phase and its verification state.
 
 ### Verification
 
@@ -3844,3 +3844,136 @@ Completed, verified, committed, and pushed.
 - Implementation-plan commit `dd8424b` (`docs: plan calendar planning workspace`) was pushed successfully to `origin/main`.
 - Implementation commit `74a0ce3` (`feat: build calendar planning workspace`) was pushed successfully to `origin/main`.
 - This progress record will be committed separately as `docs: record calendar planning workspace` and pushed to `origin/main`.
+
+## Activity Intelligence Workspace
+
+### Status
+
+Completed. The workspace activity route now provides a responsive, localized intelligence ledger with scoped filters, bounded reads, accessible interaction states, and deterministic manual pagination.
+
+### Baseline And Decisions
+
+- Inspected the existing activity controller, query object, resource, route, Vue page, translations, tests, live SQLite schema, and current workspace authorization flow before implementation.
+- Used the existing Laravel 13, Inertia 3, Vue 3, Wayfinder, Tailwind CSS 4, Pest, and SQLite architecture; no packages or alternate application stack were added.
+- Kept workspace authorization as the security boundary, limited serialized activity metadata to display-safe values, and used URL-backed filters so filtered views remain shareable.
+- Recorded the accepted design and implementation sequence in `docs/plans/2026-08-16-activity-intelligence-design.md` and `docs/plans/2026-08-16-activity-intelligence-implementation.md`.
+
+### Delivered Scope
+
+- Added creation, changes, completion, organization, and automation categories; contributor and 7/30/90-day period filters; validated actor membership; and preserved filter state across paginated requests.
+- Added workspace-wide metrics, a 20-row deterministic activity ledger, bounded contributor options, lazy stable Inertia props, and manual `Inertia::scroll` loading without duplicate or reordered rows.
+- Added SQLite composite indexes for actor and event filtering, with query-plan coverage for actor and multi-event category paths.
+- Rebuilt the page as a responsive intelligence workspace with a desktop filter rail, mobile category strip and filter sheet, grouped timeline, loading/empty/end states, dark-mode-compatible tokens, reduced-motion handling, 44px controls, focus treatment, and concise screen-reader announcements.
+- Added complete semantic activity sentences and locale-aware result pluralization for English, Lithuanian, and Russian, including safe fallbacks for system actors and unknown historical events.
+
+### Files And Data
+
+- Added `ActivityCategory`, `ActivityIndexRequest`, the activity filter-index migration, focused activity components and typed helpers, and Activity Intelligence frontend/feature tests.
+- Updated `ActivityController`, `ActivityIndexQuery`, `ActivityLogResource`, the activity page and shared types, all three workspace translation files, and query-budget coverage.
+- Ran `2026_08_16_091210_add_activity_filter_indexes_to_activity_logs_table` successfully against the local SQLite database. No dependency or configuration changes were required.
+
+### Verification
+
+- Focused backend/page/query gate: 47 tests passed with 481 assertions.
+- Standard frontend gate: 16 tests passed, including all three Activity helper tests.
+- PHPStan, Vue TypeScript checking, ESLint, Prettier verification, Pint on the phase PHP files, and the Vite production build passed.
+- Composer validation and audit passed; the production npm audit reported zero vulnerabilities.
+- Live Herd browser checks passed on desktop, mobile, and dark mode with URL-backed filtering, manual pagination states, no horizontal overflow, no recent browser errors, and an accessible mobile filter sheet/status.
+- Independent review found no remaining critical, high, or medium issues after accessibility, localization, bounded-query, query-plan, and test-discovery fixes.
+- The repository-wide Pest run was also attempted: 606 of 620 tests passed with 8,846 assertions; 13 unrelated Todo/workspace/notification mutation checks returned HTTP 419 and one concurrent run reported a transient SQLite malformed-image error. A read-only `PRAGMA integrity_check` returned `ok`, and all focused Activity/workspace/query tests passed afterward.
+
+### Git Delivery
+
+- Design commit `72c8337` (`docs: design activity intelligence workspace`) was pushed successfully to `origin/main`.
+- Implementation-plan commit `8390a00` (`docs: plan activity intelligence workspace`) was pushed successfully to `origin/main`.
+- Implementation commit `494459d` (`feat: build activity intelligence workspace`) was pushed successfully to `origin/main`.
+- This progress record will be committed separately as `docs: record activity intelligence workspace` and pushed to `origin/main`.
+
+## Production Modernization: Baseline And Canonical Documentation
+
+### Status
+
+In progress. The protected baseline and first canonical documentation pass are complete; dependency and code implementation begins next.
+
+### Repository Protection
+
+- Inspected `main` at `7f90145`, initially synchronized with `origin/main`.
+- The staging area and untracked set were empty.
+- Preserved one pre-existing unstaged user change in `tests/Feature/FrontendDesignTest.php` (+36/-2) that extends the dashboard command-center contract.
+- Confirmed npm from `package-lock.json`, Composer from `composer.lock`, and SQLite as the only relational database.
+- Ruflo MCP tools requested by the generated instruction block were not exposed in this session; Laravel Boost and local repository/runtime evidence are being used instead.
+
+### Requirements And Architecture Decisions
+
+- Re-read all governing, active, historical, plan, and tool-specific first-party Markdown; classified generated copied skill bundles and dependency/build output as non-product documentation.
+- Established `docs/index.md`, stable functional and non-functional requirement IDs, `docs/compliance-matrix.md`, and the living `docs/implementation-plan.md`.
+- Rewrote the active architecture, product/domain/data, authorization/security/API, Inertia/Vue/Tailwind/design/accessibility, localization, test/seeding, SQLite/performance/cache/integration, operations/deployment, review, and limitation contracts.
+- Recorded ADR 0001: preserve the repository-mandated Inertia/Vue stack and classify Livewire/Volt/Flux as non-applicable.
+- Recorded ADR 0002: run web/development/CI on PHP 8.5 while retaining PHP 8.4 compatibility because official NativePHP Mobile v4 currently embeds PHP 8.4.
+- Preserved July audits, roadmaps, and MimoCode plans with historical banners rather than deleting useful history.
+
+### Baseline Evidence
+
+- CLI runtime: Herd PHP 8.4.16; PHP 8.5 is installed. Laravel 13.20.0, Inertia Laravel 3.1.1, Tailwind 4.3.3, Vite 8.1.5, Pest 4.7.5/PHPUnit 12.5.30, Larastan 3.10, NativePHP Mobile 3.3.6.
+- `composer validate --strict --no-check-publish`: passed.
+- `composer audit`: failed with eight actionable advisories in Guzzle 7.15.1 and CommonMark 2.8.3.
+- `npm audit`: failed with four actionable transitive findings in brace-expansion, js-yaml, nanoid, and PostCSS.
+- `php artisan test --compact`: 569 tests, 567 passed, 2 failed, 3,387 assertions. Both failures are whitespace/call-signature-brittle source assertions in the preserved dashboard test change; the dashboard implementation is present.
+- `composer run types:check`, `composer run lint:check`, `npm run test:frontend` (13 tests), `npm run types:check`, `npm run lint:check`, `npm run format:check`, and `git diff --check`: passed.
+- `npm run build`: passed in 9.78 seconds after 3,429 modules. Baseline CSS was 158.29 kB (23.61 kB gzip), app JS 194.24 kB (49.69 kB gzip), and the largest listed button chunk 261.82 kB (89.20 kB gzip).
+- SQLite 3.45.2 health, WAL/foreign keys/configured pragmas, quick check, and foreign-key check passed through Laravel. No destructive database command was run.
+
+### Next Pass
+
+- Switch the Herd site/runtime and CI to PHP 8.5.
+- Apply targeted stable Composer/npm updates to resolve advisories and modernize Laravel/Inertia/Fortify/Sanctum/Wayfinder/Boost/Pest/Vite/Vue/NativePHP where mutually compatible.
+- Repair the preserved dashboard regression test, expand architecture/factory/seeder checks, enable strict Eloquent locally/testing, and execute the full security/data/frontend/browser/final documentation and delivery plan.
+
+### Git Delivery
+
+No commit or push has been created yet for this modernization. All changes remain reviewable in the worktree and the user-owned dashboard test change remains preserved.
+
+## Production Modernization: Implementation And Final Verification
+
+### Status
+
+Repository-controlled implementation is complete and verified. Delivery records below are factual as of this entry; the final documentation/push-status commit remains to be recorded after observing the remote push.
+
+### Runtime, Dependencies, And Architecture
+
+- Isolated the Herd site and CLI to PHP 8.5.0 and updated CI to PHP 8.5. Composer intentionally declares `>=8.4 <8.6` because NativePHP Mobile 4.2 embeds PHP 8.4.24; ADR 0002 and `sys-runtime-001` record this upstream constraint.
+- Updated Laravel to 13.25, Inertia Laravel to 3.3.1, Fortify to 1.38, Sanctum to 4.3.3, Wayfinder to 0.1.21, Boost to 2.5.3, NativePHP Mobile to 4.2, Pest to 5.1.1/PHPUnit 13.3, Vite to 8.2.1, Laravel Vite plugin to 3.2, Vue to 3.5.41, Tailwind to 4.3.3, TypeScript to 6.0.3, and their latest mutually compatible direct dependencies.
+- Cleared the eight Composer and four npm baseline advisories, regenerated both existing lock files, removed unused dnd-kit/VueUse motion packages, and retained Axios only for NativePHP's adapter contract.
+- Enabled strict Eloquent behavior outside production and fixed partial-user/two-factor/avatar/locale projections exposed by it. Removed modified-layer service-locator calls and route action closures, made the Blade bootstrap shell presentation-only, and added repository architecture guards.
+- Consolidated repeated app container, panel/feature radius, shadow, and semantic status values into CSS-first Tailwind 4 tokens while preserving the fixed Warm Precision light/dark/system design.
+
+### Data, Factories, Seeders, And Concurrent Work
+
+- Preserved the concurrent dashboard, calendar, and activity-intelligence workflows that landed during this work. The activity implementation was separated into commit `494459d` and includes validated URL filters, workspace-safe contributors, safe resource labels, bounded Inertia infinite scroll, responsive/accessible controls, and two additive rollback-safe activity indexes.
+- All 17 models retain factories; 30 meaningful states/helpers and a 55-case infrastructure contract now verify defaults, workflows, locales, roles, foreign keys, idempotent seeding, and direct production rejection by `DatabaseSeeder` and `DemoSeeder`.
+- An isolated file-backed SQLite database migrated all 33 migrations, seeded twice without count drift, produced 3 users/1 workspace/25 tasks, and returned an empty `PRAGMA foreign_key_check`. Both temporary databases were moved to Trash; the local application database was never reset.
+
+### Exact Final Verification
+
+- `herd php -v`: PHP 8.5.0. `herd composer validate --strict --no-check-publish`, `herd composer audit --locked --no-interaction`, and `herd composer outdated --direct --strict`: passed; zero advisories and compatible direct packages current.
+- PHP syntax sweep: 413 first-party PHP files passed. `vendor/bin/pint --format agent`, `composer lint:check`, and Larastan level 7 (`composer types:check`): passed with zero errors.
+- Sequential `herd php artisan test --compact`: passed 627 tests / 8,958 assertions in 27.067 s. Parallel `herd php artisan test --parallel --compact`: passed 627 tests / 8,958 assertions in 10.006 s. The post-guard focused infrastructure suite passed 55 tests / 100 assertions.
+- `herd php artisan test --coverage --min=0 --compact`: could not measure coverage and exited with `Code coverage driver not available. Did you install Xdebug or PCOV?`; `test-coverage-001` is the only blocked quality measurement.
+- `npm audit --audit-level=low`: zero vulnerabilities. `npm run test:frontend`: 13/13 passed. `npm run types:check`, `npm run lint:check`, and `npm run format:check`: passed.
+- `npm run build`: passed after 3,468 modules in 5.15 s; application CSS is 154.98 kB / 24.23 kB gzip plus 2.57 kB / 0.48 kB font CSS, and the app entry is 155.92 kB / 38.05 kB gzip.
+- `app:database-health --json`: every SQLite check true. Schedule inventory, config/route/view/optimize cache builds, application boot, and cache clear passed; 303 routes registered.
+- NativePHP 4.2 Android Gradle `assembleDebug` passed 40 tasks. `aapt dump badging` confirmed package `com.goleaf.xiaomimimo`, minSdk 31, targetSdk 36; the debug APK SHA-256 is `fd603c167c74bba63863d41c4a0e708ab8e30e55c79f444d5c25c37f532ca035`.
+- Final HTTPS smoke returned login 200 in 0.093211 s / 51,046 bytes and passkey discovery 200 in 0.034043 s / 117 bytes.
+- Chromium verification covered login/password confirmation, repeated keyboard Inertia navigation, 20 desktop/mobile page checks, activity URL/mobile filtering, reduced motion, dark media, and forced colors with one `h1`, zero horizontal overflow, and zero current console/page errors on every checked page.
+- `git diff --check`, repository architecture scans, secret-pattern scan, debug/TODO/FIXME scan, and generated-artifact scan passed.
+
+### Documentation And Requirements
+
+- Re-read and classified first-party Markdown, retained useful audit/plan history with historical banners, and synchronized the canonical index, requirements, non-functional requirements, architecture/data/security/frontend/design/accessibility/localization/testing/seeding/performance/operations/deployment documents, compliance matrix, changelog, review record, and genuine limitations.
+- There are 60 active requirement IDs: 56 repository-controlled requirements are implemented and verified once delivery is pushed, one runtime requirement is partial only because NativePHP embeds PHP 8.4, one coverage requirement is externally blocked, and Livewire/Flux are two documented non-applicable decisions under the governing Inertia/Vue contract.
+
+### Git Delivery
+
+- `494459d` — `feat: build activity intelligence workspace`.
+- `77ee95f` — `refactor: modernize runtime and quality architecture`.
+- The canonical documentation commit and observed `origin/main` push result are recorded by the final delivery entry/commit after this one.

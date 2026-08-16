@@ -1,20 +1,21 @@
 # Product Requirements
 
-## Product Contract
+Xiaomi Mimo is a trustworthy local-first workspace command center for planning and completing projects and tasks across web and NativePHP Mobile. It is a serious multi-workspace application, not tutorial CRUD.
 
-Xiaomi Mimo is a workspace-scoped task and collaboration application. It must preserve the existing Laravel 13, Inertia 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4, Reka UI, Fortify, Sanctum, Wayfinder, Pest, Larastan, Pint, and SQLite stack.
+## Product Outcomes
 
-## Required Capabilities
+1. A user can securely manage identity, preferences, and multiple workspaces with explicit owner/admin/member permissions.
+2. A workspace can manage projects, tasks, statuses, priorities, hierarchy, checklists, comments, labels, tags, recurrence, reminders, attachments, activity, and notifications without cross-workspace leakage.
+3. Task list, dashboard, calendar, project, detail, settings, import/export, and backup workflows remain useful in empty, normal, failure, and high-volume states.
+4. External API consumers receive versioned, least-privilege, stable JSON contracts equivalent to the web domain rules.
+5. English, Lithuanian, and Russian users receive equivalent, locale/timezone-aware and accessible behavior.
+6. Operators can migrate, seed, diagnose, back up, restore, schedule, build, and deploy the SQLite application safely and reproducibly.
 
-- Secure multi-workspace task, project, checklist, comment, label, tag, reminder, attachment, activity, notification, import, export, and backup workflows.
-- Explicit owner, admin, and member permissions enforced on the backend.
-- List, board, and calendar task workflows with validated filtering, sorting, pagination, bulk operations, and accessible interactions.
-- English, Lithuanian, and Russian translations with locale- and timezone-aware formatting.
-- Reliable recurring tasks and reminders with bounded, idempotent processing.
-- SQLite-only operation, documented tuning, integrity diagnostics, safe backups, and deployment constraints.
+Detailed testable requirements and stable IDs live in `docs/requirements.md`; cross-cutting quality requirements live in `docs/non-functional-requirements.md`; implementation and verification traceability lives in `docs/compliance-matrix.md`.
 
-## Quality Attributes
+## Explicit Product Boundaries
 
-Workspace isolation is a security boundary. Controllers remain thin, writes use authorized Form Requests and actions, complex reads use scoped query objects, external JSON uses resources, and all changes receive focused tests plus project-wide quality checks before phase completion.
-
-The numbered prompts in the repository contract define the phased acceptance criteria. Later phases must re-read the current source and applicable documentation before implementation.
+- Preserve the installed Laravel/Inertia/Vue/Tailwind/Wayfinder architecture and fixed Warm Precision design language.
+- SQLite is the only relational database and NativePHP Mobile is an intentional supported runtime.
+- Do not introduce Livewire, Volt, Flux, Vue Router, React, jQuery, Filament, Nova, a second SQL database, or infrastructure-heavy services without a new explicit product requirement.
+- Private workspace data, files, invitations, tokens, and backups are security boundaries, never convenience shortcuts.

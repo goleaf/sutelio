@@ -7,29 +7,11 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 ## Foundational Context
 
-This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
+This application is a Laravel application running on PHP 8.5. You are an expert with the Laravel ecosystem. Always use the APIs that match the installed major version of each package — do not assume a version.
 
-- php - 8.4
-- inertiajs/inertia-laravel (INERTIA_LARAVEL) - v3
-- laravel/fortify (FORTIFY) - v1
-- laravel/framework (LARAVEL) - v13
-- laravel/prompts (PROMPTS) - v0
-- laravel/sanctum (SANCTUM) - v4
-- laravel/wayfinder (WAYFINDER) - v0
-- larastan/larastan (LARASTAN) - v3
-- laravel/boost (BOOST) - v2
-- laravel/mcp (MCP) - v0
-- laravel/pail (PAIL) - v1
-- laravel/pint (PINT) - v1
-- laravel/sail (SAIL) - v1
-- pestphp/pest (PEST) - v4
-- phpunit/phpunit (PHPUNIT) - v12
-- @inertiajs/vue3 (INERTIA_VUE) - v3
-- tailwindcss (TAILWINDCSS) - v4
-- vue (VUE) - v3
-- @laravel/vite-plugin-wayfinder (WAYFINDER_VITE) - v0
-- eslint (ESLINT) - v9
-- prettier (PRETTIER) - v3
+Before relying on a package's API, confirm its installed version:
+- PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
+- JS packages: check `package.json` for the installed versions.
 
 ## Skills Activation
 
@@ -87,6 +69,11 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 2. Use `"quoted phrases"` for exact position matching: `"infinite scroll"` requires adjacent words in order.
 3. Combine words and phrases for mixed queries: `middleware "rate limit"`.
 4. Use multiple queries for OR logic: `queries=["authentication", "middleware"]`.
+
+## Project Rules
+
+- This project contains committed, area-grouped rules in `.ai/rules` when that directory exists (settled decisions, non-obvious traps, standing constraints). Framework and package guidelines that only apply to specific paths (testing, frontend, components) also live there, under `.ai/rules/boost` — this is not just recorded decisions, it is load-bearing guidance you have not seen inline. Before you enter plan mode or create/edit any file, you MUST first: open @.ai/rules/index.md (it maps file globs to rule files), read every rule file whose globs cover the path(s) in scope, and run `grep -rin 'keyword' .ai/rules` to catch what a path match alone misses. Do not write code until you have read and are following every matching rule. If `.ai/rules` does not exist, continue without it.
+- Record durable rules with `record-rule` so the next agent or teammate inherits them instead of working them out again. Pass a `glob` (e.g. `app/Http/Controllers/**`), a short `title`, and a few-line `note`. Always use `record-rule`, never your native memory or notes tool — native memory is personal and session-scoped; only `.ai/rules` is shared with the team and persists in the repo.
 
 ## Artisan
 
@@ -214,6 +201,71 @@ Vue components must have a single root element.
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
 
 </laravel-boost-guidelines>
+
+<xiaomi-mimo-canonical-instructions>
+=== mandatory reading order ===
+
+# Repository Purpose And Sources Of Truth
+
+Xiaomi Mimo is a local-first, workspace-scoped task and collaboration application for web and NativePHP Mobile. Before changing code, read this file, `docs/index.md`, `docs/requirements.md`, `docs/non-functional-requirements.md`, `docs/architecture.md`, `docs/compliance-matrix.md`, `docs/implementation-plan.md`, and the latest entry in `docs/progress.md`.
+
+Source code, migrations, the live SQLite schema, routes, tests, and current canonical documentation outrank historical audits and plans. Historical files remain evidence only and must not be treated as active requirements.
+
+=== technology and runtime boundaries ===
+
+# Technology Baseline
+
+- Preserve Laravel 13, Inertia 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4, Reka UI/shadcn-style components, Fortify, Sanctum, Wayfinder, Pest, Larastan, Pint, Vite, NativePHP Mobile, and SQLite.
+- The web/development target is PHP 8.5. NativePHP Mobile currently embeds PHP 8.4, so application code and Composer constraints must retain that documented mobile compatibility until NativePHP ships an 8.5 runtime.
+- SQLite is the only supported relational database. Redis and another SQL server must not become application requirements.
+- The application uses Inertia and Vue. Do not add Livewire, Volt, Vue Router, React, jQuery, Alpine page logic, Filament, or Nova.
+- Use the single existing npm lock file. Do not add another JavaScript package manager or lock file.
+- Flux is not installed or licensed and is not part of the architecture.
+
+=== architectural boundaries ===
+
+# Backend, Database, And Security Rules
+
+- Routes declare endpoints and middleware only. Controllers remain thin. Authorized Form Requests validate writes and complex filters, actions own state changes and transactions, query objects own complex reads, policies own permissions, and API Resources own public JSON shapes.
+- Workspace isolation is a security boundary. Resolve workspace-owned records through the authorized workspace or parent aggregate; mixed, missing, or foreign identifier sets fail atomically.
+- Treat every request value, route value, API payload, and browser-held identifier as untrusted. Validation does not replace authorization and frontend visibility does not replace policies.
+- Keep transactions short, make retryable operations idempotent, and do not wait for external services inside a transaction.
+- Keep Eloquent queries out of Vue, API Resources, model accessors, loops, route closures, and policies. Eager-load explicit relations, paginate unbounded collections, and preserve query-budget coverage for critical pages.
+- Migrations must be SQLite-compatible, populated-data-safe, reversible where meaningful, and verified on a fresh test database. Never use `migrate:fresh` against a real database.
+- Store uploads and backups on configured disks with generated safe names. Private downloads and every backup/restore operation require authorization. Never expose physical paths.
+- Read secrets through configuration. Never call `env()` outside config files, log credentials/tokens/session identifiers, or commit real secrets and personal data.
+
+=== frontend and presentation rules ===
+
+# Inertia, Vue, Blade, Tailwind, And Accessibility
+
+- Use Vue Composition API with `<script setup lang="ts">`, typed props/emits, immutable Inertia props, identity-synchronized local drafts, Wayfinder-generated actions/routes, and explicit loading, empty, error, success, disabled, and offline states where applicable.
+- Use built-in Inertia requests for mutations. Do not introduce Axios or custom fetch mutations unless an existing external integration specifically requires them.
+- Blade is only the Inertia bootstrap shell and safe presentation. Do not use `@php`, `@endphp`, database/model/service/facade/container calls, business calculations, or raw untrusted HTML in first-party Blade.
+- Tailwind uses the CSS-first Vite integration. Prefer semantic theme variables and shared components; keep complete class names statically discoverable and avoid unsafe dynamic class construction.
+- Preserve the fixed Warm Precision design system. Do not add runtime theme families; the existing light/dark/system appearance preference may only switch color mode.
+- Interfaces must remain keyboard, touch, screen-reader, zoom, reduced-motion, and forced-colors usable. Preserve native semantics, visible focus, meaningful labels, focus management, non-color status cues, and mobile-first layouts without horizontal overflow.
+
+=== localization rules ===
+
+# Localization
+
+- All user-facing application text uses the existing semantic translation catalogs for English (`en`), Lithuanian (`lt`), and Russian (`ru`) with English fallback.
+- Keep translation keys and placeholders in parity across locales. Do not concatenate translated sentence fragments.
+- Use the shared locale/timezone-aware date, time, number, relative-time, and list formatters. Store canonical UTC timestamps and present them in the selected user timezone.
+
+=== testing, seeding, docs, and delivery ===
+
+# Quality And Definition Of Done
+
+- Every behavior change starts or finishes with focused Pest or frontend regression coverage. Use factories for model setup and fake every external request.
+- Every first-party Eloquent model has a valid factory or a documented technical exemption. Seeders are deterministic where useful, idempotent for reference data, local/demo guarded, non-destructive, and safe to run repeatedly.
+- Run the smallest relevant checks after each pass. Before delivery, run Pint, Larastan, the full Pest suite, fresh test migration and seeding, frontend tests, Vue type checking, ESLint, Prettier verification, npm audit, the production Vite build, relevant browser checks, and Composer validation/audit.
+- Update `docs/progress.md` before and after each phase. Keep `docs/requirements.md`, `docs/compliance-matrix.md`, `docs/implementation-plan.md`, and affected architecture/operations documents synchronized with actual behavior.
+- Work on `main`. Preserve unrelated user changes, stage only phase-owned files, inspect the complete diff and staged diff, use semantic commits, never rewrite history or force-push, and push `origin main` only after the relevant gates pass.
+- Work is complete only when implementation, tests, documentation, migrations, seed data, security/accessibility review, quality gates, diff review, commit, and push status are all factual and synchronized. Never describe an unexecuted or failing check as passing.
+
+</xiaomi-mimo-canonical-instructions>
 
 <xiaomi-mimo-project-contract>
 === permanent project rules ===

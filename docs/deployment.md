@@ -1,14 +1,33 @@
 # Deployment
 
-## Requirements
+## Web Requirements
 
-- PHP 8.3 or newer with SQLite/PDO SQLite extensions.
-- A writable local filesystem for the SQLite database, WAL sidecar, storage, cache, sessions, uploads, and non-public backups.
-- Node.js tooling for the production Vite build.
-- Scheduler execution for reminders, recurring tasks, backups, and activity cleanup until those workflows document alternate execution paths.
+- PHP 8.5 with required Laravel extensions including PDO SQLite/SQLite3, Mbstring, OpenSSL, JSON, Fileinfo, Tokenizer, XML, Ctype, and Curl as used by installed packages.
+- Composer 2, Node 22, and npm for reproducible asset builds.
+- A local SQLite-compatible persistent filesystem for the database/WAL/SHM and private writable storage for cache, sessions, queue, uploads, and backups.
+- HTTPS, `APP_ENV=production`, `APP_DEBUG=false`, a unique `APP_KEY`, secure cookie/session configuration, correct `APP_URL`, mail configuration where invitations/reminders are enabled, and no demo credentials.
 
-## Constraints
+## Release Sequence
 
-SQLite is the only supported relational database. Do not place the database or WAL files on unsupported network filesystems. Production deployment must validate the configured database path and directory permissions and must not silently create a database at an unintended relative path.
+```bash
+composer install --no-dev --classmap-authoritative --no-interaction
+npm ci
+npm run build
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan app:database-health
+```
 
-The current backup/restore implementation is not approved for production use. Deployment guidance will be completed after the SQLite, recurring-operation, and data-transfer phases.
+Do not run `db:seed` in production unless an explicitly reviewed idempotent reference seeder is selected; never run the full demo `DatabaseSeeder` or `migrate:fresh`. Keep a consistent external backup before migrations, deploy populated-safe migrations, and retain the previous release for rollback. Rollback must account for code/schema compatibility; do not blindly run destructive down migrations.
+
+Configure the scheduler and, when reminder delivery is queued, a supervised bounded database queue worker. Monitor application logs, failed jobs, disk space, SQLite health, backup results, and scheduler freshness.
+
+## NativePHP Mobile
+
+NativePHP uses an embedded PHP 8.4 runtime upstream, even when web/dev uses PHP 8.5. Composer and application syntax must retain mobile compatibility until NativePHP publishes 8.5. Build/release requires official NativePHP tools, configured app ID/version/signing, min Android SDK 31 for Android 12, target/compile SDK values from config, a production frontend build, and real-device testing before store submission.
+
+The verified development artifact was built with NativePHP Mobile 4.2 and Gradle 8.14.5. `aapt` reported package `com.goleaf.xiaomimimo`, minSdk 31, targetSdk 36. Production releases must replace debug signing and `DEBUG` version metadata through protected CI/release configuration.
+
+Do not commit signing keys, provisioning profiles, production tokens, or generated local build artifacts. Verify the packaged manifest/runtime contract after every NativePHP major update.

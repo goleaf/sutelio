@@ -1,24 +1,29 @@
-# SQLite
+# SQLite Runtime And Data Safety
 
-## Support Contract
+SQLite is the only supported relational database for web, testing, production, and NativePHP Mobile. Database/WAL/SHM files must live together on a local SQLite-compatible filesystem with application-only permissions; unsupported network filesystems are prohibited.
 
-SQLite is the only supported relational database. Migrations, queries, locking, backup, restore, and operational guidance must remain SQLite-compatible. Database files and WAL files must not be placed on unsupported network filesystems.
+## Runtime Contract
 
-## Inspected Runtime
+Laravel's actual connection must report and health-check:
 
-On 2026-07-19 the repository database reported:
+- foreign keys enabled;
+- WAL journal mode;
+- configured `NORMAL` synchronous behavior;
+- bounded busy timeout;
+- configured cache size and temp store;
+- bounded WAL auto-checkpoint;
+- `quick_check` success and zero foreign-key violations.
 
-- `journal_mode`: `wal`
-- `synchronous`: `2` (`FULL`)
-- `busy_timeout`: `0`
-- `cache_size`: `-2000`
-- `temp_store`: `0`
-- `wal_autocheckpoint`: `1000`
-- `integrity_check`: `ok`
-- `foreign_keys`: `0` on the inspected SQLite CLI connection
+`SqliteHealthService` applies/verifies supported settings once at connection startup and `php artisan app:database-health` provides non-sensitive diagnostics. PRAGMAs are connection-specific; a standalone SQLite CLI result does not prove Laravel's connection state.
 
-PRAGMAs are connection-specific, so later work must verify values through Laravel's actual connection as well. Configuration must be environment-driven and applied once per connection, not before every query.
+## Migrations And Queries
 
-## Known Risks
+Migrations must be SQLite-compatible, safe for populated databases, and use expand/backfill/verify/switch/contract sequencing for risky changes. Table rebuilds require explicit orphan/value preflight, foreign-key revalidation, and a rollback/backup plan. Indexes derive from scoped query shapes and `EXPLAIN QUERY PLAN`/query-budget evidence.
 
-The current backup service copies the main database file directly and does not establish a WAL-consistent snapshot. Restore accepts a filename-derived path and replaces the database without integrity, compatibility, authorization, or exclusive-operation controls. These workflows must not be treated as production-safe.
+Use short transactions, exact aggregate sets, deterministic pagination, `chunkById`/lazy streams for large work, and atomic locks/unique identities for races. Never use `migrate:fresh` outside isolated testing.
+
+## Backup And Restore
+
+Backups use a SQLite-consistent snapshot rather than copying only the main WAL database file. They are private, opaque, integrity checked, and path-contained. Restore is owner-only, password-confirmed, exclusive, compatibility/integrity validated, rollback protected, and followed by health/FK checks. No physical path is exposed in UI/API.
+
+Deployment and incident commands are in `docs/operations.md`.

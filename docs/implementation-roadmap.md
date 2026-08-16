@@ -1,5 +1,7 @@
 # Implementation Roadmap
 
+> Historical roadmap (2026-07). Its phases were substantially delivered and are recorded in `docs/progress.md`. Use `docs/implementation-plan.md` and `docs/compliance-matrix.md` for current work and status.
+
 ## Sequencing Principles
 
 1. Security boundaries precede structural refactors.

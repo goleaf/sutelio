@@ -11,5 +11,5 @@ Return the correct command, code snippet, or explanation.
 
 # Constraints
 - Return the exact Artisan command, code snippet, or concise answer
-- Use Laravel 13 conventions and PHP 8.4 syntax
+- Use Laravel 13 conventions and the PHP runtime contract defined in the root `AGENTS.md`
 - Do not include unnecessary explanation unless the question asks for it
