@@ -3781,3 +3781,66 @@ Completed and ready for delivery.
 - Design commit `7f90145` (`docs: design dashboard command center`) was pushed successfully to `origin/main`.
 - Implementation commit `4a8eee6` (`feat: enhance dashboard with task queues and productivity insights`) was pushed successfully to `origin/main`.
 - This progress record will be committed separately as `docs: record dashboard command center` and pushed to `origin/main`.
+
+## Calendar Planning Workspace
+
+### Status
+
+Completed, verified, committed, and pushed.
+
+### Before-Phase Baseline
+
+- The calendar eagerly loaded every dated task in the workspace and kept the selected date and month/week/agenda view only in local Vue refs, so navigation state was lost on reload and could not be shared.
+- Month rendering, week rendering, agenda grouping, navigation, metrics, and the upcoming rail were implemented in one large page component.
+- The seeded August view was mostly empty while overdue work disappeared into an aggregate count and a misleading empty upcoming panel.
+- The desktop grid did not have a dedicated mobile reading model or bounded query contract.
+
+### Delivered Scope And Decisions
+
+- Added validated `view` and `date` URL state with Sunday-first month/week ranges and a bounded 31-day agenda range, normalized in the user's timezone.
+- Replaced the eager calendar query with workspace-scoped visible-range reads plus a six-item oldest-overdue preview and an independent overdue count.
+- Split the Vue page into focused navigator, month, week, agenda, attention-rail, date-helper, and typed-contract modules while retaining Inertia, generated Wayfinder routes, and immutable server props.
+- Added responsive mobile date cards, a seven-column desktop month grid, a seven-day week surface, a grouped agenda, and a persistent overdue rail with task prefetching and a generated link to the complete overdue queue.
+- Preserved the fixed Warm Precision visual language with restrained orange accents, clear hierarchy, dark-mode tokens, 44-pixel calendar controls, keyboard focus, reduced-motion behavior, and localized EN/LT/RU copy.
+- Updated source-contract tests to follow the extracted calendar navigator and made guest-language assertions resilient to the canonical multiline root markup.
+
+### Changed Files
+
+- `app/Http/Requests/CalendarIndexRequest.php`, `app/Http/Controllers/CalendarController.php`, and `app/Queries/CalendarQuery.php`.
+- `resources/js/pages/calendar/Index.vue` and the focused modules under `resources/js/components/calendar/`.
+- `resources/js/types/workspace-ui.ts` plus English, Lithuanian, and Russian workspace translations.
+- Focused calendar backend, design, and localization regressions in `tests/Feature/WorkspacePagesTest.php`, `tests/Feature/FrontendDesignTest.php`, and `tests/Feature/FrontendLocalizationTest.php`.
+- Design and implementation records under `docs/plans/`.
+
+### Migrations And Packages
+
+- No migration or schema change was required.
+- No Composer or npm dependency was changed by this phase.
+- The UI/UX skill's optional design-database search script and the generated Ruflo MCP tools were not exposed, so their embedded design and workflow rules were applied with Laravel Boost and repository/runtime evidence.
+
+### Verification
+
+- Test-first backend and frontend red states confirmed the missing URL metadata, bounded ranges, overdue preview, component extraction, and translation keys before implementation.
+- Focused calendar coverage passed: 23 tests and 207 assertions across backend, query budget, design, and localization contracts.
+- `vendor/bin/pint --format agent` on phase PHP files and `composer run types:check`: passed with zero PHPStan errors.
+- `php artisan test --compact`: passed, 585 tests and 8,090 assertions.
+- `npm run test:frontend`: passed, 13 tests. `npm run types:check`, `npm run lint:check`, and `npm run format:check`: passed.
+- `npm run build`: passed after transforming 3,462 modules; only the optional `fontaine` notice and plugin timing advisory were emitted.
+- Fresh migration and full demo seeding passed against an isolated temporary SQLite database, which was removed after verification.
+- `composer validate --strict --no-check-publish`, `composer audit --no-interaction`, `npm audit --omit=dev`, and `git diff --check`: passed; both dependency audits reported zero vulnerabilities.
+- Live Herd desktop QA verified month/week/agenda URL state, exact period stepping, reload persistence, generated task navigation with state-preserving back navigation, and zero horizontal overflow at 1,440 pixels.
+- Live Herd mobile QA at 390 x 844 verified the dedicated date-card layout, zero document/attention-rail overflow, and no undersized calendar controls. Light and dark visual passes produced no captured console or page errors.
+- Recent Boost browser logs contain only unrelated July 19 entries and no errors from this calendar phase.
+
+### Known Limitations And Next Work
+
+- Calendar tasks remain due-date based; time-block scheduling, drag-and-drop rescheduling, and persisted week-start preferences are intentionally outside this phase.
+- The attention rail is a bounded six-item preview while its badge shows the complete overdue count; the generated task-index action opens the full filtered queue.
+- The separate production-modernization worktree remains in progress and was preserved outside this phase's commits.
+
+### Git Delivery
+
+- Design commit `a792196` (`docs: design calendar planning workspace`) was pushed successfully to `origin/main`.
+- Implementation-plan commit `dd8424b` (`docs: plan calendar planning workspace`) was pushed successfully to `origin/main`.
+- Implementation commit `74a0ce3` (`feat: build calendar planning workspace`) was pushed successfully to `origin/main`.
+- This progress record will be committed separately as `docs: record calendar planning workspace` and pushed to `origin/main`.
