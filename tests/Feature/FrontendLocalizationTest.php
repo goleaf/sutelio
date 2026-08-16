@@ -43,6 +43,31 @@ test('data safety messages preserve locale parity', function () {
     }
 });
 
+test('task focus desk copy is complete in every supported locale', function () {
+    $requiredKeys = [
+        'filters.active_count',
+        'filters.completed_today',
+        'filters.favorites',
+        'filters.focus',
+        'filters.pinned',
+        'index.enter_selection',
+        'index.exit_selection',
+        'index.filtered_empty_description',
+        'index.filtered_empty_title',
+        'index.open_task',
+        'index.result_summary',
+        'index.row_actions',
+    ];
+
+    foreach (['en', 'lt', 'ru'] as $locale) {
+        $tasks = collect(Arr::dot(trans('ui.tasks', locale: $locale)));
+
+        expect($tasks)->toHaveKeys($requiredKeys)
+            ->and($tasks->only($requiredKeys)->filter(fn (mixed $value): bool => ! is_string($value) || blank($value)))
+            ->toBeEmpty();
+    }
+});
+
 test('every application translation catalog has locale parity', function () {
     $catalogs = collect(File::files(lang_path('en')))
         ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))

@@ -2,17 +2,17 @@
 import { Head, router, useHttp } from '@inertiajs/vue3';
 import { CheckCircle2, Clock3, ListChecks, Plus } from '@lucide/vue';
 import { computed, nextTick, ref } from 'vue';
-import EmptyState from '@/components/shared/EmptyState.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
-import BoardView from '@/components/task/BoardView.vue';
-import BulkActions from '@/components/task/BulkActions.vue';
+import {
+    activeTaskFilterCount,
+    clearTaskFilters,
+    restoreTaskFocus,
+} from '@/components/task/task-focus';
 import TaskCreateDialog from '@/components/task/TaskCreateDialog.vue';
 import TaskDetail from '@/components/task/TaskDetail.vue';
-import TaskFilterBar from '@/components/task/TaskFilterBar.vue';
-import TaskList from '@/components/task/TaskList.vue';
-import TaskPagination from '@/components/task/TaskPagination.vue';
+import TaskWorkspacePanel from '@/components/task/TaskWorkspacePanel.vue';
 import { Button } from '@/components/ui/button';
 import { useBulkSelect } from '@/composables/useBulkSelect';
 import { useToast } from '@/composables/useToast';
@@ -49,6 +49,8 @@ const toast = useToast();
 const { formatNumber, t } = useUi();
 const selectedTodo = ref<Todo | null>(null);
 const taskDetailTrigger = ref<HTMLElement | null>(null);
+const taskQueueFallback = ref<HTMLElement | null>(null);
+const confirmationTrigger = ref<HTMLElement | null>(null);
 const showCreateDialog = ref(false);
 const todoToDelete = ref<Todo | null>(null);
 const deletingTodo = ref(false);
@@ -56,15 +58,24 @@ const filtering = ref(false);
 const busyTodoId = ref<string | null>(null);
 const bulkProcessing = ref(false);
 const confirmBulkDelete = ref(false);
+const selectionMode = ref(false);
 const detailRequest = useHttp<Record<string, never>, { data: Todo }>({});
 const statusRequest = useHttp<{ status: string }, { data: Todo }>({
     status: '',
 });
 const selectedIds = computed(() => Array.from(bulkSelect.selectedIds.value));
+const activeFilterCount = computed(() => activeTaskFilterCount(props.filters));
+const allSelected = computed(
+    () =>
+        props.todos.data.length > 0 &&
+        props.todos.data.every((todo) =>
+            bulkSelect.selectedIds.value.has(todo.id),
+        ),
+);
 
 function applyFilters(filters: TodoFilters): void {
     filtering.value = true;
-    bulkSelect.clearSelection();
+    setSelectionMode(false);
     router.get(tasksIndex.url(), filters, {
         only: ['todos', 'filters', 'stats'],
         preserveScroll: true,
@@ -77,8 +88,26 @@ function applyFilters(filters: TodoFilters): void {
 }
 
 function refreshIndex(): void {
-    bulkSelect.clearSelection();
+    setSelectionMode(false);
     router.reload({ only: ['todos', 'filters', 'stats'] });
+}
+
+function setSelectionMode(enabled: boolean): void {
+    selectionMode.value = enabled;
+
+    if (!enabled) {
+        bulkSelect.clearSelection();
+    }
+}
+
+function activeElement(): HTMLElement | null {
+    return document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+}
+
+function restoreFocus(origin: HTMLElement | null): void {
+    void nextTick(() => restoreTaskFocus(origin, taskQueueFallback.value));
 }
 
 async function selectTodo(todo: Todo): Promise<void> {
@@ -86,10 +115,7 @@ async function selectTodo(todo: Todo): Promise<void> {
         return;
     }
 
-    taskDetailTrigger.value =
-        document.activeElement instanceof HTMLElement
-            ? document.activeElement
-            : null;
+    taskDetailTrigger.value = activeElement();
 
     try {
         const response = await detailRequest.get(
@@ -103,11 +129,8 @@ async function selectTodo(todo: Todo): Promise<void> {
 
 function closeTaskDetail(): void {
     selectedTodo.value = null;
-
-    void nextTick(() => {
-        taskDetailTrigger.value?.focus();
-        taskDetailTrigger.value = null;
-    });
+    restoreFocus(taskDetailTrigger.value);
+    taskDetailTrigger.value = null;
 }
 
 function updateSelectedTodo(todo: Todo): void {
@@ -124,6 +147,7 @@ function toggleCompletion(todo: Todo): void {
     }
 
     busyTodoId.value = todo.id;
+    const trigger = activeElement();
     const target = todo.is_completed ? uncomplete(todo) : complete(todo);
     router.post(
         target.url,
@@ -131,6 +155,7 @@ function toggleCompletion(todo: Todo): void {
         {
             only: ['todos', 'filters', 'stats'],
             preserveScroll: true,
+            onSuccess: () => restoreFocus(trigger),
             onFinish: () => {
                 busyTodoId.value = null;
             },
@@ -172,6 +197,8 @@ function selectPage(selected: boolean): void {
 function requestBulkAction(
     action: 'archive' | 'complete' | 'delete' | 'uncomplete',
 ): void {
+    confirmationTrigger.value = activeElement();
+
     if (action === 'delete') {
         confirmBulkDelete.value = true;
 
@@ -205,8 +232,10 @@ function performBulkAction(
                 }[action];
 
                 toast.success(t(message, { count: formatNumber(count) }));
-                bulkSelect.clearSelection();
+                setSelectionMode(false);
                 confirmBulkDelete.value = false;
+                restoreFocus(confirmationTrigger.value);
+                confirmationTrigger.value = null;
             },
             onError: () => toast.error(t('common.errors.generic')),
             onFinish: () => {
@@ -214,6 +243,22 @@ function performBulkAction(
             },
         },
     );
+}
+
+function requestDelete(todo: Todo): void {
+    confirmationTrigger.value = activeElement();
+    todoToDelete.value = todo;
+}
+
+function closeConfirmation(target: 'bulk' | 'todo'): void {
+    if (target === 'bulk') {
+        confirmBulkDelete.value = false;
+    } else {
+        todoToDelete.value = null;
+    }
+
+    restoreFocus(confirmationTrigger.value);
+    confirmationTrigger.value = null;
 }
 
 function deleteTodo(): void {
@@ -233,6 +278,13 @@ function deleteTodo(): void {
             if (selectedTodo.value?.id === todo.id) {
                 selectedTodo.value = null;
             }
+
+            if (bulkSelect.selectedIds.value.has(todo.id)) {
+                bulkSelect.toggle(todo.id);
+            }
+
+            restoreFocus(confirmationTrigger.value);
+            confirmationTrigger.value = null;
         },
         onFinish: () => {
             deletingTodo.value = false;
@@ -287,63 +339,39 @@ function deleteTodo(): void {
                     </template>
                 </WorkspacePageHeader>
 
-                <section
-                    class="rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6"
+                <div
+                    ref="taskQueueFallback"
+                    tabindex="-1"
+                    :aria-busy="filtering"
+                    class="focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none"
                 >
-                    <TaskFilterBar
+                    <TaskWorkspacePanel
+                        :active-filter-count="activeFilterCount"
+                        :all-selected="allSelected"
+                        :bulk-processing="bulkProcessing"
+                        :busy-todo-id="busyTodoId"
                         :filters="filters"
+                        :filtering="filtering"
                         :projects="projects.data"
-                        :task-definitions="taskDefinitions"
-                        :processing="filtering"
-                        @update="applyFilters"
-                    />
-                    <BulkActions
-                        v-if="bulkSelect.hasSelection.value"
                         :selected-ids="selectedIds"
-                        :processing="bulkProcessing"
-                        @action="requestBulkAction"
-                        @clear="bulkSelect.clearSelection"
+                        :selection-mode="selectionMode"
+                        :task-definitions="taskDefinitions"
+                        :todos="todos"
+                        @bulk-action="requestBulkAction"
+                        @clear-filters="applyFilters(clearTaskFilters(filters))"
+                        @clear-selection="setSelectionMode(false)"
+                        @create="showCreateDialog = true"
+                        @delete="requestDelete"
+                        @move="moveTodo"
+                        @navigate="setSelectionMode(false)"
+                        @select="selectTodo"
+                        @select-page="selectPage"
+                        @toggle-completion="toggleCompletion"
+                        @toggle-selection="bulkSelect.toggle($event.id)"
+                        @update-filters="applyFilters"
+                        @update-selection-mode="setSelectionMode"
                     />
-
-                    <div v-if="todos.data.length" class="mt-5">
-                        <BoardView
-                            v-if="filters.view === 'board'"
-                            :todos="todos.data"
-                            :task-definitions="taskDefinitions"
-                            :busy-todo-id="busyTodoId"
-                            @move="moveTodo"
-                            @select="selectTodo"
-                        />
-                        <TaskList
-                            v-else
-                            :todos="todos.data"
-                            :selected-ids="selectedIds"
-                            :busy-todo-id="busyTodoId"
-                            @delete="todoToDelete = $event"
-                            @select="selectTodo"
-                            @select-page="selectPage"
-                            @toggle-completion="toggleCompletion"
-                            @toggle-selection="bulkSelect.toggle($event.id)"
-                        />
-                        <TaskPagination
-                            :pagination="todos"
-                            :processing="filtering"
-                        />
-                    </div>
-                    <EmptyState
-                        v-else
-                        class="mt-5"
-                        compact
-                        :title="t('tasks.index.empty_title')"
-                        :description="t('tasks.index.empty_description')"
-                        :action-label="t('tasks.create.new_task')"
-                        @action="showCreateDialog = true"
-                    >
-                        <template #icon
-                            ><ListChecks class="size-7" aria-hidden="true"
-                        /></template>
-                    </EmptyState>
-                </section>
+                </div>
             </div>
         </main>
 
@@ -376,7 +404,7 @@ function deleteTodo(): void {
             :confirm-label="t('common.actions.delete')"
             :cancel-label="t('common.actions.cancel')"
             :processing="deletingTodo"
-            @update:open="!$event && (todoToDelete = null)"
+            @update:open="!$event && closeConfirmation('todo')"
             @confirm="deleteTodo"
         />
         <WorkspaceConfirmDialog
@@ -390,7 +418,7 @@ function deleteTodo(): void {
             :confirm-label="t('common.actions.delete')"
             :cancel-label="t('common.actions.cancel')"
             :processing="bulkProcessing"
-            @update:open="!$event && (confirmBulkDelete = false)"
+            @update:open="!$event && closeConfirmation('bulk')"
             @confirm="performBulkAction('delete')"
         />
     </div>

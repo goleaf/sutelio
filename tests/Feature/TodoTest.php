@@ -259,9 +259,12 @@ test('todo list filters by status', function () {
 
 test('task index exposes the implemented list and board views', function () {
     $taskIndex = file_get_contents(resource_path('js/pages/tasks/Index.vue'));
+    $workspacePanel = file_get_contents(resource_path('js/components/task/TaskWorkspacePanel.vue'));
     $filterBar = file_get_contents(resource_path('js/components/task/TaskFilterBar.vue'));
 
     expect($taskIndex)
+        ->toContain('<TaskWorkspacePanel')
+        ->and($workspacePanel)
         ->toContain('filters.view === \'board\'')
         ->toContain('<BoardView')
         ->toContain('<TaskList')

@@ -50,6 +50,6 @@ test('todo UI exposes completion and deletion mutations', () => {
 
 test('todo list uses the shared overdue rule and localized overdue text', () => {
     assert.match(taskList, /isTodoOverdue/);
-    assert.match(taskList, /t\('tasks\.stats\.overdue'\)/);
-    assert.doesNotMatch(taskList, /'Overdue · '/);
+    assert.match(taskList, /t\('tasks\.index\.due_overdue'/);
+    assert.doesNotMatch(taskList, /`\$\{t\([^)]*overdue[^)]*\)\}/);
 });

@@ -33,10 +33,20 @@ class TodoIndexController extends Controller
             return Inertia::render('tasks/Index', [
                 'todos' => [
                     'data' => [],
-                    'total' => 0,
-                    'current_page' => 1,
-                    'last_page' => 1,
-                    'per_page' => 50,
+                    'links' => [
+                        'first' => null,
+                        'last' => null,
+                        'next' => null,
+                        'prev' => null,
+                    ],
+                    'meta' => [
+                        'current_page' => 1,
+                        'from' => null,
+                        'last_page' => 1,
+                        'per_page' => 50,
+                        'to' => null,
+                        'total' => 0,
+                    ],
                 ],
                 'filters' => [],
                 'stats' => ['total' => 0, 'pending' => 0, 'completed' => 0],

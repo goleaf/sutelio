@@ -1,18 +1,19 @@
 export interface PaginatedResponse<T> {
     data: T[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    from?: number | null;
-    to?: number | null;
-    next_page_url?: string | null;
-    prev_page_url?: string | null;
-    links?: Array<{
-        url: string | null;
-        label: string;
-        active: boolean;
-    }>;
+    links: {
+        first: string | null;
+        last: string | null;
+        next: string | null;
+        prev: string | null;
+    };
+    meta: {
+        current_page: number;
+        from: number | null;
+        last_page: number;
+        per_page: number;
+        to: number | null;
+        total: number;
+    };
 }
 
 export interface ApiResponse<T> {

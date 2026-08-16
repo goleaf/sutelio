@@ -151,7 +151,7 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
                                     "
                                 >
                                     <SelectTrigger
-                                        class="mt-3 h-8 w-full text-xs"
+                                        class="mt-3 min-h-11 w-full text-xs"
                                         :aria-label="
                                             t('tasks.board.move', {
                                                 title: todo.title,

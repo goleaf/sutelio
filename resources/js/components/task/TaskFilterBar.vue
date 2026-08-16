@@ -1,13 +1,25 @@
 <script setup lang="ts">
 import {
+    AlertTriangle,
     ArrowDownAZ,
+    CheckCircle2,
     Columns3,
     List,
+    Pin,
     Search,
     SlidersHorizontal,
+    Star,
     X,
 } from '@lucide/vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import WorkspaceSegmentedButton from '@/components/shared/WorkspaceSegmentedButton.vue';
+import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedControl.vue';
+import {
+    activeTaskFilterCount,
+    clearTaskFilters,
+    toggleTaskFocusFilter,
+} from '@/components/task/task-focus';
+import type { TaskFocusFilter } from '@/components/task/task-focus';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -48,7 +60,34 @@ const sort = ref('default');
 const direction = ref<'asc' | 'desc'>('asc');
 const perPage = ref<'100' | '25' | '50'>('50');
 const view = ref<'board' | 'list'>('list');
+const focusFilters = ref<Partial<Record<TaskFocusFilter, boolean>>>({});
 const mobileFiltersOpen = ref(false);
+
+const focusOptions = computed(() => [
+    {
+        icon: AlertTriangle,
+        key: 'overdue' as const,
+        label: t('tasks.filters.overdue'),
+    },
+    {
+        icon: CheckCircle2,
+        key: 'completed_today' as const,
+        label: t('tasks.filters.completed_today'),
+    },
+    {
+        icon: Pin,
+        key: 'is_pinned' as const,
+        label: t('tasks.filters.pinned'),
+    },
+    {
+        icon: Star,
+        key: 'is_favorite' as const,
+        label: t('tasks.filters.favorites'),
+    },
+]);
+const activeFilterCount = computed(() =>
+    activeTaskFilterCount(currentFilters()),
+);
 
 watch(
     () => props.filters,
@@ -61,13 +100,19 @@ watch(
         direction.value = filters.direction ?? 'asc';
         perPage.value = String(filters.per_page ?? 50) as '100' | '25' | '50';
         view.value = filters.view ?? 'list';
+        focusFilters.value = {
+            completed_today: filters.completed_today,
+            is_favorite: filters.is_favorite,
+            is_pinned: filters.is_pinned,
+            overdue: filters.overdue,
+        };
     },
     { immediate: true, deep: true },
 );
 
 function currentFilters(): TodoFilters {
     return {
-        search: search.value || undefined,
+        search: search.value.trim() || undefined,
         project_id: projectId.value === 'all' ? undefined : projectId.value,
         status: status.value === 'all' ? undefined : status.value,
         priority: priority.value === 'all' ? undefined : priority.value,
@@ -75,6 +120,10 @@ function currentFilters(): TodoFilters {
         direction: direction.value,
         per_page: Number(perPage.value) as 25 | 50 | 100,
         view: view.value,
+        completed_today: focusFilters.value.completed_today || undefined,
+        is_favorite: focusFilters.value.is_favorite || undefined,
+        is_pinned: focusFilters.value.is_pinned || undefined,
+        overdue: focusFilters.value.overdue || undefined,
     };
 }
 
@@ -83,13 +132,30 @@ function apply(): void {
     emit('update', currentFilters());
 }
 
+function toggleFocus(key: TaskFocusFilter): void {
+    const filters = toggleTaskFocusFilter(currentFilters(), key);
+
+    focusFilters.value = {
+        completed_today: filters.completed_today,
+        is_favorite: filters.is_favorite,
+        is_pinned: filters.is_pinned,
+        overdue: filters.overdue,
+    };
+    apply();
+}
+
 function clear(): void {
+    const filters = clearTaskFilters(currentFilters());
+
     search.value = '';
     projectId.value = 'all';
     status.value = 'all';
     priority.value = 'all';
     sort.value = 'default';
-    direction.value = 'asc';
+    direction.value = filters.direction ?? 'asc';
+    perPage.value = String(filters.per_page ?? 50) as '100' | '25' | '50';
+    view.value = filters.view ?? 'list';
+    focusFilters.value = {};
     apply();
 }
 
@@ -107,15 +173,19 @@ function setView(nextView: 'board' | 'list'): void {
                 role="search"
                 @submit.prevent="apply"
             >
+                <label for="task-search" class="sr-only">
+                    {{ t('tasks.filters.search') }}
+                </label>
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
                     aria-hidden="true"
                 />
                 <Input
+                    id="task-search"
                     v-model="search"
                     type="search"
                     :placeholder="t('tasks.filters.search')"
-                    class="pl-10"
+                    class="min-h-11 pl-10 motion-reduce:transition-none"
                     :disabled="processing"
                 />
             </form>
@@ -124,21 +194,39 @@ function setView(nextView: 'board' | 'list'): void {
                 <Button
                     type="button"
                     variant="outline"
-                    class="md:hidden"
+                    class="min-h-11 flex-1 justify-between md:hidden"
+                    :aria-label="
+                        activeFilterCount
+                            ? t('tasks.filters.active_count', {
+                                  count: activeFilterCount,
+                              })
+                            : t('tasks.filters.filters')
+                    "
+                    aria-haspopup="dialog"
+                    :aria-expanded="mobileFiltersOpen"
                     :disabled="processing"
                     @click="mobileFiltersOpen = true"
                 >
-                    <SlidersHorizontal class="size-4" aria-hidden="true" />
-                    {{ t('tasks.filters.filters') }}
+                    <span class="flex items-center gap-2">
+                        <SlidersHorizontal class="size-4" aria-hidden="true" />
+                        {{ t('tasks.filters.filters') }}
+                    </span>
+                    <span
+                        v-if="activeFilterCount"
+                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums dark:text-orange-200"
+                    >
+                        {{ activeFilterCount }}
+                    </span>
                 </Button>
                 <div
-                    class="ml-auto flex rounded-lg border border-border/80 bg-muted/25 p-1"
+                    class="ml-auto flex rounded-xl bg-muted p-1"
                     role="group"
                     :aria-label="t('tasks.filters.view')"
                 >
                     <Button
                         type="button"
                         size="sm"
+                        class="min-h-11"
                         :variant="view === 'list' ? 'secondary' : 'ghost'"
                         :aria-pressed="view === 'list'"
                         :disabled="processing"
@@ -150,6 +238,7 @@ function setView(nextView: 'board' | 'list'): void {
                     <Button
                         type="button"
                         size="sm"
+                        class="min-h-11"
                         :variant="view === 'board' ? 'secondary' : 'ghost'"
                         :aria-pressed="view === 'board'"
                         :disabled="processing"
@@ -162,6 +251,36 @@ function setView(nextView: 'board' | 'list'): void {
             </div>
         </div>
 
+        <div class="space-y-2">
+            <p
+                class="text-xs font-semibold tracking-[0.1em] text-muted-foreground uppercase"
+            >
+                {{ t('tasks.filters.focus') }}
+            </p>
+            <WorkspaceSegmentedControl
+                role="group"
+                :label="t('tasks.filters.focus')"
+                class="w-full flex-wrap overflow-visible bg-muted/60"
+            >
+                <WorkspaceSegmentedButton
+                    v-for="option in focusOptions"
+                    :key="option.key"
+                    :active="Boolean(focusFilters[option.key])"
+                    class="min-h-11 flex-1 sm:flex-none"
+                    :aria-pressed="Boolean(focusFilters[option.key])"
+                    :disabled="processing"
+                    @click="toggleFocus(option.key)"
+                >
+                    <component
+                        :is="option.icon"
+                        class="size-4"
+                        aria-hidden="true"
+                    />
+                    {{ option.label }}
+                </WorkspaceSegmentedButton>
+            </WorkspaceSegmentedControl>
+        </div>
+
         <div class="hidden gap-3 md:grid md:grid-cols-3 xl:grid-cols-6">
             <Select
                 v-model="projectId"
@@ -169,8 +288,11 @@ function setView(nextView: 'board' | 'list'): void {
                 @update:model-value="apply"
             >
                 <SelectTrigger
-                    ><SelectValue :placeholder="t('tasks.filters.project')"
-                /></SelectTrigger>
+                    class="min-h-11"
+                    :aria-label="t('tasks.filters.project')"
+                >
+                    <SelectValue :placeholder="t('tasks.filters.project')" />
+                </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">{{
                         t('tasks.filters.all_projects')
@@ -190,8 +312,11 @@ function setView(nextView: 'board' | 'list'): void {
                 @update:model-value="apply"
             >
                 <SelectTrigger
-                    ><SelectValue :placeholder="t('tasks.filters.status')"
-                /></SelectTrigger>
+                    class="min-h-11"
+                    :aria-label="t('tasks.filters.status')"
+                >
+                    <SelectValue :placeholder="t('tasks.filters.status')" />
+                </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">{{
                         t('tasks.filters.all_statuses')
@@ -211,8 +336,11 @@ function setView(nextView: 'board' | 'list'): void {
                 @update:model-value="apply"
             >
                 <SelectTrigger
-                    ><SelectValue :placeholder="t('tasks.filters.priority')"
-                /></SelectTrigger>
+                    class="min-h-11"
+                    :aria-label="t('tasks.filters.priority')"
+                >
+                    <SelectValue :placeholder="t('tasks.filters.priority')" />
+                </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="all">{{
                         t('tasks.filters.all_priorities')
@@ -232,8 +360,11 @@ function setView(nextView: 'board' | 'list'): void {
                 @update:model-value="apply"
             >
                 <SelectTrigger
-                    ><SelectValue :placeholder="t('tasks.filters.sort')"
-                /></SelectTrigger>
+                    class="min-h-11"
+                    :aria-label="t('tasks.filters.sort')"
+                >
+                    <SelectValue :placeholder="t('tasks.filters.sort')" />
+                </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="default">{{
                         t('tasks.filters.default_order')
@@ -258,6 +389,7 @@ function setView(nextView: 'board' | 'list'): void {
             <Button
                 type="button"
                 variant="outline"
+                class="min-h-11"
                 :disabled="processing"
                 @click="
                     direction = direction === 'asc' ? 'desc' : 'asc';
@@ -277,7 +409,12 @@ function setView(nextView: 'board' | 'list'): void {
                     :disabled="processing"
                     @update:model-value="apply"
                 >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger
+                        class="min-h-11"
+                        :aria-label="t('tasks.filters.per_page')"
+                    >
+                        <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="25">25</SelectItem>
                         <SelectItem value="50">50</SelectItem>
@@ -288,8 +425,9 @@ function setView(nextView: 'board' | 'list'): void {
                     type="button"
                     variant="ghost"
                     size="icon"
+                    class="min-h-11 min-w-11"
                     :aria-label="t('tasks.filters.clear')"
-                    :disabled="processing"
+                    :disabled="processing || activeFilterCount === 0"
                     @click="clear"
                 >
                     <X class="size-4" aria-hidden="true" />
@@ -314,9 +452,13 @@ function setView(nextView: 'board' | 'list'): void {
                 <div class="grid gap-4 px-4 pb-6">
                     <Select v-model="projectId">
                         <SelectTrigger
-                            ><SelectValue
+                            class="min-h-11"
+                            :aria-label="t('tasks.filters.project')"
+                        >
+                            <SelectValue
                                 :placeholder="t('tasks.filters.project')"
-                        /></SelectTrigger>
+                            />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">{{
                                 t('tasks.filters.all_projects')
@@ -325,15 +467,20 @@ function setView(nextView: 'board' | 'list'): void {
                                 v-for="project in projects"
                                 :key="project.id"
                                 :value="project.id"
-                                >{{ project.name }}</SelectItem
                             >
+                                {{ project.name }}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                     <Select v-model="status">
                         <SelectTrigger
-                            ><SelectValue
+                            class="min-h-11"
+                            :aria-label="t('tasks.filters.status')"
+                        >
+                            <SelectValue
                                 :placeholder="t('tasks.filters.status')"
-                        /></SelectTrigger>
+                            />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">{{
                                 t('tasks.filters.all_statuses')
@@ -342,15 +489,20 @@ function setView(nextView: 'board' | 'list'): void {
                                 v-for="item in statuses"
                                 :key="item.id"
                                 :value="item.key"
-                                >{{ item.name }}</SelectItem
                             >
+                                {{ item.name }}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                     <Select v-model="priority">
                         <SelectTrigger
-                            ><SelectValue
+                            class="min-h-11"
+                            :aria-label="t('tasks.filters.priority')"
+                        >
+                            <SelectValue
                                 :placeholder="t('tasks.filters.priority')"
-                        /></SelectTrigger>
+                            />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">{{
                                 t('tasks.filters.all_priorities')
@@ -359,15 +511,20 @@ function setView(nextView: 'board' | 'list'): void {
                                 v-for="item in priorities"
                                 :key="item.id"
                                 :value="item.key"
-                                >{{ item.name }}</SelectItem
                             >
+                                {{ item.name }}
+                            </SelectItem>
                         </SelectContent>
                     </Select>
                     <Select v-model="sort">
                         <SelectTrigger
-                            ><SelectValue
+                            class="min-h-11"
+                            :aria-label="t('tasks.filters.sort')"
+                        >
+                            <SelectValue
                                 :placeholder="t('tasks.filters.sort')"
-                        /></SelectTrigger>
+                            />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="default">{{
                                 t('tasks.filters.default_order')
@@ -392,6 +549,7 @@ function setView(nextView: 'board' | 'list'): void {
                     <Button
                         type="button"
                         variant="outline"
+                        class="min-h-11"
                         @click="
                             direction = direction === 'asc' ? 'desc' : 'asc'
                         "
@@ -404,7 +562,12 @@ function setView(nextView: 'board' | 'list'): void {
                         }}
                     </Button>
                     <Select v-model="perPage">
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectTrigger
+                            class="min-h-11"
+                            :aria-label="t('tasks.filters.per_page')"
+                        >
+                            <SelectValue />
+                        </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="25">25</SelectItem>
                             <SelectItem value="50">50</SelectItem>
@@ -415,12 +578,15 @@ function setView(nextView: 'board' | 'list'): void {
                         <Button
                             type="button"
                             variant="outline"
+                            class="min-h-11"
+                            :disabled="activeFilterCount === 0"
                             @click="clear"
-                            >{{ t('tasks.filters.clear') }}</Button
                         >
-                        <Button type="button" @click="apply">{{
-                            t('tasks.filters.apply')
-                        }}</Button>
+                            {{ t('tasks.filters.clear') }}
+                        </Button>
+                        <Button type="button" class="min-h-11" @click="apply">
+                            {{ t('tasks.filters.apply') }}
+                        </Button>
                     </div>
                 </div>
             </SheetContent>

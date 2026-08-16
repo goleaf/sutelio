@@ -8,6 +8,23 @@ use Illuminate\Validation\Rule;
 
 class TodoIndexRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $normalized = [];
+
+        foreach (['is_pinned', 'is_favorite', 'overdue', 'completed_today'] as $booleanFilter) {
+            $value = $this->input($booleanFilter);
+
+            if ($value === 'true') {
+                $normalized[$booleanFilter] = true;
+            } elseif ($value === 'false') {
+                $normalized[$booleanFilter] = false;
+            }
+        }
+
+        $this->merge($normalized);
+    }
+
     public function authorize(): bool
     {
         return $this->user() instanceof User;
@@ -48,6 +65,20 @@ class TodoIndexRequest extends FormRequest
             'label_id', 'tag_id', 'is_pinned', 'is_favorite',
             'due_date_from', 'due_date_to', 'overdue', 'completed_today',
         ]))->reject(fn (mixed $value): bool => $value === null || $value === '')->all();
+
+        foreach (['is_pinned', 'is_favorite', 'overdue', 'completed_today'] as $booleanFilter) {
+            if (! array_key_exists($booleanFilter, $filters)) {
+                continue;
+            }
+
+            if (! $this->boolean($booleanFilter)) {
+                unset($filters[$booleanFilter]);
+
+                continue;
+            }
+
+            $filters[$booleanFilter] = true;
+        }
 
         return $filters;
     }

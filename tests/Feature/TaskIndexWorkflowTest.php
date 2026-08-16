@@ -47,6 +47,9 @@ test('task index validates and returns the complete URL backed state', function 
         ->where('filters.per_page', 25)
         ->where('filters.view', 'board')
         ->where('stats.total', 30)
+        ->where('todos.meta.total', 30)
+        ->where('todos.meta.from', 1)
+        ->where('todos.meta.to', 25)
         ->has('todos.data', 25));
 
     expect($response->getContent())->toContain(
@@ -80,6 +83,115 @@ test('task index metrics represent all filtered tasks instead of only the curren
             ->where('stats.completed', 20)
             ->has('todos.data', 25));
 });
+
+test('task focus filters are normalized and remain scoped to the current workspace', function () {
+    [$user, $workspace] = taskIndexWorkspace();
+    $matching = Todo::factory()->for($workspace)->overdue()->create([
+        'priority' => 'high',
+        'is_pinned' => true,
+        'is_favorite' => true,
+        'title' => 'Focused task',
+    ]);
+    Todo::factory()->for($workspace)->overdue()->create([
+        'priority' => 'low',
+        'is_pinned' => true,
+        'is_favorite' => true,
+    ]);
+
+    $foreignUser = User::factory()->create();
+    $foreignWorkspace = Workspace::factory()->for($foreignUser, 'owner')->create();
+    Todo::factory()->for($foreignWorkspace)->overdue()->create([
+        'priority' => 'high',
+        'is_pinned' => true,
+        'is_favorite' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('todos.index', [
+            'overdue' => '1',
+            'is_pinned' => '1',
+            'is_favorite' => '1',
+            'priority' => 'high',
+        ]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.overdue', true)
+            ->where('filters.is_pinned', true)
+            ->where('filters.is_favorite', true)
+            ->where('filters.priority', 'high')
+            ->where('stats.total', 1)
+            ->has('todos.data', 1)
+            ->where('todos.data.0.id', $matching->id));
+});
+
+test('completed today focus returns only tasks completed on the current day', function () {
+    [$user, $workspace] = taskIndexWorkspace();
+    $completedToday = Todo::factory()->for($workspace)->completed()->create([
+        'completed_at' => now(),
+    ]);
+    Todo::factory()->for($workspace)->completed()->create([
+        'completed_at' => now()->subDay(),
+    ]);
+    Todo::factory()->for($workspace)->pending()->create();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('todos.index', ['completed_today' => '1']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.completed_today', true)
+            ->where('stats.total', 1)
+            ->has('todos.data', 1)
+            ->where('todos.data.0.id', $completedToday->id));
+});
+
+test('task focus accepts Inertia boolean query serialization', function () {
+    [$user, $workspace] = taskIndexWorkspace();
+    $matching = Todo::factory()->for($workspace)->overdue()->create();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('todos.index', ['overdue' => 'true']))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.overdue', true)
+            ->where('stats.total', 1)
+            ->has('todos.data', 1)
+            ->where('todos.data.0.id', $matching->id));
+});
+
+test('false task focus flags are omitted from canonical filter state', function () {
+    [$user, $workspace] = taskIndexWorkspace();
+    Todo::factory()->for($workspace)->pending()->create();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->get(route('todos.index', [
+            'overdue' => '0',
+            'completed_today' => '0',
+            'is_pinned' => '0',
+            'is_favorite' => '0',
+        ]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->missing('filters.overdue')
+            ->missing('filters.completed_today')
+            ->missing('filters.is_pinned')
+            ->missing('filters.is_favorite')
+            ->where('stats.total', 1));
+});
+
+test('task focus flags reject invalid boolean query values', function (string $filter) {
+    [$user, $workspace] = taskIndexWorkspace();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id])
+        ->from(route('todos.index'))
+        ->get(route('todos.index', [$filter => 'sometimes']))
+        ->assertRedirect(route('todos.index'))
+        ->assertSessionHasErrors($filter);
+})->with(['overdue', 'completed_today', 'is_pinned', 'is_favorite']);
 
 test('task index uses the saved board preference unless the URL overrides it', function () {
     [$user, $workspace] = taskIndexWorkspace();
@@ -134,14 +246,18 @@ test('bulk actions reject stale or duplicate sets before mutating any task', fun
 test('task index coordinates the reusable workflow components', function () {
     $page = File::get(resource_path('js/pages/tasks/Index.vue'));
 
-    expect(substr_count($page, "\n"))->toBeLessThan(400)
+    expect(substr_count($page, "\n"))->toBeLessThan(450)
         ->and($page)->toContain(
+            '@/components/task/TaskWorkspacePanel.vue',
+            'only: [\'todos\', \'filters\', \'stats\']',
+        )
+        ->and(File::get(resource_path('js/components/task/TaskWorkspacePanel.vue')))->toContain(
             '@/components/task/BoardView.vue',
             '@/components/task/BulkActions.vue',
             '@/components/task/TaskFilterBar.vue',
             '@/components/task/TaskList.vue',
             '@/components/task/TaskPagination.vue',
-            'only: [\'todos\', \'filters\', \'stats\']',
+            '@/components/task/TaskResultsBar.vue',
         )
         ->and(File::get(resource_path('js/components/task/BoardView.vue')))->toContain(
             'taskDefinitions.statuses',

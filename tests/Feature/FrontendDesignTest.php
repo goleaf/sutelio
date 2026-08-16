@@ -424,16 +424,46 @@ test('task interfaces use accessible application controls', function () {
         ->not->toContain('type="checkbox"');
 });
 
-test('task rows preserve whole-row selection through a keyboard focusable overlay', function (string $file) {
+test('task rows use progressive semantic actions without a nested full-row overlay', function (string $file) {
     expect(File::get(resource_path("js/{$file}")))
-        ->toContain('absolute inset-0 z-10 cursor-pointer rounded-xl')
+        ->toContain('selectionMode')
+        ->toContain('DropdownMenu')
+        ->toContain("t('tasks.index.open_task'")
+        ->toContain('min-h-11')
         ->toContain('focus-visible:ring-orange-500')
-        ->toContain(':aria-label="todo.title"')
-        ->toMatch('/pointer-events-auto[^\"]*text-muted-foreground/')
-        ->not->toContain('class="group grid cursor-pointer');
+        ->not->toContain('absolute inset-0 z-10');
 })->with([
     'task index list' => 'components/task/TaskList.vue',
 ]);
+
+test('task focus desk discloses active filters and selection state', function () {
+    expect(File::get(resource_path('js/components/task/TaskFilterBar.vue')))
+        ->toContain('activeTaskFilterCount')
+        ->toContain(':aria-pressed="Boolean(focusFilters[option.key])"')
+        ->toContain('tasks.filters.active_count')
+        ->toContain('class="min-h-11"')
+        ->not->toContain('class="min-h-9"')
+        ->and(File::get(resource_path('js/components/task/TaskResultsBar.vue')))
+        ->toContain('aria-live="polite"')
+        ->toContain('selectionMode')
+        ->toContain('min-h-11')
+        ->toContain('pagination.meta.from')
+        ->toContain('pagination.meta.total')
+        ->and(File::get(resource_path('js/components/task/TaskPagination.vue')))
+        ->toContain('class="min-h-11"')
+        ->toContain('pagination.meta.last_page')
+        ->toContain('pagination.links.prev')
+        ->and(File::get(resource_path('js/components/task/BoardView.vue')))
+        ->toContain('class="mt-3 min-h-11 w-full text-xs"')
+        ->not->toContain('class="mt-3 h-8 w-full text-xs"')
+        ->and(File::get(resource_path('js/components/task/TaskWorkspacePanel.vue')))
+        ->toContain('TaskResultsBar')
+        ->toContain('selectionMode')
+        ->and(File::get(resource_path('js/pages/tasks/Index.vue')))
+        ->toContain('TaskWorkspacePanel')
+        ->toContain('selectionMode')
+        ->toContain(':aria-busy="filtering"');
+});
 
 test('project task rows use one semantic keyboard target without nested overlays', function () {
     expect(File::get(resource_path('js/components/project/ProjectTaskQueue.vue')))
@@ -837,7 +867,7 @@ test('list pages share the warm precision empty state', function (string $source
 })->with([
     'notifications' => 'components/notification/NotificationFeed.vue',
     'projects' => 'pages/projects/Index.vue',
-    'tasks' => 'pages/tasks/Index.vue',
+    'tasks' => 'components/task/TaskWorkspacePanel.vue',
     'workspaces' => 'pages/workspaces/Index.vue',
     'backups' => 'pages/settings/Backup.vue',
 ]);
