@@ -4,6 +4,7 @@ Accessibility is a release requirement, not a decorative review. The current int
 
 ## Implementation Contract
 
+- The persistent authenticated application shell owns the sole `main` landmark. Authenticated pages and nested settings layouts use neutral wrappers so landmarks never nest.
 - Each page has one logical `h1`; headings remain nested by section.
 - Native elements provide semantics before ARIA is added. Inputs have labels, descriptions/errors, autocomplete, and `aria-invalid` where needed.
 - Icon-only controls have translated accessible names. Status is communicated by text/icon as well as color.
@@ -22,6 +23,8 @@ The route matrix ran at 1440x1000 and 390x844. Every checked page returned 200 (
 The Notification Command Center follow-up verified one `main` and one `h1`, semantic pressed-button groups rather than invalid tab semantics, keyboard Space activation, selected-state exposure, a complete filtered-empty state, 44-pixel controls, reduced-motion transition suppression, focus fallback, and zero overflow at 1,440 and 390 pixels. The browser captured no current console, page, or failed-request error during filter and clear interactions.
 
 The Data Safety Center verification covered the current-section settings menu, wrapped English/Lithuanian/Russian labels, one logical heading, 44-pixel controls, workspace/application scope text, Select/Review/Confirm import state, validation-error context retention, cancel/success focus restoration, DOM/visual action order, dark and reduced-motion mobile presentation, forced colors, and zero horizontal overflow. Read-only members receive a text explanation instead of unauthorized upload controls.
+
+The authenticated landmark-integrity pass repeated dashboard, task index/detail, project index/detail, calendar, activity, notifications, workspace index/detail, and profile settings at 1440x1000 and 390x844. All 22 route/viewport checks exposed exactly one `main` and one `h1`, had zero horizontal overflow, and captured no console, page, failed-request, or HTTP error. The reusable task-detail body now starts its internal hierarchy at `h2`, leaving page and sheet shells responsible for their own top-level titles.
 
 Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizationTest.php`, `ActivityIntelligenceFrontendTest.php`, `NotificationCommandCenterFrontendTest.php`, `DataSafetyCenterFrontendTest.php`, direct TypeScript behavior tests, Vue type checking, ESLint, the production build, and the browser checks recorded in `docs/progress.md`.
 

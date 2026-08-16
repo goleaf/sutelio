@@ -20,6 +20,7 @@ All notable project changes are documented here.
 
 ### Interface, Accessibility, And Localization
 
+- Centralized authenticated document semantics in the persistent application shell: ten nested page/settings `main` landmarks were removed, reusable task detail now begins at `h2`, and automated plus 22-route desktop/mobile checks enforce one `main` and one `h1` per page.
 - Consolidated repeated container, radius, shadow, and semantic status values into the Tailwind 4 CSS-first Warm Precision token system.
 - Rebuilt notifications as a responsive Structured Signal Stream with URL-backed status/kind filters, Today/Earlier grouping in the saved timezone, shared localized row/browser content, focused pending/empty states, and accessible pressed-button groups.
 - Added responsive, keyboard-accessible activity intelligence filters and verified critical routes at desktop/mobile widths, reduced motion, dark media, and forced colors without overflow or current console errors.
@@ -31,7 +32,7 @@ All notable project changes are documented here.
 - Completed valid factories for all 17 models with 30 meaningful states/helpers and a 55-case factory/state/seeder contract.
 - Added a non-destructive, production-guarded `DemoSeeder`; fresh migration and repeated deterministic seeding complete with valid foreign keys.
 - Added six rollback-safe project-operation indexes with production-query-plan coverage for workspace/project filters and position, due-date, updated, and priority-definition sorts.
-- Replaced brittle/example-only checks with semantic architecture and application coverage. The final suite passes 683 tests with 9,539 assertions sequentially and in parallel. All 27 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
+- Replaced brittle/example-only checks with semantic architecture and application coverage. The final suite passes 706 tests with 10,027 assertions sequentially and in parallel. All 38 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
 - Upgraded NativePHP's generated Android project and verified a debug APK with minSdk 31 and targetSdk 36. Production signing remains a release-environment responsibility.
 
 ### Documentation

@@ -4,6 +4,8 @@
 
 Inertia 3 and Vue 3 are the intentional frontend. Pages live in `resources/js/pages`; shared/feature UI lives in `resources/js/components`; reusable behavior lives in composables; Pinia is reserved for genuine cross-page/shared state. Components use `<script setup lang="ts">`, typed props/emits, immutable page props, identity-synchronized drafts, and generated Wayfinder imports.
 
+The persistent authenticated shell owns the document `main` landmark through `SidebarInset`. Page components and the nested settings layout use neutral presentation wrappers, while `WorkspacePageHeader` owns the page `h1`; reusable detail bodies begin below that level. `FrontendDesignTest.php` guards both contracts.
+
 Livewire, Volt, and Flux are not installed and are explicitly non-applicable. Reka UI/shadcn-style components remain the focus/dialog/menu/select/checkbox primitive layer. Inertia's request APIs handle application mutations; Axios/custom fetch is not added as a parallel mutation system.
 
 ## Warm Precision Design System
@@ -27,6 +29,8 @@ Current token domains include background/surface/foreground/muted, border/input/
 ## Accessibility And Responsive Requirements
 
 Critical pages use semantic headings, labels/descriptions, associated errors, accessible names for icon controls, visible focus, natural DOM order, keyboard alternatives, status announcements, non-color cues, reduced motion, and forced-colors-aware critical controls. Native semantics are preferred to redundant ARIA.
+
+Authenticated routes must expose exactly one shell-owned `main` and one logical page `h1`. A source contract prevents page/layout landmark duplication, and the desktop/mobile browser matrix verifies the composed DOM rather than relying on source inspection alone.
 
 Mobile-first layouts are verified from 390 px through desktop/wide screens. Sidebars, dialogs, lists, filters, calendars, long names, and translated expansion must not create horizontal page overflow. Hover is never the sole affordance; touch targets and keyboard access coexist.
 

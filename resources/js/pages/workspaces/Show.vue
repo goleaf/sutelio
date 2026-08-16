@@ -192,7 +192,7 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
             "
         />
 
-        <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
+        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
             <div class="mx-auto flex max-w-app flex-col gap-6">
                 <WorkspacePageHeader
                     :eyebrow="t('workspaces.management.eyebrow')"
@@ -336,6 +336,6 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
                     />
                 </section>
             </div>
-        </main>
+        </div>
     </div>
 </template>

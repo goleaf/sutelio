@@ -37,7 +37,7 @@ const { formatNumber, t } = useUi();
     <div>
         <Head :title="t('dashboard.title')" />
 
-        <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
+        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
             <div class="mx-auto flex max-w-app flex-col gap-6">
                 <WorkspacePageHeader
                     :eyebrow="t('dashboard.weekly_productivity')"
@@ -137,6 +137,6 @@ const { formatNumber, t } = useUi();
 
                 <ProductivityChart :data="weeklyData" />
             </div>
-        </main>
+        </div>
     </div>
 </template>

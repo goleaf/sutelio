@@ -44,7 +44,7 @@ The seeding test suite is the preferred proof when configuration needs a file-ba
 
 ## Coverage And Assertions
 
-Critical identity, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --min=0 --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the final behavioral suite passes 693 tests / 9,799 assertions in parallel, and the frontend suite passes 31/31.
+Critical identity, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the final behavioral suite passes 706 tests / 10,027 assertions sequentially and in parallel, and the frontend suite passes 38/38.
 
 ## Browser Verification
 
@@ -53,3 +53,5 @@ Use the existing browser automation/Boost logs rather than installing a duplicat
 The 2026-08-16 final smoke covered login, password confirmation, repeated keyboard Inertia navigation, dashboard/tasks/projects/calendar/activity/notifications/workspaces/profile/preferences/security at 1440x1000 and 390x844, activity URL filtering and mobile sheet state, reduced motion, dark media, and forced colors. Every checked page had one `h1`, no horizontal overflow, and no captured console/page error.
 
 The final Notification Command Center pass repeated the authenticated notification route at 1440x1000 and 390x844. Keyboard-activated read/kind filters produced and cleared canonical URL state, filtered empty state rendered correctly, both filter groups exposed pressed-button group semantics, the page retained one `main` and one `h1`, 44-pixel controls, zero overflow, reduced-motion suppression, and zero current console/page/request failures.
+
+The authenticated landmark-integrity pass added a source-level regression in `FrontendDesignTest.php` and exercised 11 representative routes at both 1440x1000 and 390x844. All 22 composed-DOM checks returned one shell-owned `main`, one page `h1`, zero horizontal overflow, and zero captured console, page, request, or HTTP error; the matrix includes task/project/workspace detail and nested profile settings layouts.

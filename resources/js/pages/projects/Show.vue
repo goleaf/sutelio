@@ -424,7 +424,7 @@ async function submitProjectAction(
     <div>
         <Head :title="project.name" />
 
-        <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
+        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
             <div class="mx-auto flex max-w-app flex-col gap-6">
                 <ProjectOperationsHeader
                     :project="project"
@@ -482,7 +482,7 @@ async function submitProjectAction(
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
 
         <TaskDetail
             v-if="selectedTodo"

@@ -4246,3 +4246,32 @@ Completed. The feature implementation, review corrections, and completion record
 - `5c3c719` — `docs: record task focus desk`.
 - `git push origin main` exited 0 and reported `09f94a9..5c3c719 main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
 - No force push, history rewrite, destructive Git command, secret, generated build output, migration, dependency, or unrelated deletion was used.
+
+## Authenticated Landmark Integrity
+
+### Preflight Status
+
+- Began on `main` at `f6d2813` with a clean tracked worktree synchronized with `origin/main` after the completed Task Focus Desk delivery.
+- Re-ran the protected factual baseline: PHP 8.5.0, Laravel 13.25.0, 262 first-party routes, 704 Pest tests / 10,003 assertions, 38 frontend tests, Larastan, Pint, Vue type checking, ESLint, Prettier, Composer/npm audits, and the production build all passed.
+- Inspected the persistent Inertia layout chain and live authenticated desktop routes. `AppSidebarLayout` renders the shell-owned `main`, while nine authenticated pages and the shared settings layout render another nested `main`; sampled routes exposed two main landmarks with one page heading and no horizontal overflow.
+- Preserved Laravel 13, Inertia 3, Vue 3, TypeScript, Tailwind CSS 4, Wayfinder, Pest, SQLite, existing routes and behavior, and the fixed Warm Precision design. This pass adds no dependency, schema, data, policy, translation, or alternate frontend stack.
+- Selected a source-level architecture regression plus semantic wrapper correction because the persistent layout is the stable document-landmark owner. Focused and full automated gates plus authenticated desktop/mobile browser verification remain required before completion.
+
+### Delivered Semantics And Regression Coverage
+
+- Added failing-first frontend design contracts proving the persistent sidebar shell owns the sole authenticated `main` landmark and reusable task-detail content cannot introduce a second page `h1`.
+- Replaced nested `main` elements in nine authenticated pages and the shared settings layout with neutral `div` wrappers while preserving every class, route, prop, mutation, and visual behavior.
+- Changed the reusable task-detail content title from `h1` to `h2`; dedicated task pages retain their `WorkspacePageHeader` `h1`, while the sheet retains its own accessible title hierarchy.
+- The focused `FrontendDesignTest.php` and `ArchitectureContractTest.php` gate passes 129 tests / 5,935 assertions. Pint, Vue type checking, ESLint, Prettier, and the production build pass after the correction.
+- Live Herd QA covered dashboard, task index/detail, project index/detail, calendar, activity, notifications, workspace index/detail, and profile settings at 1440x1000 and 390x844. All 22 checks exposed one `main`, one `h1`, zero overflow, and zero console, page, failed-request, or HTTP error.
+
+### Final Verification
+
+- `herd php artisan test --compact`: 706 tests / 10,027 assertions passed in 30.164 seconds. `herd php artisan test --parallel --compact`: the same 706 tests / 10,027 assertions passed in 9.530 seconds.
+- `herd php artisan test --coverage --compact` was executed and exited with `Code coverage driver not available. Did you install Xdebug or PCOV?`; `test-coverage-001` remains the existing environment-only blocker.
+- Full first-party PHP syntax, `vendor/bin/pint --format agent`, Larastan level 7, Vue type checking, ESLint, Prettier, and 38/38 frontend tests passed.
+- Composer validation passed; all direct dependencies are current and compatible with PHP 8.5/Laravel 13. The first final audit call hit a transient Packagist DNS timeout, and the immediate retry passed with no advisories. npm audit passed with zero vulnerabilities.
+- The production build passed after 3,494 modules in 4.39 seconds: main CSS 162.35 kB / 23.92 kB gzip, app entry 89.64 kB / 23.25 kB gzip, and task-index chunk 39.73 kB / 10.08 kB gzip.
+- An isolated allowed-directory SQLite database migrated all 34 migrations, seeded twice, contained 3 users / 1 workspace / 25 tasks, returned `ok` from `PRAGMA integrity_check`, and returned zero foreign-key violations. Every temporary database directory was sent to Trash.
+- Config, route, and view caches built; `app:database-health --json` returned every check true; the schedule listed four intended tasks; 266 first-party routes registered; login returned 200; and the unauthenticated API user endpoint returned the expected 401.
+- Laravel Boost browser logs contain only historical entries; the live browser matrix captured no current error during this phase.

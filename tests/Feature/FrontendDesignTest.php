@@ -164,6 +164,36 @@ test('shared shells carry the projects page visual language', function () {
         ->toContain('border-border/80');
 });
 
+test('authenticated content delegates the sole main landmark to the persistent shell', function () {
+    $shell = File::get(resource_path('js/components/ui/sidebar/SidebarInset.vue'));
+
+    expect($shell)->toContain('<main');
+
+    foreach ([
+        'layouts/settings/Layout.vue',
+        'pages/Dashboard.vue',
+        'pages/activity/Index.vue',
+        'pages/calendar/Index.vue',
+        'pages/projects/Index.vue',
+        'pages/projects/Show.vue',
+        'pages/tasks/Index.vue',
+        'pages/tasks/Show.vue',
+        'pages/workspaces/Index.vue',
+        'pages/workspaces/Show.vue',
+    ] as $path) {
+        expect(File::get(resource_path("js/{$path}")), $path)
+            ->not->toContain('<main')
+            ->not->toContain('</main>');
+    }
+});
+
+test('reusable task detail content does not introduce a second page heading', function () {
+    expect(File::get(resource_path('js/components/task/TaskDetailContent.vue')))
+        ->not->toContain('<h1')
+        ->not->toContain('</h1>')
+        ->toContain('<h2');
+});
+
 test('dormant layouts delegate to the canonical projects style shells', function () {
     expect(File::get(resource_path('js/layouts/auth/AuthCardLayout.vue')))
         ->toContain('AuthSimpleLayout')

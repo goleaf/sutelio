@@ -102,9 +102,9 @@ async function deleteTodo(): Promise<void> {
                             {{ t('tasks.detail.recurring') }}
                         </Badge>
                     </div>
-                    <h1 class="mt-3 text-xl font-semibold tracking-tight">
+                    <h2 class="mt-3 text-xl font-semibold tracking-tight">
                         {{ todo.title }}
-                    </h1>
+                    </h2>
                     <div
                         class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
                     >

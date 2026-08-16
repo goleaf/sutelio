@@ -331,7 +331,7 @@ function manageWorkspace(workspace: Workspace): void {
     <div>
         <Head :title="t('workspaces.title')" />
 
-        <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
+        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
             <div class="mx-auto flex max-w-app flex-col gap-6">
                 <WorkspacePageHeader
                     :eyebrow="t('workspaces.eyebrow')"
@@ -649,7 +649,7 @@ function manageWorkspace(workspace: Workspace): void {
                     </EmptyState>
                 </section>
             </div>
-        </main>
+        </div>
 
         <Dialog :open="showCreateDialog" @update:open="setCreateDialog">
             <WorkspaceDialogContent

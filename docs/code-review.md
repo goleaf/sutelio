@@ -37,3 +37,10 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - Medium review findings were fixed by sharing localized reminder/fallback content between rows and browser delivery and refreshing the user-local `today` boundary on every partial visit.
 - Browser inspection found and fixed invalid tablist semantics around pressed filter buttons and the nested page `main` landmark. The final accessibility tree exposes named button groups, one main landmark, one page heading, and no current console/page/request failure.
 - Regression coverage now proves foreign task IDs cannot emit links, action authorization is one batched query for a 20-row page, stats-only reloads skip the paginator/resource query, and the production unread-reminder plan uses the existing scoped index.
+
+## Authenticated Landmark Integrity Follow-Up
+
+- Source and live DOM inspection found that the persistent sidebar shell and ten authenticated page/settings wrappers simultaneously rendered `main`, creating nested landmarks. The dedicated task page also composed a shared page `h1` with a second reusable-content `h1`.
+- The shell remains the single landmark owner; the ten nested wrappers are neutral `div` surfaces with unchanged classes, and reusable task-detail content now uses `h2` beneath the page/sheet title hierarchy.
+- Failing-first source regressions cover both contracts. The focused frontend design/architecture gate passes 129 tests / 5,935 assertions.
+- The final desktop/mobile browser matrix covers 11 routes at two widths. All 22 checks expose one `main`, one `h1`, zero overflow, and no current console, page, failed-request, or HTTP error.
