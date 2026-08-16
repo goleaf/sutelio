@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Enums\UserLanguage;
@@ -29,7 +31,9 @@ class SetLocale
             ->first(fn (mixed $candidate): bool => is_string($candidate)
                 && in_array($candidate, UserLanguage::values(), true));
 
-        App::setLocale(is_string($locale) ? $locale : UserLanguage::English->value);
+        $resolvedLocale = is_string($locale) ? $locale : UserLanguage::English->value;
+        App::setLocale($resolvedLocale);
+        $request->setLocale($resolvedLocale);
 
         return $next($request);
     }

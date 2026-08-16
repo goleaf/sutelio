@@ -303,7 +303,7 @@ function setView(nextView: 'board' | 'list'): void {
         >
             <SheetContent
                 side="bottom"
-                class="max-h-[92vh] overflow-y-auto rounded-t-[1.75rem]"
+                class="max-h-[92vh] overflow-y-auto rounded-t-feature"
             >
                 <SheetHeader>
                     <SheetTitle>{{ t('tasks.filters.filters') }}</SheetTitle>

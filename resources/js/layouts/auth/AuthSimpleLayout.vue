@@ -27,7 +27,7 @@ const { t } = useUi();
 
         <div class="relative w-full max-w-md">
             <div
-                class="overflow-hidden rounded-[1.75rem] border border-border/80 bg-card shadow-[0_32px_90px_-54px_rgba(15,23,42,0.65)]"
+                class="overflow-hidden rounded-feature border border-border/80 bg-card shadow-[0_32px_90px_-54px_rgba(15,23,42,0.65)]"
             >
                 <div
                     class="relative overflow-hidden border-b border-border/70 bg-muted/20 px-6 py-7 sm:px-9 sm:py-8"

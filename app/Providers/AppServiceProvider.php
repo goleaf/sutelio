@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Services\SqliteHealthService;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Events\DiagnosingHealth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
@@ -13,17 +16,14 @@ use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void
+    public function boot(SqliteHealthService $sqliteHealthService): void
     {
-        //
-    }
+        Model::shouldBeStrict(! $this->app->isProduction());
 
-    public function boot(): void
-    {
-        app(SqliteHealthService::class)->assertConfigurationIsSafe();
+        $sqliteHealthService->assertConfigurationIsSafe();
 
-        Event::listen(DiagnosingHealth::class, function (): void {
-            app(SqliteHealthService::class)->assertHealthy();
+        Event::listen(DiagnosingHealth::class, function () use ($sqliteHealthService): void {
+            $sqliteHealthService->assertHealthy();
         });
 
         RateLimiter::for('api-login', function (Request $request): array {

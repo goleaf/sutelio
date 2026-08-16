@@ -43,7 +43,7 @@ const accentClasses = computed(() =>
     <DialogContent
         :show-close-button="false"
         :class="[
-            'flex max-h-[calc(100svh-1.5rem)] w-[calc(100vw-1.5rem)] flex-col gap-0 overflow-hidden rounded-[1.75rem] border-border/80 p-0 shadow-[0_32px_90px_-45px_rgba(15,23,42,0.75)]',
+            'flex max-h-[calc(100svh-1.5rem)] w-[calc(100vw-1.5rem)] flex-col gap-0 overflow-hidden rounded-feature border-border/80 p-0 shadow-[0_32px_90px_-45px_rgba(15,23,42,0.75)]',
             maxWidthClass,
         ]"
     >

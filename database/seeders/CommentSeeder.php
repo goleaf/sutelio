@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Comment;
@@ -29,7 +31,7 @@ class CommentSeeder extends Seeder
         foreach ($comments as $data) {
             $todo = Todo::where('title', $data['title'])->first();
             if ($todo) {
-                Comment::create([
+                Comment::query()->firstOrCreate([
                     'todo_id' => $todo->id,
                     'user_id' => $data['user']->id,
                     'body' => $data['body'],

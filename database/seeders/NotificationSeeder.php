@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\User;
@@ -22,12 +24,27 @@ class NotificationSeeder extends Seeder
         ];
 
         foreach ($notifications as $data) {
+            $payload = json_encode(
+                ['title' => $data['title'], 'body' => $data['body']],
+                JSON_THROW_ON_ERROR,
+            );
+            $query = DB::table('notifications')->where([
+                'type' => 'App\\Notifications\\GenericNotification',
+                'notifiable_type' => User::class,
+                'notifiable_id' => $demo->id,
+                'data' => $payload,
+            ]);
+
+            if ($query->exists()) {
+                continue;
+            }
+
             DB::table('notifications')->insert([
                 'id' => Str::uuid()->toString(),
                 'type' => 'App\\Notifications\\GenericNotification',
                 'notifiable_type' => User::class,
                 'notifiable_id' => $demo->id,
-                'data' => json_encode(['title' => $data['title'], 'body' => $data['body']]),
+                'data' => $payload,
                 'read_at' => $data['read_at'] ?? null,
                 'created_at' => now(),
                 'updated_at' => now(),

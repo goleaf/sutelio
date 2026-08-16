@@ -87,7 +87,7 @@ async function save(): Promise<void> {
 
 <template>
     <section
-        class="rounded-[1.5rem] border border-border/80 bg-card p-5 shadow-[0_20px_60px_-52px_rgba(15,23,42,0.6)]"
+        class="rounded-panel border border-border/80 bg-card p-5 shadow-panel"
     >
         <h2 class="mb-4 text-base font-semibold">
             {{ t('tasks.detail.overview') }}

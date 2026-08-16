@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Resources\LabelResource;
@@ -67,7 +69,7 @@ class WorkspaceManagementController extends Controller
             'taskPriorities' => $section === 'configuration'
                 ? TaskPriorityResource::collection($this->query->taskPriorities($workspace))->resolve($request)
                 : [],
-            'locale' => app()->getLocale(),
+            'locale' => $request->getLocale(),
         ]);
     }
 }

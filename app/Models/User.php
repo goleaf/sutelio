@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Concerns\HasUuid;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\Contracts\PasskeyUser;
+use Laravel\Fortify\Fortify;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
@@ -36,6 +39,22 @@ class User extends Authenticatable implements PasskeyUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function hasEnabledTwoFactorAuthentication(): bool
+    {
+        $attributes = $this->getAttributes();
+
+        if (! array_key_exists('two_factor_secret', $attributes)) {
+            return false;
+        }
+
+        if (Fortify::confirmsTwoFactorAuthentication()) {
+            return $attributes['two_factor_secret'] !== null
+                && ($attributes['two_factor_confirmed_at'] ?? null) !== null;
+        }
+
+        return $attributes['two_factor_secret'] !== null;
     }
 
     /** @return HasMany<Workspace, $this> */

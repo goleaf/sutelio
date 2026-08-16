@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Tag;
@@ -21,7 +23,10 @@ class TagSeeder extends Seeder
         ];
 
         foreach ($tags as $data) {
-            Tag::create([...$data, 'workspace_id' => $workspace->id]);
+            Tag::query()->firstOrCreate([
+                'workspace_id' => $workspace->id,
+                'name' => $data['name'],
+            ]);
         }
 
         $this->command->info('Created 5 tags.');

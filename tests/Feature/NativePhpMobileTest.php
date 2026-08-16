@@ -11,10 +11,10 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Native\Mobile\Concerns\CleansEnvFile;
 use Native\Mobile\NativeServiceProvider as NativePhpPackageServiceProvider;
 use Native\Mobile\Support\BundleExclusions;
 use Native\Mobile\Support\BundleFileManager;
-use Native\Mobile\Traits\CleansEnvFile;
 
 test('the application is configured for the NativePHP on-device runtime', function () {
     $cleanupEnvironmentKeys = config('nativephp.cleanup_env_keys');
@@ -56,14 +56,14 @@ test('attachments use the configured on-device filesystem', function () {
     Storage::disk('mobile_public')->assertMissing($attachment->path);
 });
 
-test('the NativePHP v3 upgrade contract is configured', function () {
+test('the NativePHP v4 upgrade contract is configured', function () {
     $composer = json_decode(
         file_get_contents(base_path('composer.json')),
         true,
         flags: JSON_THROW_ON_ERROR,
     );
 
-    expect($composer['require']['nativephp/mobile'])->toBe('~3.3.0')
+    expect($composer['require']['nativephp/mobile'])->toBe('^4.2')
         ->and(json_encode($composer, JSON_THROW_ON_ERROR))->not->toContain('nativephp.composer.sh')
         ->and((new NativeServiceProvider(app()))->plugins())->toBe([])
         ->and(config('nativephp.android.compile_sdk'))->toBe(36)
@@ -94,7 +94,7 @@ test('the NativePHP Android build supports Android 12', function () {
         ->and($environmentExample)->toContain('NATIVEPHP_ANDROID_MIN_SDK=31');
 });
 
-test('the NativePHP v3 mobile configuration contract is complete', function () {
+test('the NativePHP v4 mobile configuration contract is complete', function () {
     $appStoreConnect = config('nativephp.app_store_connect');
     $cleanupExcludedFiles = config('nativephp.cleanup_exclude_files');
     $environmentExample = file_get_contents(base_path('.env.example'));
@@ -174,7 +174,7 @@ test('the NativePHP v3 mobile configuration contract is complete', function () {
         );
 });
 
-test('the NativePHP v3 development workflow is configured', function () {
+test('the NativePHP v4 development workflow is configured', function () {
     $applicationEntryPoint = file_get_contents(resource_path('js/app.ts'));
     $environmentExample = file_get_contents(base_path('.env.example'));
     $gitIgnore = file_get_contents(base_path('.gitignore'));
@@ -218,7 +218,7 @@ test('the NativePHP v3 development workflow is configured', function () {
         ]);
 });
 
-test('the NativePHP v3 deployment contract protects signing credentials', function () {
+test('the NativePHP v4 deployment contract protects signing credentials', function () {
     $cleanupEnvironmentKeys = config('nativephp.cleanup_env_keys');
     $cleanupExcludedFiles = config('nativephp.cleanup_exclude_files');
     $environmentExample = file_get_contents(base_path('.env.example'));
@@ -356,7 +356,7 @@ test('the ephemeral NativePHP platform shell is ignored from the repository root
         ->toContain('/nativephp');
 });
 
-test('the NativePHP v3 command reference is registered through Artisan and the shortcut', function () {
+test('the NativePHP v4 command reference is registered through Artisan and the shortcut', function () {
     $documentedCommands = [
         'native:install',
         'native:run',
@@ -365,6 +365,13 @@ test('the NativePHP v3 command reference is registered through Artisan and the s
         'native:open',
         'native:tail',
         'native:version',
+        'native:debug',
+        'native:emulator',
+        'native:sim',
+        'native:make',
+        'native:make-test',
+        'native:rm',
+        'native:validate',
         'native:package',
         'native:release',
         'native:credentials',
@@ -386,7 +393,7 @@ test('the NativePHP v3 command reference is registered through Artisan and the s
         ->toBe(file_get_contents(base_path('vendor/nativephp/mobile/bin/native')));
 });
 
-test('the NativePHP v3 development and release command contracts are complete', function () {
+test('the NativePHP v4 development and release command contracts are complete', function () {
     $commandContracts = [
         'native:install' => [
             'arguments' => ['platform'],
@@ -394,11 +401,11 @@ test('the NativePHP v3 development and release command contracts are complete', 
         ],
         'native:run' => [
             'arguments' => ['os', 'udid'],
-            'options' => ['build', 'watch', 'start-url', 'no-tty'],
+            'options' => ['build', 'watch', 'vite', 'start-url', 'no-tty'],
         ],
         'native:watch' => [
             'arguments' => ['platform', 'target'],
-            'options' => ['ios', 'android'],
+            'options' => ['ios', 'android', 'vite'],
         ],
         'native:jump' => [
             'arguments' => [],
@@ -484,11 +491,11 @@ test('the NativePHP v3 development and release command contracts are complete', 
         ->toBe('internal');
 });
 
-test('the NativePHP v3 plugin command contracts are complete', function () {
+test('the NativePHP v4 plugin command contracts are complete', function () {
     $pluginCommandContracts = [
         'native:plugin:create' => [
-            'arguments' => [],
-            'options' => [],
+            'arguments' => ['name'],
+            'options' => ['namespace', 'path', 'force', 'with-boost'],
         ],
         'native:plugin:list' => [
             'arguments' => [],
@@ -500,15 +507,15 @@ test('the NativePHP v3 plugin command contracts are complete', function () {
         ],
         'native:plugin:uninstall' => [
             'arguments' => ['plugin'],
-            'options' => ['force', 'keep-files'],
+            'options' => ['force', 'keep-files', 'core-v4'],
         ],
         'native:plugin:validate' => [
             'arguments' => ['path'],
             'options' => [],
         ],
         'native:plugin:make-hook' => [
-            'arguments' => [],
-            'options' => [],
+            'arguments' => ['plugin', 'hook'],
+            'options' => ['force'],
         ],
         'native:plugin:boost' => [
             'arguments' => ['plugin'],
@@ -530,7 +537,7 @@ test('the NativePHP v3 plugin command contracts are complete', function () {
     }
 
     expect(Artisan::all()['native:plugin:uninstall']->getDefinition()->getArgument('plugin')->isRequired())
-        ->toBeTrue();
+        ->toBeFalse();
 });
 
 test('the NativePHP mobile architecture is loaded into Laravel', function () {
@@ -541,10 +548,10 @@ test('the NativePHP mobile architecture is loaded into Laravel', function () {
     );
     $nativePhpVersion = InstalledVersions::getVersion('nativephp/mobile') ?? '0.0.0.0';
 
-    expect($composer['require']['php'])->toBe('^8.3')
-        ->and($composer['require']['nativephp/mobile'])->toBe('~3.3.0')
-        ->and(version_compare($nativePhpVersion, '3.3.0.0', '>='))->toBeTrue()
-        ->and(version_compare($nativePhpVersion, '3.4.0.0', '<'))->toBeTrue()
+    expect($composer['require']['php'])->toBe('>=8.4 <8.6')
+        ->and($composer['require']['nativephp/mobile'])->toBe('^4.2')
+        ->and(version_compare($nativePhpVersion, '4.2.0.0', '>='))->toBeTrue()
+        ->and(version_compare($nativePhpVersion, '5.0.0.0', '<'))->toBeTrue()
         ->and(app()->getLoadedProviders())->toHaveKey(NativePhpPackageServiceProvider::class)
         ->and(config('nativephp.runtime.mode'))->toBe('persistent')
         ->and(Artisan::all())->toHaveKeys([

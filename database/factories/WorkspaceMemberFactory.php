@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Enums\WorkspaceRole;
@@ -20,5 +22,31 @@ class WorkspaceMemberFactory extends Factory
             'user_id' => UserFactory::new(),
             'role' => WorkspaceRole::Member,
         ];
+    }
+
+    public function owner(): static
+    {
+        return $this
+            ->state(fn (): array => ['role' => WorkspaceRole::Owner])
+            ->afterCreating(function (WorkspaceMember $membership): void {
+                $workspace = $membership->workspace;
+
+                $workspace->memberships()
+                    ->whereKeyNot($membership->id)
+                    ->where('role', WorkspaceRole::Owner)
+                    ->update(['role' => WorkspaceRole::Member]);
+
+                $workspace->update(['owner_id' => $membership->user_id]);
+            });
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (): array => ['role' => WorkspaceRole::Admin]);
+    }
+
+    public function member(): static
+    {
+        return $this->state(fn (): array => ['role' => WorkspaceRole::Member]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\ReminderStatus;
@@ -27,12 +29,13 @@ class ReminderSeeder extends Seeder
         foreach ($reminders as $data) {
             $todo = Todo::where('title', $data['title'])->first();
             if ($todo) {
-                Reminder::create([
+                Reminder::query()->updateOrCreate([
                     'todo_id' => $todo->id,
                     'user_id' => $data['user']->id,
+                    'type' => $data['type'],
+                ], [
                     'reminded_at' => $data['reminded_at'],
                     'is_sent' => $data['is_sent'],
-                    'type' => $data['type'],
                     'status' => $data['is_sent']
                         ? ReminderStatus::Delivered
                         : ReminderStatus::Pending,

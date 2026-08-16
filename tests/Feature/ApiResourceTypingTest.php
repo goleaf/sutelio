@@ -33,3 +33,26 @@ test('user resource preserves the nullable avatar field', function () {
         ->toHaveKey('avatar')
         ->and($payload['avatar'])->toBeNull();
 });
+
+test('user resource never exposes a private avatar path', function () {
+    $user = User::factory()->create();
+    $user->forceFill(['avatar_path' => 'avatars/private/avatar.webp'])->save();
+
+    $payload = (new UserResource($user->refresh()))
+        ->resolve(Request::create('/api/user'));
+
+    expect($payload['avatar'])->toBeNull()
+        ->and($payload)->not->toContain('avatars/private/avatar.webp');
+});
+
+test('user resource supports intentional relationship projections', function () {
+    $persistedUser = User::factory()->create();
+    $partialUser = User::query()->select(['id', 'name', 'email'])->findOrFail($persistedUser->id);
+
+    $payload = (new UserResource($partialUser))
+        ->resolve(Request::create('/api/user'));
+
+    expect($payload)
+        ->toHaveKeys(['id', 'name', 'email', 'avatar'])
+        ->not->toHaveKey('created_at');
+});

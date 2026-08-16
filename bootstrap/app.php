@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Middleware\HandleApiVersion;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -47,12 +49,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $apiResponses = new ApiResponseFactory;
+
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
 
         $isVersionedApi = fn (Request $request): bool => $request->is('api/v1') || $request->is('api/v1/*');
-        $error = fn (Request $request, string $code, int $status, array $details = []) => app(ApiResponseFactory::class)
+        $error = fn (Request $request, string $code, int $status, array $details = []) => $apiResponses
             ->error($request, $code, $status, $details);
 
         $exceptions->render(fn (ValidationException $exception, Request $request) => $isVersionedApi($request)
@@ -97,11 +101,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(fn (Throwable $exception, Request $request) => $isVersionedApi($request)
             ? $error($request, 'server_error', 500)
             : null);
-        $exceptions->respond(function (Response $response): Response {
+        $exceptions->respond(function (Response $response) use ($apiResponses): Response {
             $request = request();
 
             if ($request->is('api/*') && ! $request->is('api/v1') && ! $request->is('api/v1/*')) {
-                app(ApiResponseFactory::class)->decorate($response, $request, 'legacy');
+                $apiResponses->decorate($response, $request, 'legacy');
             }
 
             return $response;

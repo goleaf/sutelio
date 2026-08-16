@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Actions\EnsureWorkspaceTaskDefinitions;
@@ -11,23 +13,33 @@ use Illuminate\Database\Seeder;
 
 class WorkspaceSeeder extends Seeder
 {
-    public function run(): void
+    public function run(EnsureWorkspaceTaskDefinitions $ensureWorkspaceTaskDefinitions): void
     {
         $owner = User::where('email', 'demo@example.com')->firstOrFail();
         $alice = User::where('email', 'alice@example.com')->firstOrFail();
         $bob = User::where('email', 'bob@example.com')->firstOrFail();
 
-        $workspace = Workspace::create([
-            'name' => 'Acme Projects',
-            'slug' => 'acme-projects',
-            'description' => 'Main workspace for all Acme product development and operations.',
-            'owner_id' => $owner->id,
-        ]);
+        $workspace = Workspace::query()->updateOrCreate(
+            ['slug' => 'acme-projects'],
+            [
+                'name' => 'Acme Projects',
+                'description' => 'Main workspace for all Acme product development and operations.',
+                'owner_id' => $owner->id,
+            ],
+        );
 
-        WorkspaceMember::create(['workspace_id' => $workspace->id, 'user_id' => $owner->id, 'role' => WorkspaceRole::Owner]);
-        WorkspaceMember::create(['workspace_id' => $workspace->id, 'user_id' => $alice->id, 'role' => WorkspaceRole::Admin]);
-        WorkspaceMember::create(['workspace_id' => $workspace->id, 'user_id' => $bob->id, 'role' => WorkspaceRole::Member]);
-        app(EnsureWorkspaceTaskDefinitions::class)->handle($workspace);
+        foreach ([
+            $owner->id => WorkspaceRole::Owner,
+            $alice->id => WorkspaceRole::Admin,
+            $bob->id => WorkspaceRole::Member,
+        ] as $userId => $role) {
+            WorkspaceMember::query()->updateOrCreate(
+                ['workspace_id' => $workspace->id, 'user_id' => $userId],
+                ['role' => $role],
+            );
+        }
+
+        $ensureWorkspaceTaskDefinitions->handle($workspace);
 
         $this->command->info('Created workspace "Acme Projects" with 3 members.');
     }

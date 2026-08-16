@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Project;
@@ -23,5 +25,15 @@ class ProjectFactory extends Factory
             'is_archived' => false,
             'position' => fake()->numberBetween(0, 100),
         ];
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (): array => ['is_archived' => false]);
+    }
+
+    public function archived(): static
+    {
+        return $this->state(fn (): array => ['is_archived' => true]);
     }
 }

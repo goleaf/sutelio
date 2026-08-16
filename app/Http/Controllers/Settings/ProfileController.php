@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Settings;
 
 use App\Actions\DeleteProfileAvatar;
@@ -32,7 +34,7 @@ class ProfileController extends Controller
         return Inertia::render('settings/Profile', [
             'user' => [
                 ...$user->only(['id', 'name', 'email', 'email_verified_at']),
-                'avatar_url' => is_string($user->getAttribute('avatar_path'))
+                'avatar_url' => is_string($user->getRawOriginal('avatar_path'))
                     ? route('profile.avatar.show', ['v' => $user->updated_at?->getTimestamp()])
                     : null,
             ],

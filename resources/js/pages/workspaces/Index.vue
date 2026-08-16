@@ -332,7 +332,7 @@ function manageWorkspace(workspace: Workspace): void {
         <Head :title="t('workspaces.title')" />
 
         <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-[1480px] flex-col gap-6">
+            <div class="mx-auto flex max-w-app flex-col gap-6">
                 <WorkspacePageHeader
                     :eyebrow="t('workspaces.eyebrow')"
                     :title="t('workspaces.title')"
@@ -368,7 +368,7 @@ function manageWorkspace(workspace: Workspace): void {
                 </WorkspacePageHeader>
 
                 <section
-                    class="rounded-[1.5rem] border border-border/80 bg-card p-4 shadow-[0_20px_60px_-52px_rgba(15,23,42,0.6)] sm:p-6"
+                    class="rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6"
                 >
                     <div
                         v-if="workspaces.data.length"

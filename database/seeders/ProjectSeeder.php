@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Project;
@@ -22,7 +24,10 @@ class ProjectSeeder extends Seeder
         ];
 
         foreach ($projects as $data) {
-            Project::create([...$data, 'workspace_id' => $workspace->id]);
+            Project::query()->updateOrCreate(
+                ['workspace_id' => $workspace->id, 'name' => $data['name']],
+                $data,
+            );
         }
 
         $this->command->info('Created 6 projects (1 archived).');

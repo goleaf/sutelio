@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
@@ -22,7 +24,7 @@ class SecurityController extends Controller
         ];
 
         if (in_array('two-factor-authentication', $features)) {
-            $props['twoFactorEnabled'] = (bool) $user->two_factor_confirmed_at;
+            $props['twoFactorEnabled'] = $user?->getRawOriginal('two_factor_confirmed_at') !== null;
         }
 
         return Inertia::render('settings/Security', $props);

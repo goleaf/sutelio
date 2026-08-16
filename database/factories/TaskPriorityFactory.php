@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\TaskPriority;
@@ -26,5 +28,25 @@ class TaskPriorityFactory extends Factory
             'is_default' => false,
             'is_archived' => false,
         ];
+    }
+
+    public function asDefault(): static
+    {
+        return $this
+            ->state(fn (): array => ['is_default' => true])
+            ->afterMaking(function (TaskPriority $priority): void {
+                TaskPriority::query()
+                    ->where('workspace_id', $priority->workspace_id)
+                    ->where('is_default', true)
+                    ->update(['is_default' => false]);
+            });
+    }
+
+    public function archived(): static
+    {
+        return $this->state(fn (): array => [
+            'is_archived' => true,
+            'is_default' => false,
+        ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Http\Resources\ProjectResource;
@@ -20,6 +22,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $avatarPath = $user?->getRawOriginal('avatar_path');
         $user?->loadMissing('preferences');
 
         $navigationData = null;
@@ -79,10 +82,12 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'locale' => $request->getLocale(),
             'auth' => [
                 'user' => $user ? [
-                    ...$user->only(['id', 'name', 'email', 'email_verified_at', 'two_factor_enabled']),
-                    'avatar' => is_string($user->getAttribute('avatar_path'))
+                    ...$user->only(['id', 'name', 'email', 'email_verified_at']),
+                    'two_factor_enabled' => $user->hasEnabledTwoFactorAuthentication(),
+                    'avatar' => is_string($avatarPath)
                         ? route('profile.avatar.show', ['v' => $user->updated_at?->getTimestamp()])
                         : null,
                 ] : null,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Enums\ReminderStatus;
@@ -36,5 +38,45 @@ class ReminderFactory extends Factory
             'claim_token' => null,
             'attempts' => 0,
         ];
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ReminderStatus::Pending,
+            'is_sent' => false,
+            'delivered_at' => null,
+            'failed_at' => null,
+            'cancelled_at' => null,
+        ]);
+    }
+
+    public function delivered(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ReminderStatus::Delivered,
+            'is_sent' => true,
+            'delivered_at' => now(),
+        ]);
+    }
+
+    public function failed(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ReminderStatus::Failed,
+            'is_sent' => false,
+            'attempts' => Reminder::MAX_ATTEMPTS,
+            'failed_at' => now(),
+            'last_error' => 'Test delivery failure',
+        ]);
+    }
+
+    public function cancelled(): static
+    {
+        return $this->state(fn (): array => [
+            'status' => ReminderStatus::Cancelled,
+            'is_sent' => false,
+            'cancelled_at' => now(),
+        ]);
     }
 }

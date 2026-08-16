@@ -278,7 +278,7 @@ function notificationTone(notification: NotificationItem): string {
     <Head :title="copy.notifications.title" />
 
     <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-        <div class="mx-auto flex max-w-[1480px] flex-col gap-6">
+        <div class="mx-auto flex max-w-app flex-col gap-6">
             <WorkspacePageHeader
                 :eyebrow="copy.common.workspace_intelligence"
                 :title="copy.notifications.title"
@@ -319,7 +319,7 @@ function notificationTone(notification: NotificationItem): string {
             </WorkspacePageHeader>
 
             <section
-                class="overflow-hidden rounded-[1.5rem] border border-border/80 bg-card shadow-[0_20px_60px_-52px_rgba(15,23,42,0.6)]"
+                class="overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel"
             >
                 <div
                     class="flex flex-col gap-4 border-b border-border/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"

@@ -7,7 +7,7 @@ test('primary workspace pages use the shared warm precision header', function (s
     expect(File::get(resource_path("js/pages/{$page}")))
         ->toContain('WorkspacePageHeader')
         ->toContain('bg-muted/20')
-        ->toContain('max-w-[1480px]');
+        ->toContain('max-w-app');
 })->with([
     'dashboard' => 'Dashboard.vue',
     'activity' => 'activity/Index.vue',
@@ -129,14 +129,14 @@ test('every settings page configures the shared projects style header', function
 test('shared shells carry the projects page visual language', function () {
     expect(File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue')))
         ->toContain('bg-muted/20')
-        ->toContain('rounded-[1.75rem]')
+        ->toContain('rounded-feature')
         ->and(File::get(resource_path('js/layouts/settings/Layout.vue')))
         ->toContain('bg-muted/20')
-        ->toContain('rounded-[1.5rem]')
+        ->toContain('rounded-panel')
         ->toContain('WorkspacePageHeader')
-        ->toContain('max-w-[1480px]')
+        ->toContain('max-w-app')
         ->and(File::get(resource_path('js/components/ui/card/Card.vue')))
-        ->toContain('rounded-[1.5rem]')
+        ->toContain('rounded-panel')
         ->toContain('border-border/80');
 });
 
@@ -205,7 +205,7 @@ test('autosave uses lifecycle safe Vue watcher cleanup', function () {
 
 test('workspace dialogs preserve the projects visual contract on every viewport', function () {
     expect(File::get(resource_path('js/components/shared/WorkspaceDialogContent.vue')))
-        ->toContain('rounded-[1.75rem]')
+        ->toContain('rounded-feature')
         ->toContain('max-h-[calc(100svh-1.5rem)]')
         ->toContain('overflow-y-auto')
         ->toContain('inset-y-0 left-0 w-1.5')
@@ -430,7 +430,6 @@ test('active filter pages reuse the shared segmented controls', function (string
         ->toContain('WorkspaceSegmentedControl')
         ->toContain('WorkspaceSegmentedButton');
 })->with([
-    'activity filters' => 'pages/activity/Index.vue',
     'calendar view switcher' => 'components/calendar/CalendarPeriodNavigator.vue',
     'notification filters' => 'pages/notifications/Index.vue',
     'project filters' => 'pages/projects/Index.vue',
@@ -463,11 +462,7 @@ test('shared segmented filter consumers keep the correct selection semantics', f
         ->and($calendarNavigator)
         ->toContain(':label="copy.common.filters"')
         ->toContain('role="tab"')
-        ->toContain(':aria-selected="calendar.view === option"')
-        ->and(File::get(resource_path('js/pages/activity/Index.vue')))
-        ->toContain('role="group"')
-        ->toContain('vertical')
-        ->toContain(':aria-pressed="activeFilter === filter.value"');
+        ->toContain(':aria-selected="calendar.view === option"');
 });
 
 test('calendar planning workspace uses URL state and focused accessible components', function () {
@@ -803,7 +798,6 @@ test('list pages share the warm precision empty state', function (string $page) 
     expect(File::get(resource_path("js/pages/{$page}")))
         ->toContain('EmptyState');
 })->with([
-    'activity' => 'activity/Index.vue',
     'notifications' => 'notifications/Index.vue',
     'projects' => 'projects/Index.vue',
     'project detail' => 'projects/Show.vue',

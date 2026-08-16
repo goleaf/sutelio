@@ -7,8 +7,28 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Services\BackupService;
 use App\Services\TodoSortService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+
+test('local and testing environments enable strict eloquent behavior', function () {
+    expect(Model::preventsLazyLoading())->toBeTrue()
+        ->and(Model::preventsSilentlyDiscardingAttributes())->toBeTrue()
+        ->and(Model::preventsAccessingMissingAttributes())->toBeTrue()
+        ->and(File::get(app_path('Providers/AppServiceProvider.php')))
+        ->not->toContain('app(SqliteHealthService::class)');
+});
+
+test('two factor state is safe for new and partially selected user models', function () {
+    $newUser = User::factory()->make();
+
+    expect($newUser->hasEnabledTwoFactorAuthentication())->toBeFalse();
+
+    $persistedUser = User::factory()->create();
+    $partialUser = User::query()->select(['id', 'name', 'email'])->findOrFail($persistedUser->id);
+
+    expect($partialUser->hasEnabledTwoFactorAuthentication())->toBeFalse();
+});
 
 test('backup service does not expose legacy filename-based snapshots', function () {
     $directory = sys_get_temp_dir().'/xiaomi-mimo-backup-contract-'.Str::uuid();

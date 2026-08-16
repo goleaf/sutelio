@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use App\Models\User;
@@ -16,8 +18,8 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->getAttribute('avatar'),
-            'created_at' => $this->created_at,
+            'avatar' => null,
+            'created_at' => $this->whenHas('created_at'),
         ];
     }
 }

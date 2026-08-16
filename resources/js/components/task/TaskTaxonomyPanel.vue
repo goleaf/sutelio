@@ -93,7 +93,7 @@ async function toggleTag(tag: Tag): Promise<void> {
 </script>
 
 <template>
-    <section class="rounded-[1.5rem] border border-border/80 bg-card p-5">
+    <section class="rounded-panel border border-border/80 bg-card p-5">
         <h2 class="text-base font-semibold">
             {{ t('tasks.detail.labels_and_tags') }}
         </h2>

@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
     <header
-        class="relative overflow-hidden rounded-[1.75rem] border border-border/80 bg-card shadow-[0_24px_70px_-44px_rgba(15,23,42,0.45)]"
+        class="relative overflow-hidden rounded-feature border border-border/80 bg-card shadow-[0_24px_70px_-44px_rgba(15,23,42,0.45)]"
     >
         <div
             class="absolute inset-y-0 left-0 w-1.5 bg-orange-500"

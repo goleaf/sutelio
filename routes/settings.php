@@ -6,8 +6,8 @@ use App\Http\Controllers\Settings\MembersController;
 use App\Http\Controllers\Settings\PreferencesController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
+use App\Http\Controllers\WellKnownPasskeyController;
 use Illuminate\Auth\Middleware\RequirePassword;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -18,10 +18,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile/avatar', [ProfileController::class, 'avatar'])->name('profile.avatar.show');
     Route::post('settings/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
     Route::delete('settings/profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
-    Route::get(
-        'settings/appearance',
-        fn (): RedirectResponse => to_route('preferences.edit'),
-    )->name('appearance.edit');
+    Route::redirect('settings/appearance', '/settings/preferences')->name('appearance.edit');
     Route::get('settings/preferences', [PreferencesController::class, 'edit'])->name('preferences.edit');
     Route::inertia('settings/notifications', 'settings/Notifications')->name('notifications.edit');
     Route::get('settings/export', [ExportController::class, 'edit'])->name('export.edit');
@@ -44,9 +41,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 });
 
-Route::get('.well-known/passkey-endpoints', function () {
-    return response()->json([
-        'enroll' => route('security.edit'),
-        'manage' => route('security.edit'),
-    ]);
-})->name('well-known.passkeys');
+Route::get('.well-known/passkey-endpoints', WellKnownPasskeyController::class)
+    ->name('well-known.passkeys');

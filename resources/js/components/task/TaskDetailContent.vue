@@ -71,7 +71,7 @@ async function deleteTodo(): Promise<void> {
 <template>
     <div class="space-y-5">
         <section
-            class="rounded-[1.5rem] border border-border/80 bg-card p-5 shadow-[0_20px_60px_-52px_rgba(15,23,42,0.6)]"
+            class="rounded-panel border border-border/80 bg-card p-5 shadow-panel"
         >
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div class="min-w-0 flex-1">
@@ -175,7 +175,7 @@ async function deleteTodo(): Promise<void> {
         />
 
         <section
-            class="rounded-[1.5rem] border border-destructive/20 bg-destructive/[0.04] p-5"
+            class="rounded-panel border border-destructive/20 bg-destructive/[0.04] p-5"
         >
             <Button
                 variant="destructive"

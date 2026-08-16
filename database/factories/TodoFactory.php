@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Actions\TransitionTodoDefinitions;
@@ -24,7 +26,7 @@ class TodoFactory extends Factory
             }
 
             $workspace = Workspace::query()->findOrFail($todo->workspace_id);
-            $todo->forceFill(app(TransitionTodoDefinitions::class)->attributes(
+            $todo->forceFill((new TransitionTodoDefinitions)->attributes(
                 $workspace,
                 [
                     'status' => $todo->status,

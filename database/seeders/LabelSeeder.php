@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Label;
@@ -22,7 +24,10 @@ class LabelSeeder extends Seeder
         ];
 
         foreach ($labels as $data) {
-            Label::create([...$data, 'workspace_id' => $workspace->id]);
+            Label::query()->updateOrCreate(
+                ['workspace_id' => $workspace->id, 'name' => $data['name']],
+                $data,
+            );
         }
 
         $this->command->info('Created 6 labels.');

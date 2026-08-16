@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\TodoPriority;
@@ -65,14 +67,15 @@ class TodoSeeder extends Seeder
         $position = 0;
         $createdTodos = [];
 
-        foreach ($todos as $data) {
+        foreach ($todos as $index => $data) {
             $project = $projectIds[$data['project']];
-            $user = $users[array_rand($users)];
-            $todo = Todo::create([
+            $user = $users[$index % count($users)];
+            $todo = Todo::query()->updateOrCreate([
                 'workspace_id' => $workspace->id,
+                'title' => $data['title'],
+            ], [
                 'project_id' => $project,
                 'assigned_to' => $user->id,
-                'title' => $data['title'],
                 'description' => $data['description'] ?? null,
                 'status' => $data['status'],
                 'status_id' => $statusIds[$data['status']->value],
@@ -88,17 +91,16 @@ class TodoSeeder extends Seeder
             $createdTodos[] = $todo;
         }
 
-        // Attach labels to random todos
-        foreach ($createdTodos as $todo) {
-            $labelCount = fake()->numberBetween(0, 2);
-            if ($labelCount > 0) {
-                $todo->labels()->attach($allLabels->random($labelCount));
-            }
+        foreach ($createdTodos as $index => $todo) {
+            $labelIds = $index % 4 === 0
+                ? []
+                : [$allLabels[$index % $allLabels->count()]->id];
+            $tagIds = $index % 3 === 0
+                ? []
+                : [$allTags[$index % $allTags->count()]->id];
 
-            $tagCount = fake()->numberBetween(0, 2);
-            if ($tagCount > 0) {
-                $todo->tags()->attach($allTags->random($tagCount));
-            }
+            $todo->labels()->sync($labelIds);
+            $todo->tags()->sync($tagIds);
         }
 
         // Add subtasks to some parent todos
@@ -110,12 +112,13 @@ class TodoSeeder extends Seeder
         ];
 
         foreach ($subtasks as $index => $sub) {
-            Todo::create([
+            Todo::query()->updateOrCreate([
                 'workspace_id' => $workspace->id,
+                'title' => $sub['title'],
+            ], [
                 'project_id' => $parentTodo->project_id,
                 'assigned_to' => $alice->id,
                 'parent_id' => $parentTodo->id,
-                'title' => $sub['title'],
                 'status' => $sub['status'],
                 'status_id' => $statusIds[$sub['status']->value],
                 'priority' => $sub['priority'],
@@ -126,12 +129,13 @@ class TodoSeeder extends Seeder
         }
 
         $parentTodo2 = $createdTodos[9]; // Implement push notification service
-        Todo::create([
+        Todo::query()->updateOrCreate([
             'workspace_id' => $workspace->id,
+            'title' => 'Configure FCM for Android',
+        ], [
             'project_id' => $parentTodo2->project_id,
             'assigned_to' => $bob->id,
             'parent_id' => $parentTodo2->id,
-            'title' => 'Configure FCM for Android',
             'status' => TodoStatus::InProgress,
             'status_id' => $statusIds[TodoStatus::InProgress->value],
             'priority' => TodoPriority::High,
@@ -139,12 +143,13 @@ class TodoSeeder extends Seeder
             'position' => 0,
         ]);
 
-        Todo::create([
+        Todo::query()->updateOrCreate([
             'workspace_id' => $workspace->id,
+            'title' => 'Configure APNs for iOS',
+        ], [
             'project_id' => $parentTodo2->project_id,
             'assigned_to' => $bob->id,
             'parent_id' => $parentTodo2->id,
-            'title' => 'Configure APNs for iOS',
             'status' => TodoStatus::Pending,
             'status_id' => $statusIds[TodoStatus::Pending->value],
             'priority' => TodoPriority::Medium,
