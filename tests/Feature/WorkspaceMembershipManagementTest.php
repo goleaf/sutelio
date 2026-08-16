@@ -37,6 +37,9 @@ function createMembershipManagementWorkspace(): array
 test('canonical workspace management sections render the shared page for members', function (
     string $routeName,
     string $section,
+    int $expectedMemberCount,
+    int $expectedStatusCount,
+    int $expectedPriorityCount,
 ) {
     ['owner' => $owner, 'workspace' => $workspace] = createMembershipManagementWorkspace();
 
@@ -44,23 +47,38 @@ test('canonical workspace management sections render the shared page for members
         ->withSession(['current_workspace_id' => $workspace->id])
         ->get(route($routeName, $workspace))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('workspaces/Show', false)
-            ->where('section', $section)
-            ->where('workspace.id', $workspace->id)
-            ->where('workspace.owner.id', $owner->id)
-            ->where('workspace.permissions.manage_members', true)
-            ->where('workspace.permissions.transfer_ownership', true)
-            ->has('members', 1)
-            ->where('members.0.id', $owner->id)
-            ->where('members.0.role', WorkspaceRole::Owner->value)
-            ->has('invitations', 0)
-            ->where('locale', app()->getLocale()));
+        ->assertInertia(function (Assert $page) use (
+            $expectedMemberCount,
+            $expectedPriorityCount,
+            $expectedStatusCount,
+            $owner,
+            $section,
+            $workspace,
+        ): void {
+            $page->component('workspaces/Show', false)
+                ->where('section', $section)
+                ->where('workspace.id', $workspace->id)
+                ->where('workspace.owner.id', $owner->id)
+                ->where('workspace.permissions.manage_members', true)
+                ->where('workspace.permissions.transfer_ownership', true)
+                ->has('members', $expectedMemberCount)
+                ->has('invitations', 0)
+                ->has('labels', 0)
+                ->has('tags', 0)
+                ->has('taskStatuses', $expectedStatusCount)
+                ->has('taskPriorities', $expectedPriorityCount)
+                ->where('locale', app()->getLocale());
+
+            if ($expectedMemberCount > 0) {
+                $page->where('members.0.id', $owner->id)
+                    ->where('members.0.role', WorkspaceRole::Owner->value);
+            }
+        });
 })->with([
-    'overview' => ['workspaces.show', 'overview'],
-    'members' => ['workspaces.members', 'members'],
-    'configuration' => ['workspaces.configuration', 'configuration'],
-    'danger' => ['workspaces.danger', 'danger'],
+    'overview' => ['workspaces.show', 'overview', 0, 0, 0],
+    'members' => ['workspaces.members', 'members', 1, 0, 0],
+    'configuration' => ['workspaces.configuration', 'configuration', 0, 3, 5],
+    'danger' => ['workspaces.danger', 'danger', 1, 0, 0],
 ]);
 
 test('workspace members receive read only management data while outsiders are rejected', function () {

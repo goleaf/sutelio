@@ -6,6 +6,7 @@ import {
     CheckSquare,
     Copy,
     Folder,
+    MoreHorizontal,
     Pencil,
     Plus,
     RefreshCw,
@@ -14,7 +15,7 @@ import {
     Trash2,
     Users,
 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
@@ -25,6 +26,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogFooter } from '@/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -35,6 +43,11 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import {
+    filterAndSortWorkspacePortfolio,
+    workspacePortfolioTotals,
+} from '@/components/workspace/workspace-stewardship';
+import type { WorkspacePortfolioSort } from '@/components/workspace/workspace-stewardship';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import {
@@ -47,8 +60,6 @@ import {
 } from '@/routes/workspaces';
 import type { Workspace } from '@/types/models';
 
-type WorkspaceSort = 'name_asc' | 'name_desc' | 'newest' | 'oldest';
-
 interface WorkspaceResponse {
     workspace: Workspace;
 }
@@ -59,12 +70,13 @@ const page = usePage();
 const toast = useToast();
 const { formatNumber, locale, t } = useUi();
 const searchQuery = ref('');
-const sortOrder = ref<WorkspaceSort>('name_asc');
+const sortOrder = ref<WorkspacePortfolioSort>('name_asc');
 const showCreateDialog = ref(false);
 const editingWorkspace = ref<Workspace | null>(null);
 const duplicatingWorkspace = ref<Workspace | null>(null);
 const deletingWorkspace = ref<Workspace | null>(null);
 const switchingWorkspaceId = ref<string | null>(null);
+const portfolioDialogTrigger = ref<HTMLElement | null>(null);
 
 const form = useHttp({ name: '', description: '' });
 const editForm = useHttp<
@@ -80,53 +92,16 @@ const duplicateForm = useHttp<{ name: string }, WorkspaceResponse>({
 const deleteRequest = useHttp<Record<string, never>>({});
 const switchRequest = useHttp<Record<string, never>, WorkspaceResponse>({});
 
-const filteredWorkspaces = computed(() => {
-    const query = searchQuery.value.trim().toLocaleLowerCase(locale.value);
-    const workspaces = props.workspaces.data.filter((workspace) => {
-        if (!query) {
-            return true;
-        }
-
-        return [
-            workspace.name,
-            workspace.description ?? '',
-            workspace.owner?.name ?? '',
-        ]
-            .join(' ')
-            .toLocaleLowerCase(locale.value)
-            .includes(query);
-    });
-
-    return workspaces.sort((first, second) => {
-        if (sortOrder.value === 'newest') {
-            return Date.parse(second.created_at) - Date.parse(first.created_at);
-        }
-
-        if (sortOrder.value === 'oldest') {
-            return Date.parse(first.created_at) - Date.parse(second.created_at);
-        }
-
-        const direction = sortOrder.value === 'name_desc' ? -1 : 1;
-
-        return (
-            first.name.localeCompare(second.name, locale.value, {
-                sensitivity: 'base',
-            }) * direction
-        );
-    });
-});
-
-const memberCount = computed(() =>
-    props.workspaces.data.reduce(
-        (total, workspace) => total + (workspace.members_count ?? 0),
-        0,
+const filteredWorkspaces = computed(() =>
+    filterAndSortWorkspacePortfolio(
+        props.workspaces.data,
+        searchQuery.value,
+        sortOrder.value,
+        locale.value,
     ),
 );
-const projectCount = computed(() =>
-    props.workspaces.data.reduce(
-        (total, workspace) => total + (workspace.projects_count ?? 0),
-        0,
-    ),
+const portfolioTotals = computed(() =>
+    workspacePortfolioTotals(props.workspaces.data),
 );
 
 function isCurrentWorkspace(workspace: Workspace): boolean {
@@ -148,8 +123,32 @@ function canDeleteWorkspace(workspace: Workspace): boolean {
     return workspace.permissions?.delete ?? false;
 }
 
-function reloadPortfolio(): void {
-    router.reload({ only: ['workspaces', 'navigation'] });
+function reloadPortfolio(onSuccess?: () => void): void {
+    router.reload({ only: ['workspaces', 'navigation'], onSuccess });
+}
+
+function capturePortfolioDialogTrigger(event: MouseEvent): void {
+    portfolioDialogTrigger.value =
+        event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+}
+
+function restorePortfolioDialogFocus(): void {
+    const trigger = portfolioDialogTrigger.value;
+    portfolioDialogTrigger.value = null;
+
+    void nextTick(() => {
+        const fallback =
+            document.getElementById('workspace-search') ??
+            document.querySelector<HTMLElement>('[data-workspace-create]');
+        const target = trigger?.isConnected ? trigger : fallback;
+
+        target?.focus();
+    });
+}
+
+function openCreateDialog(event: MouseEvent): void {
+    capturePortfolioDialogTrigger(event);
+    setCreateDialog(true);
 }
 
 function setCreateDialog(open: boolean): void {
@@ -157,6 +156,8 @@ function setCreateDialog(open: boolean): void {
 
     if (open) {
         form.resetAndClearErrors();
+    } else {
+        restorePortfolioDialogFocus();
     }
 }
 
@@ -171,6 +172,7 @@ function setEditDialog(open: boolean): void {
     if (!open && !editForm.processing) {
         editingWorkspace.value = null;
         editForm.resetAndClearErrors();
+        restorePortfolioDialogFocus();
     }
 }
 
@@ -184,6 +186,7 @@ function setDuplicateDialog(open: boolean): void {
     if (!open && !duplicateForm.processing) {
         duplicatingWorkspace.value = null;
         duplicateForm.resetAndClearErrors();
+        restorePortfolioDialogFocus();
     }
 }
 
@@ -196,6 +199,7 @@ function setDeleteDialog(open: boolean): void {
     if (!open && !deleteRequest.processing) {
         deletingWorkspace.value = null;
         deleteRequest.clearErrors();
+        restorePortfolioDialogFocus();
     }
 }
 
@@ -210,7 +214,7 @@ async function createWorkspace(): Promise<void> {
         await form.submit(store(), {
             onSuccess: () => {
                 toast.success(t('workspaces.created'));
-                showCreateDialog.value = false;
+                setCreateDialog(false);
                 form.resetAndClearErrors();
                 reloadPortfolio();
             },
@@ -245,7 +249,7 @@ async function editWorkspace(): Promise<void> {
         toast.success(t('workspaces.updated'));
         editingWorkspace.value = null;
         editForm.resetAndClearErrors();
-        reloadPortfolio();
+        reloadPortfolio(restorePortfolioDialogFocus);
     } catch {
         if (!editForm.hasErrors) {
             toast.error(t('workspaces.update_failed'));
@@ -269,7 +273,7 @@ async function duplicateWorkspace(): Promise<void> {
         toast.success(t('workspaces.duplicated'));
         duplicatingWorkspace.value = null;
         duplicateForm.resetAndClearErrors();
-        reloadPortfolio();
+        reloadPortfolio(restorePortfolioDialogFocus);
     } catch {
         if (!duplicateForm.hasErrors) {
             toast.error(t('workspaces.duplicate_failed'));
@@ -288,7 +292,7 @@ async function deleteWorkspace(): Promise<void> {
         await deleteRequest.submit(destroy(workspace));
         toast.success(t('workspaces.deleted'));
         deletingWorkspace.value = null;
-        reloadPortfolio();
+        reloadPortfolio(restorePortfolioDialogFocus);
     } catch {
         toast.error(t('workspaces.delete_failed'));
     }
@@ -339,7 +343,11 @@ function manageWorkspace(workspace: Workspace): void {
                     :description="t('workspaces.page_description')"
                 >
                     <template #actions>
-                        <Button size="lg" @click="setCreateDialog(true)">
+                        <Button
+                            size="lg"
+                            data-workspace-create
+                            @click="openCreateDialog"
+                        >
                             <Plus class="size-4" aria-hidden="true" />
                             {{ t('workspaces.new') }}
                         </Button>
@@ -348,21 +356,27 @@ function manageWorkspace(workspace: Workspace): void {
                     <template #metrics>
                         <WorkspaceMetric
                             :label="t('workspaces.title')"
-                            :value="formatNumber(workspaces.data.length)"
+                            :value="formatNumber(portfolioTotals.workspaces)"
                             :icon="Building2"
                             tone="orange"
                         />
                         <WorkspaceMetric
                             :label="t('workspaces.members')"
-                            :value="formatNumber(memberCount)"
+                            :value="formatNumber(portfolioTotals.members)"
                             :icon="Users"
                             tone="emerald"
                         />
                         <WorkspaceMetric
                             :label="t('workspaces.projects')"
-                            :value="formatNumber(projectCount)"
+                            :value="formatNumber(portfolioTotals.projects)"
                             :icon="Folder"
                             tone="blue"
+                        />
+                        <WorkspaceMetric
+                            :label="t('workspaces.tasks')"
+                            :value="formatNumber(portfolioTotals.tasks)"
+                            :icon="CheckSquare"
+                            tone="violet"
                         />
                     </template>
                 </WorkspacePageHeader>
@@ -421,17 +435,33 @@ function manageWorkspace(workspace: Workspace): void {
                         </div>
                     </div>
 
+                    <p
+                        v-if="workspaces.data.length"
+                        class="mt-4 text-sm text-muted-foreground"
+                        aria-live="polite"
+                        aria-atomic="true"
+                    >
+                        {{
+                            t('workspaces.result_summary', {
+                                visible: formatNumber(
+                                    filteredWorkspaces.length,
+                                ),
+                                total: formatNumber(portfolioTotals.workspaces),
+                            })
+                        }}
+                    </p>
+
                     <div
                         v-if="filteredWorkspaces.length"
-                        class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+                        class="mt-5 grid items-start gap-4 lg:grid-cols-2"
                     >
                         <Card
                             v-for="(workspace, index) in filteredWorkspaces"
                             :key="workspace.id"
-                            class="group relative flex min-h-[25rem] flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(234,88,12,0.5)] motion-reduce:transform-none"
+                            class="group relative flex flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(234,88,12,0.5)] motion-reduce:transform-none"
                             :class="
                                 isCurrentWorkspace(workspace)
-                                    ? 'border-emerald-500/30 ring-1 ring-emerald-500/10'
+                                    ? 'border-emerald-500/30 ring-1 ring-emerald-500/10 lg:col-span-2'
                                     : ''
                             "
                         >
@@ -472,16 +502,31 @@ function manageWorkspace(workspace: Workspace): void {
                                     </Badge>
                                 </div>
                                 <div class="space-y-2">
-                                    <CardTitle class="tracking-[-0.02em]">
+                                    <CardTitle
+                                        class="tracking-[-0.02em] break-words"
+                                    >
                                         {{ workspace.name }}
                                     </CardTitle>
                                     <p
-                                        class="line-clamp-2 text-sm leading-6 text-muted-foreground"
+                                        class="line-clamp-3 text-sm leading-6 break-words text-muted-foreground"
                                     >
                                         {{
                                             workspace.description ??
                                             t('workspaces.no_description')
                                         }}
+                                    </p>
+                                    <p
+                                        v-if="workspace.owner?.name"
+                                        class="flex items-center gap-1.5 text-xs text-muted-foreground"
+                                    >
+                                        <span
+                                            class="font-medium text-foreground"
+                                        >
+                                            {{ t('workspaces.owner') }}:
+                                        </span>
+                                        <span class="break-words">
+                                            {{ workspace.owner.name }}
+                                        </span>
                                     </p>
                                 </div>
                             </CardHeader>
@@ -542,7 +587,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 </div>
 
                                 <div
-                                    class="grid grid-cols-2 gap-2"
+                                    class="flex flex-wrap items-center gap-2"
                                     :aria-label="
                                         t('workspaces.actions_label', {
                                             name: workspace.name,
@@ -551,7 +596,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 >
                                     <Button
                                         size="sm"
-                                        class="w-full"
+                                        class="min-h-11 flex-1 sm:flex-none"
                                         :disabled="switchRequest.processing"
                                         @click="manageWorkspace(workspace)"
                                     >
@@ -561,7 +606,7 @@ function manageWorkspace(workspace: Workspace): void {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        class="w-full"
+                                        class="min-h-11 flex-1 sm:flex-none"
                                         :disabled="
                                             switchRequest.processing ||
                                             isCurrentWorkspace(workspace)
@@ -592,34 +637,104 @@ function manageWorkspace(workspace: Workspace): void {
                                                     )
                                         }}
                                     </Button>
-                                    <Button
-                                        v-if="canUpdateWorkspace(workspace)"
-                                        variant="ghost"
-                                        size="sm"
-                                        @click="openEditDialog(workspace)"
+                                    <DropdownMenu
+                                        v-if="
+                                            canUpdateWorkspace(workspace) ||
+                                            canDuplicateWorkspace(workspace) ||
+                                            canDeleteWorkspace(workspace)
+                                        "
                                     >
-                                        <Pencil aria-hidden="true" />
-                                        {{ t('workspaces.actions.edit') }}
-                                    </Button>
-                                    <Button
-                                        v-if="canDuplicateWorkspace(workspace)"
-                                        variant="ghost"
-                                        size="sm"
-                                        @click="openDuplicateDialog(workspace)"
-                                    >
-                                        <Copy aria-hidden="true" />
-                                        {{ t('workspaces.actions.duplicate') }}
-                                    </Button>
-                                    <Button
-                                        v-if="canDeleteWorkspace(workspace)"
-                                        variant="ghost"
-                                        size="sm"
-                                        class="text-destructive hover:bg-destructive/10 hover:text-destructive focus-visible:ring-destructive/20"
-                                        @click="openDeleteDialog(workspace)"
-                                    >
-                                        <Trash2 aria-hidden="true" />
-                                        {{ t('workspaces.actions.delete') }}
-                                    </Button>
+                                        <DropdownMenuTrigger :as-child="true">
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                class="size-11 shrink-0"
+                                                :aria-label="
+                                                    t(
+                                                        'workspaces.actions_label',
+                                                        {
+                                                            name: workspace.name,
+                                                        },
+                                                    )
+                                                "
+                                                @click="
+                                                    capturePortfolioDialogTrigger
+                                                "
+                                            >
+                                                <MoreHorizontal
+                                                    aria-hidden="true"
+                                                />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    canUpdateWorkspace(
+                                                        workspace,
+                                                    )
+                                                "
+                                                @select="
+                                                    openEditDialog(workspace)
+                                                "
+                                            >
+                                                <Pencil aria-hidden="true" />
+                                                {{
+                                                    t('workspaces.actions.edit')
+                                                }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    canDuplicateWorkspace(
+                                                        workspace,
+                                                    )
+                                                "
+                                                @select="
+                                                    openDuplicateDialog(
+                                                        workspace,
+                                                    )
+                                                "
+                                            >
+                                                <Copy aria-hidden="true" />
+                                                {{
+                                                    t(
+                                                        'workspaces.actions.duplicate',
+                                                    )
+                                                }}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator
+                                                v-if="
+                                                    canDeleteWorkspace(
+                                                        workspace,
+                                                    ) &&
+                                                    (canUpdateWorkspace(
+                                                        workspace,
+                                                    ) ||
+                                                        canDuplicateWorkspace(
+                                                            workspace,
+                                                        ))
+                                                "
+                                            />
+                                            <DropdownMenuItem
+                                                v-if="
+                                                    canDeleteWorkspace(
+                                                        workspace,
+                                                    )
+                                                "
+                                                class="text-destructive focus:text-destructive"
+                                                @select="
+                                                    openDeleteDialog(workspace)
+                                                "
+                                            >
+                                                <Trash2 aria-hidden="true" />
+                                                {{
+                                                    t(
+                                                        'workspaces.actions.delete',
+                                                    )
+                                                }}
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                             </CardContent>
                         </Card>

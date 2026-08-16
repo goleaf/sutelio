@@ -23,6 +23,7 @@ class WorkspaceController extends Controller
     public function index(Request $request): Response
     {
         $workspaces = $request->user()->workspaces()
+            ->with('owner:id,name,email')
             ->withCount(['members', 'projects', 'todos'])
             ->get();
         $selectedWorkspaceId = $request->session()->get('current_workspace_id');

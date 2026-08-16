@@ -50,6 +50,7 @@ test('workspace portfolio exposes accurate counts current state and permissions'
             ->component('workspaces/Index')
             ->has('workspaces.data', 1)
             ->where('workspaces.data.0.id', $workspace->id)
+            ->where('workspaces.data.0.owner.name', $owner->name)
             ->where('workspaces.data.0.members_count', 2)
             ->where('workspaces.data.0.projects_count', 2)
             ->where('workspaces.data.0.todos_count', 3)

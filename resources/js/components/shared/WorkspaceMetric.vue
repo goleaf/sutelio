@@ -6,7 +6,7 @@ withDefaults(
         label: string;
         value: string | number;
         icon: Component;
-        tone?: 'orange' | 'blue' | 'emerald' | 'slate';
+        tone?: 'orange' | 'blue' | 'emerald' | 'violet' | 'slate';
     }>(),
     {
         tone: 'slate',
@@ -17,6 +17,7 @@ const toneClasses = {
     orange: 'bg-orange-500/12 text-orange-700 dark:text-orange-300',
     blue: 'bg-sky-500/12 text-sky-700 dark:text-sky-300',
     emerald: 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300',
+    violet: 'bg-violet-500/12 text-violet-700 dark:text-violet-300',
     slate: 'bg-foreground/6 text-foreground/70',
 };
 </script>

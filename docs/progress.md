@@ -4194,6 +4194,59 @@ Completed. The feature implementation, review corrections, and completion record
 - The user approved the complete portfolio, management-shell, and taxonomy-studio scope. The accepted Warm Stewardship Ledger design and red-green implementation sequence are recorded under `docs/plans/2026-08-16-workspace-stewardship-console-*.md`.
 - Activated the repository workflow, brainstorming, frontend-design, UI/UX, web-design, Inertia/Vue, Tailwind CSS, Wayfinder, Laravel, TypeScript, refactoring, Pest/TDD, browser-QA, and review guidance. The UI/UX skill's optional search script and Ruflo ToolSearch/MCP tools are not exposed, so no execution of those helpers is claimed.
 
+### Approved Direction
+
+- Turn the workspace index into a useful stewardship portfolio with aggregate workspace, member, project, and task totals; client-side search and sort; visible ownership; and clear manage, switch, and secondary-action boundaries.
+- Replace the clipped management-section strip with a desktop segmented navigation and a compact mobile section menu that keeps every destination reachable.
+- Reframe Task configuration as a progressive taxonomy studio that exposes one of statuses, priorities, labels, or tags at a time, keeps per-category counts visible, and moves row edit/delete actions into accessible menus.
+
+### Delivered Backend And State
+
+- Eager-loaded each workspace owner for the portfolio and retained the existing authorized workspace counts without introducing query work in resources, Vue components, loops, accessors, or policies.
+- Made management page payloads section-specific: members and invitations receive only membership data, configuration receives only taxonomy data, and unrelated expensive props remain unevaluated Inertia closures.
+- Added typed immutable helpers for portfolio filtering, deterministic sorting, aggregate totals, supported taxonomy selection, and category counts. Existing routes, actions, policies, validation, workspace isolation, and mutation contracts remain unchanged.
+- Added focused Pest coverage for portfolio ownership and section-specific payloads while preserving the owner membership contract, plus frontend behavior coverage discovered by the standard test command.
+
+### Delivered Interface And Accessibility
+
+- Built the Warm Stewardship Ledger portfolio with a full-width current-workspace card, four concise metrics, localized result status, content-driven sizing, owner context, and restrained primary/secondary actions.
+- Added responsive management navigation with a 52-pixel mobile trigger, semantic current-section state, click-time prefetching, and complete access to overview, members, invitations, task configuration, and danger.
+- Added progressive taxonomy switching, scoped search, count-bearing category controls, bounded wrapping for long user-defined names, viewport-safe action menus, and focus restoration after category changes and dialogs.
+- Preserved English, Lithuanian, and Russian semantic copy, visible keyboard focus, dark-mode tokens, reduced-motion behavior, destructive confirmation boundaries, and zero 390-pixel horizontal overflow.
+
+### Review Closure
+
+- Changed management navigation prefetch from hover to click so a mutation cannot leave a prefetched destination stale.
+- Restored focus to connected portfolio/taxonomy action triggers, then to stable create/search/section fallbacks when the originating element no longer exists.
+- Removed long-name truncation from taxonomy rows, bounded mobile action menus, and surfaced the localized workspace owner in the portfolio.
+- The first fix-only review found two final medium edges: programmatically focused taxonomy headings lacked a visible ring, and a generated 48-character status/priority key could exceed a narrow card. Both now have explicit regressions, and authenticated 320-pixel QA proved a visible four-pixel orange ring plus long-token wrapping with no page overflow.
+- The final independent source-only review confirmed no remaining critical, high, or medium finding and made no edit or SQLite call.
+
+### Final Verification
+
+- Red-green frontend coverage now passes 42/42 cases through `npm run test:frontend`, including four Workspace Stewardship cases discovered by the standard command. The focused workspace section dataset also passed 4 tests / 128 assertions, and the frontend design contract passed 123 tests / 627 assertions during implementation.
+- A uniquely named file-backed SQLite suite passed 705/706 tests; its sole failure correctly reported that the runtime-health contract requires `DB_DATABASE=:memory:`. The required explicit in-memory full rerun passed 706 tests / 10,077 assertions in 35.270 seconds.
+- `vendor/bin/pint --dirty --format agent`, Larastan, Vue type checking, ESLint, Prettier, and `git diff --check` passed. The final production build passed after 3,499 modules in 4.53 seconds.
+- Authenticated Herd QA passed at 1440 by 1,000 and 390 by 844 pixels: the portfolio and management pages had no horizontal overflow; taxonomy switches focused their new headings; action and create/edit dialog closures restored focus; and mobile management navigation exposed every destination with a 52-pixel trigger.
+- Laravel Boost browser logs contain no current Workspace Stewardship error. Read-only live verification reports 3 users / 1 workspace / 3 memberships / 6 projects / 25 tasks.
+
+### Data Safety And Recovery
+
+- During concurrent verification, a test process unexpectedly targeted the live SQLite file and cleared the known demo baseline. The emptied file was preserved at `/tmp/xiaomi-mimo-recovery.OJlL9s/emptied-database.sqlite`, then the repository's canonical seeder restored the exact 3-user / 1-workspace / 3-membership / 6-project / 25-task baseline.
+- Post-recovery SQLite quick-check and foreign-key checks passed, the restored counts were reverified after the final in-memory suite, and the temporary file-backed test database was moved to Trash. No schema, migration, package, route, policy, or production mutation was part of the feature.
+
+### Known Limitations
+
+- The local runtime still has no Xdebug or PCOV driver, so a numeric coverage report cannot be generated locally.
+- This phase deliberately adds no workspace pagination, new workspace roles, taxonomy lifecycle, API response, route, policy, schema, dependency, or alternate storage behavior.
+
+### Git Delivery
+
+- `b18187b` — `docs: design workspace stewardship console`.
+- `0781052` — `docs: plan workspace stewardship console`.
+- The implementation and final status commits, plus exact non-force push result, are recorded after delivery.
+- Concurrent dependency-refresh commits and their files were preserved and excluded from the Workspace Stewardship implementation commit.
+
 ## Task Focus Desk
 
 ### Preflight Status

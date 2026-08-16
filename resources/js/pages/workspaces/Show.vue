@@ -14,15 +14,14 @@ import {
 import { computed } from 'vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
-import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedControl.vue';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import WorkspaceConfigurationPanel from '@/components/workspace/WorkspaceConfigurationPanel.vue';
 import WorkspaceDangerPanel from '@/components/workspace/WorkspaceDangerPanel.vue';
+import WorkspaceManagementNavigation from '@/components/workspace/WorkspaceManagementNavigation.vue';
 import WorkspaceMembersPanel from '@/components/workspace/WorkspaceMembersPanel.vue';
 import WorkspaceOverviewPanel from '@/components/workspace/WorkspaceOverviewPanel.vue';
 import { useUi } from '@/composables/useUi';
-import { cn } from '@/lib/utils';
 import {
     destroy as cancelWorkspaceInvitation,
     resend as resendWorkspaceInvitation,
@@ -272,39 +271,22 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
                             </div>
                         </div>
 
-                        <WorkspaceSegmentedControl
-                            :label="t('workspaces.management.navigation.label')"
-                            role="group"
+                        <WorkspaceManagementNavigation
                             class="w-full lg:w-auto"
-                        >
-                            <Link
-                                v-for="item in navigationItems"
-                                :key="item.section"
-                                :href="item.href"
-                                :aria-current="
-                                    section === item.section
-                                        ? 'page'
-                                        : undefined
-                                "
-                                :class="
-                                    cn(
-                                        'flex min-h-10 shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none',
-                                        section === item.section
-                                            ? item.section === 'danger'
-                                                ? 'bg-card font-medium text-destructive shadow-sm'
-                                                : 'bg-card font-medium text-orange-800 shadow-sm dark:text-orange-200'
-                                            : 'text-muted-foreground hover:bg-card/70 hover:text-foreground',
-                                    )
-                                "
-                            >
-                                <component
-                                    :is="item.icon"
-                                    class="size-4"
-                                    aria-hidden="true"
-                                />
-                                {{ item.label }}
-                            </Link>
-                        </WorkspaceSegmentedControl>
+                            :active-section="section"
+                            :items="navigationItems"
+                            :label="t('workspaces.management.navigation.label')"
+                            :current-label="
+                                t(
+                                    'workspaces.management.navigation.current_section',
+                                )
+                            "
+                            :open-label="
+                                t(
+                                    'workspaces.management.navigation.open_sections',
+                                )
+                            "
+                        />
                     </div>
 
                     <WorkspaceOverviewPanel

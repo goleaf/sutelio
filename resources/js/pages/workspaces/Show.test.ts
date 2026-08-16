@@ -8,9 +8,14 @@ function source(relativePath: string): string {
 
 test('workspace management show page exposes the four approved management sections', () => {
     const showPage = source('./Show.vue');
+    const navigation = source(
+        '../../components/workspace/WorkspaceManagementNavigation.vue',
+    );
 
     assert.match(showPage, /WorkspacePageHeader/);
-    assert.match(showPage, /WorkspaceSegmentedControl/);
+    assert.match(showPage, /WorkspaceManagementNavigation/);
+    assert.match(navigation, /WorkspaceSegmentedControl/);
+    assert.match(navigation, /DropdownMenu/);
     assert.match(showPage, /WorkspaceOverviewPanel/);
     assert.match(showPage, /WorkspaceMembersPanel/);
     assert.match(showPage, /WorkspaceConfigurationPanel/);

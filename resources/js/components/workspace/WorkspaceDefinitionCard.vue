@@ -5,6 +5,7 @@ import {
     ArrowDown,
     ArrowUp,
     CheckCircle2,
+    MoreHorizontal,
     Pencil,
     Plus,
     RotateCcw,
@@ -24,6 +25,13 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -252,13 +260,19 @@ async function deleteDefinition(): Promise<void> {
     >
         <CardHeader>
             <CardTitle>
-                {{
-                    t(
-                        'workspaces.management.configuration.' +
-                            section +
-                            '.title',
-                    )
-                }}
+                <span
+                    :id="'workspace-definition-' + kind + '-title'"
+                    tabindex="-1"
+                    class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
+                >
+                    {{
+                        t(
+                            'workspaces.management.configuration.' +
+                                section +
+                                '.title',
+                        )
+                    }}
+                </span>
             </CardTitle>
             <CardDescription>
                 {{
@@ -404,10 +418,12 @@ async function deleteDefinition(): Promise<void> {
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0">
-                                    <p class="truncate font-medium">
+                                    <p class="font-medium break-words">
                                         {{ definition.name }}
                                     </p>
-                                    <p class="text-xs text-muted-foreground">
+                                    <p
+                                        class="text-xs break-all text-muted-foreground"
+                                    >
                                         {{ definition.key }}
                                     </p>
                                 </div>
@@ -468,132 +484,148 @@ async function deleteDefinition(): Promise<void> {
                             </div>
                         </div>
 
-                        <div v-if="canManage" class="flex flex-wrap gap-2">
-                            <Button
-                                size="icon"
-                                variant="outline"
-                                :disabled="
-                                    index === 0 || reorderRequest.processing
-                                "
-                                :aria-label="
-                                    t(
-                                        'workspaces.management.configuration.move_up',
-                                        { name: definition.name },
-                                    )
-                                "
-                                @click="moveDefinition(definition.id, -1)"
+                        <DropdownMenu v-if="canManage">
+                            <DropdownMenuTrigger :as-child="true">
+                                <Button
+                                    type="button"
+                                    size="icon"
+                                    variant="ghost"
+                                    class="size-11 shrink-0"
+                                    :aria-label="
+                                        t('workspaces.actions_label', {
+                                            name: definition.name,
+                                        })
+                                    "
+                                >
+                                    <MoreHorizontal aria-hidden="true" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="end"
+                                class="w-72 max-w-[calc(100vw-2rem)]"
                             >
-                                <ArrowUp aria-hidden="true" />
-                            </Button>
-                            <Button
-                                size="icon"
-                                variant="outline"
-                                :disabled="
-                                    index === filteredDefinitions.length - 1 ||
-                                    reorderRequest.processing
-                                "
-                                :aria-label="
-                                    t(
-                                        'workspaces.management.configuration.move_down',
-                                        { name: definition.name },
-                                    )
-                                "
-                                @click="moveDefinition(definition.id, 1)"
-                            >
-                                <ArrowDown aria-hidden="true" />
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                @click="startEditing(definition)"
-                            >
-                                <Pencil aria-hidden="true" />
-                                {{ t('common.actions.edit') }}
-                            </Button>
-                            <Button
-                                v-if="
-                                    !definition.is_default &&
-                                    !definition.is_archived &&
-                                    (!isStatus(definition) ||
-                                        !definition.is_completed)
-                                "
-                                size="sm"
-                                variant="outline"
-                                @click="
-                                    manageDefinition(definition, 'set_default')
-                                "
-                            >
-                                <Star aria-hidden="true" />
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.set_default',
-                                    )
-                                }}
-                            </Button>
-                            <Button
-                                v-if="
-                                    isStatus(definition) &&
-                                    definition.is_completed &&
-                                    !definition.is_completion_target &&
-                                    !definition.is_archived
-                                "
-                                size="sm"
-                                variant="outline"
-                                @click="
-                                    manageDefinition(
-                                        definition,
-                                        'set_completion_target',
-                                    )
-                                "
-                            >
-                                <CheckCircle2 aria-hidden="true" />
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.statuses.set_completion_target',
-                                    )
-                                }}
-                            </Button>
-                            <Button
-                                v-if="definition.is_archived"
-                                size="sm"
-                                variant="outline"
-                                @click="manageDefinition(definition, 'restore')"
-                            >
-                                <RotateCcw aria-hidden="true" />
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.restore',
-                                    )
-                                }}
-                            </Button>
-                            <Button
-                                v-else-if="definition.permissions?.archive"
-                                size="sm"
-                                variant="outline"
-                                @click="manageDefinition(definition, 'archive')"
-                            >
-                                <Archive aria-hidden="true" />
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.archive',
-                                    )
-                                }}
-                            </Button>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                class="text-destructive"
-                                :aria-label="
-                                    t(
-                                        'workspaces.management.configuration.delete_action',
-                                        { name: definition.name },
-                                    )
-                                "
-                                @click="startDeleting(definition)"
-                            >
-                                <Trash2 aria-hidden="true" />
-                            </Button>
-                        </div>
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    :disabled="
+                                        index === 0 || reorderRequest.processing
+                                    "
+                                    @select="moveDefinition(definition.id, -1)"
+                                >
+                                    <ArrowUp aria-hidden="true" />
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.move_up',
+                                            { name: definition.name },
+                                        )
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    :disabled="
+                                        index ===
+                                            filteredDefinitions.length - 1 ||
+                                        reorderRequest.processing
+                                    "
+                                    @select="moveDefinition(definition.id, 1)"
+                                >
+                                    <ArrowDown aria-hidden="true" />
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.move_down',
+                                            { name: definition.name },
+                                        )
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    @select="startEditing(definition)"
+                                >
+                                    <Pencil aria-hidden="true" />
+                                    {{ t('common.actions.edit') }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    v-if="
+                                        !definition.is_default &&
+                                        !definition.is_archived &&
+                                        (!isStatus(definition) ||
+                                            !definition.is_completed)
+                                    "
+                                    @select="
+                                        manageDefinition(
+                                            definition,
+                                            'set_default',
+                                        )
+                                    "
+                                >
+                                    <Star aria-hidden="true" />
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.set_default',
+                                        )
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    v-if="
+                                        isStatus(definition) &&
+                                        definition.is_completed &&
+                                        !definition.is_completion_target &&
+                                        !definition.is_archived
+                                    "
+                                    @select="
+                                        manageDefinition(
+                                            definition,
+                                            'set_completion_target',
+                                        )
+                                    "
+                                >
+                                    <CheckCircle2 aria-hidden="true" />
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.statuses.set_completion_target',
+                                        )
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    v-if="definition.is_archived"
+                                    @select="
+                                        manageDefinition(definition, 'restore')
+                                    "
+                                >
+                                    <RotateCcw aria-hidden="true" />
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.restore',
+                                        )
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal"
+                                    v-else-if="definition.permissions?.archive"
+                                    @select="
+                                        manageDefinition(definition, 'archive')
+                                    "
+                                >
+                                    <Archive aria-hidden="true" />
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.archive',
+                                        )
+                                    }}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    class="break-words whitespace-normal text-destructive focus:text-destructive"
+                                    @select="startDeleting(definition)"
+                                >
+                                    <Trash2 aria-hidden="true" />
+                                    {{ t('common.actions.delete') }}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </template>
                 </li>
             </ul>

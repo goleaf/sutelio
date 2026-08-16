@@ -9,6 +9,7 @@ import type {
 } from '@/types/models';
 
 const props = defineProps<{
+    activeKind: 'status' | 'priority';
     workspace: Workspace;
     statuses: TaskStatusDefinition[];
     priorities: TaskPriorityDefinition[];
@@ -23,8 +24,9 @@ const canManage = computed(
 </script>
 
 <template>
-    <div class="grid items-start gap-6 xl:grid-cols-2">
+    <div>
         <WorkspaceDefinitionCard
+            v-if="activeKind === 'status'"
             kind="status"
             :definitions="statuses"
             :search="search"
@@ -38,6 +40,7 @@ const canManage = computed(
             :reload-props="['workspace', 'taskStatuses']"
         />
         <WorkspaceDefinitionCard
+            v-else
             kind="priority"
             :definitions="priorities"
             :search="search"

@@ -2,6 +2,7 @@
 import { router, useHttp } from '@inertiajs/vue3';
 import {
     ListChecks,
+    MoreHorizontal,
     Palette,
     Pencil,
     Plus,
@@ -9,7 +10,7 @@ import {
     Tag as TagIcon,
     Trash2,
 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -22,10 +23,20 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label as FormLabel } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
+import { workspaceTaxonomyCounts } from '@/components/workspace/workspace-stewardship';
+import type { WorkspaceTaxonomySection } from '@/components/workspace/workspace-stewardship';
 import WorkspaceTaskDefinitionsPanel from '@/components/workspace/WorkspaceTaskDefinitionsPanel.vue';
+import WorkspaceTaxonomySwitcher from '@/components/workspace/WorkspaceTaxonomySwitcher.vue';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import type {
@@ -52,9 +63,11 @@ const props = defineProps<{
 const toast = useToast();
 const { formatNumber, t } = useUi();
 const searchQuery = ref('');
+const activeSection = ref<WorkspaceTaxonomySection>('statuses');
 const editingLabel = ref<Label | null>(null);
 const editingTag = ref<Tag | null>(null);
 const deleteTarget = ref<DeleteTarget | null>(null);
+const metadataDialogTrigger = ref<HTMLElement | null>(null);
 const labelForm = useHttp<{ name: string; color: string }>({
     name: '',
     color: '#6366f1',
@@ -69,6 +82,21 @@ const deleteRequest = useHttp<Record<string, never>>({});
 
 const canManage = computed(
     () => props.workspace.permissions?.manage_task_configuration === true,
+);
+const taxonomyCounts = computed(() =>
+    workspaceTaxonomyCounts({
+        statuses: props.taskStatuses,
+        priorities: props.taskPriorities,
+        labels: props.labels,
+        tags: props.tags,
+    }),
+);
+const searchPlaceholder = computed(() =>
+    t('workspaces.management.configuration.search_active', {
+        section: t(
+            `workspaces.management.configuration.${activeSection.value}.title`,
+        ),
+    }),
 );
 const normalizedSearch = computed(() =>
     searchQuery.value.trim().toLocaleLowerCase(props.locale),
@@ -116,8 +144,58 @@ const deleteDescription = computed(() => {
     );
 });
 
-function reloadMetadata(): void {
-    router.reload({ only: ['workspace', 'labels', 'tags'] });
+function activeSectionHeadingId(): string {
+    return {
+        statuses: 'workspace-definition-status-title',
+        priorities: 'workspace-definition-priority-title',
+        labels: 'workspace-labels-title',
+        tags: 'workspace-tags-title',
+    }[activeSection.value];
+}
+
+function focusActiveSectionHeading(): void {
+    void nextTick(() => {
+        document.getElementById(activeSectionHeadingId())?.focus({
+            preventScroll: true,
+        });
+    });
+}
+
+function reloadMetadata(onSuccess?: () => void): void {
+    router.reload({ only: ['workspace', 'labels', 'tags'], onSuccess });
+}
+
+function captureMetadataDialogTrigger(event: MouseEvent): void {
+    metadataDialogTrigger.value =
+        event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+}
+
+function restoreMetadataDialogFocus(): void {
+    const trigger = metadataDialogTrigger.value;
+    metadataDialogTrigger.value = null;
+
+    void nextTick(() => {
+        const fallback = document.getElementById(activeSectionHeadingId());
+        const target = trigger?.isConnected ? trigger : fallback;
+
+        target?.focus({ preventScroll: true });
+    });
+}
+
+async function selectSection(section: WorkspaceTaxonomySection): Promise<void> {
+    activeSection.value = section;
+    searchQuery.value = '';
+    cancelEditingLabel();
+    cancelEditingTag();
+
+    if (!deleteRequest.processing) {
+        deleteTarget.value = null;
+    }
+
+    await nextTick();
+    document.getElementById(activeSectionHeadingId())?.focus({
+        preventScroll: true,
+    });
 }
 
 async function createLabel(): Promise<void> {
@@ -249,6 +327,7 @@ async function updateTag(): Promise<void> {
 function setDeleteConfirmation(open: boolean): void {
     if (!open && !deleteRequest.processing) {
         deleteTarget.value = null;
+        restoreMetadataDialogFocus();
     }
 }
 
@@ -283,7 +362,8 @@ async function deleteMetadata(): Promise<void> {
             ),
         );
         deleteTarget.value = null;
-        reloadMetadata();
+        metadataDialogTrigger.value = null;
+        reloadMetadata(focusActiveSectionHeading);
     } catch {
         toast.error(
             t(
@@ -337,11 +417,7 @@ async function deleteMetadata(): Promise<void> {
                         v-model="searchQuery"
                         class="pl-9"
                         type="search"
-                        :placeholder="
-                            t(
-                                'workspaces.management.configuration.search_label',
-                            )
-                        "
+                        :placeholder="searchPlaceholder"
                     />
                 </div>
             </div>
@@ -357,7 +433,17 @@ async function deleteMetadata(): Promise<void> {
             </AlertDescription>
         </Alert>
 
+        <WorkspaceTaxonomySwitcher
+            :active-section="activeSection"
+            :counts="taxonomyCounts"
+            @update:active-section="selectSection"
+        />
+
         <WorkspaceTaskDefinitionsPanel
+            v-if="
+                activeSection === 'statuses' || activeSection === 'priorities'
+            "
+            :active-kind="activeSection === 'statuses' ? 'status' : 'priority'"
             :workspace="workspace"
             :statuses="taskStatuses"
             :priorities="taskPriorities"
@@ -366,385 +452,183 @@ async function deleteMetadata(): Promise<void> {
             :routes="routes"
         />
 
-        <div class="grid items-start gap-6 xl:grid-cols-2">
-            <Card class="border-sky-500/15">
-                <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-300"
+        <Card v-else-if="activeSection === 'labels'" class="border-sky-500/15">
+            <CardHeader>
+                <div
+                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-300"
+                >
+                    <Palette class="size-5" aria-hidden="true" />
+                </div>
+                <CardTitle>
+                    <span
+                        id="workspace-labels-title"
+                        tabindex="-1"
+                        class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
                     >
-                        <Palette class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>
                         {{
                             t(
                                 'workspaces.management.configuration.labels.title',
                             )
                         }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{
-                            t(
-                                'workspaces.management.configuration.labels.description',
-                            )
-                        }}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent class="space-y-5">
-                    <form
-                        v-if="canManage"
-                        class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-end"
-                        @submit.prevent="createLabel"
-                    >
-                        <div class="space-y-2">
-                            <FormLabel for="new-label-name">
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.labels.name',
-                                    )
-                                }}
-                            </FormLabel>
-                            <Input
-                                id="new-label-name"
-                                v-model="labelForm.name"
-                                :placeholder="
-                                    t(
-                                        'workspaces.management.configuration.labels.name_placeholder',
-                                    )
-                                "
-                                :disabled="labelForm.processing"
-                                :aria-invalid="Boolean(labelForm.errors.name)"
-                                @input="labelForm.clearErrors('name')"
-                            />
-                            <InputError :message="labelForm.errors.name" />
-                        </div>
-                        <div class="space-y-2">
-                            <FormLabel for="new-label-color">
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.labels.color',
-                                    )
-                                }}
-                            </FormLabel>
-                            <Input
-                                id="new-label-color"
-                                v-model="labelForm.color"
-                                type="color"
-                                class="h-10 w-full cursor-pointer p-1"
-                                :disabled="labelForm.processing"
-                            />
-                        </div>
-                        <Button
-                            type="submit"
-                            :disabled="
-                                labelForm.processing || !labelForm.name.trim()
-                            "
-                        >
-                            <Spinner v-if="labelForm.processing" />
-                            <Plus v-else aria-hidden="true" />
+                    </span>
+                </CardTitle>
+                <CardDescription>
+                    {{
+                        t(
+                            'workspaces.management.configuration.labels.description',
+                        )
+                    }}
+                </CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-5">
+                <form
+                    v-if="canManage"
+                    class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-end"
+                    @submit.prevent="createLabel"
+                >
+                    <div class="space-y-2">
+                        <FormLabel for="new-label-name">
                             {{
                                 t(
-                                    'workspaces.management.configuration.labels.create',
+                                    'workspaces.management.configuration.labels.name',
                                 )
                             }}
-                        </Button>
-                    </form>
-
-                    <ul
-                        v-if="filteredLabels.length"
-                        class="divide-y rounded-xl border"
-                    >
-                        <li
-                            v-for="label in filteredLabels"
-                            :key="label.id"
-                            class="p-4"
-                        >
-                            <form
-                                v-if="editingLabel?.id === label.id"
-                                class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-start"
-                                @submit.prevent="updateLabel"
-                            >
-                                <div class="space-y-2">
-                                    <FormLabel :for="`edit-label-${label.id}`">
-                                        {{
-                                            t(
-                                                'workspaces.management.configuration.labels.name',
-                                            )
-                                        }}
-                                    </FormLabel>
-                                    <Input
-                                        :id="`edit-label-${label.id}`"
-                                        v-model="editLabelForm.name"
-                                        :disabled="editLabelForm.processing"
-                                        :aria-invalid="
-                                            Boolean(editLabelForm.errors.name)
-                                        "
-                                        @input="
-                                            editLabelForm.clearErrors('name')
-                                        "
-                                    />
-                                    <InputError
-                                        :message="editLabelForm.errors.name"
-                                    />
-                                </div>
-                                <div class="space-y-2">
-                                    <FormLabel
-                                        :for="`edit-label-color-${label.id}`"
-                                    >
-                                        {{
-                                            t(
-                                                'workspaces.management.configuration.labels.color',
-                                            )
-                                        }}
-                                    </FormLabel>
-                                    <Input
-                                        :id="`edit-label-color-${label.id}`"
-                                        v-model="editLabelForm.color"
-                                        type="color"
-                                        class="h-10 w-full cursor-pointer p-1"
-                                        :disabled="editLabelForm.processing"
-                                    />
-                                </div>
-                                <div class="flex gap-2 sm:pt-7">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        :disabled="editLabelForm.processing"
-                                        @click="cancelEditingLabel"
-                                    >
-                                        {{ t('common.actions.cancel') }}
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        :disabled="
-                                            editLabelForm.processing ||
-                                            !editLabelForm.name.trim()
-                                        "
-                                    >
-                                        <Spinner
-                                            v-if="editLabelForm.processing"
-                                        />
-                                        {{ t('common.actions.save') }}
-                                    </Button>
-                                </div>
-                            </form>
-                            <div
-                                v-else
-                                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-                            >
-                                <div class="flex min-w-0 items-center gap-3">
-                                    <span
-                                        class="size-4 shrink-0 rounded-full border border-black/10 shadow-sm"
-                                        :style="{
-                                            backgroundColor: label.color,
-                                        }"
-                                        aria-hidden="true"
-                                    />
-                                    <div class="min-w-0">
-                                        <p class="truncate font-medium">
-                                            {{ label.name }}
-                                        </p>
-                                        <Badge variant="outline" class="mt-1">
-                                            {{
-                                                t(
-                                                    'workspaces.management.configuration.tasks_count',
-                                                    {
-                                                        count: formatNumber(
-                                                            label.todos_count ??
-                                                                0,
-                                                        ),
-                                                    },
-                                                )
-                                            }}
-                                        </Badge>
-                                    </div>
-                                </div>
-                                <div
-                                    v-if="
-                                        label.permissions?.update ||
-                                        label.permissions?.delete
-                                    "
-                                    class="flex gap-2"
-                                >
-                                    <Button
-                                        v-if="label.permissions?.update"
-                                        variant="outline"
-                                        size="icon"
-                                        :aria-label="
-                                            t(
-                                                'workspaces.management.configuration.labels.edit_action',
-                                                { name: label.name },
-                                            )
-                                        "
-                                        @click="startEditingLabel(label)"
-                                    >
-                                        <Pencil aria-hidden="true" />
-                                    </Button>
-                                    <Button
-                                        v-if="label.permissions?.delete"
-                                        variant="ghost"
-                                        size="icon"
-                                        class="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                        :aria-label="
-                                            t(
-                                                'workspaces.management.configuration.labels.delete_action',
-                                                { name: label.name },
-                                            )
-                                        "
-                                        @click="
-                                            deleteTarget = {
-                                                kind: 'label',
-                                                item: label,
-                                            }
-                                        "
-                                    >
-                                        <Trash2 aria-hidden="true" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <p
-                        v-else
-                        class="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-muted-foreground"
-                    >
-                        {{
-                            t(
-                                'workspaces.management.configuration.labels.empty',
-                            )
-                        }}
-                    </p>
-                </CardContent>
-            </Card>
-
-            <Card class="border-violet-500/15">
-                <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700 dark:text-violet-300"
-                    >
-                        <TagIcon class="size-5" aria-hidden="true" />
+                        </FormLabel>
+                        <Input
+                            id="new-label-name"
+                            v-model="labelForm.name"
+                            :placeholder="
+                                t(
+                                    'workspaces.management.configuration.labels.name_placeholder',
+                                )
+                            "
+                            :disabled="labelForm.processing"
+                            :aria-invalid="Boolean(labelForm.errors.name)"
+                            @input="labelForm.clearErrors('name')"
+                        />
+                        <InputError :message="labelForm.errors.name" />
                     </div>
-                    <CardTitle>
-                        {{
-                            t('workspaces.management.configuration.tags.title')
-                        }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{
-                            t(
-                                'workspaces.management.configuration.tags.description',
-                            )
-                        }}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent class="space-y-5">
-                    <form
-                        v-if="canManage"
-                        class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"
-                        @submit.prevent="createTag"
-                    >
-                        <div class="space-y-2">
-                            <FormLabel for="new-tag-name">
-                                {{
-                                    t(
-                                        'workspaces.management.configuration.tags.name',
-                                    )
-                                }}
-                            </FormLabel>
-                            <Input
-                                id="new-tag-name"
-                                v-model="tagForm.name"
-                                :placeholder="
-                                    t(
-                                        'workspaces.management.configuration.tags.name_placeholder',
-                                    )
-                                "
-                                :disabled="tagForm.processing"
-                                :aria-invalid="Boolean(tagForm.errors.name)"
-                                @input="tagForm.clearErrors('name')"
-                            />
-                            <InputError :message="tagForm.errors.name" />
-                        </div>
-                        <Button
-                            type="submit"
-                            :disabled="
-                                tagForm.processing || !tagForm.name.trim()
-                            "
-                        >
-                            <Spinner v-if="tagForm.processing" />
-                            <Plus v-else aria-hidden="true" />
+                    <div class="space-y-2">
+                        <FormLabel for="new-label-color">
                             {{
                                 t(
-                                    'workspaces.management.configuration.tags.create',
+                                    'workspaces.management.configuration.labels.color',
                                 )
                             }}
-                        </Button>
-                    </form>
-
-                    <ul
-                        v-if="filteredTags.length"
-                        class="divide-y rounded-xl border"
+                        </FormLabel>
+                        <Input
+                            id="new-label-color"
+                            v-model="labelForm.color"
+                            type="color"
+                            class="h-10 w-full cursor-pointer p-1"
+                            :disabled="labelForm.processing"
+                        />
+                    </div>
+                    <Button
+                        type="submit"
+                        :disabled="
+                            labelForm.processing || !labelForm.name.trim()
+                        "
                     >
-                        <li
-                            v-for="tag in filteredTags"
-                            :key="tag.id"
-                            class="p-4"
+                        <Spinner v-if="labelForm.processing" />
+                        <Plus v-else aria-hidden="true" />
+                        {{
+                            t(
+                                'workspaces.management.configuration.labels.create',
+                            )
+                        }}
+                    </Button>
+                </form>
+
+                <ul
+                    v-if="filteredLabels.length"
+                    class="divide-y rounded-xl border"
+                >
+                    <li
+                        v-for="label in filteredLabels"
+                        :key="label.id"
+                        class="p-4"
+                    >
+                        <form
+                            v-if="editingLabel?.id === label.id"
+                            class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-start"
+                            @submit.prevent="updateLabel"
                         >
-                            <form
-                                v-if="editingTag?.id === tag.id"
-                                class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start"
-                                @submit.prevent="updateTag"
-                            >
-                                <div class="space-y-2">
-                                    <FormLabel :for="`edit-tag-${tag.id}`">
-                                        {{
-                                            t(
-                                                'workspaces.management.configuration.tags.name',
-                                            )
-                                        }}
-                                    </FormLabel>
-                                    <Input
-                                        :id="`edit-tag-${tag.id}`"
-                                        v-model="editTagForm.name"
-                                        :disabled="editTagForm.processing"
-                                        :aria-invalid="
-                                            Boolean(editTagForm.errors.name)
-                                        "
-                                        @input="editTagForm.clearErrors('name')"
-                                    />
-                                    <InputError
-                                        :message="editTagForm.errors.name"
-                                    />
-                                </div>
-                                <div class="flex gap-2 sm:pt-7">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        :disabled="editTagForm.processing"
-                                        @click="cancelEditingTag"
-                                    >
-                                        {{ t('common.actions.cancel') }}
-                                    </Button>
-                                    <Button
-                                        type="submit"
-                                        :disabled="
-                                            editTagForm.processing ||
-                                            !editTagForm.name.trim()
-                                        "
-                                    >
-                                        <Spinner
-                                            v-if="editTagForm.processing"
-                                        />
-                                        {{ t('common.actions.save') }}
-                                    </Button>
-                                </div>
-                            </form>
-                            <div
-                                v-else
-                                class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-                            >
+                            <div class="space-y-2">
+                                <FormLabel :for="`edit-label-${label.id}`">
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.labels.name',
+                                        )
+                                    }}
+                                </FormLabel>
+                                <Input
+                                    :id="`edit-label-${label.id}`"
+                                    v-model="editLabelForm.name"
+                                    :disabled="editLabelForm.processing"
+                                    :aria-invalid="
+                                        Boolean(editLabelForm.errors.name)
+                                    "
+                                    @input="editLabelForm.clearErrors('name')"
+                                />
+                                <InputError
+                                    :message="editLabelForm.errors.name"
+                                />
+                            </div>
+                            <div class="space-y-2">
+                                <FormLabel
+                                    :for="`edit-label-color-${label.id}`"
+                                >
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.labels.color',
+                                        )
+                                    }}
+                                </FormLabel>
+                                <Input
+                                    :id="`edit-label-color-${label.id}`"
+                                    v-model="editLabelForm.color"
+                                    type="color"
+                                    class="h-10 w-full cursor-pointer p-1"
+                                    :disabled="editLabelForm.processing"
+                                />
+                            </div>
+                            <div class="flex gap-2 sm:pt-7">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    :disabled="editLabelForm.processing"
+                                    @click="cancelEditingLabel"
+                                >
+                                    {{ t('common.actions.cancel') }}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    :disabled="
+                                        editLabelForm.processing ||
+                                        !editLabelForm.name.trim()
+                                    "
+                                >
+                                    <Spinner v-if="editLabelForm.processing" />
+                                    {{ t('common.actions.save') }}
+                                </Button>
+                            </div>
+                        </form>
+                        <div
+                            v-else
+                            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                            <div class="flex min-w-0 items-center gap-3">
+                                <span
+                                    class="size-4 shrink-0 rounded-full border border-black/10 shadow-sm"
+                                    :style="{
+                                        backgroundColor: label.color,
+                                    }"
+                                    aria-hidden="true"
+                                />
                                 <div class="min-w-0">
-                                    <p class="truncate font-medium">
-                                        #{{ tag.name }}
+                                    <p class="font-medium break-words">
+                                        {{ label.name }}
                                     </p>
                                     <Badge variant="outline" class="mt-1">
                                         {{
@@ -752,46 +636,256 @@ async function deleteMetadata(): Promise<void> {
                                                 'workspaces.management.configuration.tasks_count',
                                                 {
                                                     count: formatNumber(
-                                                        tag.todos_count ?? 0,
+                                                        label.todos_count ?? 0,
                                                     ),
                                                 },
                                             )
                                         }}
                                     </Badge>
                                 </div>
-                                <div
-                                    v-if="
-                                        tag.permissions?.update ||
-                                        tag.permissions?.delete
-                                    "
-                                    class="flex gap-2"
-                                >
+                            </div>
+                            <DropdownMenu
+                                v-if="
+                                    label.permissions?.update ||
+                                    label.permissions?.delete
+                                "
+                            >
+                                <DropdownMenuTrigger :as-child="true">
                                     <Button
-                                        v-if="tag.permissions?.update"
-                                        variant="outline"
-                                        size="icon"
-                                        :aria-label="
-                                            t(
-                                                'workspaces.management.configuration.tags.edit_action',
-                                                { name: tag.name },
-                                            )
-                                        "
-                                        @click="startEditingTag(tag)"
-                                    >
-                                        <Pencil aria-hidden="true" />
-                                    </Button>
-                                    <Button
-                                        v-if="tag.permissions?.delete"
+                                        type="button"
                                         variant="ghost"
                                         size="icon"
-                                        class="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                        class="size-11 shrink-0"
                                         :aria-label="
-                                            t(
-                                                'workspaces.management.configuration.tags.delete_action',
-                                                { name: tag.name },
-                                            )
+                                            t('workspaces.actions_label', {
+                                                name: label.name,
+                                            })
                                         "
-                                        @click="
+                                        @click="captureMetadataDialogTrigger"
+                                    >
+                                        <MoreHorizontal aria-hidden="true" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem
+                                        v-if="label.permissions?.update"
+                                        @select="startEditingLabel(label)"
+                                    >
+                                        <Pencil aria-hidden="true" />
+                                        {{ t('common.actions.edit') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator
+                                        v-if="
+                                            label.permissions?.update &&
+                                            label.permissions?.delete
+                                        "
+                                    />
+                                    <DropdownMenuItem
+                                        v-if="label.permissions?.delete"
+                                        class="text-destructive focus:text-destructive"
+                                        @select="
+                                            deleteTarget = {
+                                                kind: 'label',
+                                                item: label,
+                                            }
+                                        "
+                                    >
+                                        <Trash2 aria-hidden="true" />
+                                        {{ t('common.actions.delete') }}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </li>
+                </ul>
+                <p
+                    v-else
+                    class="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-muted-foreground"
+                >
+                    {{ t('workspaces.management.configuration.labels.empty') }}
+                </p>
+            </CardContent>
+        </Card>
+
+        <Card v-else-if="activeSection === 'tags'" class="border-violet-500/15">
+            <CardHeader>
+                <div
+                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700 dark:text-violet-300"
+                >
+                    <TagIcon class="size-5" aria-hidden="true" />
+                </div>
+                <CardTitle>
+                    <span
+                        id="workspace-tags-title"
+                        tabindex="-1"
+                        class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
+                    >
+                        {{
+                            t('workspaces.management.configuration.tags.title')
+                        }}
+                    </span>
+                </CardTitle>
+                <CardDescription>
+                    {{
+                        t(
+                            'workspaces.management.configuration.tags.description',
+                        )
+                    }}
+                </CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-5">
+                <form
+                    v-if="canManage"
+                    class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"
+                    @submit.prevent="createTag"
+                >
+                    <div class="space-y-2">
+                        <FormLabel for="new-tag-name">
+                            {{
+                                t(
+                                    'workspaces.management.configuration.tags.name',
+                                )
+                            }}
+                        </FormLabel>
+                        <Input
+                            id="new-tag-name"
+                            v-model="tagForm.name"
+                            :placeholder="
+                                t(
+                                    'workspaces.management.configuration.tags.name_placeholder',
+                                )
+                            "
+                            :disabled="tagForm.processing"
+                            :aria-invalid="Boolean(tagForm.errors.name)"
+                            @input="tagForm.clearErrors('name')"
+                        />
+                        <InputError :message="tagForm.errors.name" />
+                    </div>
+                    <Button
+                        type="submit"
+                        :disabled="tagForm.processing || !tagForm.name.trim()"
+                    >
+                        <Spinner v-if="tagForm.processing" />
+                        <Plus v-else aria-hidden="true" />
+                        {{
+                            t('workspaces.management.configuration.tags.create')
+                        }}
+                    </Button>
+                </form>
+
+                <ul
+                    v-if="filteredTags.length"
+                    class="divide-y rounded-xl border"
+                >
+                    <li v-for="tag in filteredTags" :key="tag.id" class="p-4">
+                        <form
+                            v-if="editingTag?.id === tag.id"
+                            class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start"
+                            @submit.prevent="updateTag"
+                        >
+                            <div class="space-y-2">
+                                <FormLabel :for="`edit-tag-${tag.id}`">
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.tags.name',
+                                        )
+                                    }}
+                                </FormLabel>
+                                <Input
+                                    :id="`edit-tag-${tag.id}`"
+                                    v-model="editTagForm.name"
+                                    :disabled="editTagForm.processing"
+                                    :aria-invalid="
+                                        Boolean(editTagForm.errors.name)
+                                    "
+                                    @input="editTagForm.clearErrors('name')"
+                                />
+                                <InputError
+                                    :message="editTagForm.errors.name"
+                                />
+                            </div>
+                            <div class="flex gap-2 sm:pt-7">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    :disabled="editTagForm.processing"
+                                    @click="cancelEditingTag"
+                                >
+                                    {{ t('common.actions.cancel') }}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    :disabled="
+                                        editTagForm.processing ||
+                                        !editTagForm.name.trim()
+                                    "
+                                >
+                                    <Spinner v-if="editTagForm.processing" />
+                                    {{ t('common.actions.save') }}
+                                </Button>
+                            </div>
+                        </form>
+                        <div
+                            v-else
+                            class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                            <div class="min-w-0">
+                                <p class="font-medium break-words">
+                                    #{{ tag.name }}
+                                </p>
+                                <Badge variant="outline" class="mt-1">
+                                    {{
+                                        t(
+                                            'workspaces.management.configuration.tasks_count',
+                                            {
+                                                count: formatNumber(
+                                                    tag.todos_count ?? 0,
+                                                ),
+                                            },
+                                        )
+                                    }}
+                                </Badge>
+                            </div>
+                            <DropdownMenu
+                                v-if="
+                                    tag.permissions?.update ||
+                                    tag.permissions?.delete
+                                "
+                            >
+                                <DropdownMenuTrigger :as-child="true">
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        class="size-11 shrink-0"
+                                        :aria-label="
+                                            t('workspaces.actions_label', {
+                                                name: tag.name,
+                                            })
+                                        "
+                                        @click="captureMetadataDialogTrigger"
+                                    >
+                                        <MoreHorizontal aria-hidden="true" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem
+                                        v-if="tag.permissions?.update"
+                                        @select="startEditingTag(tag)"
+                                    >
+                                        <Pencil aria-hidden="true" />
+                                        {{ t('common.actions.edit') }}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator
+                                        v-if="
+                                            tag.permissions?.update &&
+                                            tag.permissions?.delete
+                                        "
+                                    />
+                                    <DropdownMenuItem
+                                        v-if="tag.permissions?.delete"
+                                        class="text-destructive focus:text-destructive"
+                                        @select="
                                             deleteTarget = {
                                                 kind: 'tag',
                                                 item: tag,
@@ -799,22 +893,21 @@ async function deleteMetadata(): Promise<void> {
                                         "
                                     >
                                         <Trash2 aria-hidden="true" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <p
-                        v-else
-                        class="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-muted-foreground"
-                    >
-                        {{
-                            t('workspaces.management.configuration.tags.empty')
-                        }}
-                    </p>
-                </CardContent>
-            </Card>
-        </div>
+                                        {{ t('common.actions.delete') }}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </li>
+                </ul>
+                <p
+                    v-else
+                    class="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-muted-foreground"
+                >
+                    {{ t('workspaces.management.configuration.tags.empty') }}
+                </p>
+            </CardContent>
+        </Card>
 
         <WorkspaceConfirmDialog
             :open="Boolean(deleteTarget)"

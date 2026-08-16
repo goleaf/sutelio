@@ -53,21 +53,35 @@ class WorkspaceManagementController extends Controller
         return Inertia::render('workspaces/Show', [
             'section' => $section,
             'workspace' => (new WorkspaceResource($workspace))->resolve($request),
-            'members' => WorkspaceMemberResource::collection($this->query->members($workspace))->resolve($request),
-            'invitations' => WorkspaceInvitationResource::collection(
-                $this->query->invitations($workspace, $user),
-            )->resolve($request),
+            'members' => in_array($section, ['members', 'danger'], true)
+                ? fn (): array => WorkspaceMemberResource::collection(
+                    $this->query->members($workspace),
+                )->resolve($request)
+                : [],
+            'invitations' => $section === 'members'
+                ? fn (): array => WorkspaceInvitationResource::collection(
+                    $this->query->invitations($workspace, $user),
+                )->resolve($request)
+                : [],
             'labels' => $section === 'configuration'
-                ? LabelResource::collection($this->query->labels($workspace))->resolve($request)
+                ? fn (): array => LabelResource::collection(
+                    $this->query->labels($workspace),
+                )->resolve($request)
                 : [],
             'tags' => $section === 'configuration'
-                ? TagResource::collection($this->query->tags($workspace))->resolve($request)
+                ? fn (): array => TagResource::collection(
+                    $this->query->tags($workspace),
+                )->resolve($request)
                 : [],
             'taskStatuses' => $section === 'configuration'
-                ? TaskStatusResource::collection($this->query->taskStatuses($workspace))->resolve($request)
+                ? fn (): array => TaskStatusResource::collection(
+                    $this->query->taskStatuses($workspace),
+                )->resolve($request)
                 : [],
             'taskPriorities' => $section === 'configuration'
-                ? TaskPriorityResource::collection($this->query->taskPriorities($workspace))->resolve($request)
+                ? fn (): array => TaskPriorityResource::collection(
+                    $this->query->taskPriorities($workspace),
+                )->resolve($request)
                 : [],
             'locale' => $request->getLocale(),
         ]);
