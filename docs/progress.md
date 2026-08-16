@@ -4275,3 +4275,9 @@ Completed. The feature implementation, review corrections, and completion record
 - An isolated allowed-directory SQLite database migrated all 34 migrations, seeded twice, contained 3 users / 1 workspace / 25 tasks, returned `ok` from `PRAGMA integrity_check`, and returned zero foreign-key violations. Every temporary database directory was sent to Trash.
 - Config, route, and view caches built; `app:database-health --json` returned every check true; the schedule listed four intended tasks; 266 first-party routes registered; login returned 200; and the unauthenticated API user endpoint returned the expected 401.
 - Laravel Boost browser logs contain only historical entries; the live browser matrix captured no current error during this phase.
+
+### Git Delivery
+
+- `9226b46` — `fix: enforce authenticated landmark integrity`.
+- The first `git push --verbose origin main` attempt failed after 79.051 seconds because GitHub port 443 was unreachable; no remote state changed. The immediate non-force retry exited 0 and reported `f6d2813..9226b46 main -> main`, updating the local tracking ref.
+- This final status-only documentation commit follows in the same verified delivery. No force push, history rewrite, destructive Git command, secret, generated build output, dependency, migration, or unrelated deletion was used.

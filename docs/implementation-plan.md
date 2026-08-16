@@ -124,6 +124,6 @@ Requirements: `ui-accessibility-001`, `test-architecture-001`, `docs-traceabilit
 - [x] Add a failing architecture regression proving the persistent authenticated shell is the sole owner of the page `main` landmark.
 - [x] Replace nested page and settings-layout `main` elements with neutral presentation wrappers without changing layout, routing, or interaction behavior.
 - [x] Verify one `main` and one logical page heading across authenticated desktop and mobile routes with no horizontal overflow or current browser errors.
-- [ ] Run focused and full PHP/frontend quality gates, synchronize canonical documentation, inspect the final diff, commit the coherent phase, and push `main` to `origin`.
+- [x] Run focused and full PHP/frontend quality gates, synchronize canonical documentation, inspect the final diff, commit the coherent phase, and push `main` to `origin`.
 
 Verification: focused frontend architecture tests, Vue type/lint/format checks, production build, authenticated browser landmark matrix, full PHP/frontend gates, and final Git inspection. Rollback is a direct semantic-wrapper reversal; no dependency, schema, data, route, policy, or public response contract changes.
