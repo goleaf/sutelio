@@ -3460,6 +3460,67 @@ Completed and ready for delivery.
 - This progress record will be committed separately as `docs: record task index workflow` and pushed to `origin/main`.
 - The pre-existing Task Detail, Task Index build-repair, and Herd upload progress edits remain preserved and excluded from this phase's staged changes.
 
+## Versioned Import Preview Workflow
+
+### Status
+
+Completed and ready for delivery.
+
+### Before-Phase Baseline
+
+- Selecting a JSON or CSV file executed the import immediately, without a validated review step or explicit confirmation.
+- JSON workspace exports had no schema version, so future format changes could not be rejected safely.
+- Import execution was already bounded to 1,000 records and transactional, but preview and execution did not share one validation path.
+
+### Delivered Scope And Decisions
+
+- Added schema version 1 to JSON exports and both JSON/CSV import results; legacy JSON without a version remains compatible as version 1, while unsupported versions fail validation before writes.
+- Added an authorized workspace-scoped preview endpoint that validates UTF-8, structure, record limits, project references, active status/priority definitions, dates, and nested payload boundaries without persisting records.
+- Reused the same parsing and validation paths for preview and transactional execution, while preloading workspace task definitions instead of issuing per-record existence queries.
+- Replaced immediate browser imports with an Inertia 3 standalone HTTP preview, localized count/version review, explicit confirmation and cancellation, upload progress, processing/error states, and responsive accessible controls.
+- Preserved the legacy CSV execution response key while adding the schema version, avoiding an unnecessary compatibility break.
+
+### Changed Files
+
+- Import/export controller and services under `app/`, plus the versioned preview route in `routes/web.php`.
+- `resources/js/pages/settings/Export.vue` and English, Lithuanian, and Russian data-transfer/UI translations.
+- Focused data-transfer and frontend-contract coverage in `tests/Feature/DataTransferTest.php` and `tests/Feature/FrontendDesignTest.php`.
+- `docs/progress.md`.
+
+### Migrations And Packages
+
+- No migration was required.
+- No Composer or npm dependency changed.
+
+### Verification
+
+- Test-first red state confirmed four missing preview-route cases and the missing frontend preview contract before implementation.
+- Focused data-transfer, localization, and design coverage passed: 150 tests and 720 assertions.
+- `vendor/bin/pint --dirty --format agent`: passed.
+- `php artisan test --compact`: passed, 567 tests and 3,371 assertions.
+- `composer run types:check`: passed with zero PHPStan errors.
+- `npm run test:frontend`: passed, 13 tests.
+- `npm run types:check`, `npm run lint:check`, and `npm run format:check`: passed.
+- `npm run build`: passed after transforming 3,427 modules; only the optional `fontaine` optimization notice and plugin timing advisory were emitted.
+- `composer validate --strict --no-check-publish`: passed.
+- `php artisan route:list --name=import -vv`: passed and confirmed the authenticated, verified preview and execution routes.
+- `git diff --check`: passed.
+- Live Herd desktop QA validated a JSON preview response, counts/version review, and zero document-level horizontal overflow; only the preview request was sent, so no domain records were written.
+- Live Herd mobile QA at 390 x 844 validated the review, explicit confirmation, cancellation, and zero document-level horizontal overflow with no captured console or page errors.
+- Recent Boost browser logs contain only unrelated July 19 security-page entries; this import-preview verification produced no new browser errors.
+
+### Known Limitations And Next Work
+
+- `composer audit --no-interaction` reports eight advisories in the existing locked `guzzlehttp/guzzle` 7.15.1 and `league/commonmark` 2.8.3 packages.
+- `npm audit --omit=dev` reports two advisories in the existing production dependency tree: one high-severity `nanoid` advisory and one moderate `postcss` advisory.
+- Dependency upgrades require separate approval under the repository contract, so both lockfiles remain unchanged and the audit findings remain open.
+- CSV files remain implicitly schema version 1 because CSV has no metadata envelope; a future incompatible CSV shape will require an explicit versioning convention.
+
+### Git Delivery
+
+- Implementation commit `ca3f401` (`feat: add versioned import preview`) was pushed successfully to `origin/main`.
+- This progress record will be committed separately as `docs: record versioned import preview` and pushed to `origin/main`.
+
 ## Recurrence, Reminders, And Notifications
 
 ### Status
