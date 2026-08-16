@@ -10,22 +10,22 @@ import {
 import { useUi } from '@/composables/useUi';
 import type { TaskDefinitionCatalog, Todo } from '@/types/models';
 
-defineProps<{
+const props = defineProps<{
     todo: Todo;
     open: boolean;
     taskDefinitions: TaskDefinitionCatalog;
 }>();
 const emit = defineEmits<{
     close: [];
-    deleted: [];
+    deleted: [todoId: string];
     refresh: [];
     updated: [todo: Todo];
 }>();
 const { t } = useUi();
 
 function deleted(): void {
+    emit('deleted', props.todo.id);
     emit('close');
-    emit('deleted');
 }
 </script>
 

@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { Head, router, useHttp } from '@inertiajs/vue3';
-import { computed, nextTick, ref } from 'vue';
-import { buildProjectQuery } from '@/components/project/project-operations';
+import { computed, nextTick, ref, watch } from 'vue';
+import {
+    buildProjectQuery,
+    projectTaskMatchesFilters,
+    sortProjectTasks,
+} from '@/components/project/project-operations';
 import type {
     ProjectAssignee,
     ProjectAttention,
@@ -57,9 +61,12 @@ const toast = useToast();
 const { t } = useUi();
 const selectedTodo = ref<Todo | null>(null);
 const taskDetailTrigger = ref<HTMLElement | null>(null);
+const queueFallbackRef = ref<HTMLElement | null>(null);
 const showCreateDialog = ref(false);
 const todoToDelete = ref<ProjectTask | null>(null);
 const hiddenTaskIds = ref<Set<string>>(new Set());
+const taskOverrides = ref<Map<string, ProjectTask>>(new Map());
+const pendingTotalAdjustmentIds = ref<Set<string>>(new Set());
 const filtering = ref(false);
 const busyTaskId = ref<string | null>(null);
 const deletingTodo = ref(false);
@@ -72,21 +79,29 @@ const projectActionRequest = useHttp<
     ProjectActionResponse
 >({});
 const queueTodos = computed<ProjectTaskPaginator>(() => {
-    const hiddenCount = props.todos.data.filter((task) =>
-        hiddenTaskIds.value.has(task.id),
-    ).length;
+    const visibleTasks = props.todos.data
+        .map((task) => taskOverrides.value.get(task.id) ?? task)
+        .filter((task) => !hiddenTaskIds.value.has(task.id));
 
     return {
         ...props.todos,
-        data: props.todos.data.filter(
-            (task) => !hiddenTaskIds.value.has(task.id),
-        ),
+        data: sortProjectTasks(visibleTasks, props.filters.sort),
         meta: {
             ...props.todos.meta,
-            total: Math.max(0, props.todos.meta.total - hiddenCount),
+            total: Math.max(
+                0,
+                props.todos.meta.total - pendingTotalAdjustmentIds.value.size,
+            ),
         },
     };
 });
+
+watch(
+    () => props.todos,
+    () => {
+        pendingTotalAdjustmentIds.value = new Set();
+    },
+);
 
 function applyFilters(filters: ProjectFilters): void {
     if (projectFilterUrl(filters) === projectFilterUrl(props.filters)) {
@@ -95,6 +110,9 @@ function applyFilters(filters: ProjectFilters): void {
 
     router.cancelAll();
     filtering.value = true;
+    hiddenTaskIds.value = new Set();
+    taskOverrides.value = new Map();
+    pendingTotalAdjustmentIds.value = new Set();
 
     router.get(
         projectFilterUrl(filters),
@@ -140,7 +158,14 @@ function refreshOperations(includeTodos = true): void {
         only.unshift('todos', 'filters');
     }
 
-    router.reload({ only });
+    router.reload({
+        only,
+        onSuccess: () => {
+            if (includeTodos) {
+                pendingTotalAdjustmentIds.value = new Set();
+            }
+        },
+    });
 }
 
 async function selectTodo(task: Pick<ProjectTask, 'id'>): Promise<void> {
@@ -169,7 +194,11 @@ function closeTaskDetail(): void {
     selectedTodo.value = null;
 
     void nextTick(() => {
-        taskDetailTrigger.value?.focus();
+        const focusTarget = taskDetailTrigger.value?.isConnected
+            ? taskDetailTrigger.value
+            : queueFallbackRef.value;
+
+        focusTarget?.focus();
         taskDetailTrigger.value = null;
     });
 }
@@ -187,7 +216,79 @@ function updateSelectedTodo(todo: Todo): void {
         selectedTodo.value = { ...selectedTodo.value, ...todo };
     }
 
+    synchronizeTask(todo);
     refreshOperations();
+}
+
+function synchronizeTask(todo: Todo): void {
+    const hiddenIds = new Set(hiddenTaskIds.value);
+    const overrides = new Map(taskOverrides.value);
+    const totalAdjustmentIds = new Set(pendingTotalAdjustmentIds.value);
+    const currentTask =
+        overrides.get(todo.id) ??
+        props.todos.data.find((task) => task.id === todo.id);
+
+    if (!projectTaskMatchesFilters(todo, props.filters, props.today)) {
+        if (currentTask && !hiddenIds.has(todo.id)) {
+            totalAdjustmentIds.add(todo.id);
+        }
+
+        hiddenIds.add(todo.id);
+        overrides.delete(todo.id);
+    } else {
+        hiddenIds.delete(todo.id);
+        totalAdjustmentIds.delete(todo.id);
+
+        if (currentTask) {
+            overrides.set(todo.id, projectTaskFromTodo(todo, currentTask));
+        }
+    }
+
+    hiddenTaskIds.value = hiddenIds;
+    taskOverrides.value = overrides;
+    pendingTotalAdjustmentIds.value = totalAdjustmentIds;
+}
+
+function projectTaskFromTodo(todo: Todo, current: ProjectTask): ProjectTask {
+    const statusDefinition = todo.status_definition
+        ? todo.status_definition
+        : todo.status_id === current.status_id
+          ? current.status_definition
+          : null;
+    const priorityDefinition = todo.priority_definition
+        ? todo.priority_definition
+        : todo.priority_id === current.priority_id
+          ? current.priority_definition
+          : null;
+
+    return {
+        ...current,
+        title: todo.title,
+        assigned_to: todo.assigned_to,
+        assignee: todo.assignee
+            ? { id: todo.assignee.id, name: todo.assignee.name }
+            : todo.assigned_to === current.assigned_to
+              ? current.assignee
+              : null,
+        status: todo.status,
+        status_id: todo.status_id,
+        status_definition: statusDefinition,
+        priority: todo.priority,
+        priority_id: todo.priority_id,
+        priority_definition: priorityDefinition,
+        labels:
+            todo.labels?.map((label) => ({
+                id: label.id,
+                name: label.name,
+                color: label.color,
+            })) ?? current.labels,
+        is_completed: todo.is_completed,
+        due_date: todo.due_date,
+        position: todo.position,
+        completed_at: todo.completed_at,
+        created_at: todo.created_at,
+        updated_at: todo.updated_at,
+    };
 }
 
 async function toggleCompletion(task: ProjectTask): Promise<void> {
@@ -201,13 +302,40 @@ async function toggleCompletion(task: ProjectTask): Promise<void> {
         : completeThroughApi;
 
     try {
-        await completionRequest.post(target([props.workspace.id, task.id]).url);
+        const response = await completionRequest.post(
+            target([props.workspace.id, task.id]).url,
+        );
+        synchronizeTask(response.data);
         refreshOperations();
     } catch {
         toast.error(t('common.errors.generic'));
     } finally {
         busyTaskId.value = null;
     }
+}
+
+function handleDeletedTodo(taskId: string): void {
+    const overrides = new Map(taskOverrides.value);
+    const totalAdjustmentIds = new Set(pendingTotalAdjustmentIds.value);
+    const selectedTask =
+        selectedTodo.value?.id === taskId ? selectedTodo.value : null;
+    const countedOutsideLoadedQueue =
+        selectedTask !== null &&
+        projectTaskMatchesFilters(selectedTask, props.filters, props.today);
+
+    if (
+        (props.todos.data.some((task) => task.id === taskId) ||
+            countedOutsideLoadedQueue) &&
+        !hiddenTaskIds.value.has(taskId)
+    ) {
+        totalAdjustmentIds.add(taskId);
+    }
+
+    overrides.delete(taskId);
+    hiddenTaskIds.value = new Set([...hiddenTaskIds.value, taskId]);
+    taskOverrides.value = overrides;
+    pendingTotalAdjustmentIds.value = totalAdjustmentIds;
+    refreshOperations(false);
 }
 
 async function deleteTodo(): Promise<void> {
@@ -224,13 +352,11 @@ async function deleteTodo(): Promise<void> {
         );
         toast.success(t('tasks.index.deleted'));
         todoToDelete.value = null;
-        hiddenTaskIds.value = new Set([...hiddenTaskIds.value, task.id]);
+        handleDeletedTodo(task.id);
 
         if (selectedTodo.value?.id === task.id) {
             closeTaskDetail();
         }
-
-        refreshOperations(false);
     } catch {
         toast.error(t('common.errors.generic'));
     } finally {
@@ -328,7 +454,10 @@ async function submitProjectAction(
                     </div>
 
                     <div
-                        class="min-w-0 space-y-6 xl:col-start-1 xl:row-start-1"
+                        ref="queueFallbackRef"
+                        tabindex="-1"
+                        :aria-label="t('projects.show.results.title')"
+                        class="min-w-0 space-y-6 rounded-panel focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none xl:col-start-1 xl:row-start-1"
                     >
                         <ProjectTaskFilters
                             :filters="filters"
@@ -362,7 +491,7 @@ async function submitProjectAction(
             :open="Boolean(selectedTodo)"
             :task-definitions="taskDefinitions"
             @close="closeTaskDetail"
-            @deleted="refreshOperations"
+            @deleted="handleDeletedTodo"
             @refresh="refreshSelectedTodo"
             @updated="updateSelectedTodo"
         />

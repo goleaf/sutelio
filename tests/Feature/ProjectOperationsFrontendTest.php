@@ -91,7 +91,15 @@ test('project operations preserve detail focus origin and merged page context', 
 
     expect($page)
         ->toContain('if (selectedTodo.value === null)')
+        ->toContain('taskDetailTrigger.value?.isConnected')
+        ->toContain('queueFallbackRef.value')
         ->toContain('hiddenTaskIds')
+        ->toContain('taskOverrides')
+        ->toContain('pendingTotalAdjustmentIds')
+        ->toContain('() => props.todos')
+        ->toContain('projectTaskMatchesFilters')
+        ->toContain('sortProjectTasks')
+        ->toContain('synchronizeTask(response.data)')
         ->toContain('preserveScroll: true')
         ->and($refresh)
         ->not->toContain('reset:');

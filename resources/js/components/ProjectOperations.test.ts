@@ -7,6 +7,8 @@ import {
     isProjectTaskOverdue,
     projectAttentionContinuation,
     projectResultPluralForm,
+    projectTaskMatchesFilters,
+    sortProjectTasks,
 } from './project/project-operations.ts';
 import type { ProjectFilters } from './project/project-operations.ts';
 
@@ -87,5 +89,84 @@ test('attention continuation opens the category that still has hidden work', () 
             '2026-08-16',
         ),
         'due_soon',
+    );
+});
+
+test('updated tasks leave queues whose active filters they no longer match', () => {
+    const task = {
+        id: 'task-1',
+        title: 'Launch review',
+        description: 'Confirm release readiness',
+        status_id: 'status-done',
+        priority_id: 'priority-high',
+        assigned_to: 'user-1',
+        completed_at: '2026-08-16T08:00:00.000000Z',
+        due_date: '2026-08-15',
+    };
+    const filters: ProjectFilters = {
+        search: 'release',
+        status: null,
+        priority: 'priority-high',
+        assignee: 'user-1',
+        attention: 'overdue',
+        sort: 'position',
+    };
+
+    assert.equal(projectTaskMatchesFilters(task, filters, '2026-08-16'), false);
+    assert.equal(
+        projectTaskMatchesFilters(
+            { ...task, completed_at: null },
+            filters,
+            '2026-08-16',
+        ),
+        true,
+    );
+    assert.equal(
+        projectTaskMatchesFilters(
+            { ...task, completed_at: null },
+            { ...filters, search: 'review confirm', attention: 'all' },
+            '2026-08-16',
+        ),
+        false,
+    );
+    assert.equal(
+        projectTaskMatchesFilters(
+            { ...task, completed_at: null },
+            { ...filters, search: '%', attention: 'all' },
+            '2026-08-16',
+        ),
+        true,
+    );
+});
+
+test('updated tasks are re-sorted within the loaded queue', () => {
+    const tasks = [
+        {
+            id: 'task-later',
+            due_date: '2026-08-20',
+            position: 1,
+            updated_at: '2026-08-15T09:00:00Z',
+            priority_definition: { position: 2 },
+        },
+        {
+            id: 'task-sooner',
+            due_date: '2026-08-17',
+            position: 2,
+            updated_at: '2026-08-16T09:00:00Z',
+            priority_definition: { position: 1 },
+        },
+    ];
+
+    assert.deepEqual(
+        sortProjectTasks(tasks, 'due_date').map((task) => task.id),
+        ['task-sooner', 'task-later'],
+    );
+    assert.deepEqual(
+        sortProjectTasks(tasks, 'updated').map((task) => task.id),
+        ['task-sooner', 'task-later'],
+    );
+    assert.deepEqual(
+        sortProjectTasks(tasks, 'priority').map((task) => task.id),
+        ['task-sooner', 'task-later'],
     );
 });
