@@ -44,7 +44,7 @@ The seeding test suite is the preferred proof when configuration needs a file-ba
 
 ## Coverage And Assertions
 
-Critical identity, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --min=0 --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the final behavioral suite passes 683 tests / 9,539 assertions sequentially and in parallel, and the frontend suite passes 27/27.
+Critical identity, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --min=0 --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the final behavioral suite passes 693 tests / 9,799 assertions in parallel, and the frontend suite passes 31/31.
 
 ## Browser Verification
 

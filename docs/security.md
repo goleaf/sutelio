@@ -11,7 +11,7 @@ This document describes implemented controls; dated historical findings live und
 - Notification reads and mutations are anchored to the authenticated user's relation. Optional task destinations are emitted only after one batched query proves current workspace ownership or membership; foreign, deleted, empty, and malformed identifiers produce no actionable URL.
 - CSRF/origin/framework request-forgery protection remains enabled. Redirects are controlled; Vue/Blade output is escaped by default; no first-party rich-HTML rendering contract exists.
 - Avatar/attachment/import inputs validate size, content/MIME pair, dimensions/shape where applicable, and use generated private paths. Downloads authorize at request time.
-- Import is bounded and transactional; CSV export neutralizes spreadsheet formulas; exports stream; backups use opaque IDs, consistent SQLite snapshots, private storage, owner policy, restore confirmation, locking, integrity validation, and rollback safety.
+- Import is owner/administrator-only, bounded, previewed, and transactional; execution-time validation cannot emit false success. CSV export neutralizes spreadsheet formulas; exports stream. Backups use opaque IDs, consistent SQLite snapshots, private storage, configured-operator policy, recent password confirmation, locking, integrity validation, and rollback safety.
 - Configuration reads environment values only through config files. Application logs must not contain passwords, sessions, authorization headers, full tokens, private keys, backups, or sensitive request/response bodies.
 - Production must use `APP_DEBUG=false`, a non-placeholder app key, secure cookies/HTTPS, private storage permissions, and the documented scheduler/queue controls.
 

@@ -21,7 +21,9 @@ The route matrix ran at 1440x1000 and 390x844. Every checked page returned 200 (
 
 The Notification Command Center follow-up verified one `main` and one `h1`, semantic pressed-button groups rather than invalid tab semantics, keyboard Space activation, selected-state exposure, a complete filtered-empty state, 44-pixel controls, reduced-motion transition suppression, focus fallback, and zero overflow at 1,440 and 390 pixels. The browser captured no current console, page, or failed-request error during filter and clear interactions.
 
-Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizationTest.php`, `ActivityIntelligenceFrontendTest.php`, `NotificationCommandCenterFrontendTest.php`, `NotificationInbox.test.ts`, Vue type checking, ESLint, the production build, and the browser checks recorded in `docs/progress.md`.
+The Data Safety Center verification covered the current-section settings menu, wrapped English/Lithuanian/Russian labels, one logical heading, 44-pixel controls, workspace/application scope text, Select/Review/Confirm import state, validation-error context retention, cancel/success focus restoration, DOM/visual action order, dark and reduced-motion mobile presentation, forced colors, and zero horizontal overflow. Read-only members receive a text explanation instead of unauthorized upload controls.
+
+Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizationTest.php`, `ActivityIntelligenceFrontendTest.php`, `NotificationCommandCenterFrontendTest.php`, `DataSafetyCenterFrontendTest.php`, direct TypeScript behavior tests, Vue type checking, ESLint, the production build, and the browser checks recorded in `docs/progress.md`.
 
 ## Manual Release Review
 

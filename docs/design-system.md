@@ -22,6 +22,7 @@ Static complete class names are required. String interpolation such as `bg-${sta
 - Reka/shadcn-style primitives own dialogs, sheets, menus, selects, checkboxes, focus traps, and keyboard semantics.
 - Shared workspace components own page headers, metrics, segmented controls, empty states, dialog surfaces, and confirmations.
 - Feature components own task, project, calendar, dashboard, activity, and workspace composition.
+- Settings Data Safety uses the shared current-section menu and scope banner, then composes workspace transfer and operator backup as separate permission-aware pages.
 - Tailwind utilities and tokens style components; a static visual fragment does not become a server component.
 
 ## Responsive And State Contract
@@ -43,4 +44,4 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 | View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
 | Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
 
-Final `npm run build` transformed 3,477 modules in 4.11 seconds. Main application CSS is 159.22 kB (23.65 kB gzip), the application entry is 87.25 kB (22.73 kB gzip), and the project-detail chunk is 90.58 kB (15.93 kB gzip), remaining reviewable while adding the responsive Project Operations Workspace.
+Final `npm run build` transformed 3,489 modules in 4.76 seconds. Main application CSS is 162.18 kB (23.91 kB gzip), the application entry is 89.59 kB (23.23 kB gzip), the Data Safety export chunk is 14.10 kB (4.28 kB gzip), and the backup chunk is 6.52 kB (2.52 kB gzip).

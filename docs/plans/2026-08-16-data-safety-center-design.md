@@ -62,6 +62,8 @@ The Export/Import page becomes the workspace-level Data Transfer center.
 4. The selected file has a stable summary with name, format, size, clear action, and upload progress.
 5. Preview metrics remain projects, tasks, and schema version. The confirm action appears only after a successful preview and is described as a transactional workspace change.
 6. Operators receive a small system-backup bridge linking to `/settings/backup`; ordinary users receive no backup link or privileged metadata.
+7. Every workspace member can keep using exports, while only owners and administrators receive import controls. Read-only members see an explicit role explanation instead of a file picker that would fail after upload.
+8. Format guidance states the actual transfer boundary: import recreates projects and core task fields, while relationship/reference data and other workspace domains are not recreated.
 
 ### System Backup And Restore
 
@@ -97,7 +99,7 @@ The Backup page remains operator-only and application-scoped.
 2. The preview request uploads through Inertia's HTTP client with action-specific progress and errors.
 3. Only a successful server preview advances the UI to Review.
 4. Confirmation submits the same file and format through the existing transactional import endpoint.
-5. Success clears the file, preview, progress, and errors; failure preserves the review context for correction/retry.
+5. Inertia HTTP validation responses are treated as failures even though HTTP 422 resolves through the request helper; success clears the file, preview, progress, and errors, while failure preserves the review context for correction/retry.
 
 ### Backup
 

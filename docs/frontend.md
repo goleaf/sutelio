@@ -22,6 +22,7 @@ Current token domains include background/surface/foreground/muted, border/input/
 - Navigation remains functional as normal same-origin links through Inertia and Wayfinder. Custom integrations must initialize/teardown across Inertia navigation; no current long-lived third-party widget requires `@persist`-style behavior.
 - Task/workspace identity changes reset local drafts and pending state. Array indexes are not durable keys for mutable lists.
 - Notification filters are canonical URL state coordinated by the page, while focused filter/feed/row components consume typed immutable props. Partial visits cancel superseded requests, refresh the user-local day boundary, and request only inbox props; row/browser presentation shares one localized content resolver.
+- Data Safety settings keep workspace transfer and application backup on separate authorized routes. Export remains available to workspace members, import controls are rendered only for policy-authorized managers, standalone HTTP validation results never trigger success effects, and destructive restore remains operator/password-confirmation gated.
 
 ## Accessibility And Responsive Requirements
 
@@ -30,6 +31,8 @@ Critical pages use semantic headings, labels/descriptions, associated errors, ac
 Mobile-first layouts are verified from 390 px through desktop/wide screens. Sidebars, dialogs, lists, filters, calendars, long names, and translated expansion must not create horizontal page overflow. Hover is never the sole affordance; touch targets and keyboard access coexist.
 
 Notification read-state and kind filters are named pressed-button groups, not tablists. The signal stream uses ordered Today/Earlier headings, explicit non-color read labels, one concise result live region, connected-node focus restoration, and 44-pixel controls at both tested widths.
+
+Settings navigation uses a current-section dropdown below `lg` and the established vertical navigation at desktop. Long localized section names wrap, and Data Safety scope banners distinguish the current workspace from the application database with text and icons rather than color alone.
 
 ## Tailwind Feature Applicability
 
