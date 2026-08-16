@@ -9,7 +9,7 @@ test('notification command center uses typed component boundaries and narrow vis
         ->toContain('NotificationFilters')
         ->toContain('NotificationFeed')
         ->toContain('router.cancelAll()')
-        ->toContain("only: ['notifications', 'stats', 'filters']")
+        ->toContain("only: ['notifications', 'stats', 'filters', 'today']")
         ->toContain("from '@/routes/notifications'")
         ->not->toContain("searchable.includes('remind')")
         ->not->toContain('notification.data.title');
@@ -21,6 +21,7 @@ test('notification controls and rows expose complete accessible states', functio
     $row = file_get_contents(resource_path('js/components/notification/NotificationRow.vue'));
 
     expect($filters)
+        ->toContain('role="group"')
         ->toContain('aria-pressed')
         ->toContain('min-h-11')
         ->toContain('aria-live="polite"')

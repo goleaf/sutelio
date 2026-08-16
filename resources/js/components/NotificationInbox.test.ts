@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
     buildNotificationQuery,
     groupNotifications,
+    notificationContent,
     notificationPluralForm,
     notificationPresentation,
 } from './notification/notification-inbox.ts';
@@ -76,4 +77,40 @@ test('semantic presentation and count plurals have stable fallbacks', () => {
     assert.equal(notificationPluralForm(10, 'lt-LT'), 'other');
     assert.equal(notificationPluralForm(21, 'ru-RU'), 'one');
     assert.equal(notificationPluralForm(25, 'ru-RU'), 'many');
+});
+
+test('browser and row presentation share useful reminder and fallback copy', () => {
+    const presentationCopy = {
+        reminderTitle: 'Task reminder',
+        reminderBody: 'Review ":task".',
+        fallbackTitle: 'Workspace notification',
+        fallbackBody: 'There is an update in your workspace.',
+    };
+
+    assert.deepEqual(
+        notificationContent(
+            {
+                ...baseNotification,
+                kind: 'reminder',
+                title: null,
+                body: null,
+                task_title: 'Launch report',
+            },
+            presentationCopy,
+        ),
+        {
+            title: 'Task reminder',
+            body: 'Review "Launch report".',
+        },
+    );
+    assert.deepEqual(
+        notificationContent(
+            { ...baseNotification, title: null, body: null },
+            presentationCopy,
+        ),
+        {
+            title: 'Workspace notification',
+            body: 'There is an update in your workspace.',
+        },
+    );
 });

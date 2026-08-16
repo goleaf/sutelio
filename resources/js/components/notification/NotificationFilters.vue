@@ -77,6 +77,7 @@ function clearFilters(): void {
                     {{ copy.notifications.status_label }}
                 </p>
                 <WorkspaceSegmentedControl
+                    role="group"
                     :label="copy.notifications.status_label"
                     class="w-full"
                 >
@@ -108,6 +109,7 @@ function clearFilters(): void {
                     {{ copy.notifications.kind_label }}
                 </p>
                 <WorkspaceSegmentedControl
+                    role="group"
                     :label="copy.notifications.kind_label"
                     class="w-full"
                 >

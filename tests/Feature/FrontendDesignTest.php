@@ -462,7 +462,7 @@ test('active filter pages reuse the shared segmented controls', function (string
         ->toContain('WorkspaceSegmentedButton');
 })->with([
     'calendar view switcher' => 'components/calendar/CalendarPeriodNavigator.vue',
-    'notification filters' => 'pages/notifications/Index.vue',
+    'notification filters' => 'components/notification/NotificationFilters.vue',
     'project filters' => 'pages/projects/Index.vue',
 ]);
 
@@ -487,9 +487,9 @@ test('shared segmented filter consumers keep the correct selection semantics', f
     expect(File::get(resource_path('js/pages/projects/Index.vue')))
         ->toContain('role="tab"')
         ->toContain(':aria-selected="activeFilter === filter.value"')
-        ->and(File::get(resource_path('js/pages/notifications/Index.vue')))
-        ->toContain('role="tab"')
-        ->toContain(':aria-selected="filters.status ===')
+        ->and(File::get(resource_path('js/components/notification/NotificationFilters.vue')))
+        ->toContain(':aria-pressed="filters.status === option.value"')
+        ->toContain(':aria-pressed="filters.kind === option.value"')
         ->and($calendarNavigator)
         ->toContain(':label="copy.common.filters"')
         ->toContain('role="tab"')
@@ -532,14 +532,20 @@ test('calendar planning workspace uses URL state and focused accessible componen
 
 test('notification surfaces expose server pagination direct links and honest browser limits', function () {
     $inbox = File::get(resource_path('js/pages/notifications/Index.vue'));
+    $feed = File::get(resource_path('js/components/notification/NotificationFeed.vue'));
+    $row = File::get(resource_path('js/components/notification/NotificationRow.vue'));
     $settings = File::get(resource_path('js/pages/settings/Notifications.vue'));
 
     expect($inbox)
-        ->toContain("only: ['notifications', 'stats', 'filters']")
-        ->toContain('notifications.next_page_url')
+        ->toContain("only: ['notifications', 'stats', 'filters', 'today']")
         ->toContain('openNotification(notification)')
-        ->toContain("notification.data.channel !== 'browser'")
+        ->toContain('!notification.browser_delivery')
         ->toContain('window.localStorage.getItem(storageKey)')
+        ->and($feed)
+        ->toContain('notifications.links.next')
+        ->toContain('notifications.links.prev')
+        ->and($row)
+        ->toContain('v-if="notification.url"')
         ->and($settings)
         ->toContain('window.Notification.requestPermission()')
         ->toContain('settings.notifications.browser_live_only');
@@ -825,15 +831,15 @@ test('shared interaction accessibility copy exists in every supported language',
         ->not->toBeEmpty();
 })->with(['en', 'lt', 'ru']);
 
-test('list pages share the warm precision empty state', function (string $page) {
-    expect(File::get(resource_path("js/pages/{$page}")))
+test('list pages share the warm precision empty state', function (string $source) {
+    expect(File::get(resource_path("js/{$source}")))
         ->toContain('EmptyState');
 })->with([
-    'notifications' => 'notifications/Index.vue',
-    'projects' => 'projects/Index.vue',
-    'tasks' => 'tasks/Index.vue',
-    'workspaces' => 'workspaces/Index.vue',
-    'backups' => 'settings/Backup.vue',
+    'notifications' => 'components/notification/NotificationFeed.vue',
+    'projects' => 'pages/projects/Index.vue',
+    'tasks' => 'pages/tasks/Index.vue',
+    'workspaces' => 'pages/workspaces/Index.vue',
+    'backups' => 'pages/settings/Backup.vue',
 ]);
 
 test('project operations queue owns the warm precision empty states', function () {

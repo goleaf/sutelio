@@ -53,6 +53,13 @@ export interface NotificationGroup {
     items: NotificationItem[];
 }
 
+export interface NotificationPresentationCopy {
+    reminderTitle: string;
+    reminderBody: string;
+    fallbackTitle: string;
+    fallbackBody: string;
+}
+
 export type NotificationPluralForm = 'few' | 'many' | 'one' | 'other';
 export type NotificationIcon = 'alert' | 'bell' | 'check' | 'clock' | 'message';
 export type NotificationTone = 'blue' | 'emerald' | 'orange' | 'red';
@@ -129,6 +136,26 @@ export function notificationPluralForm(
         default:
             return 'other';
     }
+}
+
+export function notificationContent(
+    notification: NotificationItem,
+    copy: NotificationPresentationCopy,
+): { body: string; title: string } {
+    if (notification.kind === 'reminder') {
+        return {
+            title: copy.reminderTitle,
+            body: notification.task_title
+                ? copy.reminderBody.replace(':task', notification.task_title)
+                : (notification.body ?? copy.fallbackBody),
+        };
+    }
+
+    return {
+        title:
+            notification.title ?? notification.task_title ?? copy.fallbackTitle,
+        body: notification.body ?? copy.fallbackBody,
+    };
 }
 
 export function notificationPresentation(kind: string): {

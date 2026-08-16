@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { Bell, CheckCheck, Inbox, MailOpen } from '@lucide/vue';
-import { computed, nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import {
     buildNotificationQuery,
+    notificationContent,
     notificationPluralForm,
 } from '@/components/notification/notification-inbox';
 import type {
@@ -81,7 +82,7 @@ function visitResults(url: string): void {
     filterRequest.value = request;
     router.cancelAll();
     router.visit(url, {
-        only: ['notifications', 'stats', 'filters'],
+        only: ['notifications', 'stats', 'filters', 'today'],
         preserveScroll: true,
         preserveState: true,
         replace: true,
@@ -143,7 +144,7 @@ function markRead(
         {
             preserveScroll: true,
             preserveState: true,
-            only: ['notifications', 'stats', 'filters'],
+            only: ['notifications', 'stats', 'filters', 'today'],
             onSuccess: () => {
                 if (destination) {
                     router.visit(destination);
@@ -200,7 +201,7 @@ function markAllRead(): void {
         {
             preserveScroll: true,
             preserveState: true,
-            only: ['notifications', 'stats', 'filters'],
+            only: ['notifications', 'stats', 'filters', 'today'],
             onSuccess: () => {
                 toast.success(copy.value.notifications.marked_all);
 
@@ -238,14 +239,16 @@ function showBrowserNotifications(notifications: NotificationItem[]): void {
             return;
         }
 
-        const browserNotification = new window.Notification(
-            notification.title ?? copy.value.notifications.fallback_title,
-            {
-                body:
-                    notification.body ?? copy.value.notifications.fallback_body,
-                tag: notification.id,
-            },
-        );
+        const content = notificationContent(notification, {
+            reminderTitle: copy.value.notifications.reminder_title,
+            reminderBody: copy.value.notifications.reminder_body,
+            fallbackTitle: copy.value.notifications.fallback_title,
+            fallbackBody: copy.value.notifications.fallback_body,
+        });
+        const browserNotification = new window.Notification(content.title, {
+            body: content.body,
+            tag: notification.id,
+        });
         window.localStorage.setItem(storageKey, 'shown');
         browserNotification.onclick = () => {
             window.focus();
@@ -263,7 +266,7 @@ watch(() => props.notifications.data, showBrowserNotifications, {
 <template>
     <Head :title="copy.notifications.title" />
 
-    <main class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
+    <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
         <div class="mx-auto flex max-w-app flex-col gap-6">
             <WorkspacePageHeader
                 :eyebrow="copy.common.workspace_intelligence"
@@ -274,7 +277,7 @@ watch(() => props.notifications.data, showBrowserNotifications, {
                     <Button
                         type="button"
                         size="lg"
-                        class="min-h-11 motion-reduce:transition-none"
+                        class="motion-reduce:transition-none"
                         :disabled="markingAll || stats.unread === 0"
                         @click="markAllRead"
                     >
@@ -326,5 +329,5 @@ watch(() => props.notifications.data, showBrowserNotifications, {
                 @mark-read="markRead"
             />
         </div>
-    </main>
+    </div>
 </template>

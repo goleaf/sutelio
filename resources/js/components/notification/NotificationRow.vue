@@ -13,7 +13,10 @@ import type { Component } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
-import { notificationPresentation } from './notification-inbox';
+import {
+    notificationContent,
+    notificationPresentation,
+} from './notification-inbox';
 import type { NotificationItem } from './notification-inbox';
 
 const props = defineProps<{
@@ -26,31 +29,14 @@ const emit = defineEmits<{
 }>();
 const { copy, formatDate } = useWorkspaceUi();
 
-const title = computed(() => {
-    if (props.notification.kind === 'reminder') {
-        return copy.value.notifications.reminder_title;
-    }
-
-    return (
-        props.notification.title ??
-        props.notification.task_title ??
-        copy.value.notifications.fallback_title
-    );
-});
-
-const body = computed(() => {
-    if (
-        props.notification.kind === 'reminder' &&
-        props.notification.task_title
-    ) {
-        return copy.value.notifications.reminder_body.replace(
-            ':task',
-            props.notification.task_title,
-        );
-    }
-
-    return props.notification.body ?? copy.value.notifications.fallback_body;
-});
+const content = computed(() =>
+    notificationContent(props.notification, {
+        reminderTitle: copy.value.notifications.reminder_title,
+        reminderBody: copy.value.notifications.reminder_body,
+        fallbackTitle: copy.value.notifications.fallback_title,
+        fallbackBody: copy.value.notifications.fallback_body,
+    }),
+);
 
 const kindLabel = computed(
     () =>
@@ -127,7 +113,7 @@ const iconTone = computed(() => {
                         notification.is_read ? 'font-medium' : 'font-semibold',
                     ]"
                 >
-                    {{ title }}
+                    {{ content.title }}
                 </h4>
                 <span
                     class="rounded-full border px-2 py-0.5 text-[0.65rem] font-semibold tracking-wide uppercase"
@@ -152,7 +138,7 @@ const iconTone = computed(() => {
             <p
                 class="mt-1 max-w-3xl text-sm leading-6 break-words text-muted-foreground"
             >
-                {{ body }}
+                {{ content.body }}
             </p>
             <p class="mt-2 text-xs text-muted-foreground/85">
                 {{

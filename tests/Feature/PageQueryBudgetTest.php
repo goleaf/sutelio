@@ -213,6 +213,10 @@ test('representative ordered queries use their scoped indexes without unnecessar
         "SELECT id FROM notifications WHERE notifiable_type = 'App\\Models\\User' AND notifiable_id = 'user' ORDER BY created_at DESC, id DESC LIMIT 20",
         'notifications_notifiable_created_index',
     ],
+    'unread reminder notifications' => [
+        "SELECT id FROM notifications WHERE notifiable_type = 'App\\Models\\User' AND notifiable_id = 'user' AND read_at IS NULL AND (type = 'App\\Notifications\\ReminderNotification' OR CASE WHEN json_valid(data) THEN json_extract(data, '$.kind') END = 'reminder') ORDER BY created_at DESC, id DESC LIMIT 20",
+        'notifications_notifiable_created_index',
+    ],
 ]);
 
 test('project operation sort queries use scoped production indexes', function (string $sort, string $index, bool $allowsTemporarySort = false) {

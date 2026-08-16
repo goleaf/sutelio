@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\UserPreference;
 use App\Models\Workspace;
 use App\Notifications\ReminderNotification;
 use Carbon\CarbonImmutable;
-use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -219,6 +219,32 @@ test('legacy payloads use a safe semantic fallback and user timezone date key', 
             ->where('today', '2026-08-17'));
 });
 
+test('partial reloads can refresh the user local today boundary after midnight', function () {
+    $user = User::factory()->create();
+    UserPreference::factory()->for($user)->create(['timezone' => 'Europe/Vilnius']);
+    $headers = [
+        'X-Inertia' => 'true',
+        'X-Inertia-Partial-Component' => 'notifications/Index',
+        'X-Inertia-Partial-Data' => 'today',
+    ];
+    $version = app(HandleInertiaRequests::class)->version(request());
+
+    if (is_string($version)) {
+        $headers['X-Inertia-Version'] = $version;
+    }
+
+    $this->travelTo(CarbonImmutable::parse('2026-08-16 20:59:00', 'UTC'));
+    $this->actingAs($user)
+        ->get(route('notifications.index'), $headers)
+        ->assertOk()
+        ->assertJsonPath('props.today', '2026-08-16');
+
+    $this->travelTo(CarbonImmutable::parse('2026-08-16 21:01:00', 'UTC'));
+    $this->get(route('notifications.index'), $headers)
+        ->assertOk()
+        ->assertJsonPath('props.today', '2026-08-17');
+});
+
 test('notification stats partial reload does not execute the paginated inbox query', function () {
     $user = User::factory()->create();
     insertInboxNotification($user, ['kind' => 'reminder']);
@@ -253,6 +279,40 @@ test('notification stats partial reload does not execute the paginated inbox que
     )->values()->all();
 
     expect($paginatedQueries)->toBeEmpty(implode("\n", $paginatedQueries));
+});
+
+test('notification task action authorization is batched without per-row queries', function () {
+    $user = User::factory()->create();
+    $workspace = Workspace::factory()->for($user, 'owner')->create();
+    $todos = Todo::factory()->count(20)->for($workspace)->create();
+
+    foreach ($todos as $todo) {
+        insertInboxNotification($user, [
+            'kind' => 'reminder',
+            'todo_id' => $todo->id,
+        ]);
+    }
+
+    $queries = [];
+    DB::listen(function (QueryExecuted $query) use (&$queries): void {
+        $queries[] = $query->sql;
+    });
+
+    $this->actingAs($user)
+        ->get(route('notifications.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->has('notifications.data', 20));
+
+    $notificationQueries = collect($queries)->filter(
+        fn (string $query): bool => preg_match('/\bfrom\s+["`]?notifications["`]?\b/i', $query) === 1,
+    );
+    $todoAuthorizationQueries = collect($queries)->filter(
+        fn (string $query): bool => preg_match('/\bfrom\s+["`]?todos["`]?\b/i', $query) === 1
+            && preg_match('/\bjoin\s+["`]?workspaces["`]?\b/i', $query) === 1,
+    );
+
+    expect($notificationQueries)->toHaveCount(3)
+        ->and($todoAuthorizationQueries)->toHaveCount(1);
 });
 
 test('notification mutations affect only the authenticated users rows', function () {
