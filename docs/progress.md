@@ -4441,3 +4441,20 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - `b017376` — `docs: record android apk delivery`.
 - `git push --verbose origin main` exited 0 and reported `a93b1ce..b017376 main -> main`, updating the local tracking ref. This final status-only documentation commit follows in the same delivery.
 - No dependency, schema, application source, host SQLite data, signing secret, generated binary, force push, history rewrite, or unrelated file is committed.
+
+## Guided Onboarding Design — 2026-08-16
+
+### Preflight And Approved Direction
+
+- Began on clean `main` at `50b86c3`, synchronized with `origin/main`, after the Android APK and npm lock normalization deliveries.
+- Re-read the repository contract, canonical requirements/architecture/frontend/design/accessibility/localization/testing/deployment/SQLite documents, latest progress evidence, live `user_preferences` schema, and current registration/login/home/preferences/workspace/project/task boundaries.
+- Laravel Boost confirms PHP 8.4 for the active shell, Laravel 13.25.0, Inertia Laravel 3.3.1, Inertia Vue 3.6.1, NativePHP Mobile 4.2.0, Tailwind CSS 4.3.3, Vue 3.5.41, Pest 5.1.1, and SQLite. No dependency change is planned.
+- The approved product choice is a dedicated eight-step Inertia journey for newly registered users after verification, with server-side resume, whole-journey skip, role/invitation adaptation, manual replay for existing users, a dismissible post-completion Dashboard checklist, EN/LT/RU copy, and the fixed Warm Precision system.
+- Existing users will be backfilled as completed. Manual replay will preserve the completed gate so abandoning a replay cannot trap an existing user in automatic redirects.
+- The feature will compose existing preference/workspace/project/task actions, re-authorize every persisted identifier, bound every option collection, make creation retries idempotent, preserve the embedded NativePHP Laravel/SQLite model, and introduce no analytics or remote onboarding service.
+- The approved design is recorded in `docs/plans/2026-08-16-guided-onboarding-design.md`. The next required step is a writing-plans TDD implementation plan before application code changes.
+
+### Design Verification And Delivery Status
+
+- Prettier verification for the two Markdown files and `git diff --check` passed. Complete and staged diff inspection, the coherent semantic documentation commit, and `git push origin main` follow in this design slice.
+- No source, schema, route, runtime data, package, generated asset, or APK changes belong to this design slice.
