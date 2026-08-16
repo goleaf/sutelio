@@ -4200,8 +4200,47 @@ Completed. The feature implementation, review corrections, and completion record
 - Reduce the default task queue to completion, open, and overflow actions; reveal checkboxes/page selection only in explicit selection mode and keep delete behind the existing confirmation boundary.
 - Add concise result/filter status, mobile active-filter disclosure, two-line titles, complete translated metadata, 44-pixel targets, visible focus, dark mode, reduced motion, forced-colors support, and English/Lithuanian/Russian semantic copy.
 
-### Pending Verification And Delivery
+### Delivered Backend And State
 
-- Add failing-first Pest and direct TypeScript behavior coverage, implement the approved component/state changes, then run focused and complete backend/frontend/static/build/audit gates.
-- Verify live desktop/mobile list and board behavior, URL reload, filters, selection, task detail, delete confirmation, focus restoration, overflow, contrast, reduced motion, forced colors, long localization, and current logs.
-- Complete independent review, resolve all Critical/High/Medium findings, record exact results and limitations here, commit only phase files, and push `main` to `origin/main`.
+- Normalized browser-shaped `true`/`false` focus queries before validation, omitted false flags from canonical state, and retained the existing workspace-scoped query boundary for Overdue, Completed today, Pinned, and Favorites.
+- Made Completed today follow the authenticated user's selected timezone by converting the local-day boundary to an indexable UTC timestamp range. A Europe/Vilnius cross-midnight regression proves both list results and filtered metrics use the same boundary.
+- Corrected the task paginator contract to the Laravel resource `data`/`links`/`meta` shape and aligned the no-workspace response with it. No schema, migration, route, policy, dependency, or alternate data store was added.
+- Added typed pure helpers for active-filter counting, immutable focus toggles, filter clearing, hidden URL-state preservation, locale plural selection, and connected-node focus restoration.
+
+### Delivered Interface
+
+- Added the URL-backed Overdue, Completed today, Pinned, and Favorites focus strip, concise localized result range, locale-correct active-filter count, visible/mobile accessible count disclosure, filtered-empty guidance, and synchronized list/board controls.
+- Replaced the permanently exposed selection/delete surface with explicit selection mode, one semantic task-open target, an independent completion action, and a Reka overflow menu whose Delete action retains the application confirmation boundary.
+- Preserved hidden assignee/label/tag/date URL filters when visible controls change, exits selection before filter/view/page changes, and drives pagination through Inertia `before`/`start`/`finish` lifecycle state so links and the collection expose the real busy state.
+- Preserved row and overflow-trigger focus across detail refresh/close and confirmation cancel, with a connected queue fallback only when the original control disappears.
+- Kept the fixed Warm Precision design with 44-pixel targets, two-line mobile titles, wrapping custom status/priority/due badges, non-color status meaning, visible focus, dark mode, reduced motion, forced colors, and full English/Lithuanian/Russian semantic copy.
+
+### Independent Review Resolution
+
+- The independent read-only review found no Critical or High issues and identified six Medium edge cases: user-timezone completion boundaries, hidden URL-filter loss, pagination busy lifecycle, transient menu focus origins, long custom-label wrapping, and singular/plural active-filter grammar.
+- Fixed all six with failing-first regressions. A follow-up found that Inertia Link owns native click handling, so pagination was moved to its declared `before`/`start`/`finish` lifecycle callbacks.
+- The final fix-only review confirmed no remaining Critical, High, or Medium findings and made no edits. A self-review also preserved the original task-row focus target across refreshes emitted from inside the detail drawer.
+
+### Exact Verification
+
+- Focused task workflow/query/design/localization/detail gate: 191 tests / 1,208 assertions passed. Full `php artisan test --compact --parallel`: 704 tests / 10,003 assertions passed.
+- `npm run test:frontend`: 38/38 passed, including seven Task Focus Desk behavior cases visibly discovered by the standard command.
+- `vendor/bin/pint --dirty --format agent`, Larastan through `composer run types:check -- --memory-limit=1G`, Vue type checking, ESLint, Prettier verification, and `git diff --check` passed.
+- `npm run build` passed after 3,494 modules; main CSS is 162.35 kB / 23.92 kB gzip and the task-index chunk is 39.73 kB / 10.08 kB gzip.
+- `composer validate --strict`, `composer audit --no-interaction`, and `npm audit` passed with no vulnerability advisories.
+- `php artisan test --compact --coverage` remains externally blocked with `Code coverage driver not available. Did you install Xdebug or PCOV?`; the existing environment-only coverage limitation is unchanged.
+- Live Herd QA passed at 1,440 by 1,000 desktop and 390 by 844 mobile. It verified focus URL/reload/clear, a two-result overdue set, hidden-filter preservation, selection entry/exit, list/board switching, task-detail and delete-cancel focus restoration, singular active-filter copy, dark mode, reduced motion, forced colors, 44-pixel controls, and zero horizontal overflow.
+- Injected unbroken custom labels wrapped to 54-pixel badges at 390 pixels without internal or page overflow. Both browser pages reported zero current console errors; recent Laravel Boost logs contain only older unrelated entries.
+
+### Known Limitations
+
+- The local runtime has no Xdebug or PCOV driver, so a numeric coverage report cannot be generated locally.
+- This phase intentionally adds no schema, dependency, new task lifecycle, date grouping, virtual scrolling, optimistic task mutation, inline editing, or alternate pagination strategy.
+
+### Git Delivery
+
+- `9fa549d` — `docs: design task focus desk`.
+- `72cf204` — `docs: plan task focus desk`.
+- `d7c7f94` — `feat: build task focus desk`.
+- `ed64c0a` — `fix: close task focus desk review`.
+- The completion-record commit and ordinary `git push origin main` are pending. No force push, history rewrite, destructive Git command, secret, generated build output, migration, dependency, or unrelated deletion was used.
