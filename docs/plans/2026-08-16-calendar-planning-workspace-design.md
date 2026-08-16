@@ -74,7 +74,7 @@ Navigation controls disable while an Inertia visit is active. Network failures k
 
 ## Localization And Accessibility
 
-All new copy uses stable English, Lithuanian, and Russian keys with English fallback. Dates and period labels use `useWorkspaceUi` and the server-selected timezone. Weekday ordering respects the user's configured week start; no hardcoded English or `en-US` formatting is introduced.
+All new copy uses stable English, Lithuanian, and Russian keys with English fallback. Dates and period labels use `useWorkspaceUi` and the server-selected timezone. This phase preserves the source-of-truth Sunday-first week contract and its localized weekday labels; adding a persisted week-start preference remains separate work. No hardcoded English or `en-US` formatting is introduced.
 
 The calendar uses one `h1`, a logical `h2` for the planning period, semantic sections for dates, accessible names for icon buttons, `aria-current` or selected state for the active view/date, visible focus, non-color task metadata, and live busy status. Mobile reading order matches the visual order and the page must not overflow at 390 pixels.
 
