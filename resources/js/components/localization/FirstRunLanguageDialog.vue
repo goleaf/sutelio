@@ -2,6 +2,7 @@
 import { Check, Languages, LoaderCircle } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import LanguageFlag from '@/components/localization/LanguageFlag.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -51,18 +52,23 @@ function confirmLanguage(): void {
                     aria-hidden="true"
                 />
                 <DialogHeader class="relative gap-3 text-left">
-                    <span
-                        class="flex size-12 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-500/20"
-                        aria-hidden="true"
-                    >
-                        <Languages class="size-6" />
-                    </span>
-                    <DialogTitle class="text-2xl tracking-[-0.035em]">
-                        {{ previewCopy.first_run.title }}
-                    </DialogTitle>
-                    <DialogDescription class="max-w-md leading-6">
-                        {{ previewCopy.first_run.description }}
-                    </DialogDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <span
+                                class="flex size-12 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-500/20"
+                                aria-hidden="true"
+                            >
+                                <Languages class="size-6" />
+                            </span>
+                        </template>
+
+                        <DialogTitle class="text-2xl tracking-[-0.035em]">
+                            {{ previewCopy.first_run.title }}
+                        </DialogTitle>
+                        <DialogDescription class="max-w-md leading-6">
+                            {{ previewCopy.first_run.description }}
+                        </DialogDescription>
+                    </LeadingIconHeading>
                 </DialogHeader>
             </div>
 

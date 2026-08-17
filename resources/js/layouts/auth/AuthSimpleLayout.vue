@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LanguageSwitcher from '@/components/localization/LanguageSwitcher.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { useUi } from '@/composables/useUi';
 import { home } from '@/routes';
 
@@ -45,32 +46,31 @@ const { t } = useUi();
                         class="absolute -right-9 -bottom-16 size-36 rounded-full border-[18px] border-orange-500/20 bg-orange-500/[0.05]"
                         aria-hidden="true"
                     />
-                    <div class="relative flex items-start gap-4">
-                        <Link
-                            :href="home()"
-                            aria-label="Sutelio"
-                            class="flex size-12 shrink-0 items-center justify-center rounded-2xl focus-visible:ring-2 focus-visible:ring-brand-cobalt focus-visible:ring-offset-4 focus-visible:outline-hidden"
+                    <LeadingIconHeading class="relative gap-4 text-left">
+                        <template #icon>
+                            <Link
+                                :href="home()"
+                                aria-label="Sutelio"
+                                class="flex size-12 items-center justify-center rounded-2xl focus-visible:ring-2 focus-visible:ring-brand-cobalt focus-visible:ring-offset-4 focus-visible:outline-hidden"
+                            >
+                                <AppLogoIcon class-name="size-12" />
+                            </Link>
+                        </template>
+
+                        <p
+                            class="text-[0.7rem] font-semibold tracking-[0.16em] text-orange-700 uppercase"
                         >
-                            <AppLogoIcon class-name="size-12" />
-                        </Link>
-                        <div class="min-w-0 space-y-1.5 text-left">
-                            <p
-                                class="text-[0.7rem] font-semibold tracking-[0.16em] text-orange-700 uppercase"
-                            >
-                                {{ t('auth.common.eyebrow') }}
-                            </p>
-                            <h1
-                                class="text-2xl font-semibold tracking-[-0.035em]"
-                            >
-                                {{ title }}
-                            </h1>
-                            <p
-                                class="max-w-sm text-sm leading-6 text-muted-foreground"
-                            >
-                                {{ description }}
-                            </p>
-                        </div>
-                    </div>
+                            {{ t('auth.common.eyebrow') }}
+                        </p>
+                        <h1 class="text-2xl font-semibold tracking-[-0.035em]">
+                            {{ title }}
+                        </h1>
+                        <p
+                            class="max-w-sm text-sm leading-6 text-muted-foreground"
+                        >
+                            {{ description }}
+                        </p>
+                    </LeadingIconHeading>
                 </div>
                 <div class="px-6 py-7 sm:px-9 sm:py-8">
                     <slot />
