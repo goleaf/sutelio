@@ -7,7 +7,7 @@ import {
     parseDateKey,
 } from '@/components/calendar/calendar-date';
 import type { CalendarTodo } from '@/components/calendar/calendar-types';
-import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
+import ColorSwatch from '@/components/shared/ColorSwatch.vue';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
 import { show as todoShow } from '@/routes/todos';
 
@@ -63,14 +63,10 @@ const groups = computed(() =>
                         class="group flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-border/80 bg-card px-3 py-2.5 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.035] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
                         :aria-label="todo.title"
                     >
-                        <span
-                            class="size-2.5 shrink-0 rounded-full ring-4 ring-muted"
-                            :style="{
-                                backgroundColor: safeDefinitionColor(
-                                    todo.priority_definition?.color,
-                                ),
-                            }"
-                            aria-hidden="true"
+                        <ColorSwatch
+                            :color="todo.priority_definition?.color"
+                            size="md"
+                            emphasized
                         />
                         <span class="min-w-0 flex-1">
                             <span class="block truncate text-sm font-semibold">

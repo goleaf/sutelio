@@ -2,6 +2,7 @@
 import { useHttp } from '@inertiajs/vue3';
 import { Tag as TagIcon } from '@lucide/vue';
 import { ref } from 'vue';
+import ColorSwatch from '@/components/shared/ColorSwatch.vue';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label as FormLabel } from '@/components/ui/label';
@@ -122,11 +123,7 @@ async function toggleTag(tag: Tag): Promise<void> {
                             :for="`detail-label-${todo.id}-${label.id}`"
                             class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 font-normal"
                         >
-                            <span
-                                class="size-2.5 rounded-full"
-                                :style="{ backgroundColor: label.color }"
-                                aria-hidden="true"
-                            />
+                            <ColorSwatch :color="label.color" size="md" />
                             <span class="truncate">{{ label.name }}</span>
                             <Spinner
                                 v-if="busyKey === `label:${label.id}`"

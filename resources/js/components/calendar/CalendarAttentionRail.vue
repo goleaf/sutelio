@@ -2,10 +2,10 @@
 import { Link } from '@inertiajs/vue3';
 import { AlertTriangle, ArrowUpRight, CalendarCheck2 } from '@lucide/vue';
 import type { CalendarTodo } from '@/components/calendar/calendar-types';
+import ColorSwatch from '@/components/shared/ColorSwatch.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
 import { index as todoIndex, show as todoShow } from '@/routes/todos';
 
@@ -54,14 +54,10 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
                     class="group flex min-h-11 max-w-full min-w-0 cursor-pointer items-center gap-3 overflow-hidden rounded-xl border border-border/80 bg-card px-3 py-2.5 transition-colors hover:border-orange-500/35 hover:bg-orange-500/[0.04] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
                     :aria-label="todo.title"
                 >
-                    <span
-                        class="size-2.5 shrink-0 rounded-full ring-4 ring-muted"
-                        :style="{
-                            backgroundColor: safeDefinitionColor(
-                                todo.priority_definition?.color,
-                            ),
-                        }"
-                        aria-hidden="true"
+                    <ColorSwatch
+                        :color="todo.priority_definition?.color"
+                        size="md"
+                        emphasized
                     />
                     <span class="min-w-0 flex-1">
                         <span class="block truncate text-sm font-semibold">

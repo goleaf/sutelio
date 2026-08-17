@@ -191,3 +191,34 @@ test('task collaboration panels reuse the shared compact empty state', function 
             ->not->toContain('rounded-xl border border-dashed border-border/80 px-4 py-6 text-center text-sm text-muted-foreground');
     }
 });
+
+test('the shared color swatch centralizes safe dynamic color presentation', function () {
+    $path = resource_path('js/components/shared/ColorSwatch.vue');
+
+    expect(File::exists($path))->toBeTrue();
+
+    expect(File::get($path))
+        ->toContain("import { safeDefinitionColor } from '@/composables/useTaskDefinitions'")
+        ->toContain("size?: 'xs' | 'sm' | 'md' | 'lg'")
+        ->toContain('emphasized?: boolean;')
+        ->toContain('data-slot="color-swatch"')
+        ->toContain(':aria-label="props.label"')
+        ->toContain(':aria-hidden="props.label ? undefined : \'true\'"')
+        ->toContain('backgroundColor: safeDefinitionColor(props.color, props.fallback)');
+});
+
+test('calendar task links and task taxonomy reuse the shared color swatch', function () {
+    foreach ([
+        'calendar agenda' => 'calendar/CalendarAgendaView.vue',
+        'calendar attention' => 'calendar/CalendarAttentionRail.vue',
+        'calendar month' => 'calendar/CalendarMonthGrid.vue',
+        'calendar week' => 'calendar/CalendarWeekView.vue',
+        'task taxonomy' => 'task/TaskTaxonomyPanel.vue',
+    ] as $name => $file) {
+        $source = File::get(resource_path("js/components/{$file}"));
+
+        expect($source, $name)
+            ->toContain("import ColorSwatch from '@/components/shared/ColorSwatch.vue'")
+            ->toContain('<ColorSwatch');
+    }
+});
