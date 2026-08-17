@@ -48,7 +48,7 @@ Files use configured disks and generated names. Avatars, attachments, and backup
 
 ## Frontend And Design
 
-The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded white/dark surfaces, orange focus/action accents, mobile-first responsive layouts, reduced-motion rules, and light/dark/system color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs.
+The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded light surfaces, orange focus/action accents, mobile-first responsive layouts, shared reduced-motion-safe transitions, and one light color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs.
 
 Livewire, Volt, and Flux are not architectural layers. Adding them would create a second page/state/request/component/testing/localization system and violates the repository contract.
 
@@ -87,4 +87,4 @@ Important decisions are also captured under `docs/decisions` when they cannot be
 - Providers/controllers receive collaborators through dependency injection. Route endpoint closures and first-party service-locator calls were removed from the modified application layer.
 - API and Inertia Resources expose explicit safe fields; the shared user payload no longer serializes private avatar storage paths.
 - Activity reads use validated URL filters, workspace-scoped contributor checks, safe resource presentation, deterministic pagination, and server aggregates.
-- The Blade shell is presentation-only; the parser-blocking theme initializer lives in `public/theme.js`, and automated architecture tests reject Blade PHP/data/service access.
+- The Blade shell is presentation-only; no color-mode bootstrap is needed for the fixed light design, and automated architecture tests reject Blade PHP/data/service access.

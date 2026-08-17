@@ -89,7 +89,7 @@ const days = computed(() =>
                         </span>
                         <CheckCircle2
                             v-if="todo.is_completed"
-                            class="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400"
+                            class="size-3.5 shrink-0 text-emerald-600"
                             aria-hidden="true"
                         />
                     </Link>

@@ -30,7 +30,6 @@ class UpdateUserPreferenceRequest extends FormRequest
             'language' => ['sometimes', Rule::enum(UserLanguage::class)],
             'date_format' => ['sometimes', Rule::in(UserPreference::DATE_FORMATS)],
             'time_format' => ['sometimes', Rule::in(UserPreference::TIME_FORMATS)],
-            'theme' => ['sometimes', Rule::in(['system', 'light', 'dark'])],
             'default_view' => ['sometimes', Rule::in(UserPreference::DEFAULT_VIEWS)],
             'start_page' => ['sometimes', Rule::in(UserPreference::START_PAGES)],
             'week_start' => ['sometimes', Rule::in(UserPreference::WEEK_STARTS)],

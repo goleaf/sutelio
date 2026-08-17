@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
+import { UserPlus } from '@lucide/vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -101,6 +102,7 @@ setLayoutProps({
                 data-test="register-user-button"
             >
                 <Spinner v-if="processing" />
+                <UserPlus v-else class="size-4" aria-hidden="true" />
                 {{ t('auth.register.submit') }}
             </Button>
         </div>

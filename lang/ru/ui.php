@@ -24,11 +24,6 @@ return [
             'save' => 'Сохранить',
             'saving' => 'Сохранение...',
         ],
-        'appearance' => [
-            'dark' => 'Тёмная',
-            'light' => 'Светлая',
-            'system' => 'Системная',
-        ],
         'errors' => [
             'generic' => 'Что-то пошло не так.',
         ],
@@ -444,8 +439,6 @@ return [
         ],
         'preferences' => [
             'board_view' => 'Доска',
-            'appearance' => 'Оформление',
-            'appearance_description' => 'Настройте оформление аккаунта',
             'calendar_view' => 'Календарь',
             'date_format' => 'Формат даты',
             'default_view' => 'Представление по умолчанию',

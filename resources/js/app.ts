@@ -2,7 +2,6 @@ import { axiosAdapter } from '@inertiajs/core';
 import { createInertiaApp, router } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
 import { createApp, h } from 'vue';
-import { initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
@@ -40,7 +39,6 @@ createInertiaApp({
     },
 });
 
-initializeTheme();
 initializeFlashToast();
 
 router.on('success', (event) => {

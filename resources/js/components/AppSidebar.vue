@@ -134,7 +134,7 @@ function projectHref(project: Project) {
                         >
                             <Link :href="projectHref(project)" prefetch>
                                 <span
-                                    class="size-2.5 shrink-0 rounded-full border border-black/10 shadow-sm dark:border-white/20"
+                                    class="size-2.5 shrink-0 rounded-full border border-black/10 shadow-sm"
                                     :style="{
                                         backgroundColor: project.color,
                                     }"

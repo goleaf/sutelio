@@ -70,10 +70,10 @@ const iconTone = computed(() => {
     }
 
     return {
-        blue: 'bg-sky-500/12 text-sky-700 dark:text-sky-300',
-        emerald: 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300',
-        orange: 'bg-orange-500/12 text-orange-700 dark:text-orange-300',
-        red: 'bg-red-500/12 text-red-700 dark:text-red-300',
+        blue: 'bg-sky-500/12 text-sky-700',
+        emerald: 'bg-emerald-500/12 text-emerald-700',
+        orange: 'bg-orange-500/12 text-orange-700',
+        red: 'bg-red-500/12 text-red-700',
     }[presentation.value.tone];
 });
 </script>
@@ -120,7 +120,7 @@ const iconTone = computed(() => {
                     :class="
                         notification.is_read
                             ? 'border-border bg-muted text-muted-foreground'
-                            : 'border-orange-500/20 bg-orange-500/10 text-orange-800 dark:text-orange-200'
+                            : 'border-orange-500/20 bg-orange-500/10 text-orange-800'
                     "
                 >
                     {{
@@ -172,7 +172,7 @@ const iconTone = computed(() => {
                 type="button"
                 variant="outline"
                 size="sm"
-                class="min-h-11 cursor-pointer rounded-xl border-orange-500/25 text-orange-800 hover:bg-orange-500/10 hover:text-orange-900 focus-visible:ring-2 focus-visible:ring-orange-500/45 motion-reduce:transition-none dark:text-orange-200 dark:hover:text-orange-100"
+                class="min-h-11 cursor-pointer rounded-xl border-orange-500/25 text-orange-800 hover:bg-orange-500/10 hover:text-orange-900 focus-visible:ring-2 focus-visible:ring-orange-500/45 motion-reduce:transition-none"
                 :disabled="processing"
                 @click="emit('markRead', notification)"
             >

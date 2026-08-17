@@ -318,7 +318,6 @@ export interface UserPreference {
     language: 'en' | 'lt' | 'ru';
     date_format: 'Y-m-d' | 'd/m/Y' | 'm/d/Y' | 'd.m.Y';
     time_format: 'H:i' | 'h:i A';
-    theme: 'system' | 'light' | 'dark';
     default_view: 'list' | 'board' | 'calendar';
     start_page: 'dashboard' | 'tasks' | 'projects' | 'calendar';
     week_start: 'sunday' | 'monday';

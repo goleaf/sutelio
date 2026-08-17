@@ -29,7 +29,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
                         item.isActive ?? isCurrentOrParentUrl(item.href)
                     "
                     :tooltip="item.title"
-                    class="data-[active=true]:bg-orange-500/10 data-[active=true]:text-orange-700 data-[active=true]:shadow-[inset_3px_0_0_0_var(--color-orange-500)] dark:data-[active=true]:text-orange-300"
+                    class="data-[active=true]:bg-orange-500/10 data-[active=true]:text-orange-700 data-[active=true]:shadow-[inset_3px_0_0_0_var(--color-orange-500)]"
                 >
                     <Link
                         :href="item.href"

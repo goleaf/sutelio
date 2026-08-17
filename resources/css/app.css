@@ -5,14 +5,9 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
-@custom-variant dark (&:is(.dark *));
-
 html {
     background-color: oklch(1 0 0);
-}
-
-html.dark {
-    background-color: oklch(0.145 0 0);
+    color-scheme: light;
 }
 
 @theme inline {
@@ -33,6 +28,7 @@ html.dark {
     --shadow-dialog: 0 32px 90px -36px rgb(15 23 42 / 55%);
 
     --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -104,18 +100,11 @@ html.dark {
     }
 }
 
-@layer utilities {
-    body,
-    html {
-        --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-            'Noto Color Emoji';
-    }
-}
-
 :root {
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --motion-fast: 140ms;
+    --motion-standard: 240ms;
+    --motion-emphasized: 480ms;
     --brand-cobalt: #123c8b;
     --brand-deep-cobalt: #0a285f;
     --brand-orange: #ff6038;
@@ -159,45 +148,6 @@ html.dark {
     --sidebar: hsl(30 20% 98%);
 }
 
-.dark {
-    --background: hsl(0 0% 3.9%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 3.9%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(0 0% 3.9%);
-    --popover-foreground: hsl(0 0% 98%);
-    --primary: hsl(20 88% 55%);
-    --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(0 0% 14.9%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(0 0% 16.08%);
-    --muted-foreground: hsl(0 0% 63.9%);
-    --accent: hsl(0 0% 14.9%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 84% 60%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --success: oklch(0.72 0.16 155);
-    --warning: oklch(0.78 0.15 75);
-    --information: oklch(0.72 0.14 245);
-    --border: hsl(0 0% 14.9%);
-    --input: hsl(0 0% 14.9%);
-    --ring: hsl(20 88% 58%);
-    --chart-1: hsl(220 70% 50%);
-    --chart-2: hsl(160 60% 45%);
-    --chart-3: hsl(30 80% 55%);
-    --chart-4: hsl(280 65% 60%);
-    --chart-5: hsl(340 75% 55%);
-    --sidebar-background: hsl(0 0% 7%);
-    --sidebar-foreground: hsl(0 0% 95.9%);
-    --sidebar-primary: hsl(20 88% 55%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(20 28% 15.9%);
-    --sidebar-accent-foreground: hsl(24 50% 94%);
-    --sidebar-border: hsl(20 18% 17%);
-    --sidebar-ring: hsl(20 88% 58%);
-    --sidebar: hsl(240 5.9% 10%);
-}
-
 @layer base {
     * {
         @apply border-border outline-ring/50;
@@ -208,5 +158,121 @@ html.dark {
 
     ::selection {
         @apply bg-orange-500/25 text-foreground;
+    }
+}
+
+@keyframes ui-enter {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem) scale(0.992);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+    }
+
+    .ui-page-surface > * {
+        animation: ui-enter var(--motion-emphasized) var(--ease-emphasized) both;
+    }
+
+    .ui-enter,
+    .ui-surface {
+        animation: ui-enter var(--motion-emphasized) var(--ease-emphasized) both;
+    }
+
+    .ui-control {
+        transform-origin: center;
+        transition-property:
+            color, background-color, border-color, box-shadow, opacity,
+            transform;
+        transition-duration: var(--motion-fast);
+        transition-timing-function: var(--ease-emphasized);
+    }
+
+    .ui-control:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    .ui-control:active:not(:disabled) {
+        transform: translateY(0) scale(0.98);
+    }
+
+    .ui-control > svg {
+        transition: transform var(--motion-standard) var(--ease-emphasized);
+    }
+
+    .ui-control:hover:not(:disabled) > svg {
+        transform: scale(1.1) rotate(-3deg);
+    }
+
+    .ui-stagger > * {
+        animation: ui-enter var(--motion-emphasized) var(--ease-emphasized) both;
+    }
+
+    .ui-stagger > :nth-child(2) {
+        animation-delay: 40ms;
+    }
+
+    .ui-stagger > :nth-child(3) {
+        animation-delay: 80ms;
+    }
+
+    .ui-stagger > :nth-child(4) {
+        animation-delay: 120ms;
+    }
+
+    .ui-stagger > :nth-child(5) {
+        animation-delay: 160ms;
+    }
+
+    .ui-stagger > :nth-child(n + 6) {
+        animation-delay: 200ms;
+    }
+
+    .ui-step-enter-active,
+    .ui-step-leave-active {
+        transition:
+            opacity var(--motion-standard) var(--ease-emphasized),
+            transform var(--motion-standard) var(--ease-emphasized);
+    }
+
+    .ui-step-enter-from {
+        opacity: 0;
+        transform: translateX(0.75rem) scale(0.992);
+    }
+
+    .ui-step-leave-to {
+        opacity: 0;
+        transform: translateX(-0.5rem) scale(0.992);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+    }
+
+    .ui-control:hover:not(:disabled),
+    .ui-control:active:not(:disabled),
+    .ui-control:hover:not(:disabled) > svg {
+        transform: none;
     }
 }

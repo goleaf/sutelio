@@ -24,11 +24,6 @@ return [
             'save' => 'Išsaugoti',
             'saving' => 'Saugoma...',
         ],
-        'appearance' => [
-            'dark' => 'Tamsi',
-            'light' => 'Šviesi',
-            'system' => 'Sistemos',
-        ],
         'errors' => [
             'generic' => 'Įvyko klaida.',
         ],
@@ -444,8 +439,6 @@ return [
         ],
         'preferences' => [
             'board_view' => 'Lenta',
-            'appearance' => 'Išvaizda',
-            'appearance_description' => 'Atnaujinkite paskyros išvaizdos nustatymus',
             'calendar_view' => 'Kalendorius',
             'date_format' => 'Datos formatas',
             'default_view' => 'Numatytasis rodinys',

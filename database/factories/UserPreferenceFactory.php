@@ -24,7 +24,6 @@ class UserPreferenceFactory extends Factory
             'language' => 'en',
             'date_format' => 'Y-m-d',
             'time_format' => 'H:i',
-            'theme' => 'system',
             'default_view' => 'list',
             'start_page' => 'dashboard',
             'week_start' => 'sunday',

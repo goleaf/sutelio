@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
-import { RotateCcw, Sparkles } from '@lucide/vue';
+import { RotateCcw, Save, Sparkles } from '@lucide/vue';
 import { restart as restartOnboarding } from '@/actions/App/Http/Controllers/OnboardingController';
-import AppearanceTabs from '@/components/AppearanceTabs.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -88,20 +87,6 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
 <template>
     <Head :title="t('settings.preferences.title')" />
     <div class="space-y-6">
-        <Card>
-            <CardHeader>
-                <CardTitle>{{
-                    t('settings.preferences.appearance')
-                }}</CardTitle>
-                <CardDescription>
-                    {{ t('settings.preferences.appearance_description') }}
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <AppearanceTabs />
-            </CardContent>
-        </Card>
-
         <form @submit.prevent="submit" class="space-y-6">
             <Card>
                 <CardHeader
@@ -326,6 +311,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
             <div class="flex justify-end">
                 <Button type="submit" size="lg" :disabled="form.processing">
                     <Spinner v-if="form.processing" />
+                    <Save v-else class="size-4" aria-hidden="true" />
                     {{ t('settings.preferences.save') }}
                 </Button>
             </div>
@@ -333,7 +319,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
 
         <Card
             v-if="canReplayOnboarding"
-            class="overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/60 dark:border-orange-900/60 dark:from-orange-950/30 dark:via-card dark:to-amber-950/20"
+            class="overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/60"
         >
             <CardHeader class="sm:flex-row sm:items-start sm:justify-between">
                 <div class="flex min-w-0 gap-3">
@@ -344,7 +330,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                     </span>
                     <div class="space-y-1">
                         <p
-                            class="text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase dark:text-orange-300"
+                            class="text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase"
                         >
                             {{ t('settings.preferences.replay.eyebrow') }}
                         </p>

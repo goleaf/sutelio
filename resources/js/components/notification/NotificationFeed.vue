@@ -104,7 +104,7 @@ function groupLabel(key: 'earlier' | 'today'): string {
                     </span>
                 </div>
 
-                <div class="grid gap-2" role="list">
+                <div class="ui-stagger grid gap-2" role="list">
                     <NotificationRow
                         v-for="notification in group.items"
                         :key="notification.id"

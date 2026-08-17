@@ -149,7 +149,7 @@ function openCreateDialog(): void {
                     >
                         <div>
                             <p
-                                class="text-[0.68rem] font-semibold tracking-[0.16em] text-orange-700 uppercase dark:text-orange-300"
+                                class="text-[0.68rem] font-semibold tracking-[0.16em] text-orange-700 uppercase"
                             >
                                 {{ copy.projects.workspace }}
                             </p>
@@ -179,7 +179,7 @@ function openCreateDialog(): void {
 
                     <div
                         v-if="visibleProjects.length"
-                        class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
+                        class="ui-stagger mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3"
                     >
                         <Link
                             v-for="(project, index) in visibleProjects"
@@ -195,7 +195,7 @@ function openCreateDialog(): void {
                                 aria-hidden="true"
                             />
                             <span
-                                class="absolute -right-5 -bottom-11 text-[8.5rem] leading-none font-semibold tracking-[-0.1em] text-foreground/[0.025] select-none dark:text-white/[0.035]"
+                                class="absolute -right-5 -bottom-11 text-[8.5rem] leading-none font-semibold tracking-[-0.1em] text-foreground/[0.025] select-none"
                                 aria-hidden="true"
                             >
                                 {{ String(index + 1).padStart(2, '0') }}
@@ -223,7 +223,7 @@ function openCreateDialog(): void {
                                             'rounded-full px-2.5 py-1 text-[0.65rem] font-semibold tracking-[0.08em] uppercase',
                                             project.is_archived
                                                 ? 'bg-muted text-muted-foreground'
-                                                : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+                                                : 'bg-emerald-500/10 text-emerald-700',
                                         ]"
                                     >
                                         {{
@@ -236,7 +236,7 @@ function openCreateDialog(): void {
 
                                 <div class="mt-7">
                                     <h3
-                                        class="text-lg font-semibold tracking-[-0.02em] group-hover:text-orange-700 dark:group-hover:text-orange-300"
+                                        class="text-lg font-semibold tracking-[-0.02em] group-hover:text-orange-700"
                                     >
                                         {{ project.name }}
                                     </h3>

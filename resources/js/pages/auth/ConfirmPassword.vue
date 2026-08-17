@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
+import { ShieldCheck } from '@lucide/vue';
 import {
     index as confirmOptions,
     store as confirmStore,
@@ -66,6 +67,7 @@ setLayoutProps({
                     data-test="confirm-password-button"
                 >
                     <Spinner v-if="processing" />
+                    <ShieldCheck v-else class="size-4" aria-hidden="true" />
                     {{ t('auth.confirm_password.submit') }}
                 </Button>
             </div>

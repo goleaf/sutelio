@@ -14,7 +14,6 @@ import {
     InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Spinner } from '@/components/ui/spinner';
-import { useAppearance } from '@/composables/useAppearance';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { useUi } from '@/composables/useUi';
 import { confirm } from '@/routes/two-factor';
@@ -25,7 +24,6 @@ type Props = {
     twoFactorEnabled: boolean;
 };
 
-const { resolvedAppearance } = useAppearance();
 const { t } = useUi();
 
 const props = defineProps<Props>();
@@ -138,7 +136,7 @@ watch(
                             />
                         </div>
                         <ScanLine
-                            class="relative z-20 size-6 text-orange-700 dark:text-orange-300"
+                            class="relative z-20 size-6 text-orange-700"
                         />
                     </div>
                 </div>
@@ -168,13 +166,6 @@ watch(
                                         <div
                                             v-html="qrCodeSvg"
                                             class="flex aspect-square size-full items-center justify-center"
-                                            :style="{
-                                                filter:
-                                                    resolvedAppearance ===
-                                                    'dark'
-                                                        ? 'invert(1) brightness(1.5)'
-                                                        : undefined,
-                                            }"
                                         />
                                     </div>
                                 </div>

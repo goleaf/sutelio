@@ -47,11 +47,11 @@ Requirements: `sys-dashboard-001`, `test-feature-001`, `test-architecture-001`, 
 
 - [x] Repair the user-owned dashboard design test so it asserts semantic structure instead of whitespace/call-argument formatting; do not weaken its intended dashboard contract.
 - [x] Add/expand architecture coverage for no Livewire/Volt, no Blade PHP/data/service calls, no `env()` outside config, no debug calls, no forbidden frontend dependencies, and no unsafe dynamic Tailwind patterns where reliable.
-- [x] Externalize or otherwise remove ordinary inline script/style from the first-party Inertia Blade shell without theme flash, CSP, locale, or Vite regressions.
+- [x] Keep the first-party Inertia Blade shell free of ordinary inline script/style and obsolete color-mode bootstrap logic without CSP, locale, or Vite regressions.
 - [x] Remove dead example Pest helpers/tests only when confirmed non-contractual and replace with meaningful smoke/architecture coverage.
 - [x] Enable strict Eloquent behavior in local/testing and fix any missing-load/discarded/missing-attribute defects instead of suppressing them.
 
-Verification: targeted design/architecture/page/query tests, full PHP/frontend gates, browser login/dashboard/theme smoke.
+Verification: targeted design/architecture/page/query tests, full PHP/frontend gates, browser login/dashboard fixed-light smoke.
 
 ## Pass 4 — PHP 8.5 And Laravel 13 Applicability
 
@@ -84,7 +84,7 @@ Requirements: `ui-*`, `i18n-*`, `perf-*`, `sys-dashboard-001`, task/project/cale
 - [x] Verify Tailwind remains CSS-first with complete source detection and coherent design tokens; remove obsolete frontend wiring/dependencies only after usage tracing.
 - [x] Audit all Vue pages/components for immutable props, task/workspace identity resets, minimal async state, action-specific loading, duplicate prevention, keyboard/focus behavior, translated copy, and static Wayfinder imports.
 - [x] Verify translation key/placeholder parity and critical rendering for `en`, `lt`, and `ru` plus fallback and locale/timezone formatting.
-- [x] Run critical browser workflows at representative mobile/tablet/desktop widths, light/dark/system and reduced motion, inspect fresh console logs, keyboard focus, dialogs, long translations, and horizontal overflow.
+- [x] Run critical browser workflows at representative mobile/tablet/desktop widths in the fixed light mode and reduced motion, inspect fresh console logs, keyboard focus, dialogs, long translations, and horizontal overflow.
 - [x] Re-measure critical query budgets, bundle sizes/build time, page errors, and any measurable Inertia payloads; change caching only for measured stable work.
 
 Verification: frontend tests/types/lint/format/build, localization/design/query suites, Boost browser logs, browser matrix. Accessibility limitation must identify an unavailable tool/device, never substitute documentation for a fix.

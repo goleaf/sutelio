@@ -219,7 +219,7 @@ function setView(nextView: 'board' | 'list'): void {
                     </span>
                     <span
                         v-if="activeFilterCount"
-                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums dark:text-orange-200"
+                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums"
                     >
                         {{ activeFilterCount }}
                     </span>

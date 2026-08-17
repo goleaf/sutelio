@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { usePasskeyRegister } from '@laravel/passkeys/vue';
+import { KeyRound, Plus, X } from '@lucide/vue';
 import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 
 const emit = defineEmits<{
@@ -67,6 +69,7 @@ const handleCancel = () => {
     </div>
 
     <Button v-else-if="!showForm" variant="outline" @click="showForm = true">
+        <Plus class="size-4" aria-hidden="true" />
         {{ t('account.passkeys.add') }}
     </Button>
 
@@ -94,6 +97,8 @@ const handleCancel = () => {
 
         <div class="flex gap-2">
             <Button type="submit" :disabled="isLoading || !name.trim()">
+                <Spinner v-if="isLoading" />
+                <KeyRound v-else class="size-4" aria-hidden="true" />
                 {{
                     isLoading
                         ? t('account.passkeys.registering')
@@ -101,6 +106,7 @@ const handleCancel = () => {
                 }}
             </Button>
             <Button type="button" variant="ghost" @click="handleCancel">
+                <X class="size-4" aria-hidden="true" />
                 {{ t('common.actions.cancel') }}
             </Button>
         </div>

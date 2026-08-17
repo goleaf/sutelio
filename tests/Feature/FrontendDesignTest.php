@@ -169,6 +169,83 @@ test('shared shells carry the projects page visual language', function () {
         ->not->toContain('<svg', 'fill="currentColor"', '<text');
 });
 
+test('the frontend is light only without dormant dark appearance branches', function () {
+    foreach ([resource_path('js'), resource_path('css'), resource_path('views')] as $directory) {
+        foreach (File::allFiles($directory) as $file) {
+            if (! in_array($file->getExtension(), ['css', 'js', 'php', 'ts', 'vue'], true)) {
+                continue;
+            }
+
+            expect($file->getContents(), $file->getRelativePathname())
+                ->not->toContain('dark:')
+                ->not->toContain("classList.add('dark')")
+                ->not->toContain("classList.toggle('dark'");
+        }
+    }
+
+    expect(File::get(resource_path('css/app.css')))
+        ->toContain('color-scheme: light')
+        ->not->toContain('@custom-variant dark')
+        ->not->toContain('.dark {')
+        ->and(File::get(resource_path('views/app.blade.php')))
+        ->not->toContain('data-appearance')
+        ->not->toContain('/theme.js');
+});
+
+test('shared motion primitives animate navigation surfaces and interactions safely', function () {
+    $css = File::get(resource_path('css/app.css'));
+
+    expect($css)
+        ->toContain('--ease-emphasized:')
+        ->toContain('@keyframes ui-enter')
+        ->toContain('.ui-page-surface > *')
+        ->toContain('.ui-surface')
+        ->toContain('.ui-stagger > *')
+        ->toContain('@media (prefers-reduced-motion: reduce)')
+        ->and(File::get(resource_path('js/components/ui/button/index.ts')))
+        ->toContain('ui-control')
+        ->and(File::get(resource_path('js/components/ui/card/Card.vue')))
+        ->toContain('ui-surface')
+        ->and(File::get(resource_path('js/components/ui/sidebar/SidebarInset.vue')))
+        ->toContain('ui-page-surface')
+        ->and(File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue')))
+        ->toContain('ui-page-surface')
+        ->and(File::get(resource_path('js/components/shared/WorkspacePageHeader.vue')))
+        ->toContain('ui-enter')
+        ->and(File::get(resource_path('js/pages/onboarding/Index.vue')))
+        ->toContain('<Transition name="ui-step" mode="out-in">')
+        ->toContain(':key="activeStep"');
+
+    foreach ([
+        'components/notification/NotificationFeed.vue',
+        'components/task/TaskList.vue',
+        'pages/projects/Index.vue',
+        'pages/workspaces/Index.vue',
+    ] as $path) {
+        expect(File::get(resource_path("js/{$path}")), $path)
+            ->toContain('ui-stagger');
+    }
+});
+
+test('primary user actions pair localized labels with meaningful icons', function (string $path, string $icon) {
+    expect(File::get(resource_path("js/{$path}")))
+        ->toContain("{$icon}")
+        ->toContain("<{$icon}");
+})->with([
+    'login' => ['pages/auth/Login.vue', 'LogIn'],
+    'password reset request' => ['pages/auth/ForgotPassword.vue', 'Send'],
+    'registration' => ['pages/auth/Register.vue', 'UserPlus'],
+    'password reset' => ['pages/auth/ResetPassword.vue', 'KeyRound'],
+    'password confirmation' => ['pages/auth/ConfirmPassword.vue', 'ShieldCheck'],
+    'two factor challenge' => ['pages/auth/TwoFactorChallenge.vue', 'ShieldCheck'],
+    'passkey registration' => ['components/PasskeyRegister.vue', 'KeyRound'],
+    'task creation' => ['components/task/TaskCreateDialog.vue', 'Plus'],
+    'task editing' => ['components/task/TaskOverviewPanel.vue', 'Save'],
+    'task taxonomy' => ['components/task/TaskTaxonomyPanel.vue', 'Tag'],
+    'preferences save' => ['pages/settings/Preferences.vue', 'Save'],
+    'notifications save' => ['pages/settings/Notifications.vue', 'Save'],
+]);
+
 test('authenticated content delegates the sole main landmark to the persistent shell', function () {
     $shell = File::get(resource_path('js/components/ui/sidebar/SidebarInset.vue'));
 
@@ -207,7 +284,7 @@ test('guided onboarding follows the warm responsive route design contract', func
         ->toContain('border-border/80')
         ->toContain('bg-card')
         ->toContain('text-orange-')
-        ->toContain('dark:')
+        ->not->toContain('dark:')
         ->not->toContain('bg-gradient');
 });
 
@@ -536,12 +613,7 @@ test('segmented controls use the projects muted and card surface contract', func
         ->toContain('rounded-xl bg-muted p-1')
         ->and(File::get(resource_path('js/components/shared/WorkspaceSegmentedButton.vue')))
         ->toContain("'bg-card text-foreground shadow-sm'")
-        ->not->toContain("'bg-foreground text-background'")
-        ->and(File::get(resource_path('js/components/AppearanceTabs.vue')))
-        ->toContain('rounded-xl bg-muted p-1')
-        ->toContain("'bg-card text-foreground shadow-sm'")
-        ->toContain('focus-visible:ring-orange-500')
-        ->not->toContain('bg-white');
+        ->not->toContain("'bg-foreground text-background'");
 });
 
 test('active filter pages reuse the shared segmented controls', function (string $component) {
@@ -836,7 +908,6 @@ test('segmented and inline controls respect reduced motion', function (string $c
     expect(File::get(resource_path("js/{$component}")))
         ->toContain('motion-reduce:transition-none');
 })->with([
-    'appearance tabs' => 'components/AppearanceTabs.vue',
     'shared segmented button' => 'components/shared/WorkspaceSegmentedButton.vue',
     'settings navigation' => 'components/settings/SettingsSectionMenu.vue',
     'two factor challenge toggle' => 'pages/auth/TwoFactorChallenge.vue',
@@ -869,7 +940,7 @@ test('shared overlays and feedback surfaces use warm focus and reduced motion', 
         ->toContain('bg-black/65')
         ->toContain('backdrop-blur-[2px]')
         ->and(File::get(resource_path('js/components/ui/sonner/Sonner.vue')))
-        ->toContain('resolvedAppearance')
+        ->toContain('theme="light"')
         ->toContain('0 24px 70px -36px')
         ->toContain('motion-reduce:animate-none');
 });

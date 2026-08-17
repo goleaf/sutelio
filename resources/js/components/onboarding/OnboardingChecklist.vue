@@ -47,10 +47,10 @@ function dismiss(): void {
 <template>
     <section v-if="checklist.show" aria-labelledby="onboarding-checklist-title">
         <Card
-            class="relative overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/70 shadow-sm dark:border-orange-900/60 dark:from-orange-950/35 dark:via-card dark:to-amber-950/20"
+            class="relative overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/70 shadow-sm"
         >
             <div
-                class="pointer-events-none absolute -top-20 -right-16 size-48 rounded-full bg-orange-200/30 blur-3xl dark:bg-orange-700/15"
+                class="pointer-events-none absolute -top-20 -right-16 size-48 rounded-full bg-orange-200/30 blur-3xl"
                 aria-hidden="true"
             />
             <CardHeader class="relative gap-3 pr-16 sm:pr-20">
@@ -88,10 +88,10 @@ function dismiss(): void {
                     <li v-if="checklist.can_invite && checklist.workspace_id">
                         <Link
                             :href="workspaceMembers(checklist.workspace_id)"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:hover:border-orange-800"
+                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
                             <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300"
+                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-700"
                             >
                                 <Check
                                     v-if="checklist.has_team_member"
@@ -111,7 +111,7 @@ function dismiss(): void {
                                     }}</span>
                                     <span
                                         v-if="checklist.has_team_member"
-                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
                                     >
                                         {{
                                             t('dashboard.onboarding.completed')
@@ -140,10 +140,10 @@ function dismiss(): void {
                     <li>
                         <Link
                             :href="editNotifications()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:hover:border-orange-800"
+                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
                             <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300"
+                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700"
                             >
                                 <BellRing class="size-5" aria-hidden="true" />
                             </span>
@@ -172,10 +172,10 @@ function dismiss(): void {
                     <li>
                         <Link
                             :href="editSecurity()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:hover:border-orange-800"
+                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
                             <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"
                             >
                                 <Check
                                     v-if="checklist.has_security_factor"
@@ -197,7 +197,7 @@ function dismiss(): void {
                                     }}</span>
                                     <span
                                         v-if="checklist.has_security_factor"
-                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
                                     >
                                         {{
                                             t('dashboard.onboarding.completed')
@@ -226,10 +226,10 @@ function dismiss(): void {
                     <li v-if="checklist.workspace_id">
                         <Link
                             :href="editExport()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:hover:border-orange-800"
+                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
                             <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-300"
+                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700"
                             >
                                 <FileArchive
                                     class="size-5"
@@ -259,10 +259,10 @@ function dismiss(): void {
                     <li v-if="checklist.can_manage_backups">
                         <Link
                             :href="editBackups()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:hover:border-orange-800"
+                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
                             <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 dark:bg-slate-900 dark:text-slate-300"
+                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"
                             >
                                 <DatabaseBackup
                                     class="size-5"

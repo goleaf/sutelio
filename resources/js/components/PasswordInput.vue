@@ -35,7 +35,7 @@ defineExpose({
             @click="showPassword = !showPassword"
             :class="
                 cn(
-                    'absolute inset-y-0 right-0 flex min-w-11 cursor-pointer items-center justify-center rounded-r-xl text-muted-foreground transition-colors hover:bg-orange-500/8 hover:text-orange-800 focus-visible:ring-[3px] focus-visible:ring-orange-500/25 focus-visible:outline-none dark:hover:bg-orange-500/10 dark:hover:text-orange-200',
+                    'absolute inset-y-0 right-0 flex min-w-11 cursor-pointer items-center justify-center rounded-r-xl text-muted-foreground transition-colors hover:bg-orange-500/8 hover:text-orange-800 focus-visible:ring-[3px] focus-visible:ring-orange-500/25 focus-visible:outline-none',
                 )
             "
             :aria-label="

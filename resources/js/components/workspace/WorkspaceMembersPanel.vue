@@ -97,14 +97,14 @@ const managerCount = computed(
 );
 
 const avatarTones = [
-    'bg-amber-100 text-amber-950 dark:bg-amber-950/70 dark:text-amber-200',
-    'bg-sky-100 text-sky-950 dark:bg-sky-950/70 dark:text-sky-200',
-    'bg-emerald-100 text-emerald-950 dark:bg-emerald-950/70 dark:text-emerald-200',
+    'bg-amber-100 text-amber-950',
+    'bg-sky-100 text-sky-950',
+    'bg-emerald-100 text-emerald-950',
 ];
 
 const roleClasses: Record<WorkspaceRole, string> = {
-    owner: 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-200',
-    admin: 'border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-900 dark:bg-sky-950/50 dark:text-sky-200',
+    owner: 'border-amber-200 bg-amber-50 text-amber-800',
+    admin: 'border-sky-200 bg-sky-50 text-sky-800',
     member: 'border-border bg-muted/50 text-muted-foreground',
 };
 
@@ -403,7 +403,7 @@ async function cancelInvitation(): Promise<void> {
                                 </div>
                                 <a
                                     :href="`mailto:${member.email}`"
-                                    class="mt-0.5 block truncate text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-orange-800 hover:underline focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none dark:hover:text-orange-200"
+                                    class="mt-0.5 block truncate text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-orange-800 hover:underline focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
                                 >
                                     {{ member.email }}
                                 </a>
@@ -673,7 +673,7 @@ async function cancelInvitation(): Promise<void> {
                     >
                         <div class="flex min-w-0 items-start gap-3">
                             <div
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
                             >
                                 <Mail class="size-4" aria-hidden="true" />
                             </div>

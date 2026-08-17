@@ -283,7 +283,7 @@ async function confirmImport(): Promise<void> {
                         @click="announceExport(format.value)"
                     >
                         <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
                         >
                             <component
                                 :is="format.icon"
@@ -330,9 +330,9 @@ async function confirmImport(): Promise<void> {
                             :class="[
                                 'flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-center text-[10px] leading-tight font-medium transition-colors motion-reduce:transition-none sm:min-h-11 sm:flex-row sm:justify-start sm:gap-2 sm:px-3 sm:text-left sm:text-xs',
                                 importStepState(index) === 'current'
-                                    ? 'border-orange-500/30 bg-orange-500/[0.07] text-orange-900 dark:text-orange-100'
+                                    ? 'border-orange-500/30 bg-orange-500/[0.07] text-orange-900'
                                     : importStepState(index) === 'complete'
-                                      ? 'border-emerald-500/25 bg-emerald-500/[0.06] text-emerald-900 dark:text-emerald-100'
+                                      ? 'border-emerald-500/25 bg-emerald-500/[0.06] text-emerald-900'
                                       : 'border-border/70 bg-muted/30 text-muted-foreground',
                             ]"
                             :aria-current="
@@ -360,7 +360,7 @@ async function confirmImport(): Promise<void> {
                     class="flex gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-3 text-sm text-muted-foreground"
                 >
                     <CircleAlert
-                        class="mt-0.5 size-4 shrink-0 text-orange-700 dark:text-orange-300"
+                        class="mt-0.5 size-4 shrink-0 text-orange-700"
                         aria-hidden="true"
                     />
                     <p>{{ t('settings.export.import_limitations') }}</p>
@@ -401,7 +401,7 @@ async function confirmImport(): Promise<void> {
                             @change="handleImport($event, format.value)"
                         />
                         <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
                         >
                             <Spinner
                                 v-if="
@@ -458,7 +458,7 @@ async function confirmImport(): Promise<void> {
                 >
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
                         <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
                         >
                             <FileCheck2 class="size-4" aria-hidden="true" />
                         </span>

@@ -453,7 +453,7 @@ function manageWorkspace(workspace: Workspace): void {
 
                     <div
                         v-if="filteredWorkspaces.length"
-                        class="mt-5 grid items-start gap-4 lg:grid-cols-2"
+                        class="ui-stagger mt-5 grid items-start gap-4 lg:grid-cols-2"
                     >
                         <Card
                             v-for="(workspace, index) in filteredWorkspaces"
@@ -475,7 +475,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 aria-hidden="true"
                             />
                             <span
-                                class="absolute -right-4 -bottom-9 text-8xl leading-none font-semibold tracking-[-0.1em] text-foreground/[0.025] select-none dark:text-white/[0.035]"
+                                class="absolute -right-4 -bottom-9 text-8xl leading-none font-semibold tracking-[-0.1em] text-foreground/[0.025] select-none"
                                 aria-hidden="true"
                             >
                                 {{ String(index + 1).padStart(2, '0') }}
@@ -485,7 +485,7 @@ function manageWorkspace(workspace: Workspace): void {
                                     class="flex items-start justify-between gap-3"
                                 >
                                     <div
-                                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
                                     >
                                         <Building2
                                             class="size-5"
@@ -495,7 +495,7 @@ function manageWorkspace(workspace: Workspace): void {
                                     <Badge
                                         v-if="isCurrentWorkspace(workspace)"
                                         variant="outline"
-                                        class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                                        class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700"
                                     >
                                         <CheckCircle2 aria-hidden="true" />
                                         {{ t('workspaces.current') }}

@@ -50,8 +50,8 @@ const emit = defineEmits<{ action: [] }>();
             class="relative mb-5 flex size-16 items-center justify-center rounded-2xl border shadow-sm"
             :class="
                 status === 'error'
-                    ? 'border-red-500/15 bg-red-500/[0.08] text-red-700 dark:text-red-300'
-                    : 'border-orange-500/15 bg-orange-500/[0.08] text-orange-700 dark:text-orange-300'
+                    ? 'border-red-500/15 bg-red-500/[0.08] text-red-700'
+                    : 'border-orange-500/15 bg-orange-500/[0.08] text-orange-700'
             "
         >
             <slot name="icon">

@@ -190,7 +190,7 @@ function formatDate(timestamp: number): string {
                                             }}
                                         </h3>
                                         <span
-                                            class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-[11px] font-medium text-emerald-800 ring-1 ring-emerald-500/20 dark:text-emerald-200"
+                                            class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-[11px] font-medium text-emerald-800 ring-1 ring-emerald-500/20"
                                         >
                                             <CheckCircle2
                                                 class="size-3"
@@ -281,7 +281,7 @@ function formatDate(timestamp: number): string {
         </Card>
 
         <section
-            class="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-sm text-amber-950 dark:text-amber-100"
+            class="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-sm text-amber-950"
             aria-labelledby="backup-restore-risk-title"
         >
             <TriangleAlert class="mt-0.5 size-5 shrink-0" aria-hidden="true" />

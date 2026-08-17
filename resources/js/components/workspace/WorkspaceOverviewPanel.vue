@@ -118,7 +118,7 @@ async function switchWorkspace(): Promise<void> {
             >
                 <CardHeader class="pb-3">
                     <div
-                        class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                        class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
                     >
                         <Users class="size-5" aria-hidden="true" />
                     </div>
@@ -133,7 +133,7 @@ async function switchWorkspace(): Promise<void> {
             <Card class="overflow-hidden border-sky-500/15 bg-sky-500/[0.04]">
                 <CardHeader class="pb-3">
                     <div
-                        class="flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-300"
+                        class="flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700"
                     >
                         <Folder class="size-5" aria-hidden="true" />
                     </div>
@@ -150,7 +150,7 @@ async function switchWorkspace(): Promise<void> {
             >
                 <CardHeader class="pb-3">
                     <div
-                        class="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                        class="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700"
                     >
                         <CheckSquare class="size-5" aria-hidden="true" />
                     </div>
@@ -191,7 +191,7 @@ async function switchWorkspace(): Promise<void> {
                         <Badge
                             v-if="workspace.is_current"
                             variant="outline"
-                            class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                            class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700"
                         >
                             <CheckCircle2 aria-hidden="true" />
                             {{ t('workspaces.current') }}
@@ -289,7 +289,7 @@ async function switchWorkspace(): Promise<void> {
             <Card class="xl:sticky xl:top-6">
                 <CardHeader>
                     <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
                     >
                         <Pencil class="size-5" aria-hidden="true" />
                     </div>

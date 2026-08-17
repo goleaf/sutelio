@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
     <header
-        class="relative overflow-hidden rounded-feature border border-border/80 bg-card shadow-[0_24px_70px_-44px_rgba(15,23,42,0.45)]"
+        class="ui-enter relative overflow-hidden rounded-feature border border-border/80 bg-card shadow-[0_24px_70px_-44px_rgba(15,23,42,0.45)]"
     >
         <div
             class="absolute inset-y-0 left-0 w-1.5 bg-orange-500"
@@ -27,7 +27,7 @@ defineProps<{
                     <slot name="back" />
                 </div>
                 <p
-                    class="flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.22em] text-orange-700 uppercase dark:text-orange-300"
+                    class="flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.22em] text-orange-700 uppercase"
                 >
                     <span class="size-1.5 rounded-full bg-orange-500" />
                     {{ eyebrow }}

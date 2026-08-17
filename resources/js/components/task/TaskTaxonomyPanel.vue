@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
+import { Tag as TagIcon } from '@lucide/vue';
 import { ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -157,6 +158,7 @@ async function toggleTag(tag: Tag): Promise<void> {
                             class="gap-1.5"
                         >
                             <Spinner v-if="busyKey === `tag:${tag.id}`" />
+                            <TagIcon v-else class="size-3" aria-hidden="true" />
                             {{ tag.name }}
                         </Badge>
                     </button>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
-import { BadgeCheck } from '@lucide/vue';
+import { BadgeCheck, LogIn } from '@lucide/vue';
 import InputError from '@/components/InputError.vue';
 import PasskeyVerify from '@/components/PasskeyVerify.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
@@ -103,6 +103,7 @@ defineProps<{
                 data-test="login-button"
             >
                 <Spinner v-if="processing" />
+                <LogIn v-else class="size-4" aria-hidden="true" />
                 {{ t('auth.login.submit') }}
             </Button>
         </div>

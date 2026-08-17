@@ -155,7 +155,7 @@ async function deleteWorkspace(): Promise<void> {
             >
                 <CardHeader>
                     <div
-                        class="mb-2 flex size-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300"
+                        class="mb-2 flex size-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700"
                     >
                         <Crown class="size-5" aria-hidden="true" />
                     </div>
@@ -221,7 +221,7 @@ async function deleteWorkspace(): Promise<void> {
                     <Button
                         variant="outline"
                         size="lg"
-                        class="w-full border-amber-500/25 text-amber-800 hover:bg-amber-500/10 dark:text-amber-200"
+                        class="w-full border-amber-500/25 text-amber-800 hover:bg-amber-500/10"
                         :disabled="transferForm.processing"
                         @click="requestOwnershipTransfer"
                     >

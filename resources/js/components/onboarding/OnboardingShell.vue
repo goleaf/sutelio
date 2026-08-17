@@ -46,9 +46,7 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
         >
             <div class="flex items-center justify-between gap-4">
                 <div class="min-w-0">
-                    <p
-                        class="text-xs font-semibold text-orange-700 dark:text-orange-300"
-                    >
+                    <p class="text-xs font-semibold text-orange-700">
                         {{ stepLabel }}
                     </p>
                     <p class="truncate text-sm font-semibold">
@@ -87,7 +85,7 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                     class="flex items-center gap-3 border-b border-border/70 pb-5"
                 >
                     <span
-                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/15 dark:text-orange-300"
+                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/15"
                     >
                         <Route class="size-5" aria-hidden="true" />
                     </span>
@@ -121,7 +119,7 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                             class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border forced-colors:border-[CanvasText]"
                             :class="
                                 index + 1 < progress.position
-                                    ? 'border-emerald-600 bg-emerald-600 text-white dark:border-emerald-400 dark:bg-emerald-400 dark:text-slate-950'
+                                    ? 'border-emerald-600 bg-emerald-600 text-white'
                                     : step === progress.step
                                       ? 'border-orange-500 bg-orange-500 text-white'
                                       : 'border-border bg-background'

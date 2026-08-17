@@ -4872,3 +4872,32 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - This is preflight hardening, not an absolute race- or crash-atomicity guarantee: another process with workspace write access could still replace a validated path in the interval between the last check and `cpSync`. Task 7 native regeneration/install remains intentionally unexecuted.
 - The review slice is limited to `scripts/apply-native-brand.mjs`, `tests/Feature/BrandIdentityTest.php`, and this append-only progress entry. It is prepared for the required semantic commit `fix: harden Sutelio native brand guard`; the commit hash, normal-push range, and final remote synchronization are reported after Git delivery because they cannot be embedded in the commit they identify.
 - After the parallel Signal Orange/preferences work became visible in the shared working tree, the final read-only rerun remained green: Brand passes 20 tests / 3,835 assertions, Brand plus NativePHP passes 41 tests / 4,170 assertions, and the complete Task 6 gate passes 62 tests / 4,270 assertions. Those unrelated files remain unstaged and are not part of this review slice.
+
+## Light-Only Motion And Icon System — 2026-08-17
+
+### Implementation Preflight
+
+- Began from a clean synchronized `main` at `4fde4dc`; later external delivery advanced the shared checkout to `d5f93f3` without conflicting with this slice. The audit covered 241 Vue files: 91 already imported Lucide icons, 71 files contained 238 dormant `dark:` branches, and 78 files contained 360 fragmented motion markers.
+- Version inspection confirmed Laravel 13.25.0, Inertia Laravel 3.3.1, Vue 3.5.41, Tailwind CSS 4.3.3, `@lucide/vue` 1.31.0, Pest 5.1.1, PHP 8.5, and SQLite. Laravel Boost documentation search covered CSS-first dark-mode removal, transition/reduced-motion behavior, and SQLite migration testing before implementation.
+- The failing-first preferences/design gate ran 145 tests: 130 passed, 15 failed as expected, with 1,008 assertions. Failures covered the persisted appearance column/runtime wiring, dormant dark utilities, missing shared motion primitives, and missing icons on critical actions.
+
+### Implementation Delivered
+
+- The product now has one fixed light presentation contract. The appearance middleware, bootstrap asset, composable, selector component, Blade state, TypeScript types, request field, model/factory/seeder defaults, translations, and all first-party `dark:` branches were removed. The old appearance URL remains a compatibility redirect to Preferences.
+- A populated-data-safe SQLite migration drops `user_preferences.theme`; its `down()` restores the original `system` default. Regression coverage executes `down()` and `up()` against an existing preference row and verifies that the row survives both directions.
+- `app.css` now owns fast/standard/emphasized motion tokens, shared page/surface/control/stagger/step primitives, and a global `prefers-reduced-motion` clamp. Buttons, cards, authenticated/auth shells, headers, task/notification/project/workspace collections, and onboarding step changes consume those primitives.
+- Critical authentication, passkey, task create/edit/taxonomy, preferences, and notification actions now pair their translated labels with meaningful Lucide icons. Icons remain decorative to assistive technology, loading spinners replace them deterministically, and all existing textual accessible names remain intact.
+- Current requirements, architecture, frontend/design-system, accessibility, testing, implementation plan, and compliance matrix now describe the fixed light contract and shared motion behavior. Translation key parity remains intact for English, Lithuanian, and Russian.
+
+### Verification Evidence
+
+- The final focused light/motion/preferences gate passes 145 tests / 2,227 assertions. The broader localization/onboarding/design/preferences gate passes 167 tests / 2,957 assertions. The full backend suite passes 789 tests / 21,477 assertions, and Larastan reports zero errors.
+- Fresh in-memory SQLite migration plus complete demo seeding passes. The reversible migration test confirms the original `system` default on rollback and preserves populated data. The change adds no Eloquent query, route, authorization, dependency, or external-service requirement.
+- Frontend verification passes: Vue type checking, ESLint, Prettier, and all 45 Node tests. The production Vite build transforms 3,533 modules in 5.29 seconds; application CSS is 164.94 kB (24.62 kB gzip) and the application entry is 88.10 kB (22.57 kB gzip).
+- `npm audit` reports zero vulnerabilities; `composer validate --strict` passes; Composer audit reports no advisories. Scoped Pint and staged `git diff --check` pass without formatting or staging any concurrent user work.
+- Live Herd verification at `https://xiaomi-mimo.test/login` returned 200. An isolated desktop Chrome render showed the fixed light surface and icon-bearing login action. CDP mobile emulation measured a real 390x844 viewport with document width 390, no horizontal overflow, a 358-pixel card inside 16-pixel gutters, one `h1`, no runtime/console/network errors, and `color-scheme: light` even while the OS dark preference matched. Standard entrance motion measured 480 ms; reduced-motion emulation clamped both animation and button transition to 0.01 ms.
+- The connected Chrome DevTools MCP remained unavailable because the user's Chrome instance did not expose `DevToolsActivePort`, and the shared Playwright profile was already in use. No user browser was terminated; the isolated headless/CDP fallback supplied the live rendering and runtime evidence.
+
+### Git Delivery
+
+- The phase-owned diff is staged independently from concurrent NativePHP regeneration and Signal Orange work. It is prepared for the semantic commit `feat(ui): enforce light mode and shared motion`; exact commit, push range, and final remote synchronization are reported after delivery because they cannot be embedded in the commit they identify.

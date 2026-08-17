@@ -68,7 +68,7 @@ const countMessage = computed(() => {
         >
             <div class="flex items-center gap-3">
                 <span
-                    class="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-300"
+                    class="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20"
                 >
                     <Check class="size-5" aria-hidden="true" />
                 </span>
@@ -87,7 +87,7 @@ const countMessage = computed(() => {
                 >
                     <component
                         :is="row.icon"
-                        class="mt-0.5 size-4 shrink-0 text-orange-600 dark:text-orange-300"
+                        class="mt-0.5 size-4 shrink-0 text-orange-600"
                         aria-hidden="true"
                     />
                     <div class="min-w-0">
@@ -104,7 +104,7 @@ const countMessage = computed(() => {
             </dl>
         </section>
         <aside
-            class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-5 text-blue-950 dark:text-blue-100"
+            class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-5 text-blue-950"
         >
             <h2 class="font-semibold">{{ copy.next_title }}</h2>
             <p class="mt-2 text-sm leading-6">{{ copy.next_description }}</p>

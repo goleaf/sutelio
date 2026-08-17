@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
+import { Save } from '@lucide/vue';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -228,6 +229,7 @@ async function save(): Promise<void> {
                     :disabled="form.processing || !form.title.trim()"
                 >
                     <Spinner v-if="form.processing" />
+                    <Save v-else class="size-4" aria-hidden="true" />
                     {{
                         form.processing
                             ? t('common.actions.saving')

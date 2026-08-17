@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
+import { Plus, X } from '@lucide/vue';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
@@ -273,10 +274,13 @@ async function submit(): Promise<void> {
                         size="lg"
                         :disabled="form.processing"
                         @click="emit('close')"
-                        >{{ t('common.actions.cancel') }}</Button
                     >
+                        <X class="size-4" aria-hidden="true" />
+                        {{ t('common.actions.cancel') }}
+                    </Button>
                     <Button type="submit" size="lg" :disabled="form.processing">
                         <Spinner v-if="form.processing" />
+                        <Plus v-else class="size-4" aria-hidden="true" />
                         {{
                             form.processing
                                 ? t('tasks.create.creating')

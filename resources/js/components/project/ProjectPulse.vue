@@ -77,7 +77,7 @@ function dueLabel(task: ProjectTask): string {
         <div class="border-b border-border/70 px-5 py-5 sm:px-6">
             <div class="flex items-start gap-3">
                 <span
-                    class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                    class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
                 >
                     <Gauge class="size-5" aria-hidden="true" />
                 </span>
@@ -216,7 +216,7 @@ function dueLabel(task: ProjectTask): string {
                     </p>
                 </div>
                 <span
-                    class="rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-800 tabular-nums dark:text-orange-200"
+                    class="rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-800 tabular-nums"
                 >
                     {{ formatNumber(attentionTasks.total) }}
                 </span>
@@ -231,12 +231,12 @@ function dueLabel(task: ProjectTask): string {
                     @click="emit('select', task)"
                 >
                     <CalendarClock
-                        class="size-4 shrink-0 text-orange-600 dark:text-orange-400"
+                        class="size-4 shrink-0 text-orange-600"
                         aria-hidden="true"
                     />
                     <span class="min-w-0 flex-1">
                         <span
-                            class="block truncate text-sm font-medium group-hover:text-orange-800 dark:group-hover:text-orange-200"
+                            class="block truncate text-sm font-medium group-hover:text-orange-800"
                         >
                             {{ task.title }}
                         </span>
@@ -285,7 +285,7 @@ function dueLabel(task: ProjectTask): string {
             </div>
             <div
                 v-else
-                class="mt-4 flex items-start gap-3 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.06] p-3 text-sm text-emerald-900 dark:text-emerald-100"
+                class="mt-4 flex items-start gap-3 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.06] p-3 text-sm text-emerald-900"
             >
                 <CheckCircle2
                     class="mt-0.5 size-4 shrink-0"

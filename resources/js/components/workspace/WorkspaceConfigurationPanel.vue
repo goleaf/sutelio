@@ -382,7 +382,7 @@ async function deleteMetadata(): Promise<void> {
             <div class="max-w-3xl">
                 <div class="flex items-center gap-3">
                     <div
-                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700 dark:text-orange-300"
+                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
                     >
                         <ListChecks class="size-5" aria-hidden="true" />
                     </div>
@@ -455,7 +455,7 @@ async function deleteMetadata(): Promise<void> {
         <Card v-else-if="activeSection === 'labels'" class="border-sky-500/15">
             <CardHeader>
                 <div
-                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700 dark:text-sky-300"
+                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700"
                 >
                     <Palette class="size-5" aria-hidden="true" />
                 </div>
@@ -710,7 +710,7 @@ async function deleteMetadata(): Promise<void> {
         <Card v-else-if="activeSection === 'tags'" class="border-violet-500/15">
             <CardHeader>
                 <div
-                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700 dark:text-violet-300"
+                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700"
                 >
                     <TagIcon class="size-5" aria-hidden="true" />
                 </div>

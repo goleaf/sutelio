@@ -52,7 +52,7 @@ function formatFullDate(date: string): string {
             >
                 <div class="max-w-2xl">
                     <p
-                        class="flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.2em] text-orange-700 uppercase dark:text-orange-300"
+                        class="flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.2em] text-orange-700 uppercase"
                     >
                         <Activity class="size-3.5" aria-hidden="true" />
                         {{ t('dashboard.weekly_productivity') }}
@@ -78,7 +78,7 @@ function formatFullDate(date: string): string {
                         class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.06] px-4 py-3"
                     >
                         <p
-                            class="flex items-center gap-1.5 text-xs text-orange-800 dark:text-orange-200"
+                            class="flex items-center gap-1.5 text-xs text-orange-800"
                         >
                             <CheckCircle2 class="size-3.5" aria-hidden="true" />
                             {{ t('tasks.stats.completed') }}
@@ -91,7 +91,7 @@ function formatFullDate(date: string): string {
                         class="rounded-2xl border border-sky-500/15 bg-sky-500/[0.06] px-4 py-3"
                     >
                         <p
-                            class="flex items-center gap-1.5 text-xs text-sky-800 dark:text-sky-200"
+                            class="flex items-center gap-1.5 text-xs text-sky-800"
                         >
                             <PlusCircle class="size-3.5" aria-hidden="true" />
                             {{ t('dashboard.created') }}
@@ -118,7 +118,7 @@ function formatFullDate(date: string): string {
                         class="flex min-h-56 flex-col items-center justify-center gap-3 text-center"
                     >
                         <span
-                            class="flex size-12 items-center justify-center rounded-2xl border border-orange-500/15 bg-orange-500/[0.06] text-orange-700 dark:text-orange-300"
+                            class="flex size-12 items-center justify-center rounded-2xl border border-orange-500/15 bg-orange-500/[0.06] text-orange-700"
                         >
                             <Activity class="size-5" aria-hidden="true" />
                         </span>

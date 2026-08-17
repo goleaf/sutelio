@@ -5,7 +5,6 @@ import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon
 import { reactiveOmit } from "@vueuse/core"
 import { computed } from "vue"
 import { Toaster as Sonner } from "vue-sonner"
-import { useAppearance } from "@/composables/useAppearance"
 import { useUi } from "@/composables/useUi"
 import { cn } from "@/lib/utils"
 
@@ -14,7 +13,6 @@ import "vue-sonner/style.css"
 const props = defineProps<ToasterProps>()
 type ToastOptions = NonNullable<ToasterProps["toastOptions"]>
 const delegatedProps = reactiveOmit(props, "class", "containerAriaLabel", "style", "theme", "toastOptions")
-const { resolvedAppearance } = useAppearance()
 const { t } = useUi()
 
 const toasterStyle = computed<CSSProperties>(() => ({
@@ -49,7 +47,7 @@ const toastOptions = computed<ToastOptions>(() => ({
     :class="cn('toaster group', props.class)"
     :container-aria-label="props.containerAriaLabel ?? t('common.toast.notifications')"
     :style="toasterStyle"
-    :theme="props.theme ?? resolvedAppearance"
+    theme="light"
     :toast-options="toastOptions"
   >
     <template #success-icon>

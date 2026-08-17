@@ -15,32 +15,32 @@ const destinations = [
     {
         key: 'dashboard',
         icon: LayoutDashboard,
-        tone: 'text-orange-600 dark:text-orange-300',
+        tone: 'text-orange-600',
     },
     {
         key: 'tasks',
         icon: ListChecks,
-        tone: 'text-orange-600 dark:text-orange-300',
+        tone: 'text-orange-600',
     },
     {
         key: 'projects',
         icon: FolderKanban,
-        tone: 'text-blue-600 dark:text-blue-300',
+        tone: 'text-blue-600',
     },
     {
         key: 'calendar',
         icon: CalendarDays,
-        tone: 'text-blue-600 dark:text-blue-300',
+        tone: 'text-blue-600',
     },
     {
         key: 'activity',
         icon: Activity,
-        tone: 'text-slate-600 dark:text-slate-300',
+        tone: 'text-slate-600',
     },
     {
         key: 'notifications',
         icon: Bell,
-        tone: 'text-slate-600 dark:text-slate-300',
+        tone: 'text-slate-600',
     },
 ] as const;
 </script>

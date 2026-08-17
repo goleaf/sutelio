@@ -2,8 +2,6 @@
 <html
     lang="{{ str_replace('_', '-', $page['props']['locale'] ?? 'en') }}"
     dir="ltr"
-    data-appearance="{{ $appearance ?? 'system' }}"
-    @class(['dark' => ($appearance ?? 'system') === 'dark'])
 >
     <head>
         <meta charset="utf-8">
@@ -11,7 +9,6 @@
         <meta name="application-name" content="{{ $page['props']['name'] }}">
         <meta name="apple-mobile-web-app-title" content="{{ $page['props']['name'] }}">
         <meta name="theme-color" content="#123C8B">
-        <script src="/theme.js"></script>
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">

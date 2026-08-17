@@ -88,7 +88,7 @@ function deleteFromActions(todo: Todo): void {
 </script>
 
 <template>
-    <div class="space-y-2.5">
+    <div class="ui-stagger space-y-2.5">
         <article
             v-for="todo in todos"
             :key="todo.id"
@@ -131,7 +131,7 @@ function deleteFromActions(todo: Todo): void {
                 >
                     <Check
                         v-if="todo.is_completed"
-                        class="size-4 text-emerald-600 dark:text-emerald-400"
+                        class="size-4 text-emerald-600"
                         aria-hidden="true"
                     />
                     <Circle
@@ -191,7 +191,7 @@ function deleteFromActions(todo: Todo): void {
                         class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
                         :class="
                             isOverdue(todo)
-                                ? 'border-red-500/50 text-red-700 dark:text-red-300'
+                                ? 'border-red-500/50 text-red-700'
                                 : ''
                         "
                         variant="outline"

@@ -52,8 +52,7 @@ const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const { t } = useUi();
 
-const activeItemStyles =
-    'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
+const activeItemStyles = 'text-neutral-900';
 
 const mainNavItems = computed<NavItem[]>(() => [
     {
@@ -181,7 +180,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 </Link>
                                 <div
                                     v-if="isCurrentUrl(item.href)"
-                                    class="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"
+                                    class="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black"
                                 ></div>
                             </NavigationMenuItem>
                         </NavigationMenuList>
@@ -254,7 +253,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         :alt="auth.user.name"
                                     />
                                     <AvatarFallback
-                                        class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
+                                        class="rounded-lg bg-neutral-200 font-semibold text-black"
                                     >
                                         {{ getInitials(auth.user?.name) }}
                                     </AvatarFallback>

@@ -209,10 +209,7 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
         <aside
             class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
         >
-            <Clock3
-                class="size-5 text-orange-600 dark:text-orange-300"
-                aria-hidden="true"
-            />
+            <Clock3 class="size-5 text-orange-600" aria-hidden="true" />
             <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
             <p class="mt-1 text-sm leading-6 text-muted-foreground">
                 {{ copy.preview_description }}

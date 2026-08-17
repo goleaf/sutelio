@@ -14,7 +14,7 @@ const { t } = useUi();
 
 <template>
     <div
-        class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-muted/20 p-4 sm:p-6 md:p-10"
+        class="ui-page-surface relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-muted/20 p-4 sm:p-6 md:p-10"
     >
         <div
             class="pointer-events-none absolute -top-32 -right-24 size-96 rounded-full border-[72px] border-orange-500/[0.055]"
@@ -50,7 +50,7 @@ const { t } = useUi();
                         </Link>
                         <div class="min-w-0 space-y-1.5 text-left">
                             <p
-                                class="text-[0.7rem] font-semibold tracking-[0.16em] text-orange-700 uppercase dark:text-orange-300"
+                                class="text-[0.7rem] font-semibold tracking-[0.16em] text-orange-700 uppercase"
                             >
                                 {{ t('auth.common.eyebrow') }}
                             </p>

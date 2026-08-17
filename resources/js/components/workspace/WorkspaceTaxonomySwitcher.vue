@@ -27,22 +27,22 @@ const items = computed<
     {
         section: 'statuses',
         icon: CircleDotDashed,
-        tone: 'text-emerald-700 dark:text-emerald-300',
+        tone: 'text-emerald-700',
     },
     {
         section: 'priorities',
         icon: Flag,
-        tone: 'text-amber-700 dark:text-amber-300',
+        tone: 'text-amber-700',
     },
     {
         section: 'labels',
         icon: Palette,
-        tone: 'text-sky-700 dark:text-sky-300',
+        tone: 'text-sky-700',
     },
     {
         section: 'tags',
         icon: Tags,
-        tone: 'text-violet-700 dark:text-violet-300',
+        tone: 'text-violet-700',
     },
 ]);
 </script>

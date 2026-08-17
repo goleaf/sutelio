@@ -154,7 +154,7 @@ function subjectLabel(subjectType: string): string {
 
 function initials(name: string): string {
     return name
-        .split(' ')
+        .split('')
         .map((part) => part[0])
         .join('')
         .slice(0, 2)
@@ -195,23 +195,23 @@ function eventIcon(event: ActivityLog['event']): Component {
 
 function eventTone(event: ActivityLog['event']): string {
     if (event === 'created') {
-        return 'bg-orange-500/12 text-orange-700 dark:text-orange-300';
+        return 'bg-orange-500/12 text-orange-700';
     }
 
     if (['updated', 'attached', 'detached'].includes(event)) {
-        return 'bg-sky-500/12 text-sky-700 dark:text-sky-300';
+        return 'bg-sky-500/12 text-sky-700';
     }
 
     if (['completed', 'uncompleted'].includes(event)) {
-        return 'bg-emerald-500/12 text-emerald-700 dark:text-emerald-300';
+        return 'bg-emerald-500/12 text-emerald-700';
     }
 
     if (event === 'recurrence_generated') {
-        return 'bg-violet-500/12 text-violet-700 dark:text-violet-300';
+        return 'bg-violet-500/12 text-violet-700';
     }
 
     if (event === 'deleted') {
-        return 'bg-red-500/12 text-red-700 dark:text-red-300';
+        return 'bg-red-500/12 text-red-700';
     }
 
     return 'bg-foreground/6 text-foreground/70';

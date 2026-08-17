@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
-import { BadgeCheck } from '@lucide/vue';
+import { BadgeCheck, Send } from '@lucide/vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -62,6 +62,7 @@ defineProps<{
                     data-test="email-password-reset-link-button"
                 >
                     <Spinner v-if="processing" />
+                    <Send v-else class="size-4" aria-hidden="true" />
                     {{ t('auth.forgot_password.submit') }}
                 </Button>
             </div>

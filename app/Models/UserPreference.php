@@ -42,7 +42,7 @@ class UserPreference extends Model
 
     protected $fillable = [
         'user_id', 'timezone', 'language', 'date_format', 'time_format',
-        'theme', 'default_view', 'start_page', 'week_start',
+        'default_view', 'start_page', 'week_start',
         'notification_email', 'notification_browser', 'notification_in_app',
         'onboarding_version', 'onboarding_step', 'onboarding_run_id', 'onboarding_state',
         'onboarding_started_at', 'onboarding_completed_at', 'onboarding_skipped_at',
@@ -65,7 +65,7 @@ class UserPreference extends Model
     }
 
     /**
-     * @return array{timezone: string, language: string, date_format: string, time_format: string, theme: string, default_view: string, start_page: string, week_start: string, notification_email: bool, notification_browser: bool, notification_in_app: bool}
+     * @return array{timezone: string, language: string, date_format: string, time_format: string, default_view: string, start_page: string, week_start: string, notification_email: bool, notification_browser: bool, notification_in_app: bool}
      */
     public static function defaults(): array
     {
@@ -74,7 +74,6 @@ class UserPreference extends Model
             'language' => 'en',
             'date_format' => 'Y-m-d',
             'time_format' => 'H:i',
-            'theme' => 'system',
             'default_view' => 'list',
             'start_page' => 'dashboard',
             'week_start' => 'sunday',

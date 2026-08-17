@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
+import { KeyRound, ShieldCheck } from '@lucide/vue';
 import { computed, ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
@@ -92,15 +93,17 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     :disabled="processing"
                 >
                     <Spinner v-if="processing" />
+                    <ShieldCheck v-else class="size-4" aria-hidden="true" />
                     {{ t('auth.two_factor.continue') }}
                 </Button>
                 <div class="text-center text-sm text-muted-foreground">
                     <span>{{ t('auth.two_factor.or_you_can') }} </span>
                     <button
                         type="button"
-                        class="cursor-pointer rounded-md font-medium text-orange-700 underline decoration-orange-500/35 underline-offset-4 transition-colors duration-200 hover:text-orange-800 hover:decoration-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:text-orange-300 dark:hover:text-orange-200"
+                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-md font-medium text-orange-700 underline decoration-orange-500/35 underline-offset-4 transition-colors duration-200 hover:text-orange-800 hover:decoration-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         @click="() => toggleRecoveryMode(clearErrors)"
                     >
+                        <KeyRound class="size-3.5" aria-hidden="true" />
                         {{ authConfigContent.buttonText }}
                     </button>
                 </div>
@@ -131,6 +134,7 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     :disabled="processing"
                 >
                     <Spinner v-if="processing" />
+                    <ShieldCheck v-else class="size-4" aria-hidden="true" />
                     {{ t('auth.two_factor.continue') }}
                 </Button>
 
@@ -138,9 +142,10 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     <span>{{ t('auth.two_factor.or_you_can') }} </span>
                     <button
                         type="button"
-                        class="cursor-pointer rounded-md font-medium text-orange-700 underline decoration-orange-500/35 underline-offset-4 transition-colors duration-200 hover:text-orange-800 hover:decoration-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none dark:text-orange-300 dark:hover:text-orange-200"
+                        class="inline-flex cursor-pointer items-center gap-1.5 rounded-md font-medium text-orange-700 underline decoration-orange-500/35 underline-offset-4 transition-colors duration-200 hover:text-orange-800 hover:decoration-orange-500 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         @click="() => toggleRecoveryMode(clearErrors)"
                     >
+                        <KeyRound class="size-3.5" aria-hidden="true" />
                         {{ authConfigContent.buttonText }}
                     </button>
                 </div>

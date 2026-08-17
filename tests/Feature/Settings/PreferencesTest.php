@@ -2,9 +2,10 @@
 
 use App\Models\User;
 use App\Models\UserPreference;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('preferences page is the canonical settings page for preferences and appearance', function () {
+test('preferences page is the canonical settings page for regional and navigation preferences', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
@@ -29,6 +30,36 @@ test('legacy appearance page redirects to preferences', function () {
         ->assertRedirectToRoute('preferences.edit');
 });
 
+test('appearance is fixed to the light design and is no longer persisted', function () {
+    expect(Schema::hasColumn('user_preferences', 'theme'))->toBeFalse()
+        ->and(file_exists(resource_path('js/components/AppearanceTabs.vue')))->toBeFalse()
+        ->and(file_exists(resource_path('js/composables/useAppearance.ts')))->toBeFalse()
+        ->and(file_exists(public_path('theme.js')))->toBeFalse();
+
+    $preferencesPage = file_get_contents(resource_path('js/pages/settings/Preferences.vue'));
+
+    expect($preferencesPage)
+        ->not->toContain('AppearanceTabs')
+        ->not->toContain('settings.preferences.appearance');
+});
+
+test('theme preference removal is reversible and preserves populated rows', function () {
+    $preferences = UserPreference::factory()->create();
+    $migration = require database_path('migrations/2026_08_17_114137_drop_theme_from_user_preferences_table.php');
+
+    expect(Schema::hasColumn('user_preferences', 'theme'))->toBeFalse();
+
+    $migration->down();
+
+    expect(Schema::hasColumn('user_preferences', 'theme'))->toBeTrue()
+        ->and(UserPreference::query()->whereKey($preferences)->value('theme'))->toBe('system');
+
+    $migration->up();
+
+    expect(Schema::hasColumn('user_preferences', 'theme'))->toBeFalse()
+        ->and(UserPreference::query()->whereKey($preferences)->exists())->toBeTrue();
+});
+
 test('settings preferences pages require authentication', function (string $routeName) {
     $this->get(route($routeName))
         ->assertRedirectToRoute('login');
@@ -37,13 +68,13 @@ test('settings preferences pages require authentication', function (string $rout
     'legacy appearance redirect' => 'appearance.edit',
 ]);
 
-test('preferences page contains the shared appearance control', function () {
+test('preferences page omits the retired appearance control', function () {
     $preferencesPage = file_get_contents(resource_path('js/pages/settings/Preferences.vue'));
     $settingsLayout = file_get_contents(resource_path('js/layouts/settings/Layout.vue'));
 
     expect($preferencesPage)
-        ->toContain("import AppearanceTabs from '@/components/AppearanceTabs.vue'")
-        ->toContain('<AppearanceTabs />')
+        ->not->toContain("import AppearanceTabs from '@/components/AppearanceTabs.vue'")
+        ->not->toContain('<AppearanceTabs />')
         ->and($settingsLayout)
         ->not->toContain("label: 'Appearance'");
 });

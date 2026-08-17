@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
-import { BellRing, Mail, Monitor } from '@lucide/vue';
+import { BellRing, Mail, Monitor, Save } from '@lucide/vue';
 import { computed, onMounted, ref } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -105,7 +105,7 @@ async function requestBrowserPermission(): Promise<void> {
                         class="flex min-h-20 items-center gap-4 rounded-2xl border border-border/70 bg-muted/20 p-4 transition-colors hover:bg-muted/35"
                     >
                         <div
-                            class="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700 dark:text-orange-300"
+                            class="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700"
                         >
                             <component
                                 :is="option.icon"
@@ -177,6 +177,7 @@ async function requestBrowserPermission(): Promise<void> {
             <div class="mt-4 flex justify-end">
                 <Button type="submit" size="lg" :disabled="form.processing">
                     <Spinner v-if="form.processing" />
+                    <Save v-else class="size-4" aria-hidden="true" />
                     {{ t('common.actions.save') }}
                 </Button>
             </div>

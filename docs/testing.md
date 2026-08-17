@@ -48,7 +48,7 @@ Critical identity, onboarding, workspace isolation, policy, token, backup/restor
 
 ## Browser Verification
 
-Use the existing browser automation/Boost logs rather than installing a duplicate framework. Critical smoke includes login, navigation, dashboard, tasks, project/task detail, workspaces/members, settings/security/backup/import, validation and dialogs at representative mobile/tablet/desktop widths, keyboard focus, dark/system mode, reduced motion, long translations, no horizontal overflow, and no fresh console/page errors.
+Use the existing browser automation/Boost logs rather than installing a duplicate framework. Critical smoke includes login, navigation, dashboard, tasks, project/task detail, workspaces/members, settings/security/backup/import, validation and dialogs at representative mobile/tablet/desktop widths, keyboard focus, the fixed light mode, reduced motion, long translations, no horizontal overflow, and no fresh console/page errors.
 
 The 2026-08-16 final smoke covered login, password confirmation, repeated keyboard Inertia navigation, dashboard/tasks/projects/calendar/activity/notifications/workspaces/profile/preferences/security at 1440x1000 and 390x844, activity URL filtering and mobile sheet state, reduced motion, dark media, and forced colors. Every checked page had one `h1`, no horizontal overflow, and no captured console/page error.
 

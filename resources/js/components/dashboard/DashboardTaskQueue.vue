@@ -37,8 +37,7 @@ const queueDesign = computed(() => {
     if (props.tone === 'overdue') {
         return {
             icon: AlertTriangle,
-            iconClass:
-                'border-red-500/15 bg-red-500/10 text-red-700 dark:text-red-300',
+            iconClass: 'border-red-500/15 bg-red-500/10 text-red-700',
             badgeVariant: 'destructive' as const,
         };
     }
@@ -46,16 +45,14 @@ const queueDesign = computed(() => {
     if (props.tone === 'today') {
         return {
             icon: CalendarClock,
-            iconClass:
-                'border-sky-500/15 bg-sky-500/10 text-sky-700 dark:text-sky-300',
+            iconClass: 'border-sky-500/15 bg-sky-500/10 text-sky-700',
             badgeVariant: 'secondary' as const,
         };
     }
 
     return {
         icon: CalendarCheck2,
-        iconClass:
-            'border-orange-500/15 bg-orange-500/10 text-orange-700 dark:text-orange-300',
+        iconClass: 'border-orange-500/15 bg-orange-500/10 text-orange-700',
         badgeVariant: 'outline' as const,
     };
 });
@@ -163,7 +160,7 @@ function formattedDueDate(todo: Todo): string {
                         {{ t('dashboard.overdue') }}
                     </Badge>
                     <ArrowUpRight
-                        class="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-orange-700 group-focus-visible:text-orange-700 motion-reduce:transition-none dark:group-hover:text-orange-300 dark:group-focus-visible:text-orange-300"
+                        class="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-orange-700 group-focus-visible:text-orange-700 motion-reduce:transition-none"
                         aria-hidden="true"
                     />
                 </Link>

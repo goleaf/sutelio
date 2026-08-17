@@ -181,7 +181,7 @@ onBeforeUnmount(clearAvatarPreview);
             <CardHeader>
                 <div class="flex items-start gap-3">
                     <div
-                        class="flex size-10 items-center justify-center rounded-xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700 dark:text-orange-300"
+                        class="flex size-10 items-center justify-center rounded-xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700"
                     >
                         <Camera class="size-5" aria-hidden="true" />
                     </div>

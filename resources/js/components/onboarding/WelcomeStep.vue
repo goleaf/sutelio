@@ -24,7 +24,7 @@ const features = [
             >
                 <component
                     :is="feature.icon"
-                    class="size-5 text-orange-600 dark:text-orange-300"
+                    class="size-5 text-orange-600"
                     aria-hidden="true"
                 />
                 <h2 class="mt-4 text-base font-semibold">
@@ -36,7 +36,7 @@ const features = [
             </article>
         </div>
         <p
-            class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 text-sm leading-6 text-emerald-950 dark:text-emerald-100"
+            class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 text-sm leading-6 text-emerald-950"
         >
             {{ copy.privacy }}
         </p>

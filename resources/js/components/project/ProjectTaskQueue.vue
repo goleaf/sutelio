@@ -181,7 +181,7 @@ function dueLabel(task: ProjectTask): string {
                             :class="
                                 task.is_completed
                                     ? 'text-muted-foreground line-through'
-                                    : 'group-hover:text-orange-800 dark:group-hover:text-orange-200'
+                                    : 'group-hover:text-orange-800'
                             "
                         >
                             {{ task.title }}

@@ -180,7 +180,7 @@ function clear(): void {
                     </span>
                     <span
                         v-if="activeFilterCount"
-                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums dark:text-orange-200"
+                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums"
                         >{{ activeFilterCount }}</span
                     >
                 </Button>
@@ -327,7 +327,7 @@ function clear(): void {
                 class="min-h-11 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none disabled:opacity-50 motion-reduce:transition-none"
                 :class="
                     attention === option.value
-                        ? 'bg-orange-500/10 text-orange-800 dark:text-orange-200'
+                        ? 'bg-orange-500/10 text-orange-800'
                         : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground'
                 "
                 @click="applyAttention(option.value)"
@@ -451,7 +451,7 @@ function clear(): void {
                             class="min-h-11 rounded-xl border px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
                             :class="
                                 attention === option.value
-                                    ? 'border-orange-500/25 bg-orange-500/10 text-orange-800 dark:text-orange-200'
+                                    ? 'border-orange-500/25 bg-orange-500/10 text-orange-800'
                                     : 'border-border/80 text-muted-foreground'
                             "
                             @click="attention = option.value"

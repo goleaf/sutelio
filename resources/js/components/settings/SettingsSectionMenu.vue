@@ -41,7 +41,7 @@ const activeItem = computed(
                     <span class="sr-only">{{ openLabel }}</span>
                     <span class="flex min-w-0 items-center gap-3">
                         <span
-                            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card text-orange-700 shadow-sm ring-1 ring-border/70 dark:text-orange-300"
+                            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card text-orange-700 shadow-sm ring-1 ring-border/70"
                         >
                             <component
                                 v-if="activeItem"
@@ -95,7 +95,7 @@ const activeItem = computed(
                         }}</span>
                         <Check
                             v-if="item.active"
-                            class="size-4 text-orange-700 dark:text-orange-300"
+                            class="size-4 text-orange-700"
                             aria-hidden="true"
                         />
                     </Link>

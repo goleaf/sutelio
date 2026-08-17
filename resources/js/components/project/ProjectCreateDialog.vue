@@ -228,7 +228,7 @@ async function submit(): Promise<void> {
                             :class="[
                                 'flex min-h-12 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,color] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
                                 form.icon === option.value
-                                    ? 'border-orange-500/50 bg-orange-500/10 text-orange-700 shadow-sm dark:text-orange-300'
+                                    ? 'border-orange-500/50 bg-orange-500/10 text-orange-700 shadow-sm'
                                     : 'border-border/80 bg-background text-muted-foreground hover:border-orange-500/25 hover:bg-orange-500/[0.04] hover:text-foreground',
                             ]"
                             :disabled="form.processing"

@@ -24,7 +24,7 @@ const topics = [
             >
                 <component
                     :is="topic.icon"
-                    class="size-5 text-orange-600 dark:text-orange-300"
+                    class="size-5 text-orange-600"
                     aria-hidden="true"
                 />
                 <h2 class="mt-4 font-semibold">
@@ -36,7 +36,7 @@ const topics = [
             </article>
         </div>
         <p
-            class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-4 text-sm leading-6 text-blue-950 dark:text-blue-100"
+            class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-4 text-sm leading-6 text-blue-950"
         >
             {{ canManageWorkspace ? copy.manager_note : copy.member_note }}
         </p>

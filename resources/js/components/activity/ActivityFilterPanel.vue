@@ -95,7 +95,7 @@ function clearFilters(): void {
                     class="min-h-11 shrink-0 rounded-xl border px-3.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 disabled:opacity-50 motion-reduce:transition-none"
                     :class="
                         filters.category === category.value
-                            ? 'border-orange-500/30 bg-orange-500/10 text-orange-800 dark:text-orange-200'
+                            ? 'border-orange-500/30 bg-orange-500/10 text-orange-800'
                             : 'border-border bg-card text-foreground/75 hover:bg-muted/60 hover:text-foreground'
                     "
                     @click="updateFilters({ category: category.value })"
@@ -239,10 +239,7 @@ function clearFilters(): void {
         >
             <div class="border-b border-border/70 px-1 pb-4">
                 <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Filter
-                        class="size-4 text-orange-600 dark:text-orange-400"
-                        aria-hidden="true"
-                    />
+                    <Filter class="size-4 text-orange-600" aria-hidden="true" />
                     {{ copy.activity.filters_title }}
                 </div>
                 <p class="mt-1.5 text-xs leading-5 text-muted-foreground">
@@ -271,7 +268,7 @@ function clearFilters(): void {
                             class="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 disabled:opacity-50 motion-reduce:transition-none"
                             :class="
                                 filters.category === category.value
-                                    ? 'bg-orange-500/10 text-orange-800 dark:text-orange-200'
+                                    ? 'bg-orange-500/10 text-orange-800'
                                     : 'text-foreground/75 hover:bg-muted/60 hover:text-foreground'
                             "
                             @click="updateFilters({ category: category.value })"

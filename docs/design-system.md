@@ -4,7 +4,7 @@
 
 ## Warm Precision Tokens
 
-The fixed Warm Precision language uses warm neutral canvases, explicit surface/foreground/border/focus semantics, orange editorial accents, non-color status text/icons, restrained depth, and light/dark/system color modes. `@theme` maps the application variables into discoverable Tailwind utilities.
+The fixed Warm Precision language uses warm neutral canvases, explicit surface/foreground/border/focus semantics, orange editorial accents, non-color status text/icons, restrained depth, and one light color mode. `@theme` maps the application variables into discoverable Tailwind utilities.
 
 | Token domain | Canonical examples                                                                            | Usage rule                                                                       |
 | ------------ | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -13,7 +13,7 @@ The fixed Warm Precision language uses warm neutral canvases, explicit surface/f
 | Shadow       | `shadow-panel`, `shadow-dialog`                                                               | Shared depth uses tokens; avoid decorative stacking                              |
 | Container    | `max-w-app`                                                                                   | Main workspaces share the bounded 92.5rem container                              |
 | Typography   | Instrument Sans font variables and Tailwind type scale                                        | Preserve readable line length, hierarchy, and translated expansion               |
-| Motion       | standard easing/duration plus `motion-reduce:*`                                               | Interaction feedback only; reduced-motion remains fully functional               |
+| Motion       | fast/standard/emphasized durations, shared easing, `ui-*` primitives, `motion-reduce:*`       | Orientation and interaction feedback only; reduced-motion remains fully functional |
 
 Static complete class names are required. String interpolation such as `bg-${status}` is prohibited and guarded by `ArchitectureContractTest.php`; controlled maps must contain complete class literals. `@source` covers first-party Vue/Blade/PHP paths that automatic discovery cannot infer.
 
@@ -36,7 +36,7 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 
 | Feature                                           | Decision and candidate                                | Responsive / accessibility / browser effect                | Evidence                       |
 | ------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------- | ------------------------------ |
-| CSS-first `@theme`, `@source`, custom variants    | Used in `app.css`                                     | Stable discovery and semantic light/dark utilities         | production build               |
+| CSS-first `@theme` and `@source`                  | Used in `app.css`                                     | Stable discovery and semantic light utilities              | production build               |
 | Data/ARIA/group/peer/has variants                 | Used where primitives expose state                    | State is synchronized with semantics                       | design and component tests     |
 | Reduced motion / forced colors                    | Used on critical interaction/motion paths             | Controls remain usable in emulated modes                   | browser smoke and source tests |
 | Logical properties                                | Preferred for direction-independent spacing/alignment | Better multilingual/RTL resilience                         | component review               |

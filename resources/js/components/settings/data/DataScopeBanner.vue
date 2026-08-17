@@ -15,14 +15,12 @@ const presentation = computed(() =>
     props.scope === 'workspace'
         ? {
               icon: Building2,
-              iconClass:
-                  'bg-orange-500/10 text-orange-800 ring-orange-500/15 dark:text-orange-200',
+              iconClass: 'bg-orange-500/10 text-orange-800 ring-orange-500/15',
               railClass: 'bg-orange-500',
           }
         : {
               icon: Database,
-              iconClass:
-                  'bg-amber-500/10 text-amber-800 ring-amber-500/20 dark:text-amber-200',
+              iconClass: 'bg-amber-500/10 text-amber-800 ring-amber-500/20',
               railClass: 'bg-amber-500',
           },
 );

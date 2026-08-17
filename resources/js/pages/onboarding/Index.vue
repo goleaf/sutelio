@@ -380,78 +380,84 @@ function skip(): void {
                             id="onboarding-step-form"
                             @submit.prevent="submit"
                         >
-                            <WelcomeStep
-                                v-if="activeStep === 'welcome'"
-                                :copy="copy.welcome"
-                            />
-                            <PreferencesStep
-                                v-else-if="activeStep === 'preferences'"
-                                :copy="copy.preferences"
-                                :draft="preferencesDraft"
-                                :timezones="timezones"
-                                :errors="form.errors"
-                                :processing="form.processing"
-                                @update:draft="updatePreferences"
-                            />
-                            <WorkspaceStep
-                                v-else-if="activeStep === 'workspace'"
-                                v-model:mode="form.mode"
-                                v-model:selected-id="form.workspace_id"
-                                v-model:name="form.name"
-                                v-model:description="form.description"
-                                :copy="copy.workspace"
-                                :workspaces="options.workspaces"
-                                :errors="form.errors"
-                                :processing="form.processing"
-                            />
-                            <ProjectStep
-                                v-else-if="activeStep === 'project'"
-                                v-model:mode="form.mode"
-                                v-model:selected-id="form.project_id"
-                                v-model:name="form.name"
-                                v-model:description="form.description"
-                                v-model:color="form.color"
-                                v-model:icon="form.icon"
-                                :copy="copy.project"
-                                :projects="options.projects"
-                                :errors="form.errors"
-                                :processing="form.processing"
-                            />
-                            <TaskStep
-                                v-else-if="activeStep === 'task'"
-                                v-model:mode="form.mode"
-                                v-model:selected-id="form.task_id"
-                                v-model:title="form.title"
-                                v-model:description="form.description"
-                                v-model:status-id="form.status_id"
-                                v-model:priority-id="form.priority_id"
-                                v-model:assignee-id="form.assigned_to"
-                                v-model:due-date="form.due_date"
-                                :copy="copy.task"
-                                :tasks="options.tasks"
-                                :members="options.members"
-                                :statuses="options.statuses"
-                                :priorities="options.priorities"
-                                :errors="form.errors"
-                                :processing="form.processing"
-                            />
-                            <ProductMapStep
-                                v-else-if="activeStep === 'product_map'"
-                                :copy="copy.product_map"
-                            />
-                            <SafetyStep
-                                v-else-if="activeStep === 'safety'"
-                                :copy="copy.safety"
-                                :can-manage-workspace="canManageWorkspace"
-                            />
-                            <ResultsStep
-                                v-else
-                                :copy="copy.results"
-                                :preferences="preferences"
-                                :workspace="selectedWorkspace"
-                                :project="selectedProject"
-                                :task="selectedTask"
-                            />
+                            <Transition name="ui-step" mode="out-in">
+                                <div :key="activeStep">
+                                    <WelcomeStep
+                                        v-if="activeStep === 'welcome'"
+                                        :copy="copy.welcome"
+                                    />
+                                    <PreferencesStep
+                                        v-else-if="activeStep === 'preferences'"
+                                        :copy="copy.preferences"
+                                        :draft="preferencesDraft"
+                                        :timezones="timezones"
+                                        :errors="form.errors"
+                                        :processing="form.processing"
+                                        @update:draft="updatePreferences"
+                                    />
+                                    <WorkspaceStep
+                                        v-else-if="activeStep === 'workspace'"
+                                        v-model:mode="form.mode"
+                                        v-model:selected-id="form.workspace_id"
+                                        v-model:name="form.name"
+                                        v-model:description="form.description"
+                                        :copy="copy.workspace"
+                                        :workspaces="options.workspaces"
+                                        :errors="form.errors"
+                                        :processing="form.processing"
+                                    />
+                                    <ProjectStep
+                                        v-else-if="activeStep === 'project'"
+                                        v-model:mode="form.mode"
+                                        v-model:selected-id="form.project_id"
+                                        v-model:name="form.name"
+                                        v-model:description="form.description"
+                                        v-model:color="form.color"
+                                        v-model:icon="form.icon"
+                                        :copy="copy.project"
+                                        :projects="options.projects"
+                                        :errors="form.errors"
+                                        :processing="form.processing"
+                                    />
+                                    <TaskStep
+                                        v-else-if="activeStep === 'task'"
+                                        v-model:mode="form.mode"
+                                        v-model:selected-id="form.task_id"
+                                        v-model:title="form.title"
+                                        v-model:description="form.description"
+                                        v-model:status-id="form.status_id"
+                                        v-model:priority-id="form.priority_id"
+                                        v-model:assignee-id="form.assigned_to"
+                                        v-model:due-date="form.due_date"
+                                        :copy="copy.task"
+                                        :tasks="options.tasks"
+                                        :members="options.members"
+                                        :statuses="options.statuses"
+                                        :priorities="options.priorities"
+                                        :errors="form.errors"
+                                        :processing="form.processing"
+                                    />
+                                    <ProductMapStep
+                                        v-else-if="activeStep === 'product_map'"
+                                        :copy="copy.product_map"
+                                    />
+                                    <SafetyStep
+                                        v-else-if="activeStep === 'safety'"
+                                        :copy="copy.safety"
+                                        :can-manage-workspace="
+                                            canManageWorkspace
+                                        "
+                                    />
+                                    <ResultsStep
+                                        v-else
+                                        :copy="copy.results"
+                                        :preferences="preferences"
+                                        :workspace="selectedWorkspace"
+                                        :project="selectedProject"
+                                        :task="selectedTask"
+                                    />
+                                </div>
+                            </Transition>
                         </form>
                     </OnboardingStepPanel>
                 </OnboardingShell>

@@ -24,7 +24,6 @@ class UserSeeder extends Seeder
                 'preferences' => [
                     'timezone' => 'America/New_York',
                     'language' => 'en',
-                    'theme' => 'dark',
                     'default_view' => 'list',
                 ],
             ],
@@ -34,7 +33,6 @@ class UserSeeder extends Seeder
                 'preferences' => [
                     'timezone' => 'Asia/Tokyo',
                     'language' => 'lt',
-                    'theme' => 'light',
                     'default_view' => 'list',
                 ],
             ],
@@ -44,7 +42,6 @@ class UserSeeder extends Seeder
                 'preferences' => [
                     'timezone' => 'Europe/Vilnius',
                     'language' => 'ru',
-                    'theme' => 'system',
                     'default_view' => 'board',
                 ],
             ],

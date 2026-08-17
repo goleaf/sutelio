@@ -24,11 +24,6 @@ return [
             'save' => 'Save',
             'saving' => 'Saving...',
         ],
-        'appearance' => [
-            'dark' => 'Dark',
-            'light' => 'Light',
-            'system' => 'System',
-        ],
         'errors' => [
             'generic' => 'Something went wrong.',
         ],
@@ -444,8 +439,6 @@ return [
         ],
         'preferences' => [
             'board_view' => 'Board',
-            'appearance' => 'Appearance',
-            'appearance_description' => 'Update the appearance settings for your account',
             'calendar_view' => 'Calendar',
             'date_format' => 'Date Format',
             'default_view' => 'Default View',

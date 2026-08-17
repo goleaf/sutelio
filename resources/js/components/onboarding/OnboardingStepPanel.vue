@@ -28,13 +28,13 @@ const validationErrors = computed(() =>
         <header class="border-b border-border/70 px-5 py-6 sm:px-7 sm:py-7">
             <div class="flex flex-wrap items-center gap-2">
                 <p
-                    class="text-xs font-semibold tracking-[0.14em] text-orange-700 uppercase dark:text-orange-300"
+                    class="text-xs font-semibold tracking-[0.14em] text-orange-700 uppercase"
                 >
                     {{ eyebrow }}
                 </p>
                 <span
                     v-if="replayBadge"
-                    class="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:text-blue-300"
+                    class="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-700"
                 >
                     {{ replayBadge }}
                 </span>
@@ -54,7 +54,7 @@ const validationErrors = computed(() =>
         <div class="space-y-5 p-5 sm:p-7">
             <div
                 v-if="recoveryMessage"
-                class="flex gap-3 rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-4 text-sm leading-6 text-blue-950 dark:text-blue-100"
+                class="flex gap-3 rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-4 text-sm leading-6 text-blue-950"
             >
                 <AlertCircle
                     class="mt-0.5 size-5 shrink-0"

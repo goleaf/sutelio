@@ -23,7 +23,7 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
     >
         <header class="flex items-start gap-3">
             <div
-                class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/12 text-orange-700 dark:text-orange-300"
+                class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/12 text-orange-700"
             >
                 <AlertTriangle class="size-4.5" aria-hidden="true" />
             </div>
@@ -91,7 +91,7 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
             class="mt-4 flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-card/50 px-4 text-center"
         >
             <CalendarCheck2
-                class="size-7 text-emerald-600 dark:text-emerald-400"
+                class="size-7 text-emerald-600"
                 aria-hidden="true"
             />
             <p class="mt-3 text-sm leading-5 text-muted-foreground">

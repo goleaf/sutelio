@@ -142,10 +142,7 @@ const dueDate = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <ListChecks
-                    class="size-5 text-orange-600 dark:text-orange-300"
-                    aria-hidden="true"
-                />
+                <ListChecks class="size-5 text-orange-600" aria-hidden="true" />
                 <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
                 <p class="mt-2 text-sm font-medium break-words">
                     {{ selected?.title }}

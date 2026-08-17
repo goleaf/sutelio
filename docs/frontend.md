@@ -10,11 +10,11 @@ Livewire, Volt, and Flux are not installed and are explicitly non-applicable. Re
 
 ## Warm Precision Design System
 
-The fixed product language is a warm neutral canvas, semantic surface layers, orange editorial accent, strong page hierarchy, generous rounded corners, restrained depth, and clear light/dark/system color modes. Runtime design-family switching is prohibited.
+The fixed product language is a warm neutral canvas, semantic surface layers, orange editorial accent, strong page hierarchy, generous rounded corners, restrained depth, and one intentional light color mode. Runtime design-family or color-mode switching is prohibited.
 
-`resources/css/app.css` is CSS-first Tailwind 4 configuration using `@import "tailwindcss"`, explicit sources, custom variants, semantic CSS variables, and theme mappings. The Vite Tailwind plugin is the compiler integration. Complete utility names must be statically discoverable; arbitrary values are one-off only and repeating values become tokens/components.
+`resources/css/app.css` is CSS-first Tailwind 4 configuration using `@import "tailwindcss"`, explicit sources, built-in state variants, semantic CSS variables, and theme mappings. The Vite Tailwind plugin is the compiler integration. Complete utility names must be statically discoverable; arbitrary values are one-off only and repeating values become tokens/components.
 
-Current token domains include background/surface/foreground/muted, border/input/ring, primary/accent, destructive and chart colors, sidebar surfaces, radii, typography, spacing, shadows, and motion. Logical start/end properties are preferred where they improve multilingual/RTL resilience.
+Current token domains include background/surface/foreground/muted, border/input/ring, primary/accent, destructive and chart colors, sidebar surfaces, radii, typography, spacing, shadows, and motion. Shared page, surface, control, stagger, and step transitions use the same motion tokens and collapse under `prefers-reduced-motion`. Logical start/end properties are preferred where they improve multilingual/RTL resilience.
 
 ## Interaction Contract
 
@@ -45,7 +45,7 @@ Guided onboarding uses a wide-screen progress rail and a compact sticky mobile p
 
 | Feature                                        | Candidate / decision                                       | Effect and evidence                                            |
 | ---------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
-| CSS-first `@theme`, `@source`, custom variants | Used in main stylesheet                                    | Static discovery and semantic tokens; production build         |
+| CSS-first `@theme` and `@source`               | Used in main stylesheet                                    | Static discovery and semantic tokens; production build         |
 | Data/ARIA/group/peer variants                  | Used through shared controls                               | State styling without dynamic class construction; design tests |
 | Reduced-motion / forced-colors variants        | Used where critical                                        | Accessibility behavior; source/browser checks                  |
 | Logical properties                             | Used where direction-independent layout helps              | Translation/RTL resilience                                     |
