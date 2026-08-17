@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { TriangleAlert } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
+import DialogActions from '@/components/shared/DialogActions.vue';
+import DialogBody from '@/components/shared/DialogBody.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogFooter } from '@/components/ui/dialog';
+import { Dialog } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -63,7 +65,7 @@ function confirm(): void {
             :accent="destructive ? 'red' : 'orange'"
             max-width-class="sm:max-w-md"
         >
-            <div class="space-y-6 px-6 py-6 sm:px-8">
+            <DialogBody>
                 <div
                     class="flex size-11 items-center justify-center rounded-2xl border"
                     :class="
@@ -87,30 +89,28 @@ function confirm(): void {
                         :autocomplete="'off'"
                     />
                 </div>
-                <DialogFooter
-                    class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
+            </DialogBody>
+            <DialogActions>
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                    :disabled="processing"
+                    @click="emit('update:open', false)"
                 >
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="lg"
-                        :disabled="processing"
-                        @click="emit('update:open', false)"
-                    >
-                        {{ cancelLabel }}
-                    </Button>
-                    <Button
-                        type="button"
-                        :variant="destructive ? 'destructive' : 'default'"
-                        size="lg"
-                        :disabled="processing || !confirmationMatches"
-                        @click="confirm"
-                    >
-                        <Spinner v-if="processing" />
-                        {{ confirmLabel }}
-                    </Button>
-                </DialogFooter>
-            </div>
+                    {{ cancelLabel }}
+                </Button>
+                <Button
+                    type="button"
+                    :variant="destructive ? 'destructive' : 'default'"
+                    size="lg"
+                    :disabled="processing || !confirmationMatches"
+                    @click="confirm"
+                >
+                    <Spinner v-if="processing" />
+                    {{ confirmLabel }}
+                </Button>
+            </DialogActions>
         </WorkspaceDialogContent>
     </Dialog>
 </template>

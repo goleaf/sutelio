@@ -109,6 +109,7 @@ test('active create dialogs reuse shared body and action composition', function 
     foreach ([
         'project create' => 'project/ProjectCreateDialog.vue',
         'task create' => 'task/TaskCreateDialog.vue',
+        'workspace confirmation' => 'shared/WorkspaceConfirmDialog.vue',
     ] as $name => $file) {
         $source = File::get(resource_path("js/components/{$file}"));
 
