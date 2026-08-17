@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
 import { Clock3 } from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LanguageFlag from '@/components/localization/LanguageFlag.vue';
 import type {
     OnboardingCopy,
     OnboardingPreferences,
@@ -14,7 +16,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useLanguagePreference } from '@/composables/useLanguagePreference';
+import { useUi } from '@/composables/useUi';
 import { formatDateValue } from '@/lib/formatters';
+import type { SupportedLanguage } from '@/types';
 
 const props = defineProps<{
     copy: OnboardingCopy['preferences'];
@@ -23,6 +28,9 @@ const props = defineProps<{
     errors: Record<string, string>;
     processing: boolean;
 }>();
+const page = usePage();
+const { form: languageForm, saveLanguage } = useLanguagePreference();
+const { t } = useUi();
 
 const emit = defineEmits<{
     'update:draft': [draft: OnboardingPreferences];
@@ -42,6 +50,20 @@ const timeFormat = preferenceModel('time_format');
 const defaultView = preferenceModel('default_view');
 const startPage = preferenceModel('start_page');
 const weekStart = preferenceModel('week_start');
+
+function handleLanguageChange(value: unknown): void {
+    if (typeof value !== 'string') {
+        return;
+    }
+
+    language.value = value as SupportedLanguage;
+    saveLanguage(value, {
+        onError: (currentLanguage) => {
+            language.value = currentLanguage;
+        },
+    });
+}
+
 const preview = computed(() =>
     formatDateValue(
         new Date(),
@@ -64,24 +86,45 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
         <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
                 <Label for="language">{{ copy.language }}</Label>
-                <Select v-model="language" :disabled="processing">
+                <Select
+                    :model-value="language"
+                    :disabled="processing || languageForm.processing"
+                    @update:model-value="handleLanguageChange"
+                >
                     <SelectTrigger
                         id="language"
-                        :aria-invalid="Boolean(errors.language)"
+                        :aria-invalid="
+                            Boolean(
+                                errors.language || languageForm.errors.language,
+                            )
+                        "
                     >
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem
-                            v-for="(label, value) in copy.languages"
-                            :key="value"
-                            :value="value"
+                            v-for="option in page.props.localization.options"
+                            :key="option.code"
+                            :value="option.code"
                         >
-                            {{ label }}
+                            <span class="flex items-center gap-2.5">
+                                <LanguageFlag :src="option.flag_url" />
+                                <span>{{ option.localized_name }}</span>
+                            </span>
                         </SelectItem>
                     </SelectContent>
                 </Select>
-                <InputError :message="errors.language" />
+                <InputError
+                    :message="languageForm.errors.language ?? errors.language"
+                />
+                <p
+                    v-if="languageForm.processing"
+                    class="text-sm text-muted-foreground"
+                    role="status"
+                    aria-live="polite"
+                >
+                    {{ t('localization.saving') }}
+                </p>
             </div>
             <div class="space-y-2">
                 <Label for="timezone">{{ copy.timezone }}</Label>

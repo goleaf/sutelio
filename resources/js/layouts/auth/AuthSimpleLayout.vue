@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import LanguageSwitcher from '@/components/localization/LanguageSwitcher.vue';
 import { useUi } from '@/composables/useUi';
 import { home } from '@/routes';
 
@@ -24,6 +25,10 @@ const { t } = useUi();
             class="pointer-events-none absolute -bottom-40 -left-32 size-[30rem] rounded-full border-[88px] border-orange-500/[0.035]"
             aria-hidden="true"
         />
+
+        <div class="absolute top-4 right-4 z-20 sm:top-6 sm:right-6">
+            <LanguageSwitcher />
+        </div>
 
         <div class="relative w-full max-w-md">
             <div

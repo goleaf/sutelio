@@ -23,4 +23,11 @@ Only external or environmental blockers belong here.
 - Impact: repository/runtime compatibility and emulator installation are verified, but this workstation cannot claim signed Android/iOS store artifacts or real-device release coverage.
 - Resolution trigger: provide protected signing/provisioning credentials through the release environment and perform signed real-device/store builds without committing secrets.
 
+## Apple Native Build Toolchain
+
+- Affected requirements: `sys-runtime-001`, `sys-user-003`.
+- Evidence: `DB_DATABASE=:memory: php artisan native:build --simulated --no-tty --no-interaction` prepared the 134,365,209-byte iOS Laravel/WebView archive, configured the generated Xcode project, installed CocoaPods, and then stopped at `tool 'xcodebuild' requires Xcode` because `xcode-select -p` points to `/Library/Developer/CommandLineTools`; `xcrun simctl` is likewise unavailable.
+- Impact: the shared responsive language implementation, iOS-mode Vite build, generated iOS project, and packaged runtime contents are verified on this workstation, but an iPhone/iPad simulator binary and runtime launch cannot be claimed here. The Android debug APK and desktop/phone/tablet browser matrix provide executable mobile-layout evidence without substituting for the missing Apple release gate.
+- Resolution trigger: install full Xcode, select its developer directory, create or boot an available iPhone/iPad simulator, rerun the NativePHP simulated/device build, and repeat the first-run plus persisted language workflow before an Apple release.
+
 Other entries may be added only with an exact failing command, affected requirement ID, and external dependency or unavailable environment. Difficult unfinished implementation is not a limitation.

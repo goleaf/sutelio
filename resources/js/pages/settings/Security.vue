@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
 import { Shield, ShieldCheck } from '@lucide/vue';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -35,10 +35,12 @@ withDefaults(
 const toast = useToast();
 const { t } = useUi();
 
-setLayoutProps<SettingsLayoutProps>({
-    settingsEyebrow: t('account.menu.settings'),
-    settingsTitle: t('settings.security.title'),
-    settingsDescription: t('settings.security.description'),
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        settingsEyebrow: t('account.menu.settings'),
+        settingsTitle: t('settings.security.title'),
+        settingsDescription: t('settings.security.description'),
+    });
 });
 
 const passwordForm = useForm({

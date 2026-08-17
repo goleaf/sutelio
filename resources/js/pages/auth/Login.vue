@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import { BadgeCheck, LogIn } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasskeyVerify from '@/components/PasskeyVerify.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
@@ -18,9 +19,11 @@ import { request } from '@/routes/password';
 
 const { t } = useUi();
 
-setLayoutProps({
-    title: t('auth.login.heading'),
-    description: t('auth.login.description'),
+watchEffect(() => {
+    setLayoutProps({
+        title: t('auth.login.heading'),
+        description: t('auth.login.description'),
+    });
 });
 
 defineProps<{

@@ -8,7 +8,7 @@ Accessibility is a release requirement, not a decorative review. The current int
 - Each page has one logical `h1`; headings remain nested by section.
 - Native elements provide semantics before ARIA is added. Inputs have labels, descriptions/errors, autocomplete, and `aria-invalid` where needed.
 - Icon-only controls have translated accessible names. Status is communicated by text/icon as well as color.
-- Dialogs and sheets use Reka focus trapping, Escape dismissal, return focus, accessible title/description, viewport-safe scroll, and at least 44px primary touch targets.
+- Dialogs and sheets use Reka focus trapping, Escape dismissal, return focus, accessible title/description, viewport-safe scroll, and at least 44px primary touch targets. The mandatory first-run language dialog is the documented exception: Escape, outside click, and a close control are disabled until a valid language is explicitly confirmed.
 - Destructive actions remain policy-authorized and use localized confirmation; confirmation never replaces server authorization.
 - Focus rings are visible in the fixed light mode. Keyboard order follows the DOM, and mutable lists use stable entity keys.
 - Motion is restrained and critical behavior remains available under `prefers-reduced-motion`; forced-colors mode retains control identity.
@@ -27,6 +27,8 @@ The Data Safety Center verification covered the current-section settings menu, w
 The authenticated landmark-integrity pass repeated dashboard, task index/detail, project index/detail, calendar, activity, notifications, workspace index/detail, and profile settings at 1440x1000 and 390x844. All 22 route/viewport checks exposed exactly one `main` and one `h1`, had zero horizontal overflow, and captured no console, page, failed-request, or HTTP error. The reusable task-detail body now starts its internal hierarchy at `h2`, leaving page and sheet shells responsible for their own top-level titles.
 
 The guided-onboarding pass verified a complete new-user journey, logout/login resume, invited-member adaptation, required skip, replay/exit, and Dashboard continuation. Desktop and 390x844 mobile rendering expose one `main` and one `h1`, connected heading focus after each step, a keyboard-reachable 44-pixel action sequence, focused validation summary and field links, no horizontal overflow, and usable dark, reduced-motion, and forced-colors presentation. The mobile footer keeps Skip separate and Back/Continue in a stable equal-width row.
+
+The global-language pass verifies the mandatory first-run dialog and persistent shell dropdown at desktop, 390x844 phone, and tablet widths. The dialog retains focus, cannot be dismissed with Escape or outside interaction, translates its title/description/language names/action immediately as the highlighted language changes, exposes a live saving state, fits without horizontal overflow, and clamps decorative motion under `prefers-reduced-motion`. Flags are local decorative assets; native names and localized text carry the meaning.
 
 Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizationTest.php`, `OnboardingFrontendTest.php`, `ActivityIntelligenceFrontendTest.php`, `NotificationCommandCenterFrontendTest.php`, `DataSafetyCenterFrontendTest.php`, direct TypeScript behavior tests, Vue type checking, ESLint, the production build, and the browser checks recorded in `docs/progress.md`.
 

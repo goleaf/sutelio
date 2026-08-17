@@ -51,6 +51,16 @@ return [
             'undo' => 'Atšaukti veiksmą',
         ],
     ],
+    'localization' => [
+        'choose' => 'Pasirinkite kalbą',
+        'continue' => 'Naudoti šią kalbą',
+        'first_run' => [
+            'description' => 'Pasirinkite visos „Sutelio“ aplinkos kalbą. Ją bet kada galėsite pakeisti kiekvieno ekrano viršuje.',
+            'title' => 'Sveiki atvykę į „Sutelio“',
+        ],
+        'saving' => 'Keičiama kalba...',
+        'switcher_label' => 'Keisti kalbą',
+    ],
     'auth' => [
         'common' => [
             'confirm_password' => 'Patvirtinkite slaptažodį',

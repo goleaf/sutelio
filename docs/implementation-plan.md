@@ -166,3 +166,16 @@ Requirements: `sys-runtime-001`, `sec-deps-001`, `data-sqlite-001`, `test-featur
 - [x] Run the final complete backend/frontend/static/data/diff gates, synchronize final evidence, commit only phase-owned files, and push `origin/main`.
 
 The ignored debug APK remains a local sideload artifact. Production signing and real-hardware release validation remain external release activities.
+
+## Global Language Selection — 2026-08-17
+
+Requirements: `sys-user-003`, `sys-user-002`, `sys-onboarding-001`, `i18n-001`, `i18n-format-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-motion-001`, `test-feature-001`, `test-static-001`, `git-delivery-001`.
+
+- [x] Define the account/device/session/browser/fallback precedence and a server-owned extensible EN/LT/RU catalog with local flag assets.
+- [x] Add failing-first coverage for first-run presentation, persistence, invalid input, account precedence, registration/login synchronization, shared shells, accessibility, and live translation behavior.
+- [x] Implement the validated and rate-limited locale action, encrypted long-lived cookie, shared Inertia props, mandatory animated first-run dialog, and global auth/authenticated dropdown.
+- [x] Reuse the same immediate locale mutation from Settings and onboarding, keep registration and document locale synchronized, and make persistent translated layout props reactive.
+- [x] Verify focused/full Pest, Pint, Larastan, frontend tests/types/lint/format/audit/build, isolated SQLite migration/seed integrity, web browser behavior, NativePHP packaging, and representative desktop/phone/tablet rendering.
+- [ ] Inspect the complete and staged diffs, preserve concurrent Signal Orange work, commit the attributable localization slice on `main`, push normally, and verify remote equality.
+
+Detailed design and execution order are recorded in `docs/superpowers/specs/2026-08-17-global-language-selection-design.md` and `docs/superpowers/plans/2026-08-17-global-language-selection.md`. The change adds no schema or dependency; rollback removes the locale endpoint/cookie/shared controls while preserving the pre-existing account preference column.

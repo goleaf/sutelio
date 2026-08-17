@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
+import { Head, setLayoutProps, useForm, usePage } from '@inertiajs/vue3';
 import { RotateCcw, Save, Sparkles } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import { restart as restartOnboarding } from '@/actions/App/Http/Controllers/OnboardingController';
 import InputError from '@/components/InputError.vue';
+import LanguageFlag from '@/components/localization/LanguageFlag.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -20,6 +22,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import { useLanguagePreference } from '@/composables/useLanguagePreference';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import { update } from '@/routes/preferences';
@@ -44,11 +47,15 @@ const props = defineProps<{
 }>();
 const toast = useToast();
 const { t } = useUi();
+const { form: languageForm, saveLanguage } = useLanguagePreference();
+const page = usePage();
 
-setLayoutProps<SettingsLayoutProps>({
-    settingsEyebrow: t('account.menu.settings'),
-    settingsTitle: t('settings.preferences.title'),
-    settingsDescription: t('settings.preferences.description'),
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        settingsEyebrow: t('account.menu.settings'),
+        settingsTitle: t('settings.preferences.title'),
+        settingsDescription: t('settings.preferences.description'),
+    });
 });
 
 const form = useForm({
@@ -74,11 +81,19 @@ function submit() {
     });
 }
 
-const languages = [
-    { value: 'en', label: 'settings.preferences.languages.en' },
-    { value: 'lt', label: 'settings.preferences.languages.lt' },
-    { value: 'ru', label: 'settings.preferences.languages.ru' },
-];
+function handleLanguageChange(value: unknown): void {
+    if (typeof value !== 'string') {
+        return;
+    }
+
+    form.language = value as PreferenceFields['language'];
+    saveLanguage(value, {
+        onError: (language) => {
+            form.language = language;
+        },
+    });
+}
+
 const dateFormats = ['Y-m-d', 'd/m/Y', 'm/d/Y', 'd.m.Y'];
 const timeFormats = ['H:i', 'h:i A'];
 const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
@@ -175,27 +190,54 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                                 t('settings.preferences.language')
                             }}</Label>
                             <Select
-                                v-model="form.language"
-                                :disabled="form.processing"
+                                :model-value="form.language"
+                                :disabled="
+                                    form.processing || languageForm.processing
+                                "
+                                @update:model-value="handleLanguageChange"
                             >
                                 <SelectTrigger
                                     id="language"
                                     :aria-invalid="
-                                        Boolean(form.errors.language)
+                                        Boolean(
+                                            form.errors.language ||
+                                            languageForm.errors.language,
+                                        )
                                     "
                                     ><SelectValue
                                 /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem
-                                        v-for="language in languages"
-                                        :key="language.value"
-                                        :value="language.value"
+                                        v-for="language in page.props
+                                            .localization.options"
+                                        :key="language.code"
+                                        :value="language.code"
                                     >
-                                        {{ t(language.label) }}
+                                        <span class="flex items-center gap-2.5">
+                                            <LanguageFlag
+                                                :src="language.flag_url"
+                                            />
+                                            <span>{{
+                                                language.localized_name
+                                            }}</span>
+                                        </span>
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
-                            <InputError :message="form.errors.language" />
+                            <InputError
+                                :message="
+                                    languageForm.errors.language ??
+                                    form.errors.language
+                                "
+                            />
+                            <p
+                                v-if="languageForm.processing"
+                                class="text-sm text-muted-foreground"
+                                role="status"
+                                aria-live="polite"
+                            >
+                                {{ t('localization.saving') }}
+                            </p>
                         </div>
                         <div class="space-y-2">
                             <Label for="timezone">{{

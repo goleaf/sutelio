@@ -38,6 +38,8 @@ Workspace membership is the tenant boundary. Every project, task, taxonomy, acti
 
 Inertia props are immutable inputs. Editable Vue drafts synchronize by durable entity identity and reset when the task/workspace changes. Async interactions expose action-specific progress, duplicate prevention, validation, recoverable failure, and completion. Wayfinder is the only application route-generation mechanism.
 
+Locale resolution is request-scoped and follows one explicit precedence chain: authenticated account preference, encrypted long-lived device cookie, session, `Accept-Language`, then English fallback. One validated, rate-limited web endpoint updates session/cookie state and, when authenticated, the existing `UserPreference` through the canonical action. The server shares the current locale, first-run state, extensible option catalog, owned flag URLs, and bounded first-run preview copy through Inertia; the same Laravel/session boundary is packaged by NativePHP for phone and tablet.
+
 The application bootstrap provides the authenticated `AppLayout`; onboarding pages provide a neutral single root and therefore retain exactly one `main` landmark. Onboarding step changes transfer focus to the connected step heading, validation transfers focus to one concise summary, and confirmation dialogs use the shared Reka-based focus lifecycle.
 
 ## Data And Runtime Processes
@@ -48,7 +50,7 @@ Files use configured disks and generated names. Avatars, attachments, and backup
 
 ## Frontend And Design
 
-The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded light surfaces, orange focus/action accents, mobile-first responsive layouts, shared reduced-motion-safe transitions, and one light color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs.
+The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded light surfaces, orange focus/action accents, mobile-first responsive layouts, shared reduced-motion-safe transitions, and one light color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs; shared auth and authenticated shells expose the same locale selector and react to successful Inertia locale changes without a parallel client translation store.
 
 Livewire, Volt, and Flux are not architectural layers. Adding them would create a second page/state/request/component/testing/localization system and violates the repository contract.
 

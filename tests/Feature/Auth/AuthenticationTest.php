@@ -25,12 +25,16 @@ test('users can authenticate using the login screen', function () {
 
 test('successful login and the home route honor the preferred start page', function () {
     $user = User::factory()->create();
-    UserPreference::factory()->for($user)->create(['start_page' => 'projects']);
+    UserPreference::factory()->for($user)->create([
+        'language' => 'ru',
+        'start_page' => 'projects',
+    ]);
 
     $this->post(route('login.store'), [
         'email' => $user->email,
         'password' => 'password',
-    ])->assertRedirect(route('projects', absolute: false));
+    ])->assertRedirect(route('projects', absolute: false))
+        ->assertCookie('sutelio_locale', 'ru');
 
     $this->get(route('home'))
         ->assertRedirectToRoute('projects');

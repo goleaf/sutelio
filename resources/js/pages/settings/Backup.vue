@@ -8,7 +8,7 @@ import {
     RotateCcw,
     TriangleAlert,
 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import {
     dataSafetyPluralForm,
     formatDataSize,
@@ -55,10 +55,12 @@ const availableSummary = computed(() => {
     });
 });
 
-setLayoutProps<SettingsLayoutProps>({
-    settingsEyebrow: t('account.menu.settings'),
-    settingsTitle: t('settings.backup.title'),
-    settingsDescription: t('settings.backup.description'),
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        settingsEyebrow: t('account.menu.settings'),
+        settingsTitle: t('settings.backup.title'),
+        settingsDescription: t('settings.backup.description'),
+    });
 });
 
 function createBackup(): void {

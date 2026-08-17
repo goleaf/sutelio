@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
 import { BadgeCheck, Camera, ImageUp, Trash2 } from '@lucide/vue';
-import { computed, onBeforeUnmount, ref, useTemplateRef } from 'vue';
+import {
+    computed,
+    onBeforeUnmount,
+    ref,
+    useTemplateRef,
+    watchEffect,
+} from 'vue';
 import {
     destroyAvatar,
     update,
@@ -80,11 +86,13 @@ const props = defineProps<{
 
 const { t } = useUi();
 
-setLayoutProps<SettingsLayoutProps>({
-    navigationLabel: props.labels.navigation_label,
-    settingsEyebrow: t('account.menu.settings'),
-    settingsTitle: props.labels.title,
-    settingsDescription: props.labels.description,
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        navigationLabel: props.labels.navigation_label,
+        settingsEyebrow: t('account.menu.settings'),
+        settingsTitle: props.labels.title,
+        settingsDescription: props.labels.description,
+    });
 });
 
 const toast = useToast();

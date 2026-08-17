@@ -51,6 +51,16 @@ return [
             'undo' => 'Undo',
         ],
     ],
+    'localization' => [
+        'choose' => 'Choose language',
+        'continue' => 'Use this language',
+        'first_run' => [
+            'description' => 'Choose the language for the entire Sutelio experience. You can change it anytime from the top of every screen.',
+            'title' => 'Welcome to Sutelio',
+        ],
+        'saving' => 'Changing language...',
+        'switcher_label' => 'Change language',
+    ],
     'auth' => [
         'common' => [
             'confirm_password' => 'Confirm password',

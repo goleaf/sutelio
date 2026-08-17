@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import { ShieldCheck } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import {
     index as confirmOptions,
     store as confirmStore,
@@ -16,9 +17,11 @@ import { store } from '@/routes/password/confirm';
 
 const { t } = useUi();
 
-setLayoutProps({
-    title: t('auth.confirm_password.heading'),
-    description: t('auth.confirm_password.description'),
+watchEffect(() => {
+    setLayoutProps({
+        title: t('auth.confirm_password.heading'),
+        description: t('auth.confirm_password.description'),
+    });
 });
 </script>
 

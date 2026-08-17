@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import { BadgeCheck, Send } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -14,9 +15,11 @@ import { email } from '@/routes/password';
 
 const { t } = useUi();
 
-setLayoutProps({
-    title: t('auth.forgot_password.heading'),
-    description: t('auth.forgot_password.description'),
+watchEffect(() => {
+    setLayoutProps({
+        title: t('auth.forgot_password.heading'),
+        description: t('auth.forgot_password.description'),
+    });
 });
 
 defineProps<{

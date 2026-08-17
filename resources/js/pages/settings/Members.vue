@@ -9,7 +9,7 @@ import {
     UserCog,
     UserPlus,
 } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -114,24 +114,29 @@ const managerCount = computed(
     () => props.members.filter((member) => member.role !== 'member').length,
 );
 
-setLayoutProps<SettingsLayoutProps>({
-    settingsEyebrow: props.copy.eyebrow,
-    settingsTitle: props.copy.title.replace(':workspace', props.workspace.name),
-    settingsDescription: props.copy.description,
-    settingsMetrics: [
-        {
-            label: props.copy.total_members,
-            value: props.members.length,
-            icon: 'users',
-            tone: 'orange',
-        },
-        {
-            label: props.copy.managers,
-            value: managerCount.value,
-            icon: 'shield',
-            tone: 'emerald',
-        },
-    ],
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        settingsEyebrow: props.copy.eyebrow,
+        settingsTitle: props.copy.title.replace(
+            ':workspace',
+            props.workspace.name,
+        ),
+        settingsDescription: props.copy.description,
+        settingsMetrics: [
+            {
+                label: props.copy.total_members,
+                value: props.members.length,
+                icon: 'users',
+                tone: 'orange',
+            },
+            {
+                label: props.copy.managers,
+                value: managerCount.value,
+                icon: 'shield',
+                tone: 'emerald',
+            },
+        ],
+    });
 });
 
 const filteredMembers = computed(() => {

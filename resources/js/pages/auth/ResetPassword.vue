@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import { KeyRound } from '@lucide/vue';
-import { ref } from 'vue';
+import { ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
@@ -13,9 +13,11 @@ import { update } from '@/routes/password';
 
 const { t } = useUi();
 
-setLayoutProps({
-    title: t('auth.reset_password.heading'),
-    description: t('auth.reset_password.description'),
+watchEffect(() => {
+    setLayoutProps({
+        title: t('auth.reset_password.heading'),
+        description: t('auth.reset_password.description'),
+    });
 });
 
 const props = defineProps<{

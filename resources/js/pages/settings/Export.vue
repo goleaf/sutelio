@@ -12,7 +12,7 @@ import {
     Upload,
 } from '@lucide/vue';
 import type { LucideIcon } from '@lucide/vue';
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref, watchEffect } from 'vue';
 import type { ComponentPublicInstance } from 'vue';
 import InputError from '@/components/InputError.vue';
 import {
@@ -115,10 +115,12 @@ const currentImportStage = computed(() =>
     }),
 );
 
-setLayoutProps<SettingsLayoutProps>({
-    settingsEyebrow: t('account.menu.settings'),
-    settingsTitle: t('settings.export.title'),
-    settingsDescription: t('settings.export.description'),
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        settingsEyebrow: t('account.menu.settings'),
+        settingsTitle: t('settings.export.title'),
+        settingsDescription: t('settings.export.description'),
+    });
 });
 
 function announceExport(format: ExportFormat): void {

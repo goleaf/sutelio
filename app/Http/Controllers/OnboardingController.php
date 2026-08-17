@@ -13,6 +13,7 @@ use App\Actions\DismissOnboardingChecklist;
 use App\Actions\RestartOnboarding;
 use App\Actions\SaveOnboardingPreferences;
 use App\Actions\SkipOnboarding;
+use App\Enums\UserLanguage;
 use App\Http\Requests\AdvanceOnboardingRequest;
 use App\Http\Requests\StoreOnboardingProjectRequest;
 use App\Http\Requests\StoreOnboardingTaskRequest;
@@ -21,6 +22,7 @@ use App\Http\Requests\UpdateOnboardingPreferencesRequest;
 use App\Models\User;
 use App\Models\UserPreference;
 use App\Queries\OnboardingQuery;
+use App\Services\LocalePreference;
 use DateTimeZone;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,6 +68,7 @@ class OnboardingController extends Controller
     public function preferences(
         UpdateOnboardingPreferencesRequest $request,
         SaveOnboardingPreferences $saveOnboardingPreferences,
+        LocalePreference $localePreference,
     ): RedirectResponse {
         $user = $request->user();
 
@@ -78,7 +81,11 @@ class OnboardingController extends Controller
         );
         $request->session()->put('locale', $preferences->language);
 
-        return to_route('onboarding.index');
+        $language = UserLanguage::tryFrom((string) $preferences->language)
+            ?? UserLanguage::English;
+
+        return to_route('onboarding.index')
+            ->withCookie($localePreference->remember($request, $language));
     }
 
     public function workspace(

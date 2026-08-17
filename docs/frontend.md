@@ -26,6 +26,7 @@ Current token domains include background/surface/foreground/muted, border/input/
 - Notification filters are canonical URL state coordinated by the page, while focused filter/feed/row components consume typed immutable props. Partial visits cancel superseded requests, refresh the user-local day boundary, and request only inbox props; row/browser presentation shares one localized content resolver.
 - Data Safety settings keep workspace transfer and application backup on separate authorized routes. Export remains available to workspace members, import controls are rendered only for policy-authorized managers, standalone HTTP validation results never trigger success effects, and destructive restore remains operator/password-confirmation gated.
 - Guided onboarding uses one typed Inertia form coordinator and eight focused step components. Step props remain immutable, drafts resynchronize from server identity, generated Wayfinder actions own every request, superseded visits are cancelled, and the sticky save/status/action regions expose saving, saved, resumed, error, pending, and confirmation states without blocking unrelated controls.
+- The global language control is owned by both primary shells and consumes one server-provided catalog. Its first-run dialog is intentionally non-dismissible until a valid choice is confirmed, previews all dialog copy in the highlighted language before submission, and uses the same Inertia locale mutation as the dropdown, Settings, and onboarding so persistent layout copy reacts without a duplicate client translation source.
 
 ## Accessibility And Responsive Requirements
 
@@ -34,6 +35,8 @@ Critical pages use semantic headings, labels/descriptions, associated errors, ac
 Authenticated routes must expose exactly one shell-owned `main` and one logical page `h1`. A source contract prevents page/layout landmark duplication, and the desktop/mobile browser matrix verifies the composed DOM rather than relying on source inspection alone.
 
 Mobile-first layouts are verified from 390 px through desktop/wide screens. Sidebars, dialogs, lists, filters, calendars, long names, and translated expansion must not create horizontal page overflow. Hover is never the sole affordance; touch targets and keyboard access coexist.
+
+The language switcher remains a 44-pixel keyboard/touch target at the top of guest and authenticated shells. The mandatory first-run dialog traps focus, blocks Escape/outside dismissal until confirmation, exposes title/description/status semantics, uses local SVG flags only as decorative reinforcement, wraps translated labels, and suppresses nonessential animation under reduced motion.
 
 Notification read-state and kind filters are named pressed-button groups, not tablists. The signal stream uses ordered Today/Earlier headings, explicit non-color read labels, one concise result live region, connected-node focus restoration, and 44-pixel controls at both tested widths.
 

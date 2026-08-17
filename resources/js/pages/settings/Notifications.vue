@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
 import { BellRing, Mail, Monitor, Save } from '@lucide/vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -23,10 +23,12 @@ const props = defineProps<{ preferences: UserPreference }>();
 const toast = useToast();
 const { t } = useUi();
 
-setLayoutProps<SettingsLayoutProps>({
-    settingsEyebrow: t('account.menu.settings'),
-    settingsTitle: t('settings.notifications.title'),
-    settingsDescription: t('settings.notifications.description'),
+watchEffect(() => {
+    setLayoutProps<SettingsLayoutProps>({
+        settingsEyebrow: t('account.menu.settings'),
+        settingsTitle: t('settings.notifications.title'),
+        settingsDescription: t('settings.notifications.description'),
+    });
 });
 
 const form = useForm({

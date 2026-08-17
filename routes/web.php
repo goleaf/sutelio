@@ -11,6 +11,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LabelController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProjectController;
@@ -30,6 +31,13 @@ use App\Http\Controllers\WorkspaceOwnershipController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::middleware('throttle:20,1')
+    ->prefix('locale')
+    ->name('locale.')
+    ->group(function (): void {
+        Route::put('/', LocaleController::class)->name('update');
+    });
 
 Route::middleware('auth')
     ->controller(OnboardingController::class)

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
+import { Form, Head, setLayoutProps, usePage } from '@inertiajs/vue3';
 import { UserPlus } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -17,10 +18,13 @@ defineProps<{
 }>();
 
 const { t } = useUi();
+const page = usePage();
 
-setLayoutProps({
-    title: t('auth.register.heading'),
-    description: t('auth.register.description'),
+watchEffect(() => {
+    setLayoutProps({
+        title: t('auth.register.heading'),
+        description: t('auth.register.description'),
+    });
 });
 </script>
 
@@ -34,6 +38,11 @@ setLayoutProps({
         v-slot="{ errors, processing }"
         class="flex flex-col gap-6"
     >
+        <input
+            type="hidden"
+            name="language"
+            :value="page.props.localization.current"
+        />
         <div class="grid gap-6">
             <div class="grid gap-2">
                 <Label for="name">{{ t('auth.common.name') }}</Label>

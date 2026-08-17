@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserLanguage;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\WorkspaceResource;
+use App\Services\LocalePreference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
@@ -13,6 +15,8 @@ use Inertia\Middleware;
 class HandleInertiaRequests extends Middleware
 {
     protected $rootView = 'app';
+
+    public function __construct(private readonly LocalePreference $localePreference) {}
 
     public function version(Request $request): ?string
     {
@@ -100,6 +104,12 @@ class HandleInertiaRequests extends Middleware
             'currentWorkspace' => fn () => $resolveNavigation()['currentWorkspace'],
             'navigation' => fn () => $resolveNavigation(),
             'preferences' => fn () => $user?->preferences,
+            'localization' => fn (): array => [
+                'current' => $request->getLocale(),
+                'requires_selection' => $this->localePreference->requiresSelection($request),
+                'options' => UserLanguage::frontendOptions(),
+                'previews' => UserLanguage::frontendPreviews(),
+            ],
             'ui' => fn (): array => $this->uiTranslations(),
             'workspaceUi' => fn (): array => $this->workspaceUiTranslations(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',

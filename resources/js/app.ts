@@ -6,7 +6,6 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
-import type { UserPreference } from '@/types/models';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Sutelio';
 
@@ -42,11 +41,9 @@ createInertiaApp({
 initializeFlashToast();
 
 router.on('success', (event) => {
-    const preferences = event.detail.page.props.preferences as
-        UserPreference | null | undefined;
-    const preferredLanguage = preferences?.language;
-    const language = ['en', 'lt', 'ru'].includes(preferredLanguage ?? '')
-        ? (preferredLanguage ?? 'en')
+    const currentLanguage = event.detail.page.props.localization.current;
+    const language = ['en', 'lt', 'ru'].includes(currentLanguage)
+        ? currentLanguage
         : 'en';
 
     document.documentElement.lang = language;

@@ -12,9 +12,11 @@ type TranslationReplacements = Record<string, number | string>;
 
 export function useUi() {
     const page = usePage();
-    const preferences = computed<FormattingPreferences>(
-        () => page.props.preferences ?? {},
-    );
+    const preferences = computed<FormattingPreferences>(() => ({
+        ...page.props.preferences,
+        language:
+            page.props.preferences?.language ?? page.props.localization.current,
+    }));
     const locale = computed(() =>
         resolveIntlLocale(preferences.value.language),
     );

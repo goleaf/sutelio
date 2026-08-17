@@ -1,4 +1,5 @@
 import type { Auth } from '@/types/auth';
+import type { LocalizationPageProps } from '@/types/localization';
 import type { UserPreference } from '@/types/models';
 import type { SidebarNavigation } from '@/types/navigation';
 import type { WorkspaceUiCopy } from '@/types/workspace-ui';
@@ -24,6 +25,8 @@ declare module '@inertiajs/core' {
             capabilities: {
                 manageDatabaseBackups: boolean;
             };
+            locale: string;
+            localization: LocalizationPageProps;
             navigation: SidebarNavigation;
             preferences: UserPreference | null;
             sidebarOpen: boolean;

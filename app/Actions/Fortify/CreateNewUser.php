@@ -4,10 +4,13 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
+use App\Enums\UserLanguage;
 use App\Models\User;
 use App\Models\UserPreference;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -23,10 +26,14 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             ...$this->profileRules(),
+            'language' => ['sometimes', Rule::enum(UserLanguage::class)],
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return DB::transaction(function () use ($input): User {
+        $language = UserLanguage::tryFrom($input['language'] ?? App::currentLocale())
+            ?? UserLanguage::English;
+
+        return DB::transaction(function () use ($input, $language): User {
             $user = User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
@@ -36,6 +43,7 @@ class CreateNewUser implements CreatesNewUsers
             $user->preferences()->create([
                 ...UserPreference::defaults(),
                 ...UserPreference::pendingOnboardingDefaults(),
+                'language' => $language->value,
             ]);
 
             return $user;
