@@ -3,6 +3,7 @@
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 
 $nativeBrandAndroidAssets = [
@@ -209,6 +210,94 @@ test('the approved Sutelio identity and package metadata are canonical', functio
     }
 });
 
+test('active first-party files contain no legacy product package or starter identity', function () {
+    $legacyIdentities = [
+        'Xiaomi'.' Mimo',
+        'xiaomi'.'-mimo',
+        'xiaomi'.'mimo',
+        'com.goleaf.'.'xiaomi'.'mimo',
+        'laravel/'.'vue-starter-kit',
+    ];
+    $documentationIndex = File::get(base_path('docs/index.md'));
+    $canonicalInventory = Str::between(
+        $documentationIndex,
+        '## Canonical Documents',
+        '## Historical Evidence',
+    );
+
+    preg_match_all('/^\| `([^`]+)`\s+\|/m', $canonicalInventory, $matches);
+
+    $canonicalFiles = collect($matches[1])->unique()->values();
+    $requiredCanonicalFiles = [
+        'AGENTS.md',
+        'README.md',
+        'CHANGELOG.md',
+        'docs/index.md',
+        'docs/requirements.md',
+        'docs/product-requirements.md',
+        'docs/non-functional-requirements.md',
+        'docs/architecture.md',
+        'docs/frontend.md',
+        'docs/design-system.md',
+        'docs/accessibility.md',
+        'docs/localization.md',
+        'docs/testing.md',
+        'docs/deployment.md',
+        'docs/current-state.md',
+        'docs/current-state-audit.md',
+        'docs/implementation-plan.md',
+        'docs/compliance-matrix.md',
+        'docs/code-review.md',
+        'docs/known-limitations.md',
+        'docs/progress.md',
+    ];
+
+    expect($canonicalFiles->all())->toContain(...$requiredCanonicalFiles);
+
+    foreach ($canonicalFiles as $canonicalFile) {
+        expect(File::isFile(base_path($canonicalFile)), $canonicalFile)->toBeTrue();
+    }
+
+    $rootFiles = [
+        '.env.example',
+        'composer.json',
+        'package.json',
+        'package-lock.json',
+    ];
+    $historicalCanonicalFiles = [
+        'docs/current-state-audit.md',
+        'docs/progress.md',
+    ];
+    $activeRoots = ['app', 'config', 'lang', 'resources/js', 'resources/views', 'routes'];
+    $paths = collect($rootFiles)
+        ->merge($canonicalFiles->diff($historicalCanonicalFiles))
+        ->map(static fn (string $path): string => base_path($path))
+        ->merge(collect($activeRoots)->flatMap(
+            static fn (string $path): array => collect(File::allFiles(base_path($path)))
+                ->map(static fn (SplFileInfo $file): string => $file->getPathname())
+                ->all(),
+        ))
+        ->unique();
+
+    foreach ($paths as $path) {
+        foreach ($legacyIdentities as $legacyIdentity) {
+            expect(File::get($path), $path)->not->toContain($legacyIdentity);
+        }
+    }
+
+    $currentStateAuditPath = base_path('docs/current-state-audit.md');
+    $currentStateAudit = File::get($currentStateAuditPath);
+    $historicalHeading = '## Historical Xiaomi'.' Mimo Evidence';
+
+    expect(substr_count($currentStateAudit, $historicalHeading), $currentStateAuditPath)->toBe(1);
+
+    $activeCurrentStateAudit = Str::before($currentStateAudit, $historicalHeading);
+
+    foreach ($legacyIdentities as $legacyIdentity) {
+        expect($activeCurrentStateAudit, $currentStateAuditPath)->not->toContain($legacyIdentity);
+    }
+});
+
 test('the Sutelio configuration fallbacks evaluate independently of local environment', function () {
     $environmentKeys = [
         'APP_NAME',
@@ -292,7 +381,7 @@ test('the remaining user-facing catalogs use Sutelio with locale contract parity
 
             expect($source, $path)
                 ->toContain('Sutelio')
-                ->not->toContain('Xiaomi Mimo')
+                ->not->toContain('Xiaomi'.' Mimo')
                 ->and(array_keys($localized), $path)
                 ->toBe(array_keys($english));
 
@@ -315,7 +404,7 @@ test('browser reminders use the Sutelio storage namespace', function () {
 
     expect($notificationsPage)
         ->toContain('const storageKey = `sutelio:browser-reminder:${notification.id}`;')
-        ->not->toContain('xiaomi-mimo:browser-reminder:');
+        ->not->toContain('xiaomi'.'-mimo:browser-reminder:');
 });
 
 test('backup downloads use the Sutelio public filename', function () {
@@ -323,7 +412,7 @@ test('backup downloads use the Sutelio public filename', function () {
 
     expect($controller)
         ->toContain("'sutelio-backup-'.now()->format('Ymd-His').'.sqlite'")
-        ->not->toContain("'xiaomi-mimo-backup-'");
+        ->not->toContain("'xiaomi"."-mimo-backup-'");
 });
 
 test('backup tests use isolated Sutelio temporary prefixes', function () {
@@ -332,10 +421,10 @@ test('backup tests use isolated Sutelio temporary prefixes', function () {
 
     expect($backupTest)
         ->toContain("sys_get_temp_dir().'/sutelio-test-backup-'.Str::uuid()")
-        ->not->toContain("sys_get_temp_dir().'/xiaomi-mimo-backup-'")
+        ->not->toContain("sys_get_temp_dir().'/xiaomi"."-mimo-backup-'")
         ->and($contractTest)
         ->toContain("sys_get_temp_dir().'/sutelio-test-backup-contract-'.Str::uuid()")
-        ->not->toContain("sys_get_temp_dir().'/xiaomi-mimo-backup-contract-'");
+        ->not->toContain("sys_get_temp_dir().'/xiaomi"."-mimo-backup-contract-'");
 });
 
 test('the pinned Instrument Sans inputs have the approved checksums', function () {
@@ -556,7 +645,8 @@ test('the native brand installer canonicalizes a fresh NativePHP template and is
 test('the native brand installer rejects an arbitrary stale application ID before writing', function () use ($createNativeBrandInstallerFixture, $nativeBrandPublishedFiles, $runNativeBrandInstaller, $snapshotNativeBrandFixture) {
     $temporaryRoot = $createNativeBrandInstallerFixture();
     $buildPath = $temporaryRoot.'/nativephp/android/app/build.gradle.kts';
-    File::put($buildPath, str_replace('applicationId = "REPLACE_APP_ID"', 'applicationId = "com.goleaf.xiaomimimo"', File::get($buildPath)));
+    $staleApplicationId = 'com.goleaf.'.'xiaomi'.'mimo';
+    File::put($buildPath, str_replace('applicationId = "REPLACE_APP_ID"', 'applicationId = "'.$staleApplicationId.'"', File::get($buildPath)));
     $before = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
 
     try {
@@ -565,7 +655,7 @@ test('the native brand installer rejects an arbitrary stale application ID befor
         expect($process->isSuccessful())
             ->toBeFalse()
             ->and($process->getErrorOutput().$process->getOutput())
-            ->toContain('com.goleaf.xiaomimimo')
+            ->toContain($staleApplicationId)
             ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
             ->toBe($before);
     } finally {
@@ -576,7 +666,8 @@ test('the native brand installer rejects an arbitrary stale application ID befor
 test('the native brand installer rejects an arbitrary stale application label before writing', function () use ($createNativeBrandInstallerFixture, $nativeBrandPublishedFiles, $runNativeBrandInstaller, $snapshotNativeBrandFixture) {
     $temporaryRoot = $createNativeBrandInstallerFixture();
     $manifestPath = $temporaryRoot.'/nativephp/android/app/src/main/AndroidManifest.xml';
-    File::put($manifestPath, str_replace('android:label="NativePHP"', 'android:label="Xiaomi Mimo"', File::get($manifestPath)));
+    $staleApplicationLabel = 'Xiaomi'.' Mimo';
+    File::put($manifestPath, str_replace('android:label="NativePHP"', 'android:label="'.$staleApplicationLabel.'"', File::get($manifestPath)));
     $before = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
 
     try {
@@ -585,7 +676,7 @@ test('the native brand installer rejects an arbitrary stale application label be
         expect($process->isSuccessful())
             ->toBeFalse()
             ->and($process->getErrorOutput().$process->getOutput())
-            ->toContain('Xiaomi Mimo')
+            ->toContain($staleApplicationLabel)
             ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
             ->toBe($before);
     } finally {
@@ -597,11 +688,13 @@ test('the native brand installer rejects canonical identity decoys in comments b
     $temporaryRoot = $createNativeBrandInstallerFixture();
     $buildPath = $temporaryRoot.'/nativephp/android/app/build.gradle.kts';
     $manifestPath = $temporaryRoot.'/nativephp/android/app/src/main/AndroidManifest.xml';
+    $staleApplicationId = 'com.goleaf.'.'xiaomi'.'mimo';
+    $staleApplicationLabel = 'Xiaomi'.' Mimo';
     File::put(
         $buildPath,
         "/* applicationId = \"com.goleaf.sutelio\" */\n// applicationId = \"com.goleaf.sutelio\"\n".str_replace(
             'applicationId = "REPLACE_APP_ID"',
-            'applicationId = "com.goleaf.xiaomimimo"',
+            'applicationId = "'.$staleApplicationId.'"',
             File::get($buildPath),
         ),
     );
@@ -610,7 +703,7 @@ test('the native brand installer rejects canonical identity decoys in comments b
         str_replace(
             '<application',
             "<!-- <application android:label=\"Sutelio\"/> -->\n    <application",
-            str_replace('android:label="NativePHP"', 'android:label="Xiaomi Mimo"', File::get($manifestPath)),
+            str_replace('android:label="NativePHP"', 'android:label="'.$staleApplicationLabel.'"', File::get($manifestPath)),
         ),
     );
     $before = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
@@ -621,7 +714,7 @@ test('the native brand installer rejects canonical identity decoys in comments b
         expect($process->isSuccessful())
             ->toBeFalse()
             ->and($process->getErrorOutput().$process->getOutput())
-            ->toContain('com.goleaf.xiaomimimo')
+            ->toContain($staleApplicationId)
             ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
             ->toBe($before);
     } finally {

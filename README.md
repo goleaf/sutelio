@@ -1,6 +1,8 @@
-# Xiaomi Mimo
+# Sutelio
 
-Xiaomi Mimo is a workspace-scoped task, project, and collaboration application built with Laravel 13, Inertia 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4, Reka UI primitives, Fortify, Sanctum, Wayfinder, Pest, Larastan, Pint, NativePHP Mobile, and SQLite.
+Sutelio is a local-first, workspace-scoped task and collaboration application for web and NativePHP Mobile.
+
+The implementation uses Laravel 13, Inertia 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4, Reka UI primitives, Fortify, Sanctum, Wayfinder, Pest, Larastan, Pint, and SQLite.
 
 ## Start Here
 
@@ -21,6 +23,8 @@ npm run build
 ```
 
 Laravel Herd serves this parked repository; do not start a second application server. Use Laravel Boost's absolute-URL tool before sharing a local URL.
+
+The canonical repository and Herd identities are [`goleaf/sutelio`](https://github.com/goleaf/sutelio) and `https://sutelio.test`. They become effective only after the verified in-place GitHub, checkout, and Herd rename in Task 12; until then, use the currently configured remote and Herd link rather than creating a replacement repository or site.
 
 For a non-destructive local demo graph:
 

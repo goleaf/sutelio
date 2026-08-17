@@ -204,12 +204,12 @@ Vue components must have a single root element.
 
 </laravel-boost-guidelines>
 
-<xiaomi-mimo-canonical-instructions>
+<sutelio-canonical-instructions>
 === mandatory reading order ===
 
 # Repository Purpose And Sources Of Truth
 
-Xiaomi Mimo is a local-first, workspace-scoped task and collaboration application for web and NativePHP Mobile. Before changing code, read this file, `docs/index.md`, `docs/requirements.md`, `docs/non-functional-requirements.md`, `docs/architecture.md`, `docs/compliance-matrix.md`, `docs/implementation-plan.md`, and the latest entry in `docs/progress.md`.
+Sutelio is a local-first, workspace-scoped task and collaboration application for web and NativePHP Mobile. Before changing code, read this file, `docs/index.md`, `docs/requirements.md`, `docs/non-functional-requirements.md`, `docs/architecture.md`, `docs/compliance-matrix.md`, `docs/implementation-plan.md`, and the latest entry in `docs/progress.md`.
 
 Source code, migrations, the live SQLite schema, routes, tests, and current canonical documentation outrank historical audits and plans. Historical files remain evidence only and must not be treated as active requirements.
 
@@ -245,7 +245,7 @@ Source code, migrations, the live SQLite schema, routes, tests, and current cano
 - Use built-in Inertia requests for mutations. Do not introduce Axios or custom fetch mutations unless an existing external integration specifically requires them.
 - Blade is only the Inertia bootstrap shell and safe presentation. Do not use `@php`, `@endphp`, database/model/service/facade/container calls, business calculations, or raw untrusted HTML in first-party Blade.
 - Tailwind uses the CSS-first Vite integration. Prefer semantic theme variables and shared components; keep complete class names statically discoverable and avoid unsafe dynamic class construction.
-- Preserve the fixed Warm Precision design system. Do not add runtime theme families; the existing light/dark/system appearance preference may only switch color mode.
+- Preserve the fixed Warm Precision design system and its single light color mode. Do not add runtime theme families or restore light/dark/system appearance switching.
 - Interfaces must remain keyboard, touch, screen-reader, zoom, reduced-motion, and forced-colors usable. Preserve native semantics, visible focus, meaningful labels, focus management, non-color status cues, and mobile-first layouts without horizontal overflow.
 
 === localization rules ===
@@ -267,14 +267,14 @@ Source code, migrations, the live SQLite schema, routes, tests, and current cano
 - Work on `main`. Preserve unrelated user changes, stage only phase-owned files, inspect the complete diff and staged diff, use semantic commits, never rewrite history or force-push, and push `origin main` only after the relevant gates pass.
 - Work is complete only when implementation, tests, documentation, migrations, seed data, security/accessibility review, quality gates, diff review, commit, and push status are all factual and synchronized. Never describe an unexecuted or failing check as passing.
 
-</xiaomi-mimo-canonical-instructions>
+</sutelio-canonical-instructions>
 
-<xiaomi-mimo-project-contract>
+<sutelio-project-contract>
 === permanent project rules ===
 
-# Xiaomi Mimo Engineering Contract
+# Sutelio Engineering Contract
 
-- Work in the existing `goleaf/xiaomi-mimo` repository on `main`; do not rebuild the application or create a replacement branch or pull request.
+- Work in the existing `goleaf/sutelio` repository on `main`; do not rebuild the application or create a replacement branch or pull request. The external GitHub repository and local Herd identity adopt this canonical name only when the in-place Task 12 rename is completed and verified.
 - Preserve Laravel 13, PHP 8.3+, Inertia 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4, Reka UI/shadcn-style components, Fortify, Sanctum, Wayfinder, Pest, Larastan, Pint, and SQLite.
 - SQLite is the only supported relational database. Do not add another database or Redis as an application requirement.
 - Do not introduce Vue Router as a replacement for Inertia, or add Livewire, Volt, React, jQuery, Alpine page logic, Filament, or Nova.
@@ -288,4 +288,4 @@ Source code, migrations, the live SQLite schema, routes, tests, and current cano
 - Before and after each phase, update `docs/progress.md` with files, migrations, packages, decisions, checks, limitations, next work, commit, and push status.
 - Commit only phase-related files using the required phase message and push to `origin main`; preserve unrelated user changes and record exact push failures.
 
-</xiaomi-mimo-project-contract>
+</sutelio-project-contract>

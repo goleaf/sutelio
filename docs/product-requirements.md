@@ -1,6 +1,6 @@
 # Product Requirements
 
-Xiaomi Mimo is a trustworthy local-first workspace command center for planning and completing projects and tasks across web and NativePHP Mobile. It is a serious multi-workspace application, not tutorial CRUD.
+Sutelio is a trustworthy local-first workspace command center for planning and completing projects and tasks across web and NativePHP Mobile. It is a serious multi-workspace application, not tutorial CRUD.
 
 ## Product Outcomes
 

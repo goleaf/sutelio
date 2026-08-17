@@ -4,6 +4,14 @@
 
 Laravel owns routing, Fortify/Sanctum authentication, authorization, validation, transactions, persistence, scheduling, files, notifications, versioned JSON, and Inertia page responses. Vue 3 pages use `<script setup lang="ts">`, the Composition API, typed Inertia props, Pinia only for genuine shared state, Wayfinder-generated routes/actions, Reka-based components, and Tailwind CSS 4. SQLite is the sole relational database. NativePHP packages the same Laravel application for mobile with its embedded runtime.
 
+## Product And Package Identity
+
+Sutelio is the single active product identity. Deterministic tracked brand inputs generate the stripe-free clean-S browser mark, one-color wordmark, raster icons, Android adaptive/monochrome resources, and native splash imagery. Android's external `applicationId` and the primary iOS bundle identifier are `com.goleaf.sutelio`; the custom deep-link scheme is `sutelio`.
+
+The generated Android `namespace = "com.nativephp.mobile"` is an internal NativePHP/JNI integration contract and must not be renamed to the external application ID. This active architecture decision supersedes contrary namespace language in historical Sutelio design and implementation plans. Both external mobile identifiers create a new operating-system sandbox: the application does not claim automatic access to or migration from the previous package's private SQLite files.
+
+Source and reproducible NativePHP generation satisfy the current part of `sys-brand-001`. A freshly inspected and installed Sutelio APK remains a Task 11 gate, while the in-place GitHub repository, checkout, and Herd identity change remains Task 12; neither is an application-runtime shortcut or a replacement repository.
+
 ## Module Boundaries
 
 - Identity: registration/login/reset/passkeys/two-factor/profile/preferences; email verification is intentionally absent.
@@ -50,7 +58,7 @@ Files use configured disks and generated names. Avatars, attachments, and backup
 
 ## Frontend And Design
 
-The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded light surfaces, orange focus/action accents, mobile-first responsive layouts, shared reduced-motion-safe transitions, and one light color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs; shared auth and authenticated shells expose the same locale selector and react to successful Inertia locale changes without a parallel client translation store.
+The fixed Warm Precision system uses semantic CSS variables, shared primitives, large rounded light surfaces, orange focus/action accents, mobile-first responsive layouts, shared reduced-motion-safe transitions, and one light color mode. Tailwind configuration is CSS-first through the Vite plugin. User-facing copy comes from shared English/Lithuanian/Russian catalogs; shared auth and authenticated shells expose the same locale selector and react to successful Inertia locale changes without a parallel client translation store. Older dark/system appearance requirements are superseded and must not reintroduce a runtime theme family.
 
 Livewire, Volt, and Flux are not architectural layers. Adding them would create a second page/state/request/component/testing/localization system and violates the repository contract.
 

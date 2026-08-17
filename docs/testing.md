@@ -8,6 +8,7 @@ Pest is the sole primary PHP test style. Feature tests cover framework-integrate
 - Workspace/project/task/child feature files: policies, validation, state transitions, isolation, files, recurrence/reminders, notifications, transfer/backup.
 - `tests/Feature/Api`: API v1 envelope, auth, ability, policy, resource, validation, and domain parity.
 - Schema/runtime/query/architecture files: migrations/FKs/indexes, SQLite health, application boundaries, resource typing, query counts, NativePHP, design/localization contracts.
+- `BrandIdentityTest.php`: canonical metadata, active-file legacy identity exclusion, deterministic clean-S geometry/raster outputs, browser/logo semantics, and safe NativePHP publication/rollback. `NativePhpMobileTest.php` separately protects runtime/package integration, including the external Sutelio IDs and unchanged internal Android namespace.
 - `resources/js/**/*.test.ts`: typed frontend state, onboarding progress/draft/plural contracts, CRUD and task/workspace interaction behavior.
 
 ## Per-Pass Workflow
@@ -33,6 +34,14 @@ npm run format:check
 npm run build
 ```
 
+The focused Sutelio documentation/identity gate is:
+
+```bash
+php artisan test --compact tests/Feature/BrandIdentityTest.php tests/Feature/FrontendLocalizationTest.php tests/Feature/NativePhpMobileTest.php
+```
+
+Automated brand tests prove deterministic source and generated-tree contracts, not a shipped artifact or human visual result. Browser verification must inspect title/metadata/favicon, shared/authentication logo composition, focus, forced colors, zoom, fixed-light behavior, and representative viewports. Task 11 must independently inspect the named APK's manifest/resources/signature/alignment/archives, clean-install it, and verify launcher, splash, in-app identity, SQLite sandbox, and logs before `sys-brand-001` can be marked fully verified.
+
 Migration and seeding checks must use isolated testing SQLite databases. Never run `migrate:fresh` against the local working database:
 
 ```bash
@@ -50,12 +59,12 @@ Critical identity, onboarding, workspace isolation, policy, token, backup/restor
 
 Use the existing browser automation/Boost logs rather than installing a duplicate framework. Critical smoke includes login, navigation, dashboard, tasks, project/task detail, workspaces/members, settings/security/backup/import, validation and dialogs at representative mobile/tablet/desktop widths, keyboard focus, the fixed light mode, reduced motion, long translations, no horizontal overflow, and no fresh console/page errors.
 
-The 2026-08-16 final smoke covered login, password confirmation, repeated keyboard Inertia navigation, dashboard/tasks/projects/calendar/activity/notifications/workspaces/profile/preferences/security at 1440x1000 and 390x844, activity URL filtering and mobile sheet state, reduced motion, dark media, and forced colors. Every checked page had one `h1`, no horizontal overflow, and no captured console/page error.
+The current browser contract covers login, password confirmation, repeated keyboard Inertia navigation, dashboard/tasks/projects/calendar/activity/notifications/workspaces/profile/preferences/security at 1440x1000 and 390x844, activity URL filtering and mobile sheet state, fixed-light presentation, reduced motion, and forced colors. Every checked page had one `h1`, no horizontal overflow, and no captured console/page error.
 
 The final Notification Command Center pass repeated the authenticated notification route at 1440x1000 and 390x844. Keyboard-activated read/kind filters produced and cleared canonical URL state, filtered empty state rendered correctly, both filter groups exposed pressed-button group semantics, the page retained one `main` and one `h1`, 44-pixel controls, zero overflow, reduced-motion suppression, and zero current console/page/request failures.
 
 The authenticated landmark-integrity pass added a source-level regression in `FrontendDesignTest.php` and exercised 11 representative routes at both 1440x1000 and 390x844. All 22 composed-DOM checks returned one shell-owned `main`, one page `h1`, zero horizontal overflow, and zero captured console, page, request, or HTTP error; the matrix includes task/project/workspace detail and nested profile settings layouts.
 
-The guided-onboarding smoke registered real disposable users, resumed after logout/login, changed EN/LT/RU preferences, created and preserved real workspace/project/task records, accepted a pre-registration signed invitation before the completion gate, exercised required skip and replay/exit, and verified Dashboard checklist visibility/dismissal. Desktop and 390x844 mobile checks covered heading/validation focus, keyboard submission, 44-pixel actions, one landmark/heading, no overflow, and dark/reduced-motion/forced-colors modes.
+The guided-onboarding smoke registered real disposable users, resumed after logout/login, changed EN/LT/RU preferences, created and preserved real workspace/project/task records, accepted a pre-registration signed invitation before the completion gate, exercised required skip and replay/exit, and verified Dashboard checklist visibility/dismissal. Desktop and 390x844 mobile checks covered heading/validation focus, keyboard submission, 44-pixel actions, one landmark/heading, no overflow, and fixed-light/reduced-motion/forced-colors modes.
 
 The global-language smoke covers the mandatory first-run dialog and shared shell switcher at 390x844, 820x1180, and 1440x1000. It verifies immediate whole-dialog Lithuanian/Russian preview before confirmation, persisted server-authoritative `PUT /locale` updates, document language and page-copy refresh, focus containment, blocked Escape, 44-pixel controls, reduced motion, local flags, no overflow, and zero current runtime/network failures. Account precedence, invalid input, registration inheritance, and login cookie synchronization remain deterministic Pest contracts so browser QA does not mutate the local user database.

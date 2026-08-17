@@ -15,6 +15,12 @@ The fixed Warm Precision language uses warm neutral canvases, explicit surface/f
 | Typography   | Instrument Sans font variables and Tailwind type scale                                        | Preserve readable line length, hierarchy, and translated expansion                 |
 | Motion       | fast/standard/emphasized durations, shared easing, `ui-*` primitives, `motion-reduce:*`       | Orientation and interaction feedback only; reduced-motion remains fully functional |
 
+## Sutelio Brand Geometry
+
+The master brand palette has exactly four identity tokens: cobalt `#123C8B`, deep cobalt `#0A285F`, Signal Orange `#FF6038`, and ivory `#FFF8E9`. The clean-S mark places a solid Signal Orange circle at 70% of the 512-unit artboard diameter on cobalt and uses one solid, stripe-free ivory S. Gradients, strokes, line decoration, and text elements are prohibited in the master mark.
+
+The Sutelio wordmark is one color, deep cobalt, and is exported as deterministic paths rather than live font text. Its final `o` is not orange. The darker accessible orange `#CD431F` is a solid-control surface derivative for white foreground text, not a fifth master-logo token. The runtime product remains light-only; no brand token establishes a dark/system mode or a switchable design family.
+
 ### Sutelio Signal Orange
 
 The complete Tailwind `orange-50` through `orange-950` scale is application-owned and anchored at the logo's exact signal orange `#FF6038`. `orange-500` maps directly to `--brand-orange`; lighter and darker steps form a perceptual brand ramp rather than inheriting Tailwind's default orange hue.

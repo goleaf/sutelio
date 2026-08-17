@@ -8,6 +8,12 @@ The persistent authenticated shell owns the document `main` landmark through `Si
 
 Livewire, Volt, and Flux are not installed and are explicitly non-applicable. Reka UI/shadcn-style components remain the focus/dialog/menu/select/checkbox primitive layer. Inertia's request APIs handle application mutations; Axios/custom fetch is not added as a parallel mutation system.
 
+## Sutelio Identity Flow
+
+`AppLogoIcon` consumes the deterministic `/favicon.svg` clean-S mark as a decorative image. `AppLogo` combines that mark with the unchanged Sutelio proper noun; `AppHeader`, `AppSidebar`, and the authentication layout reuse those components instead of embedding divergent artwork. The authentication logo link owns the accessible `Sutelio` name, while adjacent visible text names the product in shared navigation.
+
+The Inertia Blade shell remains query-free and receives the canonical application name from server props for the document title, application metadata, and Apple mobile title. It links the deterministic favicon and touch icon outputs and declares cobalt as the browser theme color. `npm run brand:build` is the only supported way to regenerate these tracked assets.
+
 ## Warm Precision Design System
 
 The fixed product language is a warm neutral canvas, semantic surface layers, orange editorial accent, strong page hierarchy, generous rounded corners, restrained depth, and one intentional light color mode. Runtime design-family or color-mode switching is prohibited.

@@ -1,4 +1,18 @@
-# Current-State Audit — 2026-08-16
+# Current-State Audit — 2026-08-17
+
+## Active Sutelio Brand Evidence
+
+The active product identity is Sutelio. Application/package metadata, configuration fallbacks, English/Lithuanian/Russian catalogs, Blade metadata, `AppLogo`/`AppLogoIcon`, deterministic clean-S and one-color wordmark sources, favicon/raster outputs, Android adaptive/monochrome sources, iOS icon/splash inputs, external `com.goleaf.sutelio` package/bundle identifiers, and the `sutelio` deep-link scheme are present in current source and guarded by `BrandIdentityTest.php` plus `NativePhpMobileTest.php`.
+
+Task 7 proved that the unchanged sequence `php artisan native:install --force --no-interaction && npm run brand:native` reproducibly canonicalizes a fresh NativePHP 4.2 tree. The generated Android external application ID is `com.goleaf.sutelio`, while its NativePHP/JNI namespace deliberately remains `com.nativephp.mobile`; active architecture and implementation-plan text supersede contrary historical plan language. The publication and rollback follow-ups were delivered by `66318c0` and `e50f9c1`, with the combined NativePHP/brand gate passing 45 tests / 4,249 assertions.
+
+This Task 8 documentation pass does not build or install a final rename APK and does not rename GitHub, the checkout, or Herd. Task 11 owns fresh artifact/hash/manifest/resource/signature/alignment/archive/emulator evidence; Task 12 owns the verified in-place repository and `sutelio.test` transition. Those requirements remain pending in `sys-brand-001`.
+
+## Historical Xiaomi Mimo Evidence
+
+The dated modernization baseline and artifact facts below are retained as historical evidence. They do not override the active Sutelio source contract or turn an older APK/hash/emulator result into Task 11 evidence.
+
+### 2026-08-16 Modernization Baseline
 
 This is the active modernization baseline. The July audit under `docs/audit` is preserved as historical evidence; its critical/high findings were subsequently addressed in the source and tests recorded by `docs/progress.md`.
 

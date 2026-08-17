@@ -4,6 +4,14 @@ All notable project changes are documented here.
 
 ## Unreleased
 
+### Brand Identity
+
+- Renamed the active product in place to Sutelio across application metadata, EN/LT/RU copy, deterministic browser/native brand sources, package metadata, and canonical engineering documentation while preserving earlier release and audit evidence.
+- Locked the stripe-free clean-S mark to cobalt `#123C8B`, deep cobalt `#0A285F`, Signal Orange `#FF6038`, and ivory `#FFF8E9`; the one-color wordmark, including its final `o`, remains deep cobalt.
+- Established `com.goleaf.sutelio` as the external Android application ID and iOS bundle ID, `sutelio` as the deep-link scheme, and `com.nativephp.mobile` as the unchanged NativePHP/JNI Android namespace. The new mobile package is an intentional clean-install sandbox with no automatic migration of private data from the previous package.
+- Preserved the delivered fixed light-only Warm Precision presentation; earlier dark/system verification entries below describe superseded historical behavior rather than a current runtime theme family.
+- Kept final Sutelio APK/emulator evidence and the in-place GitHub/Herd rename pending for Tasks 11 and 12; this documentation pass does not represent either external gate as complete.
+
 ### Runtime And Dependencies
 
 - Moved the Herd web/development runtime and CI to PHP 8.5 while retaining `>=8.4 <8.6` compatibility for NativePHP Mobile 4.2's embedded PHP 8.4 runtime.

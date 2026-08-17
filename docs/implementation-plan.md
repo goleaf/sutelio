@@ -180,3 +180,17 @@ Requirements: `sys-user-003`, `sys-user-002`, `sys-onboarding-001`, `i18n-001`, 
 - [x] Inspect the complete and staged diffs, preserve concurrent Signal Orange work, commit the attributable localization slice on `main`, push normally, and verify remote equality.
 
 Detailed design and execution order are recorded in `docs/superpowers/specs/2026-08-17-global-language-selection-design.md` and `docs/superpowers/plans/2026-08-17-global-language-selection.md`. The change adds no schema or dependency; rollback removes the locale endpoint/cookie/shared controls while preserving the pre-existing account preference column.
+
+## Sutelio Full Brand Rename — 2026-08-17
+
+Requirements: `sys-brand-001`, `ui-accessibility-001`, `i18n-001`, `test-feature-001`, `ops-deployment-001`, `docs-traceability-001`, `git-delivery-001`.
+
+- [x] Establish deterministic clean-S, one-color wordmark, favicon/raster, adaptive/monochrome Android, splash, configuration, package-metadata, storage-name, and EN/LT/RU source contracts under the Sutelio identity.
+- [x] Make `npm run brand:native` reproduce canonical Android/iOS identity and assets after a fresh NativePHP install, with complete preflight, containment, idempotence, and handled-failure rollback coverage.
+- [x] Synchronize active repository instructions, contributor/release entry points, requirement traceability, frontend/design/accessibility/localization/testing/deployment ownership, and current evidence while retaining historical audits/plans/progress.
+- [ ] Run the complete Task 9 application, static, frontend, data-safety, dependency, build, and delivery gates.
+- [ ] Complete Task 10 browser/visual verification in the fixed light mode, including zoom, focus, reduced motion, forced colors, metadata, favicon, and shared logo consumers.
+- [ ] Build, independently inspect, name, clean-install, and exercise the final Sutelio Android APK in Task 11; record artifact and emulator evidence only after it is observed.
+- [ ] Rename the existing GitHub repository, checkout, and Herd site in place and verify `goleaf/sutelio` plus `sutelio.test` in Task 12; do not create a replacement repository or rewrite history.
+
+The external Android `applicationId` and primary iOS bundle identifier are `com.goleaf.sutelio`; Android's internal NativePHP/JNI namespace remains `com.nativephp.mobile` and must not be renamed. This active contract supersedes contrary namespace language in historical brand specifications/plans. The application is also fixed light-only after the delivered appearance-removal phase; older dark/system verification language is historical and does not define a current runtime theme family.

@@ -4,6 +4,8 @@
 
 English (`en`), Lithuanian (`lt`), and Russian (`ru`) are supported with English fallback. PHP catalogs under `lang/{locale}` are the single translation source and are shared with Inertia; do not create a parallel JSON/JavaScript catalog.
 
+`Sutelio` is a proper noun and remains exactly `Sutelio` in English, Lithuanian, and Russian. Translate complete surrounding sentences and apply locale-appropriate grammar and punctuation there; do not translate, transliterate, inflect, or concatenate the product name itself.
+
 Locale resolution follows authenticated account preference, encrypted five-year device cookie, session, browser `Accept-Language`, then English fallback. Browser language is only the initial presentation hint: a guest without a prior explicit device/session choice receives the mandatory first-run dialog. A confirmed guest choice is stored in session and the encrypted HTTP-only cookie; login synchronizes the account preference back to the device, registration persists the selected locale, and authenticated changes update both account and device state.
 
 The server shares the selected locale, first-run state, extensible language option catalog, owned SVG flag URLs, and bounded first-run preview copy with Inertia. Auth and authenticated shells use the same selector. The first-run dialog translates its own complete copy immediately while the user compares choices, then confirmation triggers a normal Inertia locale update so the complete application, document `lang`, formatting, persistent layout headings, Settings, and onboarding refresh together. NativePHP phone/tablet builds use this same Laravel/session/cookie boundary rather than a second native preference implementation.
