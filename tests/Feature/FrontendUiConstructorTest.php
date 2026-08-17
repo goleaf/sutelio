@@ -44,18 +44,42 @@ test('field errors expose a stable component slot for described by wiring', func
         ->toContain('aria-live="polite"');
 });
 
-test('a representative active form composes the shared field contract', function () {
-    $source = File::get(resource_path('js/components/task/TaskCreateDialog.vue'));
+test('task title and description fields compose the shared form primitives', function () {
+    $titlePath = resource_path('js/components/task/TaskTitleField.vue');
+    $descriptionPath = resource_path('js/components/task/TaskDescriptionField.vue');
 
-    expect($source)
+    expect(File::exists($titlePath))->toBeTrue()
+        ->and(File::exists($descriptionPath))->toBeTrue();
+
+    expect(File::get($titlePath))
         ->toContain("import Field from '@/components/shared/Field.vue'")
+        ->toContain("import { Input } from '@/components/ui/input'")
         ->toContain('<Field')
-        ->toContain(':label="t(\'tasks.create.title\')"')
-        ->toContain(':error="form.errors.title"')
         ->toContain('#default="{ id, describedBy, invalid, required }"')
-        ->toContain(':id="id"')
         ->toContain(':aria-describedby="describedBy"')
         ->toContain(':aria-invalid="invalid"')
-        ->toContain(':required="required"')
-        ->not->toContain('<Label for="title">');
+        ->toContain(':required="required"');
+
+    expect(File::get($descriptionPath))
+        ->toContain("import Field from '@/components/shared/Field.vue'")
+        ->toContain("import { Textarea } from '@/components/ui/textarea'")
+        ->toContain('<Field')
+        ->toContain('<Textarea')
+        ->toContain(':aria-describedby="describedBy"')
+        ->toContain(':aria-invalid="invalid"');
+});
+
+test('task create and overview compose the same focused task fields', function () {
+    foreach ([
+        'task create' => 'TaskCreateDialog.vue',
+        'task overview' => 'TaskOverviewPanel.vue',
+    ] as $name => $file) {
+        $source = File::get(resource_path("js/components/task/{$file}"));
+
+        expect($source, $name)
+            ->toContain("import TaskTitleField from '@/components/task/TaskTitleField.vue'")
+            ->toContain("import TaskDescriptionField from '@/components/task/TaskDescriptionField.vue'")
+            ->toContain('<TaskTitleField')
+            ->toContain('<TaskDescriptionField');
+    }
 });

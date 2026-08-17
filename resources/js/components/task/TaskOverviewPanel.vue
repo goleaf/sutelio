@@ -3,6 +3,8 @@ import { useHttp } from '@inertiajs/vue3';
 import { Save } from '@lucide/vue';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import TaskDescriptionField from '@/components/task/TaskDescriptionField.vue';
+import TaskTitleField from '@/components/task/TaskTitleField.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -94,34 +96,20 @@ async function save(): Promise<void> {
             {{ t('tasks.detail.overview') }}
         </h2>
         <form class="space-y-4" @submit.prevent="save">
-            <div class="space-y-2">
-                <Label :for="`task-title-${todo.id}`">{{
-                    t('tasks.create.title')
-                }}</Label>
-                <Input
-                    :id="`task-title-${todo.id}`"
-                    v-model="form.title"
-                    maxlength="500"
-                    :disabled="form.processing"
-                    :aria-invalid="Boolean(form.errors.title)"
-                    @input="form.clearErrors('title')"
-                />
-                <InputError :message="form.errors.title" />
-            </div>
-            <div class="space-y-2">
-                <Label :for="`task-description-${todo.id}`">{{
-                    t('tasks.detail.description')
-                }}</Label>
-                <textarea
-                    :id="`task-description-${todo.id}`"
-                    v-model="form.description"
-                    rows="4"
-                    :disabled="form.processing"
-                    :aria-invalid="Boolean(form.errors.description)"
-                    class="flex min-h-24 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive"
-                />
-                <InputError :message="form.errors.description" />
-            </div>
+            <TaskTitleField
+                v-model="form.title"
+                :label="t('tasks.create.title')"
+                :error="form.errors.title"
+                :disabled="form.processing"
+                @input="form.clearErrors('title')"
+            />
+            <TaskDescriptionField
+                v-model="form.description"
+                :label="t('tasks.detail.description')"
+                :error="form.errors.description"
+                :disabled="form.processing"
+                @input="form.clearErrors('description')"
+            />
             <div class="grid gap-4 sm:grid-cols-3">
                 <div class="space-y-2">
                     <Label>{{ t('tasks.filters.status') }}</Label>

@@ -565,8 +565,13 @@ test('project creation selectors expose warm precision interaction states', func
 });
 
 test('task creation fields expose complete invalid and disabled states', function () {
-    expect(File::get(resource_path('js/components/task/TaskCreateDialog.vue')))
-        ->toContain(':aria-invalid="Boolean(form.errors.description)"')
+    $dialog = File::get(resource_path('js/components/task/TaskCreateDialog.vue'));
+    $descriptionField = File::get(resource_path('js/components/task/TaskDescriptionField.vue'));
+
+    expect($dialog)
+        ->toContain('<TaskDescriptionField')
+        ->toContain(':error="form.errors.description"')
+        ->toContain(':disabled="form.processing"')
         ->toContain(':aria-invalid="Boolean(form.errors.priority)"')
         ->toContain(':aria-invalid="Boolean(form.errors.due_date)"')
         ->toContain('form.errors.recurring_rule')
