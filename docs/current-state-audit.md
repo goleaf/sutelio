@@ -6,7 +6,7 @@ The active product identity is Sutelio. Application/package metadata, configurat
 
 Task 7 proved that the unchanged sequence `php artisan native:install --force --no-interaction && npm run brand:native` reproducibly canonicalizes a fresh NativePHP 4.2 tree. The generated Android external application ID is `com.goleaf.sutelio`, while its NativePHP/JNI namespace deliberately remains `com.nativephp.mobile`; active architecture and implementation-plan text supersede contrary historical plan language. The publication and rollback follow-ups were delivered by `66318c0` and `e50f9c1`, with the combined NativePHP/brand gate passing 45 tests / 4,249 assertions.
 
-This Task 8 documentation pass does not build or install a final rename APK and does not rename GitHub, the checkout, or Herd. Task 11 owns fresh artifact/hash/manifest/resource/signature/alignment/archive/emulator evidence; Task 12 owns the verified in-place repository and `sutelio.test` transition. Those requirements remain pending in `sys-brand-001`.
+Task 9 subsequently completed the application/data-safety quality baseline. The published successor plan supersedes the earlier pending numbering: Task 18 owns fresh browser evidence, Task 19 owns the post-design complete gates, Task 20 owns artifact/hash/manifest/resource/signature/alignment/archive/emulator evidence, Task 21 owns the verified in-place GitHub repository/checkout/Herd and `sutelio.test` transition, and Task 22 reserves installation on the connected Samsung as the final mutation. These successor tasks remain pending in `sys-brand-001` and are not claimed as executed here.
 
 ## Historical Xiaomi Mimo Evidence
 
@@ -17,6 +17,8 @@ The dated modernization baseline and artifact facts below are retained as histor
 This is the active modernization baseline. The July audit under `docs/audit` is preserved as historical evidence; its critical/high findings were subsequently addressed in the source and tests recorded by `docs/progress.md`.
 
 ## Post-Audit Runtime Verification — 2026-08-17
+
+Successor note: the following paragraph is preserved as dated historical evidence and uses “current” only relative to that earlier capture; its 763-test result is not the active suite status. The later Task 9 gates passed 831 tests / 32,899 assertions both sequentially and in isolated parallel execution plus all 45 frontend tests, while the coverage attempt exited before tests because Xdebug/PCOV is unavailable and produced no percentage.
 
 The dated baseline and modernization measurements below remain historical evidence. The current checkout runs Herd PHP 8.5.8 and NativePHP Mobile 4.2 with tracked embedded PHP 8.5.9. A complete compatible dependency refresh upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0 with zero Composer/npm advisories or compatible direct updates. The final suite passes 763 tests / 16,291 assertions sequentially and in parallel plus 45 frontend tests; Larastan, Pint, types, lint, format, build, isolated 36-migration seed/health verification, and runtime caches pass. The current debug APK hash, manifest, signature, archive, and device-test limitation are recorded in `docs/deployment.md` and the latest `docs/progress.md` entry and supersede older artifact measurements below.
 

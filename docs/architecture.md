@@ -10,7 +10,7 @@ Sutelio is the single active product identity. Deterministic tracked brand input
 
 The generated Android `namespace = "com.nativephp.mobile"` is an internal NativePHP/JNI integration contract and must not be renamed to the external application ID. This active architecture decision supersedes contrary namespace language in historical Sutelio design and implementation plans. Both external mobile identifiers create a new operating-system sandbox: the application does not claim automatic access to or migration from the previous package's private SQLite files.
 
-Source and reproducible NativePHP generation satisfy the current part of `sys-brand-001`. A freshly inspected and installed Sutelio APK remains a Task 11 gate, while the in-place GitHub repository, checkout, and Herd identity change remains Task 12; neither is an application-runtime shortcut or a replacement repository.
+Source and reproducible NativePHP generation satisfy the current part of `sys-brand-001`, and Task 9 supplies the completed application/data-safety baseline. The published successor plan supersedes the earlier pending numbering: Task 18 owns browser verification, Task 19 owns the post-design complete gates, Task 20 owns final APK/emulator verification, Task 21 owns the in-place GitHub repository/checkout/Herd rename, and Task 22 reserves physical Samsung installation as the last mutating action. None is an application-runtime shortcut or a replacement repository, and none is claimed complete here.
 
 ## Module Boundaries
 
