@@ -3,6 +3,7 @@ import { useHttp } from '@inertiajs/vue3';
 import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from '@lucide/vue';
 import { reactive, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import InlineState from '@/components/shared/InlineState.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -453,12 +454,10 @@ async function confirmDelete(): Promise<void> {
                 </div>
             </article>
 
-            <p
+            <InlineState
                 v-if="checklists.length === 0"
-                class="rounded-xl border border-dashed border-border/80 px-4 py-6 text-center text-sm text-muted-foreground"
-            >
-                {{ t('tasks.detail.no_checklists') }}
-            </p>
+                :description="t('tasks.detail.no_checklists')"
+            />
 
             <div class="flex flex-col gap-2 sm:flex-row">
                 <Input

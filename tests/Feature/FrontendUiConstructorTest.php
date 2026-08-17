@@ -158,3 +158,36 @@ test('active asynchronous actions delegate their visual pending state to the sha
             ->not->toMatch('/<(Spinner|LoaderCircle)\s+v-if="(?:form\.)?processing"/');
     }
 });
+
+test('the shared inline state owns compact feedback semantics and visual treatment', function () {
+    $path = resource_path('js/components/shared/InlineState.vue');
+
+    expect(File::exists($path))->toBeTrue();
+
+    expect(File::get($path))
+        ->toContain('type InlineStateStatus =')
+        ->toContain("'empty'", "'loading'", "'error'", "'success'", "'information'")
+        ->toContain('data-slot="inline-state"')
+        ->toContain(':data-status="props.status"')
+        ->toContain("if (props.status === 'error')")
+        ->toContain("return 'alert'")
+        ->toContain("props.status === 'loading' ? 'true' : undefined")
+        ->toContain('border-dashed border-border/80')
+        ->toContain('<slot />');
+});
+
+test('task collaboration panels reuse the shared compact empty state', function () {
+    foreach ([
+        'attachments' => 'TaskAttachmentsPanel.vue',
+        'checklists' => 'TaskChecklistPanel.vue',
+        'comments' => 'TaskCommentsPanel.vue',
+        'reminders' => 'TaskRemindersPanel.vue',
+    ] as $name => $file) {
+        $source = File::get(resource_path("js/components/task/{$file}"));
+
+        expect($source, $name)
+            ->toContain("import InlineState from '@/components/shared/InlineState.vue'")
+            ->toContain('<InlineState')
+            ->not->toContain('rounded-xl border border-dashed border-border/80 px-4 py-6 text-center text-sm text-muted-foreground');
+    }
+});

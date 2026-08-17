@@ -3,6 +3,7 @@ import { useHttp } from '@inertiajs/vue3';
 import { Bell, Trash2 } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import InlineState from '@/components/shared/InlineState.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -183,12 +184,10 @@ async function deleteReminder(reminder: Reminder): Promise<void> {
                     <Trash2 v-else class="size-4" aria-hidden="true" />
                 </Button>
             </div>
-            <p
+            <InlineState
                 v-if="reminders.length === 0"
-                class="rounded-xl border border-dashed border-border/80 px-4 py-6 text-center text-sm text-muted-foreground"
-            >
-                {{ t('tasks.detail.no_reminders') }}
-            </p>
+                :description="t('tasks.detail.no_reminders')"
+            />
         </div>
     </section>
 </template>

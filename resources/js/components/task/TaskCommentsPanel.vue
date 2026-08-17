@@ -3,6 +3,7 @@ import { useHttp } from '@inertiajs/vue3';
 import { MessageSquare, Pencil, Trash2 } from '@lucide/vue';
 import { reactive, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import InlineState from '@/components/shared/InlineState.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -284,12 +285,10 @@ async function deleteComment(): Promise<void> {
                 </p>
             </article>
 
-            <p
+            <InlineState
                 v-if="comments.length === 0 && !listRequest.processing"
-                class="rounded-xl border border-dashed border-border/80 px-4 py-6 text-center text-sm text-muted-foreground"
-            >
-                {{ t('tasks.detail.no_comments') }}
-            </p>
+                :description="t('tasks.detail.no_comments')"
+            />
 
             <Button
                 v-if="nextUrl"
