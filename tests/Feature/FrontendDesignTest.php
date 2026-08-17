@@ -270,6 +270,13 @@ test('authenticated content delegates the sole main landmark to the persistent s
     }
 });
 
+test('guest authentication content is contained by one main landmark', function () {
+    $layout = File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue'));
+
+    expect(substr_count($layout, '<main'))->toBe(1)
+        ->and(substr_count($layout, '</main>'))->toBe(1);
+});
+
 test('guided onboarding follows the warm responsive route design contract', function () {
     $page = File::get(resource_path('js/pages/onboarding/Index.vue'));
     $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));

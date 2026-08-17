@@ -14,7 +14,7 @@ const { t } = useUi();
 </script>
 
 <template>
-    <div
+    <main
         class="ui-page-surface relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-muted/20 p-4 sm:p-6 md:p-10"
     >
         <div
@@ -77,5 +77,5 @@ const { t } = useUi();
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 </template>
