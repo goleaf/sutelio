@@ -231,7 +231,7 @@ Requirements: `sys-brand-001`, `ui-accessibility-001`, `i18n-001`, `test-feature
 - [x] Complete successor Task 18 browser/visual verification in the fixed light mode, including zoom, focus, reduced motion, forced colors, metadata, favicon, and shared logo consumers.
 - [x] Run successor Task 19 complete application, dependency, build, and isolated data-safety gates after the design work; retain the completed Task 9 result as its own earlier evidence rather than presenting it as a Task 19 execution.
 - [x] Build, independently inspect, name, clean-install, and exercise the final Sutelio Android APK in the emulator in successor Task 20; record artifact and emulator evidence only after it is observed.
-- [ ] Rename the existing GitHub repository, checkout, and Herd site in place and verify `goleaf/sutelio` plus `sutelio.test` in successor Task 21; do not create a replacement repository or rewrite history.
+- [x] Rename the existing GitHub repository, checkout, and Herd site in place and verify `goleaf/sutelio` plus `sutelio.test` in successor Task 21; do not create a replacement repository or rewrite history.
 - [ ] Install and verify the final Task 20 artifact on the connected Samsung in successor Task 22 only after Tasks 18-21, Git delivery, and the repository/Herd rename are complete; keep this as the last mutating action.
 
 The external Android `applicationId` and primary iOS bundle identifier are `com.goleaf.sutelio`; Android's internal NativePHP/JNI namespace remains `com.nativephp.mobile` and must not be renamed. This active contract supersedes contrary namespace language in historical brand specifications/plans. The application is also fixed light-only after the delivered appearance-removal phase; older dark/system verification language is historical and does not define a current runtime theme family.
@@ -259,7 +259,7 @@ Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-
 - [x] Implement one token-safe `globalBusy` controller, Inertia lifecycle binding, configured standalone HTTP wrapper, and root teleported `GlobalBusyOverlay` without a new dependency.
 - [x] Preserve action-specific local feedback while excluding prefetch, polling, deferred/partial background refreshes, infinite scroll, and Precognition validation from the application lock.
 - [x] Record the permanent JavaScript rule and synchronize frontend, design-system, accessibility, localization, testing, NFR, compliance, and progress documentation.
-- [ ] The focused/full/static/dependency/data/build gates and independent Chrome DevTools and Playwright browser matrix pass; complete the semantic commit and normal `origin/main` push after Tasks 20-21.
+- [x] The focused/full/static/dependency/data/build gates and independent Chrome DevTools and Playwright browser matrix pass; complete the semantic commit and normal `origin/main` push after Tasks 20-21.
 
 Detailed design, execution order, rollback, and acceptance criteria are recorded in `docs/superpowers/specs/2026-08-17-global-operation-feedback-design.md` and `docs/superpowers/plans/2026-08-17-global-operation-feedback.md`. No schema, route, policy, API shape, package, lock-file, or database change is planned.
 
@@ -274,6 +274,7 @@ Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-
 - [x] Pass the focused 55-test / 2,879-assertion motion gate, 56 frontend tests, Vue type checking, ESLint, Prettier, and the production Vite build.
 - [x] Complete the independent Task 18 Chrome DevTools and Playwright matrix and Task 19 complete gates.
 - [x] Complete Task 20 APK/emulator verification.
-- [ ] Complete Task 21 in-place repository/Herd rename and final Task 22 Samsung installation.
+- [x] Complete Task 21 in-place repository/Herd rename.
+- [ ] Complete final Task 22 Samsung installation.
 
 The implementation follows `docs/superpowers/plans/2026-08-17-sutelio-soft-motion-ui-remediation-master-plan.md`. Physical-device installation remains the final mutation after source delivery, APK inspection/emulator proof, and the canonical repository/Herd rename.

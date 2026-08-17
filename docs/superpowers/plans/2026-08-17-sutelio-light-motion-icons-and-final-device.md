@@ -1140,7 +1140,7 @@ Verify `goleaf/sutelio` does not already exist, then rename `goleaf/xiaomi-mimo`
 
 Verify `/Users/andrejprus/Herd/sutelio` is absent, unlink only the old Herd site, move the exact checkout directory to `/Users/andrejprus/Herd/sutelio`, link it through Herd, update only ignored local `APP_URL`, and verify `https://sutelio.test` boot/browser smoke. Do not recursively delete or overwrite either path.
 
-- [ ] **Step 4: Publish final evidence before phone installation**
+- [x] **Step 4: Publish final evidence before phone installation**
 
 Commit/push canonical repository/Herd facts, verify `HEAD = origin/main = remote`, clean tracked tree, and confirm no source/doc/Git mutation remains after this point.
 
