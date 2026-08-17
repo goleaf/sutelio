@@ -365,7 +365,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
             class="overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/60"
         >
             <CardHeader class="sm:flex-row sm:items-center sm:justify-between">
-                <LeadingIconHeading>
+                <LeadingIconHeading class="flex-1">
                     <template #icon>
                         <span
                             class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
