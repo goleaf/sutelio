@@ -649,6 +649,49 @@ test('the native brand installer rejects a mixed template and canonical identity
     }
 });
 
+test('the native brand installer rejects canonical identity with template and absent assets before writing', function () use ($createNativeBrandInstallerFixture, $nativeBrandPublishedFiles, $runNativeBrandInstaller, $snapshotNativeBrandFixture) {
+    $temporaryRoot = $createNativeBrandInstallerFixture();
+
+    try {
+        $canonicalProcess = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($canonicalProcess->isSuccessful(), $canonicalProcess->getErrorOutput().$canonicalProcess->getOutput())
+            ->toBeTrue();
+
+        $storeIcon = $temporaryRoot.'/nativephp/android/app/src/main/ic_launcher-playstore.png';
+        $templateStoreIcon = $temporaryRoot.'/vendor/nativephp/mobile/resources/androidstudio/app/src/main/ic_launcher-playstore.png';
+        $absentResource = $temporaryRoot.'/nativephp/android/app/src/main/res/values-night-v31/themes.xml';
+        $absentResourceDirectory = dirname($absentResource);
+        File::copy($templateStoreIcon, $storeIcon);
+        File::delete($absentResource);
+        File::deleteDirectory($absentResourceDirectory);
+
+        $before = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
+
+        expect($before['nativephp/android/app/src/main/ic_launcher-playstore.png'])
+            ->toBe(hash_file('sha256', $templateStoreIcon))
+            ->and($before['nativephp/android/app/src/main/res/values-night-v31/themes.xml'])
+            ->toBeNull()
+            ->and(File::isDirectory($absentResourceDirectory))
+            ->toBeFalse();
+
+        $process = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('identity and assets must be entirely fresh-template or entirely canonical')
+            ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
+            ->toBe($before)
+            ->and(File::isDirectory($absentResourceDirectory))
+            ->toBeFalse()
+            ->and(glob($temporaryRoot.'/nativephp/.sutelio-native-*') ?: [])
+            ->toBeEmpty();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
 test('the native brand installer rejects a symlink destination without writing outside the workspace', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
     $externalRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'sutelio-native-brand-external-'.Str::uuid();
     File::ensureDirectoryExists($externalRoot);
@@ -697,6 +740,47 @@ test('the native brand installer rolls back handled multi-file publication failu
             ->filter(static fn (string $filename): bool => str_contains($filename, '.sutelio-native-stage-') || str_contains($filename, '.sutelio-native-backup-'));
 
         expect($publishArtifacts)->toBeEmpty();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
+test('the native brand installer removes absent v33 outputs and directories after a late publication failure', function () use ($createNativeBrandInstallerFixture, $nativeBrandPublishedFiles, $runNativeBrandInstaller, $snapshotNativeBrandFixture) {
+    $temporaryRoot = $createNativeBrandInstallerFixture();
+    $installerPath = $temporaryRoot.'/scripts/apply-native-brand.mjs';
+    $installer = File::get($installerPath);
+    $publishNeedle = "            publishedEntries.push(entry);\n";
+    $publishReplacement = $publishNeedle."            if (publishedEntries.length === 15) {\n                throw new Error('Injected late native publication failure.');\n            }\n";
+    $injectedInstaller = str_replace($publishNeedle, $publishReplacement, $installer, $publishReplacementCount);
+
+    expect($publishReplacementCount)->toBe(1);
+
+    File::put($installerPath, $injectedInstaller);
+
+    $v33Resource = $temporaryRoot.'/nativephp/android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml';
+    $v33Directory = dirname($v33Resource);
+    $before = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
+
+    expect($before['nativephp/android/app/src/main/res/mipmap-anydpi-v33/ic_launcher.xml'])
+        ->toBeNull()
+        ->and(File::isDirectory($v33Directory))
+        ->toBeFalse();
+
+    try {
+        $process = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('Injected late native publication failure.')
+            ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
+            ->toBe($before)
+            ->and(File::exists($v33Resource))
+            ->toBeFalse()
+            ->and(File::isDirectory($v33Directory))
+            ->toBeFalse()
+            ->and(glob($temporaryRoot.'/nativephp/.sutelio-native-*') ?: [])
+            ->toBeEmpty();
     } finally {
         File::deleteDirectory($temporaryRoot);
     }
