@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Models\WorkspaceMember;
 use App\Services\BackupService;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\ArrayMaintenanceMode;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -19,7 +20,7 @@ use function Pest\Laravel\mock;
  */
 function isolatedBackupDatabase(): array
 {
-    $directory = sys_get_temp_dir().'/xiaomi-mimo-backup-'.Str::uuid();
+    $directory = sys_get_temp_dir().'/sutelio-test-backup-'.Str::uuid();
     $database = $directory.'/database.sqlite';
     $backups = $directory.'/backups';
 
@@ -360,6 +361,8 @@ test('operator restore uses the guarded action and returns to the dashboard', fu
 });
 
 test('verified backup download is private and uses a safe public filename', function () {
+    $this->travelTo(CarbonImmutable::parse('2026-08-17 12:34:56'));
+
     $operator = configuredBackupOperator();
     $backupId = (string) Str::uuid();
     $download = storage_path('framework/testing/'.$backupId.'.sqlite');
@@ -376,7 +379,7 @@ test('verified backup download is private and uses a safe public filename', func
             ->assertOk()
             ->assertHeader('Cache-Control', 'max-age=0, no-store, private')
             ->assertHeader('X-Content-Type-Options', 'nosniff')
-            ->assertDownload();
+            ->assertDownload('sutelio-backup-20260817-123456.sqlite');
     } finally {
         File::delete($download);
     }

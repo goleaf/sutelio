@@ -5,19 +5,19 @@ declare(strict_types=1);
 return [
     'meta' => [
         'eyebrow' => 'Guided setup',
-        'title' => 'Welcome to Xiaomi Mimo',
+        'title' => 'Welcome to Sutelio',
         'description' => 'Set up your workspace, first project, and first task one clear step at a time.',
         'replay_badge' => 'Practice mode',
     ],
     'steps' => [
         'welcome' => ['title' => 'Make work feel lighter', 'description' => 'A short guided route will turn your preferences and first ideas into a useful workspace.'],
-        'preferences' => ['title' => 'Make Xiaomi Mimo yours', 'description' => 'Choose how dates, time, planning, and your first screen should work for you.'],
+        'preferences' => ['title' => 'Make Sutelio yours', 'description' => 'Choose how dates, time, planning, and your first screen should work for you.'],
         'workspace' => ['title' => 'Choose your workspace', 'description' => 'A workspace keeps its members, projects, tasks, and data inside one clear boundary.'],
         'project' => ['title' => 'Give the work a home', 'description' => 'Select a current project or create a focused project for the outcome you want.'],
         'task' => ['title' => 'Create your first next action', 'description' => 'Turn the project into a real, assignable task with an honest status and due date.'],
         'product_map' => ['title' => 'Know where everything lives', 'description' => 'Each area has one purpose, so you can move through the product without hunting.'],
         'safety' => ['title' => 'Collaborate without losing control', 'description' => 'Roles, account security, and backups protect the work as your workspace grows.'],
-        'results' => ['title' => 'Your workspace is ready', 'description' => 'Review what you configured, then continue into Xiaomi Mimo with real work already in place.'],
+        'results' => ['title' => 'Your workspace is ready', 'description' => 'Review what you configured, then continue into Sutelio with real work already in place.'],
     ],
     'actions' => [
         'back' => 'Back',
@@ -54,7 +54,7 @@ return [
         'unexpected' => 'Something interrupted the save. Your draft is still here, so you can try again.',
     ],
     'welcome' => [
-        'intro' => 'Xiaomi Mimo keeps planning concrete: capture what matters, shape it into projects, and see what needs attention next.',
+        'intro' => 'Sutelio keeps planning concrete: capture what matters, shape it into projects, and see what needs attention next.',
         'capture_title' => 'Capture clearly',
         'capture_description' => 'Keep every task, deadline, and owner in one dependable place.',
         'plan_title' => 'Plan with context',
@@ -123,7 +123,7 @@ return [
         'unassigned' => 'Unassigned',
         'due_date' => 'Due date',
         'empty_title' => 'No active task yet',
-        'empty_description' => 'Create one real next action and Xiaomi Mimo will carry it into your workspace.',
+        'empty_description' => 'Create one real next action and Sutelio will carry it into your workspace.',
         'preview_title' => 'Task preview',
     ],
     'product_map' => [

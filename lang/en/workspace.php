@@ -153,7 +153,7 @@ return [
         'reminder_title' => 'Task reminder',
         'reminder_body' => '“:task” is ready for your attention.',
         'reminder_subject' => 'Task reminder: :task',
-        'reminder_footer' => 'This reminder was scheduled in Xiaomi Mimo.',
+        'reminder_footer' => 'This reminder was scheduled in Sutelio.',
         'view_task' => 'View task',
         'pagination_label' => 'Notification pages',
         'pagination_range' => ':from–:to of :total',

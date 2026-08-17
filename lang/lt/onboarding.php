@@ -5,19 +5,19 @@ declare(strict_types=1);
 return [
     'meta' => [
         'eyebrow' => 'Vedama sąranka',
-        'title' => 'Sveiki atvykę į „Xiaomi Mimo“',
+        'title' => 'Sveiki atvykę į „Sutelio“',
         'description' => 'Žingsnis po žingsnio nustatykite darbo erdvę, pirmąjį projektą ir pirmąją užduotį.',
         'replay_badge' => 'Mokymosi režimas',
     ],
     'steps' => [
         'welcome' => ['title' => 'Tegul darbai tampa lengvesni', 'description' => 'Trumpas vedamas kelias pavers jūsų nuostatas ir pirmąsias idėjas naudinga darbo erdve.'],
-        'preferences' => ['title' => 'Pritaikykite „Xiaomi Mimo“ sau', 'description' => 'Pasirinkite, kaip jums turi veikti datos, laikas, planavimas ir pirmasis ekranas.'],
+        'preferences' => ['title' => 'Pritaikykite „Sutelio“ sau', 'description' => 'Pasirinkite, kaip jums turi veikti datos, laikas, planavimas ir pirmasis ekranas.'],
         'workspace' => ['title' => 'Pasirinkite darbo erdvę', 'description' => 'Darbo erdvė laiko narius, projektus, užduotis ir duomenis vienoje aiškioje riboje.'],
         'project' => ['title' => 'Suteikite darbui vietą', 'description' => 'Pasirinkite vykdomą projektą arba sukurkite konkretų projektą norimam rezultatui.'],
         'task' => ['title' => 'Sukurkite pirmąjį kitą veiksmą', 'description' => 'Paverskite projektą tikra priskiriama užduotimi su aiškia būsena ir terminu.'],
         'product_map' => ['title' => 'Žinokite, kur kas yra', 'description' => 'Kiekviena sritis turi vieną paskirtį, todėl programoje nereikės klaidžioti.'],
         'safety' => ['title' => 'Bendradarbiaukite neprarasdami kontrolės', 'description' => 'Vaidmenys, paskyros sauga ir atsarginės kopijos saugo augančios erdvės darbus.'],
-        'results' => ['title' => 'Jūsų darbo erdvė paruošta', 'description' => 'Peržiūrėkite nustatymus ir tęskite darbą „Xiaomi Mimo“ jau turėdami tikrą užduotį.'],
+        'results' => ['title' => 'Jūsų darbo erdvė paruošta', 'description' => 'Peržiūrėkite nustatymus ir tęskite darbą „Sutelio“ jau turėdami tikrą užduotį.'],
     ],
     'actions' => [
         'back' => 'Atgal',
@@ -54,7 +54,7 @@ return [
         'unexpected' => 'Išsaugojimas nutrūko. Juodraštis liko čia, todėl galite bandyti dar kartą.',
     ],
     'welcome' => [
-        'intro' => '„Xiaomi Mimo“ padeda planuoti konkrečiai: užfiksuokite tai, kas svarbu, sudėliokite projektus ir matykite, kam dabar reikia dėmesio.',
+        'intro' => '„Sutelio“ padeda planuoti konkrečiai: užfiksuokite tai, kas svarbu, sudėliokite projektus ir matykite, kam dabar reikia dėmesio.',
         'capture_title' => 'Užfiksuokite aiškiai',
         'capture_description' => 'Laikykite kiekvieną užduotį, terminą ir atsakingą asmenį vienoje patikimoje vietoje.',
         'plan_title' => 'Planuokite su kontekstu',
@@ -123,7 +123,7 @@ return [
         'unassigned' => 'Nepriskirta',
         'due_date' => 'Terminas',
         'empty_title' => 'Aktyvios užduoties dar nėra',
-        'empty_description' => 'Sukurkite vieną tikrą kitą veiksmą, o „Xiaomi Mimo“ perkels jį į darbo erdvę.',
+        'empty_description' => 'Sukurkite vieną tikrą kitą veiksmą, o „Sutelio“ perkels jį į darbo erdvę.',
         'preview_title' => 'Užduoties peržiūra',
     ],
     'product_map' => [

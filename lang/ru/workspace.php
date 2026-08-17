@@ -153,7 +153,7 @@ return [
         'reminder_title' => 'Напоминание о задаче',
         'reminder_body' => 'Задача «:task» ждёт вашего внимания.',
         'reminder_subject' => 'Напоминание о задаче: :task',
-        'reminder_footer' => 'Это напоминание было запланировано в Xiaomi Mimo.',
+        'reminder_footer' => 'Это напоминание было запланировано в Sutelio.',
         'view_task' => 'Открыть задачу',
         'pagination_label' => 'Страницы уведомлений',
         'pagination_range' => ':from–:to из :total',

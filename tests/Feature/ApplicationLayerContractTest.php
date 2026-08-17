@@ -31,7 +31,7 @@ test('two factor state is safe for new and partially selected user models', func
 });
 
 test('backup service does not expose legacy filename-based snapshots', function () {
-    $directory = sys_get_temp_dir().'/xiaomi-mimo-backup-contract-'.Str::uuid();
+    $directory = sys_get_temp_dir().'/sutelio-test-backup-contract-'.Str::uuid();
     $backupDirectory = $directory.'/backups';
     $databasePath = $directory.'/database.sqlite';
 

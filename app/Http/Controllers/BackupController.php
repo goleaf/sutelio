@@ -69,7 +69,7 @@ class BackupController extends Controller
 
         $response = response()->download(
             $path,
-            'xiaomi-mimo-backup-'.now()->format('Ymd-His').'.sqlite',
+            'sutelio-backup-'.now()->format('Ymd-His').'.sqlite',
             [
                 'X-Content-Type-Options' => 'nosniff',
             ],

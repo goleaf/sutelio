@@ -233,7 +233,7 @@ function showBrowserNotifications(notifications: NotificationItem[]): void {
             return;
         }
 
-        const storageKey = `xiaomi-mimo:browser-reminder:${notification.id}`;
+        const storageKey = `sutelio:browser-reminder:${notification.id}`;
 
         if (window.localStorage.getItem(storageKey)) {
             return;

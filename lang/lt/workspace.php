@@ -153,7 +153,7 @@ return [
         'reminder_title' => 'Užduoties priminimas',
         'reminder_body' => 'Užduotis „:task“ laukia jūsų dėmesio.',
         'reminder_subject' => 'Užduoties priminimas: :task',
-        'reminder_footer' => 'Šis priminimas suplanuotas „Xiaomi Mimo“ programoje.',
+        'reminder_footer' => 'Šis priminimas suplanuotas „Sutelio“ programoje.',
         'view_task' => 'Atverti užduotį',
         'pagination_label' => 'Pranešimų puslapiai',
         'pagination_range' => ':from–:to iš :total',

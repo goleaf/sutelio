@@ -4781,3 +4781,35 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - `49f6d63` — `feat: remove email verification` contains the 48 phase-owned implementation, migration, negative regressions, translations, durable repository rule, and synchronized active documentation files.
 - `git push --verbose origin main` exited 0 and advanced `origin/main` from `60249b2` to `49f6d63` without rewriting history. The push also published the already-separate local ancestor `8b6e19f` (`fix: harden Sutelio brand delivery`), which was created by another repository process and is not represented as part of this phase's commit.
 - Generated Wayfinder outputs, production web assets, the NativePHP Android project/APK, local environment/database data, browser profiles, and credentials remain ignored or uncommitted. This status-only documentation commit records the completed delivery and will be pushed normally.
+
+## Sutelio User-Facing Copy And Backup Identity — 2026-08-17
+
+### Implementation Preflight
+
+- Began from clean synchronized `main` at `9de5be5`; the required Sutelio ancestors `60249b2` and `8b6e19f` and the email-verification removal commits `49f6d63` / `9de5be5` are present.
+- Scope is limited to remaining user-facing product copy in the EN/LT/RU onboarding, UI, and workspace catalogs, the browser-reminder storage namespace, the public backup-download filename, isolated backup-test prefixes, and focused brand/localization regression coverage.
+- The planned `DatabaseBackupController.php` and `NotificationCard.vue` paths are stale: the live implementation is `app/Http/Controllers/BackupController.php` and `resources/js/pages/notifications/Index.vue`. Those current source files are authoritative.
+- Semantic translation keys and placeholders must remain in parity across English, Lithuanian, and Russian. Email verification remains intentionally absent and must not be reintroduced.
+- No dependency, schema, route, authorization, query, or data-contract changes are planned. The Laravel Boost `search-docs` MCP is unavailable in this environment, so no MCP result is claimed; this literal identity rename is grounded in current source, sibling tests, and installed project conventions.
+- Focused failing-first brand coverage precedes implementation. Focused GREEN tests, frontend tests, scoped formatting, diff inspection, a phase-only semantic commit, and no push remain pending.
+
+### Implementation Delivered
+
+- Replaced every remaining user-facing `Xiaomi Mimo` mention with `Sutelio` in the English, Lithuanian, and Russian onboarding, UI, and workspace catalogs. Lithuanian copy preserves the established `„Sutelio“` quotation style; no semantic key or placeholder was changed.
+- Changed the browser-notification deduplication namespace to exactly `sutelio:browser-reminder:${notification.id}` and the public database-download name to `sutelio-backup-YYYYMMDD-HHMMSS.sqlite`.
+- Renamed isolated backup-test directory prefixes to `sutelio-test-backup-` and `sutelio-test-backup-contract-`, and strengthened the functional download test to assert the complete deterministic Sutelio filename.
+- Added a brand contract covering all nine scoped locale files, cross-locale key and placeholder parity, the browser-reminder namespace, the backup filename, and both test-only prefixes. This slice adds zero Eloquent queries and changes no backup authorization, storage path, opaque identifier, cache header, schema, route, or dependency contract.
+- Email verification was not restored or modified. No Tailwind classes changed, so the Tailwind-specific skill and CSS/build gates were not applicable to this literal identity slice.
+
+### Verification Evidence
+
+- The required RED run, `php artisan test --compact tests/Feature/BrandIdentityTest.php`, failed exactly four new contracts: 13 tests, 9 passed, 4 failed, 149 assertions. Failures identified the old catalog copy, `xiaomi-mimo:browser-reminder:` namespace, `xiaomi-mimo-backup-` download prefix, and the two old test-directory prefixes.
+- After implementation, the same brand test passes 13 tests / 3,810 assertions. The final combined focused Pest gate for `BrandIdentityTest.php`, `FrontendLocalizationTest.php`, `OnboardingFrontendTest.php`, `DatabaseBackupTest.php`, and `ApplicationLayerContractTest.php` passes 50 tests / 4,617 assertions in 2.226 seconds.
+- `npm run test:frontend` passes all 45 tests with zero failures. `vendor/bin/pint --dirty --format agent` passes, and scoped Prettier verification passes for `resources/js/pages/notifications/Index.vue` and `docs/progress.md`.
+- `git diff --check` passes. A full backend suite, browser run, production build, Larastan, dependency audits, migration/seed checks, and push were intentionally not run because this task explicitly requests focused verification and defers push until the following task.
+- Laravel Boost `search-docs` remained unavailable in this environment; no MCP documentation, schema, query-count, or browser-log result is claimed. The change is a source-grounded literal identity rename with a zero-query delta.
+
+### Git Delivery
+
+- The phase is prepared as one local semantic commit named `refactor: rename Sutelio user-facing copy`; its observed hash and final ahead/behind state are reported in the task handoff after commit creation.
+- Push is intentionally deferred until Task 6. No history rewrite, force push, dependency change, generated artifact, or email-verification change is included.

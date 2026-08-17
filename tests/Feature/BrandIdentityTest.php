@@ -1,8 +1,69 @@
 <?php
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
+
+test('the remaining user-facing catalogs use Sutelio with locale contract parity', function () {
+    $catalogs = ['onboarding', 'ui', 'workspace'];
+    $locales = ['en', 'lt', 'ru'];
+
+    foreach ($catalogs as $catalog) {
+        $english = Arr::dot(trans($catalog, locale: 'en'));
+
+        foreach ($locales as $locale) {
+            $path = lang_path("{$locale}/{$catalog}.php");
+            $source = File::get($path);
+            $localized = Arr::dot(trans($catalog, locale: $locale));
+
+            expect($source, $path)
+                ->toContain('Sutelio')
+                ->not->toContain('Xiaomi Mimo')
+                ->and(array_keys($localized), $path)
+                ->toBe(array_keys($english));
+
+            foreach ($english as $key => $message) {
+                preg_match_all('/:[A-Za-z_]+/', (string) $message, $englishPlaceholders);
+                preg_match_all('/:[A-Za-z_]+/', (string) $localized[$key], $localizedPlaceholders);
+
+                sort($englishPlaceholders[0]);
+                sort($localizedPlaceholders[0]);
+
+                expect($localizedPlaceholders[0], "Placeholder mismatch for {$locale}.{$catalog}.{$key}")
+                    ->toBe($englishPlaceholders[0]);
+            }
+        }
+    }
+});
+
+test('browser reminders use the Sutelio storage namespace', function () {
+    $notificationsPage = File::get(resource_path('js/pages/notifications/Index.vue'));
+
+    expect($notificationsPage)
+        ->toContain('const storageKey = `sutelio:browser-reminder:${notification.id}`;')
+        ->not->toContain('xiaomi-mimo:browser-reminder:');
+});
+
+test('backup downloads use the Sutelio public filename', function () {
+    $controller = File::get(app_path('Http/Controllers/BackupController.php'));
+
+    expect($controller)
+        ->toContain("'sutelio-backup-'.now()->format('Ymd-His').'.sqlite'")
+        ->not->toContain("'xiaomi-mimo-backup-'");
+});
+
+test('backup tests use isolated Sutelio temporary prefixes', function () {
+    $backupTest = File::get(base_path('tests/Feature/DatabaseBackupTest.php'));
+    $contractTest = File::get(base_path('tests/Feature/ApplicationLayerContractTest.php'));
+
+    expect($backupTest)
+        ->toContain("sys_get_temp_dir().'/sutelio-test-backup-'.Str::uuid()")
+        ->not->toContain("sys_get_temp_dir().'/xiaomi-mimo-backup-'")
+        ->and($contractTest)
+        ->toContain("sys_get_temp_dir().'/sutelio-test-backup-contract-'.Str::uuid()")
+        ->not->toContain("sys_get_temp_dir().'/xiaomi-mimo-backup-contract-'");
+});
 
 test('the pinned Instrument Sans inputs have the approved checksums', function () {
     expect(hash_file('sha256', resource_path('brand/fonts/InstrumentSans.ttf')))
