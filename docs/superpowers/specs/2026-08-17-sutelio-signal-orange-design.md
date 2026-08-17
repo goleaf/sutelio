@@ -38,8 +38,8 @@ The canonical CSS-first Tailwind theme owns this perceptual ramp:
 
 ## Semantic Contract
 
-- Primary controls use exact signal orange with deep-cobalt foreground.
-- The default Button and checked Checkbox consume `primary` and `primary-foreground`, not another literal pair.
+- Exact signal-orange semantic surfaces use deep-cobalt foreground.
+- Foreground-bearing controls, including the default Button, checked Checkbox, and default Badge, use the accessible orange-600/white pair.
 - `ring` and `sidebar-ring` use orange-600 for stronger boundary contrast.
 - Editorial rails, progress markers, active navigation, selection, and restrained washes keep their established shade roles through the new palette.
 - Raw Tailwind-orange shadow/focus channels become exact signal-orange channels.

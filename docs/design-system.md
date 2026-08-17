@@ -19,7 +19,7 @@ The fixed Warm Precision language uses warm neutral canvases, explicit surface/f
 
 The complete Tailwind `orange-50` through `orange-950` scale is application-owned and anchored at the logo's exact signal orange `#FF6038`. `orange-500` maps directly to `--brand-orange`; lighter and darker steps form a perceptual brand ramp rather than inheriting Tailwind's default orange hue.
 
-Primary controls use exact signal orange with deep-cobalt `#0A285F` foreground. That pair measures `4.71:1`; white on exact signal orange measures only `3.01:1` and is prohibited for normal text. White text may use `orange-600` (`#CD431F`) or darker, where the measured ratio is at least `4.5:1`. Warning, destructive, success, information, chart, and persisted user/domain colors remain separate semantic systems.
+Exact signal-orange semantic surfaces use deep-cobalt `#0A285F` foreground, a pair measuring `4.71:1`. Foreground-bearing primary controls such as the default Button, checked Checkbox, and default Badge use `orange-600` (`#CD431F`) with white at `4.75:1`; white on exact signal orange reaches only `3.01:1` and is prohibited for normal text. Warning, destructive, success, information, chart, and persisted user/domain colors remain separate semantic systems.
 
 Static complete class names are required. String interpolation such as `bg-${status}` is prohibited and guarded by `ArchitectureContractTest.php`; controlled maps must contain complete class literals. `@source` covers first-party Vue/Blade/PHP paths that automatic discovery cannot infer.
 
