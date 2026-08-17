@@ -4702,3 +4702,21 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - Specification self-review resolved exact geometry, iOS bundle identity, deep-link scheme, Composer/npm metadata, backup/test prefixes, and APK publication naming. `git diff --check` and focused Prettier verification pass.
 - The design-only diff contains this specification and append-only progress evidence. Commit `2c0aadd` (`docs: record Sutelio full rename design`) was pushed normally to `origin/main` as `81f2393..2c0aadd`.
 - This status-only progress synchronization follows on `main`; application implementation remains intentionally paused until the user confirms the specification.
+
+## Sutelio Full Brand Rename Implementation Planning — 2026-08-17
+
+### Planning Preflight
+
+- The user confirmed the full Sutelio rename specification. Planning began on clean `main` at `a37c9ce`, synchronized with `origin/main`; no application implementation has started.
+- Re-read the `writing-plans`, Laravel configuration/testing/style, Inertia Vue, and Pest guidance. Laravel Boost `search-docs` remains unavailable in this session, so installed NativePHP Mobile 4.2 source and bundled versioned guidance were inspected directly.
+- Mapped every active `Xiaomi Mimo`, `xiaomi-mimo`, `xiaomimimo`, and `com.goleaf.xiaomimimo` reference outside append-only/historical evidence, plus the remaining Laravel starter-kit metadata and logo consumers.
+- Confirmed NativePHP consumes opaque 1024-pixel `public/icon.png` and 1080-by-1920 `public/splash*.png` sources, while its current generator does not emit an Android 13 monochrome launcher resource. The implementation plan will keep generated `/nativephp` output ignored and apply source-controlled adaptive/monochrome overrides after native installation.
+- Confirmed the existing Android 14 arm64 `BTChat_API_34` AVD remains available but is not currently running; Android SDK tools live under `/Users/andrejprus/Library/Android/sdk`, and JDK 17 resolves at `/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home`.
+- Confirmed the in-place external rename command is `gh repo rename -R goleaf/xiaomi-mimo sutelio --yes`; the current remote remains `https://github.com/goleaf/xiaomi-mimo.git` until verified source delivery succeeds.
+
+### Implementation Plan Delivered
+
+- Created `docs/superpowers/plans/2026-08-17-sutelio-full-brand-rename.md` with locked file ownership and twelve ordered TDD/delivery tasks covering deterministic master vectors/raster exports, web consumers, EN/LT/RU copy, Laravel/package/NativePHP identity, adaptive/monochrome/splash generation, current documentation, complete quality gates, real-browser review, APK inspection, Android 14 emulator verification, and final in-place GitHub/Herd rename.
+- The plan pins the official OFL Instrument Sans source at Google Fonts commit `2fc9491da70cf3e1bafd3c3da49244c5a496e9d5` and validates SHA-256 `b24f1812584816958afcf22e22d08e44318c5e51651e25d2438efdde389b33b1`; no new package dependency is introduced.
+- Fresh-eye review maps every approved specification section to an executable task. Placeholder scan, name/type consistency review, embedded Node ESM syntax checks, `git diff --check`, and focused Prettier verification pass.
+- This planning phase changes documentation only. No application source, dependency lock, local environment, database, generated native project, APK, emulator package, GitHub repository name, remote URL, project directory, or Herd site has been changed.
