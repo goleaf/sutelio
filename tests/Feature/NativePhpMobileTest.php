@@ -662,7 +662,12 @@ test('Sutelio NativePHP brand sources include deterministic adaptive monochrome 
     $splashTheme = File::get(resource_path('brand/android/values-v31/themes.xml'));
 
     expect($brandBuilder)->toContain('b24f1812584816958afcf22e22d08e44318c5e51651e25d2438efdde389b33b1')
-        ->and($nativeBrandInstaller)->toContain('cpSync(source, destination, { recursive: true, force: true })')
+        ->and($nativeBrandInstaller)->toContain(
+            'function buildPublicationPlan()',
+            'function publishPlan(plan)',
+            'publishedEntries.push(entry);',
+            'for (const entry of publishedEntries.reverse())',
+        )
         ->and($monochrome)->toContain('#FF000000', 'android:pathData')
         ->and($adaptive)->toContain('<monochrome android:drawable="@drawable/ic_launcher_monochrome"/>')
         ->and($splashTheme)->toContain(
