@@ -211,13 +211,13 @@ test('the approved Sutelio identity and package metadata are canonical', functio
 });
 
 test('active first-party files contain no legacy product package or starter identity', function () {
-    $legacyIdentities = [
+    $legacyIdentities = collect([
         'Xiaomi'.' Mimo',
         'xiaomi'.'-mimo',
         'xiaomi'.'mimo',
         'com.goleaf.'.'xiaomi'.'mimo',
         'laravel/'.'vue-starter-kit',
-    ];
+    ])->map(static fn (string $identity): string => Str::lower($identity));
     $documentationIndex = File::get(base_path('docs/index.md'));
     $canonicalInventory = Str::between(
         $documentationIndex,
@@ -259,29 +259,150 @@ test('active first-party files contain no legacy product package or starter iden
     }
 
     $rootFiles = [
+        '.editorconfig',
         '.env.example',
+        '.gitattributes',
+        '.gitignore',
+        '.mcp.json',
+        '.npmrc',
+        '.prettierignore',
+        '.prettierrc',
+        'artisan',
+        'boost.json',
+        'CLAUDE.md',
+        'components.json',
         'composer.json',
+        'composer.lock',
+        'eslint.config.js',
+        'native',
+        'nativephp.lock',
+        'opencode.json',
         'package.json',
         'package-lock.json',
+        'phpstan.neon',
+        'phpunit.xml',
+        'pint.json',
+        'pnpm-workspace.yaml',
+        'tsconfig.json',
+        'vite.config.ts',
     ];
     $historicalCanonicalFiles = [
         'docs/current-state-audit.md',
         'docs/progress.md',
     ];
-    $activeRoots = ['app', 'config', 'lang', 'resources/js', 'resources/views', 'routes'];
+    $activeRoots = [
+        '.github',
+        'app',
+        'bootstrap',
+        'config',
+        'database',
+        'lang',
+        'public',
+        'resources',
+        'routes',
+        'scripts',
+    ];
+    $requiredActiveRoots = [
+        '.github',
+        'app',
+        'bootstrap',
+        'config',
+        'database',
+        'lang',
+        'public',
+        'resources',
+        'routes',
+        'scripts',
+    ];
+    $requiredResourceRoots = [
+        'resources/brand',
+        'resources/css',
+        'resources/js',
+        'resources/views',
+    ];
+    $textExtensions = [
+        'css',
+        'html',
+        'js',
+        'json',
+        'lock',
+        'md',
+        'mjs',
+        'neon',
+        'php',
+        'svg',
+        'ts',
+        'tsx',
+        'txt',
+        'vue',
+        'xml',
+        'yaml',
+        'yml',
+    ];
+    $extensionlessTextFiles = ['.gitignore', '.htaccess'];
+    $excludedPathPrefixes = [
+        '.mimocode',
+        'docs/audit',
+        'docs/audits',
+        'docs/plans',
+        'docs/superpowers/plans',
+        'docs/superpowers/specs',
+        'graphify-out',
+        'nativephp',
+        'node_modules',
+        'public/build',
+        'storage',
+        'tests',
+        'vendor',
+    ];
+
+    expect(array_diff($requiredActiveRoots, $activeRoots))->toBeEmpty();
+
+    foreach ([...$activeRoots, ...$requiredResourceRoots] as $activeRoot) {
+        expect(File::isDirectory(base_path($activeRoot)), $activeRoot)->toBeTrue();
+    }
+
+    foreach ($rootFiles as $rootFile) {
+        expect(File::isFile(base_path($rootFile)), $rootFile)->toBeTrue();
+    }
+
+    $isExcludedPath = static fn (string $relativePath): bool => collect($excludedPathPrefixes)
+        ->contains(static fn (string $prefix): bool => $relativePath === $prefix || str_starts_with($relativePath, $prefix.'/'));
+    $isAllowedTextFile = static function (SplFileInfo $file, string $relativePath) use ($extensionlessTextFiles, $isExcludedPath, $textExtensions): bool {
+        if ($isExcludedPath($relativePath)) {
+            return false;
+        }
+
+        return in_array(Str::lower($file->getExtension()), $textExtensions, true)
+            || in_array($file->getFilename(), $extensionlessTextFiles, true);
+    };
     $paths = collect($rootFiles)
         ->merge($canonicalFiles->diff($historicalCanonicalFiles))
         ->map(static fn (string $path): string => base_path($path))
         ->merge(collect($activeRoots)->flatMap(
             static fn (string $path): array => collect(File::allFiles(base_path($path)))
-                ->map(static fn (SplFileInfo $file): string => $file->getPathname())
+                ->map(static fn (SplFileInfo $file): array => [
+                    'file' => $file,
+                    'relative_path' => str_replace(
+                        DIRECTORY_SEPARATOR,
+                        '/',
+                        Str::after($file->getPathname(), base_path().DIRECTORY_SEPARATOR),
+                    ),
+                ])
+                ->filter(static fn (array $candidate): bool => $isAllowedTextFile(
+                    $candidate['file'],
+                    $candidate['relative_path'],
+                ))
+                ->map(static fn (array $candidate): string => $candidate['file']->getPathname())
                 ->all(),
         ))
         ->unique();
 
     foreach ($paths as $path) {
+        $normalizedSource = Str::lower(File::get($path));
+
         foreach ($legacyIdentities as $legacyIdentity) {
-            expect(File::get($path), $path)->not->toContain($legacyIdentity);
+            expect($normalizedSource, $path)->not->toContain($legacyIdentity);
         }
     }
 
@@ -291,7 +412,7 @@ test('active first-party files contain no legacy product package or starter iden
 
     expect(substr_count($currentStateAudit, $historicalHeading), $currentStateAuditPath)->toBe(1);
 
-    $activeCurrentStateAudit = Str::before($currentStateAudit, $historicalHeading);
+    $activeCurrentStateAudit = Str::lower(Str::before($currentStateAudit, $historicalHeading));
 
     foreach ($legacyIdentities as $legacyIdentity) {
         expect($activeCurrentStateAudit, $currentStateAuditPath)->not->toContain($legacyIdentity);
