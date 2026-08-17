@@ -8,6 +8,9 @@ use App\Services\SqliteHealthService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 
 test('SQLite runtime settings are configurable and documented', function () {
     $environment = file_get_contents(base_path('.env.example'));
@@ -75,6 +78,40 @@ test('SQLite path validation rejects relative and out of bounds database files',
         if (is_string($outsideDatabase)) {
             @unlink($outsideDatabase);
         }
+    }
+});
+
+test('NativePHP runtime allows the persisted SQLite directory beside Laravel storage', function () {
+    $temporaryRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'mimo-native-sqlite-'.Str::uuid();
+    $storagePath = $temporaryRoot.DIRECTORY_SEPARATOR.'persisted_data'.DIRECTORY_SEPARATOR.'storage';
+    $databaseDirectory = $temporaryRoot.DIRECTORY_SEPARATOR.'persisted_data'.DIRECTORY_SEPARATOR.'database';
+    $databasePath = $databaseDirectory.DIRECTORY_SEPARATOR.'database.sqlite';
+
+    File::ensureDirectoryExists($storagePath.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views');
+    File::ensureDirectoryExists($databaseDirectory);
+    File::put($databasePath, '');
+
+    try {
+        $process = new Process(
+            [PHP_BINARY, 'artisan', 'config:show', 'database.connections.sqlite.allowed_directory'],
+            base_path(),
+            [
+                'APP_ENV' => 'testing',
+                'APP_KEY' => config('app.key'),
+                'DB_CONNECTION' => 'sqlite',
+                'DB_DATABASE' => $databasePath,
+                'LARAVEL_STORAGE_PATH' => $storagePath,
+                'NATIVEPHP_PLATFORM' => 'android',
+            ],
+        );
+
+        $process->run();
+
+        expect($process->isSuccessful())
+            ->toBeTrue($process->getErrorOutput().$process->getOutput())
+            ->and($process->getOutput())->toContain($databaseDirectory);
+    } finally {
+        File::deleteDirectory($temporaryRoot);
     }
 });
 

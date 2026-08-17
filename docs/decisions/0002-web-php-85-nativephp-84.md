@@ -1,6 +1,6 @@
 # ADR 0002: PHP 8.5 Web Runtime With NativePHP 8.4 Compatibility
 
-- Status: accepted with upstream constraint
+- Status: accepted with upstream documentation constraint; runtime observation updated 2026-08-17
 - Date: 2026-08-16
 
 ## Context
@@ -14,3 +14,7 @@ Run web development, CI, static analysis, tests, and deployment on PHP 8.5. Keep
 ## Consequences
 
 PHP 8.5-only syntax/attributes cannot be used in shared application code yet. PHP 8.5 behavior is still tested on the web runtime. The Composer minimum can be raised to 8.5 only after an upstream NativePHP runtime upgrade and full Android/web verification.
+
+## 2026-08-17 Runtime Update
+
+`native:install` now produces the tracked PHP 8.5.9 runtime, and a clean Android 14 emulator installation passed first-run migration and registration. Official NativePHP v4 documentation still says PHP 8.4, so the decision to keep `>=8.4 <8.6` remains in force until the documented support contract catches up; the current generated artifact itself is verified on PHP 8.5.9.

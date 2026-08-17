@@ -19,7 +19,7 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - No unresolved repository-controlled security, data-integrity, static-analysis, formatting, test, frontend-build, dependency-advisory, browser-console, or responsive-overflow finding remains.
 - The activity feature was designed/planned by a concurrent repository workflow and remained uncommitted while the modernization was active. It was preserved, integrated, verified, and committed separately as `494459d`; it is not misrepresented as baseline code.
 - `npm outdated` reports only non-macOS optional binaries, Node 26 types against the intentional Node 22 runtime, and TypeScript 7 before the installed typescript-eslint line declares compatibility. No compatible direct package update remains.
-- The only unexecuted quality measurement is percentage coverage because the installed Herd PHP 8.5 runtime has neither Xdebug nor PCOV. NativePHP's embedded PHP 8.4 and store signing credentials are separate external/runtime limitations, recorded with exact evidence.
+- The only unexecuted quality measurement is percentage coverage because the installed Herd PHP 8.5 runtime has neither Xdebug nor PCOV. NativePHP documentation/runtime-version drift, real-device coverage, and store signing credentials are separate external/runtime limitations recorded with exact evidence.
 
 ## Project Operations Follow-Up Review
 
@@ -52,3 +52,11 @@ Use this record for the final modernization diff; it is not a substitute for tes
 - Newer transitive Composer releases are intentionally blocked by current upstream constraints: Laravel/Boost/NativePHP require Guzzle 7, Laravel requires URI Template 1, NativePHP requires Workerman 4, UUID/WebAuthn require Brick Math through 0.18, and Pest 5.1.1 conflicts with PHPUnit above 13.3.0.
 - TypeScript 7 is outside `typescript-eslint` 8.67.0's declared `<6.1` peer range, and `@types/node` remains on major 22 to match the project runtime. Non-macOS native Rollup/Tailwind/Lightning CSS entries are optional platform packages, not missing application dependencies.
 - The combined worktree passed 706 Pest tests / 10,081 assertions sequentially and in parallel, 42 frontend tests, Vue types, ESLint, build, syntax, isolated migration/repeat seed/integrity, runtime cache/route/database-health, and HTTP smoke. Repository-wide Prettier reports only the preserved concurrent `resources/js/pages/workspaces/Index.vue` edit; dependency-owned documentation passes Prettier and `git diff --check`.
+
+## Dependency And Android Emulator Verification Follow-Up
+
+- Complete compatible resolution upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0; all direct dependencies remain current, Composer/npm audits are clean, and the NativePHP runtime lock now records PHP 8.5.9.
+- Clean emulator testing exposed and closed two first-boot defects: mobile SQLite containment now derives from the independent runtime storage root, and Android/iOS discard only physically unavailable package view hints before NativePHP invokes `view:cache`.
+- The final backend suite passes 762 tests / 11,359 assertions sequentially and in parallel; 45 frontend tests, Pint, Larastan, Vue types, ESLint, Prettier, production build, 35-migration repeat seed, SQLite health/integrity, and cache/route/view gates pass.
+- The 114,877,574-byte debug APK independently passes manifest, v2 signature, alignment, outer/nested archive, bundle-content, and host-database-exclusion checks. A clean Android 14 emulator installation completed cold boot, migration, registration, email-verification navigation, and device SQLite integrity without Laravel error/exception or signed-verification-link log entries.
+- Remaining release boundaries are explicit: debug signing is not store signing, Android emulator coverage is not real-hardware coverage, and official NativePHP v4 documentation still describes PHP 8.4 despite the installed PHP 8.5.9 runtime.

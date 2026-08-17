@@ -5,6 +5,7 @@ use App\Actions\UploadAttachment;
 use App\Models\Todo;
 use App\Models\User;
 use App\Providers\NativeServiceProvider;
+use App\Services\NativePhpRuntimeService;
 use Composer\InstalledVersions;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\UploadedFile;
@@ -29,7 +30,7 @@ test('the application is configured for the NativePHP on-device runtime', functi
             'APP_STORE_*',
             'AWS_*',
             'DB_PASSWORD',
-            'MAIL_PASSWORD',
+            'MAIL_*',
             '*_SECRET',
         )
         ->and(Artisan::all())->toHaveKeys([
@@ -37,6 +38,22 @@ test('the application is configured for the NativePHP on-device runtime', functi
             'native:jump',
             'native:run',
         ]);
+});
+
+test('NativePHP runtime discards missing view hints and disables token-bearing mail logs', function () {
+    config()->set('nativephp-internal.platform', 'android');
+    config()->set('mail.default', 'log');
+
+    $finder = app('view')->getFinder();
+    $existingPath = resource_path('views');
+    $missingPath = resource_path('views/missing-nativephp-bundle-path');
+
+    $finder->addNamespace('nativephp-bundle-test', [$existingPath, $missingPath]);
+
+    app(NativePhpRuntimeService::class)->configure();
+
+    expect($finder->getHints()['nativephp-bundle-test'])->toBe([$existingPath])
+        ->and(config('mail.default'))->toBe('array');
 });
 
 test('attachments use the configured on-device filesystem', function () {
@@ -279,6 +296,8 @@ test('deployment credentials are removed from the bundled environment', function
         'NATIVEPHP_APP_ID=com.goleaf.xiaomimimo',
         'NATIVEPHP_APP_VERSION=1.0.0',
         'DB_CONNECTION=sqlite',
+        'MAIL_MAILER=log',
+        'MAIL_URL=smtp://user:password@example.test',
         'ANDROID_KEYSTORE_FILE=credentials/release.jks',
         'ANDROID_KEYSTORE_PASSWORD=keystore-password',
         'ANDROID_KEY_ALIAS=xiaomi-mimo',
@@ -316,6 +335,8 @@ test('deployment credentials are removed from the bundled environment', function
                 'ANDROID_KEYSTORE_PASSWORD',
                 'ANDROID_KEY_ALIAS',
                 'ANDROID_KEY_PASSWORD',
+                'MAIL_MAILER',
+                'MAIL_URL',
                 'FCM_SERVER_KEY',
                 'GOOGLE_SERVICE_ACCOUNT_KEY',
                 'APP_STORE_API_KEY_PATH',

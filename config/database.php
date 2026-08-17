@@ -29,6 +29,16 @@ $sqliteChoice = static function (string $key, string $default, array $allowed): 
     return $value;
 };
 
+$sqliteDatabase = env('DB_DATABASE', database_path('database.sqlite'));
+$configuredSqliteAllowedDirectory = env('DB_SQLITE_ALLOWED_DIRECTORY');
+$nativePhpPlatform = env('NATIVEPHP_PLATFORM');
+$sqliteAllowedDirectory = is_string($configuredSqliteAllowedDirectory)
+    && trim($configuredSqliteAllowedDirectory) !== ''
+        ? $configuredSqliteAllowedDirectory
+        : (in_array($nativePhpPlatform, ['android', 'ios'], true)
+            ? dirname(storage_path()).DIRECTORY_SEPARATOR.'database'
+            : database_path());
+
 return [
 
     'default' => env('DB_CONNECTION', 'sqlite'),
@@ -38,7 +48,7 @@ return [
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'database' => $sqliteDatabase,
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
             'busy_timeout' => $sqliteInteger('DB_BUSY_TIMEOUT', 5000, 0, 60_000),
@@ -57,7 +67,7 @@ return [
                 'DEFERRED',
                 ['DEFERRED', 'IMMEDIATE', 'EXCLUSIVE'],
             ),
-            'allowed_directory' => env('DB_SQLITE_ALLOWED_DIRECTORY', database_path()),
+            'allowed_directory' => $sqliteAllowedDirectory,
             'pragmas' => [
                 'cache_size' => $sqliteInteger('DB_CACHE_SIZE', -20_000, -1_000_000, 1_000_000),
                 'temp_store' => $sqliteChoice('DB_TEMP_STORE', 'MEMORY', ['DEFAULT', 'FILE', 'MEMORY']),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\NativePhpRuntimeService;
 use App\Services\SqliteHealthService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -16,10 +17,13 @@ use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function boot(SqliteHealthService $sqliteHealthService): void
-    {
+    public function boot(
+        SqliteHealthService $sqliteHealthService,
+        NativePhpRuntimeService $nativePhpRuntimeService,
+    ): void {
         Model::shouldBeStrict(! $this->app->isProduction());
 
+        $nativePhpRuntimeService->configure();
         $sqliteHealthService->assertConfigurationIsSafe();
 
         Event::listen(DiagnosingHealth::class, function () use ($sqliteHealthService): void {

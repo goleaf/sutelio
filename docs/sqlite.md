@@ -16,6 +16,8 @@ Laravel's actual connection must report and health-check:
 
 `SqliteHealthService` applies/verifies supported settings once at connection startup and `php artisan app:database-health` provides non-sensitive diagnostics. PRAGMAs are connection-specific; a standalone SQLite CLI result does not prove Laravel's connection state.
 
+On NativePHP Android/iOS, the allowed SQLite directory is derived independently from the runtime storage root as its sibling `database` directory; it is not inferred from `DB_DATABASE`. Explicit operator configuration still wins. A subprocess regression and clean emulator boot verify this app-private containment contract.
+
 ## Migrations And Queries
 
 Migrations must be SQLite-compatible, safe for populated databases, and use expand/backfill/verify/switch/contract sequencing for risky changes. Table rebuilds require explicit orphan/value preflight, foreign-key revalidation, and a rollback/backup plan. Indexes derive from scoped query shapes and `EXPLAIN QUERY PLAN`/query-budget evidence.

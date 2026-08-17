@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'deeplink_scheme' => env('NATIVEPHP_DEEPLINK_SCHEME'),
+    'deeplink_scheme' => env('NATIVEPHP_DEEPLINK_SCHEME') ?: null,
 
     /*
     |--------------------------------------------------------------------------
@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'deeplink_host' => env('NATIVEPHP_DEEPLINK_HOST'),
+    'deeplink_host' => env('NATIVEPHP_DEEPLINK_HOST') ?: null,
 
     /*
     |--------------------------------------------------------------------------
@@ -178,10 +178,7 @@ return [
         'FILESYSTEM_DISK',
         'GOOGLE_SERVICE_ACCOUNT_KEY',
         'IOS_*',
-        'MAIL_HOST',
-        'MAIL_PASSWORD',
-        'MAIL_PORT',
-        'MAIL_USERNAME',
+        'MAIL_*',
         'MEMCACHED_*',
         'NATIVEPHP_7ZIP_LOCATION',
         'NATIVEPHP_ANDROID_SDK_LOCATION',
@@ -339,10 +336,10 @@ return [
 
     'server' => [
         // HTTP server port for serving the app
-        'http_port' => env('NATIVEPHP_HTTP_PORT', 3000),
+        'http_port' => (int) env('NATIVEPHP_HTTP_PORT', 3000),
 
         // WebSocket server port for hot reload communication
-        'ws_port' => env('NATIVEPHP_WS_PORT', 8081),
+        'ws_port' => (int) env('NATIVEPHP_WS_PORT', 8081),
 
         // Service name advertised on the network
         'service_name' => env('NATIVEPHP_SERVICE_NAME', 'Xiaomi Mimo'),

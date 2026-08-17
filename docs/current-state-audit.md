@@ -2,6 +2,10 @@
 
 This is the active modernization baseline. The July audit under `docs/audit` is preserved as historical evidence; its critical/high findings were subsequently addressed in the source and tests recorded by `docs/progress.md`.
 
+## Post-Audit Runtime Verification — 2026-08-17
+
+The dated baseline and modernization measurements below remain historical evidence. The current checkout runs Herd PHP 8.5.8 and NativePHP Mobile 4.2 with tracked embedded PHP 8.5.9. A complete compatible dependency refresh upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0 with zero Composer/npm advisories or compatible direct updates. The final suite passes 762 tests / 11,359 assertions sequentially and in parallel plus 45 frontend tests; Larastan, Pint, types, lint, format, build, isolated 35-migration/repeat-seed/health verification, and runtime caches pass. The current debug APK hash, manifest, signature, archive, and Android 14 emulator results are recorded in `docs/deployment.md` and the latest `docs/progress.md` entry and supersede older artifact measurements below.
+
 ## Repository Protection
 
 - Branch: `main` at `7f90145`, synchronized with `origin/main` when inspected.
@@ -83,18 +87,18 @@ No critical workspace-isolation, backup path, known-password invitation, unrestr
 
 The modernization closed every baseline risk that is controllable in the repository. The remaining upstream/environment limitations are documented in `docs/known-limitations.md`: NativePHP Mobile 4.2 embeds PHP 8.4, the installed Herd PHP 8.5 runtime has no coverage driver and exposes PHP 8.5.0 rather than the current patch, and protected store-signing credentials are unavailable on this workstation.
 
-| Area                  | Final observed result                                                                                                                                                                                                    |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Web runtime           | Herd PHP 8.5.0; Laravel 13.25.0; 266 first-party routes; application/database health passed                                                                                                                              |
-| Composer              | Laravel 13.25, Inertia Laravel 3.3.1, Fortify 1.38, Sanctum 4.3.3, Wayfinder 0.1.21, NativePHP 4.2.0, Pest 5.1.1/PHPUnit 13.3; direct dependencies current; zero advisories                                              |
-| Frontend              | Vue 3.5.41, Inertia Vue 3.6.1, Tailwind/@tailwindcss-vite 4.3.3, Vite 8.2.1, Laravel Vite plugin 3.2.0, TypeScript 6.0.3; npm audit zero                                                                                 |
-| PHP verification      | Pest passed 706 tests / 10,027 assertions sequentially in 30.164 s and in parallel in 9.530 s; Pint and Larastan level 7 passed                                                                                          |
-| Frontend verification | 38/38 Node tests, Vue type checking, ESLint, Prettier, and production build passed                                                                                                                                        |
-| Build                 | 3,494 modules in 4.39 s; main application CSS 162.35 kB / 23.92 kB gzip; application entry 89.64 kB / 23.25 kB gzip; task index chunk 39.73 kB / 10.08 kB gzip                                                         |
-| Database/seeding      | 34 migrations from zero; repeat idempotent seed; 3 users, 1 workspace, 25 tasks; integrity and foreign-key checks passed; all 17 models have factories                                                                    |
-| Android               | NativePHP 4.2 installed; Gradle `assembleDebug` passed 40 tasks; APK package `com.goleaf.xiaomimimo`, minSdk 31, targetSdk 36                                                                                            |
-| Runtime caches/smoke  | Config, routes, and views cached; every SQLite health check true; login 200 in 0.123229 s / 59,313 bytes; unauthenticated API contract returned 401 in 0.029020 s / 137 bytes                                           |
-| Browser               | Prior login/keyboard/motion/color workflows plus 22 authenticated desktop/mobile landmark checks passed with one `main`/`h1`, zero current errors, and zero overflow                                                       |
+| Area                  | Final observed result                                                                                                                                                         |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Web runtime           | Herd PHP 8.5.0; Laravel 13.25.0; 266 first-party routes; application/database health passed                                                                                   |
+| Composer              | Laravel 13.25, Inertia Laravel 3.3.1, Fortify 1.38, Sanctum 4.3.3, Wayfinder 0.1.21, NativePHP 4.2.0, Pest 5.1.1/PHPUnit 13.3; direct dependencies current; zero advisories   |
+| Frontend              | Vue 3.5.41, Inertia Vue 3.6.1, Tailwind/@tailwindcss-vite 4.3.3, Vite 8.2.1, Laravel Vite plugin 3.2.0, TypeScript 6.0.3; npm audit zero                                      |
+| PHP verification      | Pest passed 706 tests / 10,027 assertions sequentially in 30.164 s and in parallel in 9.530 s; Pint and Larastan level 7 passed                                               |
+| Frontend verification | 38/38 Node tests, Vue type checking, ESLint, Prettier, and production build passed                                                                                            |
+| Build                 | 3,494 modules in 4.39 s; main application CSS 162.35 kB / 23.92 kB gzip; application entry 89.64 kB / 23.25 kB gzip; task index chunk 39.73 kB / 10.08 kB gzip                |
+| Database/seeding      | 34 migrations from zero; repeat idempotent seed; 3 users, 1 workspace, 25 tasks; integrity and foreign-key checks passed; all 17 models have factories                        |
+| Android               | NativePHP 4.2 installed; Gradle `assembleDebug` passed 40 tasks; APK package `com.goleaf.xiaomimimo`, minSdk 31, targetSdk 36                                                 |
+| Runtime caches/smoke  | Config, routes, and views cached; every SQLite health check true; login 200 in 0.123229 s / 59,313 bytes; unauthenticated API contract returned 401 in 0.029020 s / 137 bytes |
+| Browser               | Prior login/keyboard/motion/color workflows plus 22 authenticated desktop/mobile landmark checks passed with one `main`/`h1`, zero current errors, and zero overflow          |
 
 The post-modernization landmark audit found and closed nested `main` landmarks across ten authenticated page/settings wrappers plus a duplicate reusable task-detail `h1`. A final 11-route matrix at desktop and mobile widths produced 22/22 checks with exactly one `main`, one `h1`, zero horizontal overflow, and no captured console, page, request, or HTTP error.
 

@@ -31,7 +31,7 @@ Verification: Markdown links/content review, `git diff --check`, Prettier where 
 Requirements: `sys-runtime-001`, `sec-deps-001`, `test-static-001`, `ops-deployment-001`.
 
 - [x] Isolate the Herd site/CLI to installed PHP 8.5 and record the exact patch version/extensions.
-- [x] Select a Composer PHP constraint that runs on web PHP 8.5 while remaining honest about NativePHP's embedded PHP 8.4.
+- [x] Select a Composer PHP constraint that runs on web PHP 8.5 while remaining honest about NativePHP's documented PHP 8.4 compatibility and currently generated PHP 8.5.9 runtime.
 - [x] Upgrade Laravel 13, Inertia, Boost, Fortify, Sanctum, Wayfinder, Pint, Pail/Sail, Guzzle/CommonMark transitively, and other compatible first-party direct packages.
 - [x] Upgrade NativePHP Mobile 3 to stable 4 only after its upgrade contract and generated native-project implications are understood; verify Android 12/minSdk compatibility.
 - [x] Upgrade Pest 4 to stable Pest 5/PHPUnit 13 when the existing suite and Laravel plugin resolve cleanly; preserve Pest as the sole primary PHP test style.
@@ -132,7 +132,7 @@ Verification: focused frontend architecture tests, Vue type/lint/format checks, 
 
 Requirements: `sys-runtime-001`, `sec-deps-001`, `test-static-001`, `ops-deployment-001`, `git-delivery-001`.
 
-- [x] Refresh every Composer package to the latest stable release permitted by the Laravel 13, NativePHP Mobile 4, Pest 5, PHP 8.4 mobile, and PHP 8.5 web compatibility envelope.
+- [x] Refresh every Composer package to the latest stable release permitted by the Laravel 13, NativePHP Mobile 4, Pest 5, documented PHP 8.4 compatibility, and PHP 8.5 web/mobile runtime envelope.
 - [x] Refresh every npm package to the latest stable release permitted by Node 22 and the installed TypeScript, ESLint, Inertia, Vue, Tailwind, and Vite peer contracts.
 - [x] Preserve the existing Composer/npm package set and single npm lock file; document upstream major-version ceilings rather than overriding them with incompatible direct constraints.
 - [x] Run dependency audits, application boot, static analysis, full backend/frontend tests, production build, isolated migration/seeding, cache, route, HTTP, and diff gates.
@@ -153,3 +153,16 @@ Requirements: `sys-onboarding-001`, `sys-user-002`, `sys-workspace-002`, `ui-*`,
 - [x] Build and independently inspect the final onboarding-capable NativePHP Android debug APK, record its hash/manifest/signature/alignment/archive evidence, then commit and push the final documentation state.
 
 Verification and rollback details are recorded in `docs/plans/2026-08-16-guided-onboarding-implementation.md` and `docs/progress.md`. The migration down path removes only onboarding lifecycle storage; runtime rollback must preserve any workspace/project/task entities already created by users.
+
+## Full Dependency, Installation, And Emulator Verification — 2026-08-17
+
+Requirements: `sys-runtime-001`, `sec-deps-001`, `data-sqlite-001`, `test-feature-001`, `ops-deployment-001`, `git-delivery-001`.
+
+- [x] Resolve and install the full compatible Composer/npm graphs, upgrade current lock drift, and verify zero advisories or compatible direct updates.
+- [x] Update Android SDK tools, regenerate the ignored NativePHP platform project, and refresh the tracked embedded runtime lock.
+- [x] Add failing-first coverage and repair mobile SQLite containment, NativePHP scalar normalization, and unavailable bundled Blade view hints found by clean-device testing.
+- [x] Build and independently verify the APK manifest, signature, alignment, outer/nested archives, required bundle files, and host-database exclusion.
+- [x] Clean-install on the existing Android 14 emulator and complete cold boot, migrations, login rendering, registration, email-verification navigation, SQLite integrity, process, and log checks.
+- [ ] Run the final complete backend/frontend/static/data/diff gates, synchronize final evidence, commit only phase-owned files, and push `origin/main`.
+
+The ignored debug APK remains a local sideload artifact. Production signing and real-hardware release validation remain external release activities.

@@ -8,7 +8,7 @@ Read `AGENTS.md` and `docs/index.md` before changing code. Active behavior is de
 
 ## Local Development
 
-Prerequisites are PHP 8.5 for the web/development runtime, Composer, Node 22 with npm, and SQLite/PDO SQLite. NativePHP Mobile currently embeds PHP 8.4, so application code retains documented 8.4 compatibility until upstream provides an 8.5 runtime.
+Prerequisites are PHP 8.5 for the web/development runtime, Composer, Node 22 with npm, and SQLite/PDO SQLite. The tracked NativePHP lock currently installs PHP 8.5.9 for mobile; the conservative `>=8.4 <8.6` Composer range remains until NativePHP's official v4 documentation catches up with the shipped runtime.
 
 ```bash
 composer install

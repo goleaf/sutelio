@@ -9,11 +9,13 @@ All notable project changes are documented here.
 - Moved the Herd web/development runtime and CI to PHP 8.5 while retaining `>=8.4 <8.6` compatibility for NativePHP Mobile 4.2's embedded PHP 8.4 runtime.
 - Updated Laravel to 13.25, Inertia Laravel to 3.3.1, Fortify to 1.38, Sanctum to 4.3.3, Wayfinder to 0.1.21, Boost to 2.5.3, Pest to 5.1.1/PHPUnit 13.3, NativePHP Mobile to 4.2, Vite to 8.2.1, Laravel Vite plugin to 3.2, Vue to 3.5.41, and compatible frontend tooling.
 - Re-ran complete stable dependency resolution on 2026-08-16 and upgraded PHPStan from 2.2.5 to 2.2.8. Every direct Composer and npm package remains at its latest mutually compatible release; newer Guzzle, Workerman, Brick Math, PHPUnit, TypeScript, and Node-type majors remain behind explicit upstream framework/runtime peer constraints rather than unsafe overrides.
+- Re-ran complete stable dependency resolution on 2026-08-17, upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0, and refreshed the tracked NativePHP embedded runtime from PHP 8.4.24 to 8.5.9. Composer and npm audits remain clean, and no compatible direct dependency update remains.
 - Regenerated Composer/npm locks and cleared all eight Composer and four npm baseline advisories; removed unused frontend dependencies and retained Axios only for NativePHP's adapter contract.
 
 ### Architecture And Security
 
 - Added a versioned, resumable guided-onboarding state machine with verified-user gating, run-scoped idempotent workspace/project/task composition, authorization-aware invitation discovery, safe replay, and populated-data migration behavior.
+- Normalized NativePHP environment scalars, allowed the independently derived app-private mobile SQLite directory, removed only unavailable mobile-bundle Blade namespace hints, and disabled token-bearing mail logs on-device so clean Android boot, migration, `view:cache`, and registration complete without runtime/security log errors.
 - Enabled strict Eloquent behavior outside production and corrected partial-model projections, locale/request state, private avatar serialization, route endpoint closures, and service-locator usage exposed by the stricter contract.
 - Added a typed user-scoped notification request/query/resource boundary with semantic filters, deterministic pagination, safe legacy payloads, batched authorization for task destinations, and idempotent read mutations.
 - Added typed activity category/filter/query/resource boundaries, workspace-safe activity filtering, bounded infinite scrolling, and two rollback-safe workspace-leading activity indexes.
@@ -36,8 +38,9 @@ All notable project changes are documented here.
 - Completed valid factories for all 17 models with 30 meaningful states/helpers and a 55-case factory/state/seeder contract.
 - Added a non-destructive, production-guarded `DemoSeeder`; fresh migration and repeated deterministic seeding complete with valid foreign keys.
 - Added six rollback-safe project-operation indexes with production-query-plan coverage for workspace/project filters and position, due-date, updated, and priority-definition sorts.
-- Replaced brittle/example-only checks with semantic architecture and application coverage. The current suite passes 760 tests with 11,347 assertions sequentially and in parallel. All 45 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
+- Replaced brittle/example-only checks with semantic architecture and application coverage. The current suite passes 762 tests with 11,359 assertions sequentially and in parallel. All 45 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
 - Upgraded NativePHP's generated Android project and verified a fresh onboarding-capable debug APK with minSdk 31, targetSdk 36, v2 debug signature, ZIP alignment/integrity, embedded onboarding sources/translations, and no host SQLite database. Production signing remains a release-environment responsibility.
+- Clean-installed the refreshed debug APK on an Android 14 emulator and completed registration through email verification; the device SQLite database passed integrity checks with all 35 migrations applied.
 
 ### Documentation
 

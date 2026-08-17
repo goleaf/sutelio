@@ -3,8 +3,8 @@
 ## Current Integrations
 
 - Fortify, passkeys, and Sanctum provide first-party identity/security boundaries.
-- Laravel database notifications and configured mail delivery support invitations/reminders.
-- NativePHP Mobile packages the Laravel application for Android/iOS. NativePHP v4 currently embeds PHP 8.4 even when web/development runs PHP 8.5.
+- Laravel database notifications and configured web mail delivery support invitations/reminders. NativePHP uses the non-logging `array` mailer and strips bundled `MAIL_*` values so signed links and transport credentials are not stored on-device.
+- NativePHP Mobile packages the Laravel application for Android/iOS. The tracked v4 runtime embeds PHP 8.5.9; official v4 documentation still describes PHP 8.4, so the broader compatibility envelope remains intentional.
 - Configured Laravel filesystems store private avatars, attachments, import fixtures, and backups.
 
 There is no current payment, webhook, AI, vector-search, semantic-search, realtime-provider, social-login, public media CDN, or user-controlled server-side URL-fetch integration.

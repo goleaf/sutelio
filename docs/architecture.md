@@ -54,16 +54,16 @@ Livewire, Volt, and Flux are not architectural layers. Adding them would create 
 
 ## PHP 8.5 Applicability
 
-| Feature                      | Decision                                                  | Reason / location / evidence                                                                                   |
-| ---------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Web runtime on PHP 8.5       | Used and verified                                         | Herd PHP 8.5.0 runs the site, full/parallel Pest suites, Artisan caches, SQLite health, and HTTP smokes        |
-| URI extension                | Candidate only for future user-controlled URL integration | No current server-side URL-fetch or normalization domain requires a new abstraction                            |
-| Clone-with                   | Not applicable                                            | No materially improved immutable wither found in current domain objects                                        |
-| Pipe operator                | Not applicable                                            | Current action/query flows are clearer as methods/collections and must remain PHP 8.4 compatible for NativePHP |
-| `#[NoDiscard]`               | Not applicable while mobile is PHP 8.4                    | New 8.5-only attributes would break NativePHP's embedded runtime                                               |
-| `#[Override]`                | Not applicable while mobile is PHP 8.4                    | Same cross-runtime syntax/attribute compatibility constraint                                                   |
-| `array_first` / `array_last` | Prefer Laravel `Arr` methods                              | Laravel 13 documents polyfill/helper conflicts and mobile remains PHP 8.4                                      |
-| Persistent cURL share        | Not applicable                                            | No measured external HTTP connection-reuse requirement                                                         |
+| Feature                      | Decision                                                  | Reason / location / evidence                                                                                             |
+| ---------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Web runtime on PHP 8.5       | Used and verified                                         | Herd PHP 8.5.8 runs the site, full/parallel Pest suites, Artisan caches, SQLite health, and HTTP smokes                  |
+| URI extension                | Candidate only for future user-controlled URL integration | No current server-side URL-fetch or normalization domain requires a new abstraction                                      |
+| Clone-with                   | Not applicable                                            | No materially improved immutable wither found in current domain objects                                                  |
+| Pipe operator                | Not applicable                                            | Current action/query flows are clearer as methods/collections; the conservative Composer envelope still includes PHP 8.4 |
+| `#[NoDiscard]`               | Available but not currently needed                        | Web and the tracked mobile runtime use PHP 8.5, but no existing return-value contract benefits from the attribute        |
+| `#[Override]`                | Available but not currently needed                        | Current inheritance contracts are already explicit and tested                                                            |
+| `array_first` / `array_last` | Prefer Laravel `Arr` methods                              | Laravel 13 documents polyfill/helper conflicts, and the existing helpers keep compatibility intent clear                 |
+| Persistent cURL share        | Not applicable                                            | No measured external HTTP connection-reuse requirement                                                                   |
 
 ## Laravel 13 Feature Applicability
 

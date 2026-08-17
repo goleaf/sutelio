@@ -1,6 +1,6 @@
 # Documentation Index
 
-This index defines the first-party documentation system reviewed on 2026-08-16. Source code, migrations, routes, tests, and the live SQLite schema remain executable evidence. Generated dependency documentation, copied agent-skill bundles, build output, and `graphify-out` are not product requirements.
+This index defines the first-party documentation system reviewed on 2026-08-17. Source code, migrations, routes, tests, and the live SQLite schema remain executable evidence. Generated dependency documentation, copied agent-skill bundles, build output, and `graphify-out` are not product requirements.
 
 ## Mandatory Reading Order
 

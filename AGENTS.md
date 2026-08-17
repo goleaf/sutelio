@@ -10,6 +10,7 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 This application is a Laravel application running on PHP 8.5. You are an expert with the Laravel ecosystem. Always use the APIs that match the installed major version of each package — do not assume a version.
 
 Before relying on a package's API, confirm its installed version:
+
 - PHP packages: run `composer show --direct` to list direct dependencies with versions, or `composer show <vendor/package>` for a single package.
 - JS packages: check `package.json` for the installed versions.
 
@@ -85,7 +86,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Execute PHP in app context for debugging and testing code. Do not create models without user approval, prefer tests with factories instead. Prefer existing Artisan commands over custom tinker code.
 - Always use single quotes to prevent shell expansion: `php artisan tinker --execute 'Your::code();'`
-  - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
+    - Double quotes for PHP strings inside: `php artisan tinker --execute 'User::where("active", true)->count();'`
 
 === php rules ===
 
@@ -198,6 +199,7 @@ Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `
 # Inertia + Vue
 
 Vue components must have a single root element.
+
 - IMPORTANT: Activate `inertia-vue-development` when working with Inertia Vue client-side patterns.
 
 </laravel-boost-guidelines>
@@ -216,7 +218,7 @@ Source code, migrations, the live SQLite schema, routes, tests, and current cano
 # Technology Baseline
 
 - Preserve Laravel 13, Inertia 3, Vue 3, TypeScript, Pinia, Tailwind CSS 4, Reka UI/shadcn-style components, Fortify, Sanctum, Wayfinder, Pest, Larastan, Pint, Vite, NativePHP Mobile, and SQLite.
-- The web/development target is PHP 8.5. NativePHP Mobile currently embeds PHP 8.4, so application code and Composer constraints must retain that documented mobile compatibility until NativePHP ships an 8.5 runtime.
+- The web/development target is PHP 8.5. The tracked NativePHP Mobile runtime currently embeds PHP 8.5.9, while the official v4 documentation still describes PHP 8.4; retain the conservative `>=8.4 <8.6` Composer compatibility envelope until upstream documentation and runtime metadata converge.
 - SQLite is the only supported relational database. Redis and another SQL server must not become application requirements.
 - The application uses Inertia and Vue. Do not add Livewire, Volt, Vue Router, React, jQuery, Alpine page logic, Filament, or Nova.
 - Use the single existing npm lock file. Do not add another JavaScript package manager or lock file.
