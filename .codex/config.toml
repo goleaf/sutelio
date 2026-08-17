@@ -1,3 +1,17 @@
 [mcp_servers.laravel-boost]
 command = "php"
 args = ["artisan", "boost:mcp"]
+
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = ["-y", "chrome-devtools-mcp@latest", "--channel=stable", "--isolated", "--headless", "--viewport=1440x900", "--redact-network-headers", "--no-usage-statistics", "--no-performance-crux"]
+startup_timeout_sec = 60.0
+tool_timeout_sec = 120.0
+enabled = true
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest", "--browser", "chrome", "--isolated", "--headless", "--viewport-size", "1440x900", "--console-level", "warning", "--output-dir", "/tmp/codex-playwright-mcp", "--output-max-size", "52428800"]
+startup_timeout_sec = 60.0
+tool_timeout_sec = 120.0
+enabled = true
