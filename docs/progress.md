@@ -4912,6 +4912,16 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - The ignored local environment and committed example agree on the nine inspected non-secret identity keys: `Sutelio`, `com.goleaf.sutelio`, `sutelio`, the empty deployment-specific deep-link host, the three locked Android colors, and Sutelio service/store names. No secret or complete environment file was printed.
 - Before regeneration, `nativephp.lock` records embedded PHP 8.5.9 with ICU disabled and has SHA-256 `4e65b086b785cbb9cb95f53a35fb0aa7332fdf26369011082131d799e0eb2920`. All tracked brand inputs/outputs are clean. Laravel Boost `search-docs` is unavailable in this session, so no MCP documentation result is claimed.
 
+## Global Language Selection — 2026-08-17
+
+### Implementation Preflight
+
+- Scope is a first-run language dialog plus a persistent top-of-page dropdown across guest, authenticated, web, and NativePHP phone/tablet shells. English, Lithuanian, and Russian remain the only supported locales with English fallback; project-owned SVG flags and one server-provided option catalog are planned for future extension.
+- Current source and live SQLite schema confirm `user_preferences.language` already persists authenticated choices, while guest locale resolution currently falls through session, `Accept-Language`, and fallback without a durable explicit device choice. The implementation therefore uses an encrypted long-lived locale cookie before authentication and the existing account preference after authentication, with account state taking precedence.
+- Laravel Boost confirms Laravel 13.25.0, Inertia Laravel 3.3.1, NativePHP Mobile 4.2.0, PHP 8.5, and SQLite. Version-specific documentation confirms request locale selection, encrypted-cookie defaults, and shared Inertia props; NativePHP v4 documentation confirms PHP-mode web views share the Laravel session.
+- The accepted design is recorded in `docs/superpowers/specs/2026-08-17-global-language-selection-design.md`; the dependency-ordered TDD and web/mobile verification plan is `docs/superpowers/plans/2026-08-17-global-language-selection.md`.
+- A large pre-existing staged light-only/motion phase, unstaged Signal Orange work, untracked design artifacts, and a concurrent NativePHP regeneration entry are present. They remain user/concurrent work and will not be reverted, reformatted, staged, or committed as language-selection work. Overlapping files require attributable hunk handling or completion of the concurrent commit before final publication.
+
 ### Task 7 Regeneration And Verification Evidence
 
 - `npm run brand:build` completed with `Built deterministic Sutelio web and NativePHP brand assets.` All tracked brand inputs/outputs remained byte-identical with no diff; representative SHA-256 values are `861ff275...afd7bd64` for the master mark, `fa435670...2048fb` for `public/icon.png`, and `e7618624...f532b27` for both canonical splash files.
@@ -4944,6 +4954,29 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - `php artisan native:validate` exits 0 with only `No NativeComponents found in app/NativeComponents/.`. Targeted formatting/syntax checks pass, and `php artisan test --compact tests/Feature/NativePhpMobileTest.php tests/Feature/BrandIdentityTest.php` passes 43 tests / 4,240 assertions. `npm run brand:build` still leaves tracked brand outputs byte-identical.
 - Representative Android manifest/store and iOS plist/icon paths continue to match `.gitignore` rule `/nativephp`; generated trees remain ignored and outside the tracked diff. `nativephp.lock` remains unchanged at SHA-256 `4e65b086...e0eb2920`. Vendor test targets still contain NativePHP's non-secret template `DEVELOPMENT_TEAM = QN45R83U43`; no key, certificate, provisioning profile, keystore, account credential, or application signing team was added. Query, Blade, Filament, schema, route, dependency, and database deltas remain zero.
 - The source correction is prepared for the required semantic commit `fix: make Sutelio native branding reproducible` and normal `origin/main` push after scoped-index review. The concurrent global-language, Signal Orange, theme, preference, documentation, and real-index work remains preserved and excluded from this commit.
+
+## Global Language Selection Delivery — 2026-08-17
+
+### Implemented Contract
+
+- Added one server-owned EN/LT/RU catalog with native names, localized names, bounded first-run preview copy, and project-owned SVG flags. A future locale is added through the enum, matching translation catalog/frontend union, and one local asset rather than page-specific lists.
+- Locale precedence is authenticated account preference, encrypted five-year HTTP-only SameSite=Lax device cookie, session, browser `Accept-Language`, then English fallback. The validated and rate-limited `PUT /locale` action updates guest session/cookie state and reuses the canonical preference action for authenticated users; unsupported values leave account, session, and cookie state unchanged.
+- Login and registration synchronize account/device state, registration preserves the selected guest language, Settings and onboarding save language immediately, and successful Inertia visits update the document language, formatters, page copy, and reactive persistent layout headings.
+- Shared guest and authenticated shells expose the same keyboard/touch dropdown. A new device receives a non-dismissible first-run Reka dialog with focus containment, explicit title/description/error/status semantics, decorative flags plus text labels, reduced-motion behavior, and live whole-dialog translation before confirmation.
+- Page-read query delta is zero: the authenticated preference relationship was already loaded by the shared Inertia middleware and `loadMissing` reuses it; guest locale resolution performs no database query. Authenticated locale writes use the existing transactional `UpdateUserPreferences` boundary. No schema, migration, dependency, Blade query, Filament, or external-service change was added.
+
+### Verification Evidence
+
+- TDD RED evidence covered seven expected backend failures, four missing frontend component contracts, and two cookie/registration failures before implementation. The final focused localization/auth/preferences/onboarding gate passes 68 tests / 1,198 assertions; the final full sequential Pest suite passes 805 tests / 21,928 assertions.
+- Pint and `git diff --check` pass. Larastan reports zero errors. All 45 frontend tests, Vue type checking, ESLint, Prettier verification, npm audit with zero vulnerabilities, Composer strict validation/locked audit/platform requirements, the production web build, and Android/iOS-mode Vite builds pass.
+- An isolated repository-contained SQLite database applied all 37 migrations, completed deterministic demo seeding twice, passed `app:database-health`, returned `ok` from `PRAGMA integrity_check`, and reported no foreign-key violation. The temporary database and browser script/profile were moved to Trash; the real local database and user browser were not modified.
+- Live Chromium verified the full first-run flow at 390x844: viewport/document width 390, a 358-pixel dialog inside 16-pixel gutters, contained initial focus, no close button, blocked Escape, 0.01 ms reduced-motion durations, and zero runtime/network failures. Selecting Lithuanian changed the uncommitted dialog title/action/language names immediately; confirmation changed document language to `lt` and removed the dialog; the global dropdown then issued a second `PUT /locale`, changed the document/title to Russian, and exposed all three flags/options. Tablet 820x1180 and desktop 1440x1000 both retained focus and had no horizontal overflow.
+- Android preparation produced a 32.2 MB Laravel bundle, then Gradle `assembleDebug` passed in 1m08s using the installed SDK/JDK. The 130,626,648-byte APK has SHA-256 `863f4f588fba9ff8b64c48d5ecc858e3809d7fd6f14b9598d80c120697085cef`, package `com.goleaf.sutelio`, min/target SDK 31/36, valid v2 debug signature and ZIP alignment, and contains the locale service plus all flags. No device is attached, so no installed package/data was touched.
+- The iOS-mode Vite build and NativePHP preparation pass through Composer, Xcode project configuration, CocoaPods, and Swift package resolution. The resulting 134,365,209-byte `app.zip` has SHA-256 `442aff795a106555b417ce6387807a1c531a84dc2f9f66c0cbb19678144b65e6` and contains the same locale runtime/assets. Native simulator compilation is externally blocked by the workstation's Command Line Tools-only installation; `docs/known-limitations.md` records the exact `xcodebuild` failure and resolution gate.
+
+### Delivery Status
+
+- Complete and staged diff inspection passed with the concurrent Signal Orange presentation changes excluded from the localization slice. Commit `aaef657` (`feat(localization): add persistent language selection`) was pushed normally to `origin/main`, and local `main` matched the remote before this final documentation update. The remaining Signal Orange work stays preserved and uncommitted in the shared worktree.
 
 ## Sutelio NativePHP Self-Contained Test Contract Follow-Up — 2026-08-17
 

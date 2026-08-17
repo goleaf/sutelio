@@ -176,6 +176,6 @@ Requirements: `sys-user-003`, `sys-user-002`, `sys-onboarding-001`, `i18n-001`, 
 - [x] Implement the validated and rate-limited locale action, encrypted long-lived cookie, shared Inertia props, mandatory animated first-run dialog, and global auth/authenticated dropdown.
 - [x] Reuse the same immediate locale mutation from Settings and onboarding, keep registration and document locale synchronized, and make persistent translated layout props reactive.
 - [x] Verify focused/full Pest, Pint, Larastan, frontend tests/types/lint/format/audit/build, isolated SQLite migration/seed integrity, web browser behavior, NativePHP packaging, and representative desktop/phone/tablet rendering.
-- [ ] Inspect the complete and staged diffs, preserve concurrent Signal Orange work, commit the attributable localization slice on `main`, push normally, and verify remote equality.
+- [x] Inspect the complete and staged diffs, preserve concurrent Signal Orange work, commit the attributable localization slice on `main`, push normally, and verify remote equality.
 
 Detailed design and execution order are recorded in `docs/superpowers/specs/2026-08-17-global-language-selection-design.md` and `docs/superpowers/plans/2026-08-17-global-language-selection.md`. The change adds no schema or dependency; rollback removes the locale endpoint/cookie/shared controls while preserving the pre-existing account preference column.
