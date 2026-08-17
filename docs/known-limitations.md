@@ -6,7 +6,7 @@ Only external/environmental blockers and explicitly accepted platform data bound
 
 - Affected requirement: `sys-brand-001`.
 - Evidence: Android and iOS isolate private application storage by package/bundle identity; Sutelio uses `com.goleaf.sutelio`, which is intentionally a different sandbox from the preceding installed product identity.
-- Impact: a clean Sutelio installation cannot automatically read the preceding package's private SQLite database, and this repository currently claims no automatic cross-package migration. Task 11 validates the new sandbox only; deleting the preceding installed package before an explicit export/migration would make its private data unavailable.
+- Impact: a clean Sutelio installation cannot automatically read the preceding package's private SQLite database, and this repository currently claims no automatic cross-package migration. Task 20 validates the new sandbox only; deleting the preceding installed package before an explicit export/migration would make its private data unavailable.
 - Resolution trigger: retain the preceding installation/data unless the user deliberately accepts a clean start, or approve and implement a separately specified, authenticated export/import or platform migration workflow before removal.
 
 ## NativePHP Runtime Documentation Drift

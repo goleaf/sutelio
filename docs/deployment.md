@@ -43,7 +43,7 @@ npm run brand:native
 
 `brand:native` validates and publishes the canonical identity/assets only after a complete fresh-template or already-canonical preflight. Android's external `applicationId` and iOS primary bundle identifier are `com.goleaf.sutelio`, and the hostless custom scheme is `sutelio`. Android's `namespace = "com.nativephp.mobile"` belongs to NativePHP/JNI and must remain unchanged.
 
-Task 11 will build and independently inspect a fresh APK, then copy the ignored deliverable to `storage/app/native-build/sutelio-android-debug.apk`. Its bytes, SHA-256, manifest, resources, signature, alignment, archives, clean-install/emulator behavior, SQLite sandbox, and logs are pending and are not claimed by Task 8. Older APK and iOS archive measurements remain dated historical evidence in `docs/current-state-audit.md` and `docs/progress.md`, not the final Sutelio rename artifact.
+Task 20 will build and independently inspect a fresh APK, then copy the ignored deliverable to `storage/app/native-build/sutelio-android-debug.apk`. Its bytes, SHA-256, manifest, resources, signature, alignment, archives, clean-install/emulator behavior, SQLite sandbox, and logs are pending and are not claimed by Task 8. Older APK and iOS archive measurements remain dated historical evidence in `docs/current-state-audit.md` and `docs/progress.md`, not the final Sutelio rename artifact.
 
 Full iOS simulator compilation remains externally blocked on this workstation because only Apple Command Line Tools are installed; the exact release gate and resolution trigger are recorded in `docs/known-limitations.md`.
 
