@@ -288,3 +288,25 @@ test('task results and pagination compose the shared result frames', function ()
         ->toContain('<PaginationBar')
         ->not->toContain('<nav');
 });
+
+test('the shared surface panel owns the flat bordered product surface recipe', function () {
+    $path = resource_path('js/components/shared/SurfacePanel.vue');
+
+    expect(File::exists($path))->toBeTrue();
+
+    expect(File::get($path))
+        ->toContain("as?: 'div' | 'section' | 'aside' | 'article' | 'nav'")
+        ->toContain("padding?: 'none' | 'sm' | 'md'")
+        ->toContain('data-slot="surface-panel"')
+        ->toContain('rounded-panel border border-border/80 bg-card shadow-panel')
+        ->toContain('<slot />');
+});
+
+test('notification filters reuse the shared flat surface', function () {
+    $source = File::get(resource_path('js/components/notification/NotificationFilters.vue'));
+
+    expect($source)
+        ->toContain("import SurfacePanel from '@/components/shared/SurfacePanel.vue'")
+        ->toContain('<SurfacePanel')
+        ->not->toContain('overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel');
+});

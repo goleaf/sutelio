@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { FilterX, Layers3, ListFilter } from '@lucide/vue';
 import { computed } from 'vue';
+import SurfacePanel from '@/components/shared/SurfacePanel.vue';
 import WorkspaceSegmentedButton from '@/components/shared/WorkspaceSegmentedButton.vue';
 import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedControl.vue';
 import { Button } from '@/components/ui/button';
@@ -62,10 +63,7 @@ function clearFilters(): void {
 </script>
 
 <template>
-    <section
-        class="overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel"
-        :aria-label="copy.common.filters"
-    >
+    <SurfacePanel as="section" :aria-label="copy.common.filters">
         <div
             class="grid gap-5 border-b border-border/70 px-4 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end"
         >
@@ -189,5 +187,5 @@ function clearFilters(): void {
                 }}
             </p>
         </div>
-    </section>
+    </SurfacePanel>
 </template>
