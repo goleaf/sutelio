@@ -653,3 +653,20 @@ test('the NativePHP Jump command exposes the complete network contract', functio
             'NATIVEPHP_OPEN_BROWSER=false',
         );
 });
+
+test('Sutelio NativePHP brand sources include deterministic adaptive monochrome and splash resources', function () {
+    $brandBuilder = File::get(base_path('scripts/build-brand-assets.mjs'));
+    $nativeBrandInstaller = File::get(base_path('scripts/apply-native-brand.mjs'));
+    $monochrome = File::get(resource_path('brand/android/drawable/ic_launcher_monochrome.xml'));
+    $adaptive = File::get(resource_path('brand/android/mipmap-anydpi-v33/ic_launcher.xml'));
+    $splashTheme = File::get(resource_path('brand/android/values-v31/themes.xml'));
+
+    expect($brandBuilder)->toContain('b24f1812584816958afcf22e22d08e44318c5e51651e25d2438efdde389b33b1')
+        ->and($nativeBrandInstaller)->toContain('cpSync(source, destination, { recursive: true, force: true })')
+        ->and($monochrome)->toContain('#FF000000', 'android:pathData')
+        ->and($adaptive)->toContain('<monochrome android:drawable="@drawable/ic_launcher_monochrome"/>')
+        ->and($splashTheme)->toContain(
+            '<item name="android:windowSplashScreenBackground">#FFF8E9</item>',
+            '<item name="android:windowSplashScreenIconBackgroundColor">#123C8B</item>',
+        );
+});

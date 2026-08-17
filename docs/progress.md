@@ -4722,3 +4722,25 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - This planning phase changes documentation only. No application source, dependency lock, local environment, database, generated native project, APK, emulator package, GitHub repository name, remote URL, project directory, or Herd site has been changed.
 - Commit `4df9fd0` (`docs: add Sutelio rename implementation plan`) contains only the implementation plan and append-only planning evidence; `git push --verbose origin main` completed successfully as `a37c9ce..4df9fd0`.
 - This status-only progress synchronization follows on `main` and will be pushed normally. Application implementation remains paused until the execution approach is selected.
+
+## Sutelio Full Brand Rename Implementation — 2026-08-17
+
+### Implementation Preflight
+
+- Began from clean synchronized `main` after approval of `docs/plans/2026-08-17-sutelio-full-brand-rename-design.md` and `docs/superpowers/plans/2026-08-17-sutelio-full-brand-rename.md`.
+- Scope is identity-only: deterministic brand assets, active product/package names, NativePHP generation, APK/emulator proof, canonical evidence, and final in-place GitHub/Herd rename.
+- No schema, domain behavior, authorization, authentication, email-verification, or dependency-version change is authorized in this phase.
+
+### Red Brand Contract Evidence
+
+- `php artisan test --compact tests/Feature/BrandIdentityTest.php tests/Feature/FrontendDesignTest.php` intentionally remains red: 126 tests ran with 123 passing, 1 failed assertion, 2 missing-asset errors, and 640 assertions. The three non-passing cases are the expected absent Sutelio master/raster assets and the existing inline Laravel logo in `AppLogoIcon.vue`.
+- No brand asset or production component was created or changed in this contract-only task, and the red state was not committed.
+
+### Visual Identity Slice
+
+- The Task 1 red contract above is green after Tasks 2-4: the pinned Instrument Sans input and unchanged OFL license produce the approved clean-S vectors, opaque web/mobile rasters, Android adaptive/monochrome resources, and matching favicon through one deterministic generator. It builds in a temporary directory, validates the font checksum, output set, SVG/XML structure, favicon parity, and raster dimensions before publishing, then always removes the temporary directory; the native installer fails clearly when either source or generated destination is absent.
+- The web shell now exposes the locked cobalt, deep-cobalt, orange, and ivory tokens without changing existing primary, status, chart, or color-mode behavior. The canonical full-color mark replaces the inline Laravel SVG everywhere; the visible `Sutelio` wordmark stays one color, sidebar/auth/header consumers remove redundant orange wrappers, decorative copies remain hidden from assistive technology, the auth home link has an explicit `Sutelio` accessible name and brand-cobalt focus ring, and the repository/documentation links target `goleaf/sutelio`.
+- Browser presentation now falls back to the `Sutelio` title, uses `#FF6038` for Inertia progress, and declares the application name, Apple web-app title, and `#123C8B` theme color while preserving the existing favicon/touch links, theme initializer, fonts, Vite entries, and Inertia head. The narrow `.gitattributes` rule reports `resources/brand/fonts/OFL.txt: whitespace: -trailing-space`; its required checksum remains unchanged and no repository-wide whitespace suppression was added.
+- `php artisan test --compact tests/Feature/BrandIdentityTest.php tests/Feature/FrontendDesignTest.php` passes 130 tests / 754 assertions in 2.094 seconds. `php artisan test --compact tests/Feature/NativePhpMobileTest.php --filter='brand sources include'` passes 1 test / 7 assertions in 0.203 seconds. Vue type checking, ESLint, Prettier verification, and `vendor/bin/pint --dirty --format agent` pass, and `git diff --check` is clean.
+- `npm run build` passes with Vite 8.2.1: 3,539 modules transformed and the production bundle completed in 3.07 seconds. The main application CSS is 160.07 kB / 23.57 kB gzip and the main application JavaScript is 89.50 kB / 23.10 kB gzip; the only additional output is the informational plugin-timing report.
+- This presentation-only slice adds zero database queries, migrations, schema changes, dependency additions, or dependency-version changes. Package metadata only names the existing npm root `sutelio` and exposes the two brand scripts. The visual work will be committed locally as `feat: add Sutelio brand identity`; no push is authorized before the technical identity work in Task 6.

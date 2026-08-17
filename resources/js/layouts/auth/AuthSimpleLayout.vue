@@ -43,12 +43,10 @@ const { t } = useUi();
                     <div class="relative flex items-start gap-4">
                         <Link
                             :href="home()"
-                            class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-600/20 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-4 focus-visible:outline-none"
+                            aria-label="Sutelio"
+                            class="flex size-12 shrink-0 items-center justify-center rounded-2xl focus-visible:ring-2 focus-visible:ring-brand-cobalt focus-visible:ring-offset-4 focus-visible:outline-none"
                         >
-                            <AppLogoIcon
-                                class="size-7 fill-current text-white"
-                            />
-                            <span class="sr-only">{{ title }}</span>
+                            <AppLogoIcon class-name="size-12" />
                         </Link>
                         <div class="min-w-0 space-y-1.5 text-left">
                             <p

@@ -65,6 +65,11 @@ html.dark {
     --color-input: var(--input);
     --color-ring: var(--ring);
 
+    --color-brand-cobalt: var(--brand-cobalt);
+    --color-brand-deep-cobalt: var(--brand-deep-cobalt);
+    --color-brand-orange: var(--brand-orange);
+    --color-brand-ivory: var(--brand-ivory);
+
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
@@ -111,6 +116,10 @@ html.dark {
 
 :root {
     --safe-area-inset-bottom: env(safe-area-inset-bottom);
+    --brand-cobalt: #123c8b;
+    --brand-deep-cobalt: #0a285f;
+    --brand-orange: #ff6038;
+    --brand-ivory: #fff8e9;
     --background: hsl(0 0% 100%);
     --foreground: hsl(0 0% 3.9%);
     --card: hsl(0 0% 100%);

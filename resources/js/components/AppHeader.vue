@@ -66,12 +66,12 @@ const mainNavItems = computed<NavItem[]>(() => [
 const rightNavItems = computed<NavItem[]>(() => [
     {
         title: t('common.navigation.repository'),
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/goleaf/sutelio',
         icon: Folder,
     },
     {
         title: t('common.navigation.documentation'),
-        href: 'https://laravel.com/docs/starter-kits#vue',
+        href: 'https://github.com/goleaf/sutelio#readme',
         icon: BookOpen,
     },
 ]);
@@ -98,9 +98,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 t('common.navigation.menu')
                             }}</SheetTitle>
                             <SheetHeader class="flex justify-start text-left">
-                                <AppLogoIcon
-                                    class="size-6 fill-current text-black dark:text-white"
-                                />
+                                <AppLogoIcon class-name="size-8" />
                             </SheetHeader>
                             <div
                                 class="flex h-full flex-1 flex-col justify-between space-y-4 py-6"

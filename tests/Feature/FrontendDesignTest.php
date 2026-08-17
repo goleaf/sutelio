@@ -162,6 +162,11 @@ test('shared shells carry the projects page visual language', function () {
         ->and(File::get(resource_path('js/components/ui/card/Card.vue')))
         ->toContain('rounded-panel')
         ->toContain('border-border/80');
+
+    expect(File::get(resource_path('js/components/AppLogoIcon.vue')))
+        ->toContain('src="/favicon.svg"', 'alt=""', 'aria-hidden="true"')
+        ->toMatch('/<img\b(?=[^>]*\bsrc\s*=\s*["\']\/favicon\.svg["\'])(?=[^>]*\balt\s*=\s*["\']["\'])(?=[^>]*:class\s*=\s*["\']className["\'])(?=[^>]*\baria-hidden\s*=\s*["\']true["\'])[^>]*>/s')
+        ->not->toContain('<svg', 'fill="currentColor"', '<text');
 });
 
 test('authenticated content delegates the sole main landmark to the persistent shell', function () {
@@ -695,7 +700,7 @@ test('passkey verification uses the shared large loading action', function () {
 
 test('shared navigation feedback uses localized labels and the projects orange accent', function () {
     expect(File::get(resource_path('js/app.ts')))
-        ->toContain("color: '#ea580c'")
+        ->toContain("color: '#FF6038'")
         ->not->toContain("color: '#4B5563'")
         ->and(File::get(resource_path('js/components/ui/spinner/Spinner.vue')))
         ->toContain("t('common.states.loading')")

@@ -9,7 +9,7 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 import type { UserPreference } from '@/types/models';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Sutelio';
 
 createInertiaApp({
     http: axiosAdapter(),
@@ -36,7 +36,7 @@ createInertiaApp({
         }
     },
     progress: {
-        color: '#ea580c',
+        color: '#FF6038',
     },
 });
 

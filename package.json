@@ -1,11 +1,14 @@
 {
     "$schema": "https://www.schemastore.org/package.json",
+    "name": "sutelio",
     "private": true,
     "type": "module",
     "imports": {
         "#nativephp": "./vendor/nativephp/mobile/resources/dist/native.js"
     },
     "scripts": {
+        "brand:build": "node scripts/build-brand-assets.mjs",
+        "brand:native": "node scripts/apply-native-brand.mjs",
         "build": "vite build",
         "build:android": "vite build --mode=android",
         "build:ios": "vite build --mode=ios",

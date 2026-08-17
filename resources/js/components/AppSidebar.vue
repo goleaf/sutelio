@@ -94,7 +94,7 @@ function projectHref(project: Project) {
         <SidebarHeader class="gap-2 border-b border-sidebar-border/80 pb-3">
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child tooltip="Xiaomi Mimo">
+                    <SidebarMenuButton size="lg" as-child tooltip="Sutelio">
                         <Link :href="dashboard()" prefetch>
                             <AppLogo />
                         </Link>
