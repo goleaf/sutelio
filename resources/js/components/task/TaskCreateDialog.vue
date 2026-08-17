@@ -3,12 +3,14 @@ import { useHttp } from '@inertiajs/vue3';
 import { Plus, X } from '@lucide/vue';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import DialogActions from '@/components/shared/DialogActions.vue';
+import DialogBody from '@/components/shared/DialogBody.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import TaskDescriptionField from '@/components/task/TaskDescriptionField.vue';
 import TaskTitleField from '@/components/task/TaskTitleField.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogFooter } from '@/components/ui/dialog';
+import { Dialog } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -97,169 +99,173 @@ async function submit(): Promise<void> {
             :close-label="t('common.actions.cancel')"
             max-width-class="sm:max-w-xl"
         >
-            <form class="space-y-6 px-6 py-6 sm:px-8" @submit.prevent="submit">
-                <TaskTitleField
-                    v-model="form.title"
-                    :label="t('tasks.create.title')"
-                    :error="form.errors.title"
-                    :placeholder="t('tasks.create.title_placeholder')"
-                    :disabled="form.processing"
-                    autofocus
-                    @input="form.clearErrors('title')"
-                />
-                <TaskDescriptionField
-                    v-model="form.description"
-                    :label="t('tasks.create.description')"
-                    :error="form.errors.description"
-                    :placeholder="t('tasks.create.description_placeholder')"
-                    :disabled="form.processing"
-                    @input="form.clearErrors('description')"
-                />
-                <div class="grid gap-4 sm:grid-cols-3">
-                    <div class="space-y-2">
-                        <Label for="task-status">{{
-                            t('tasks.create.status')
-                        }}</Label>
-                        <Select
-                            v-model="form.status"
-                            :disabled="form.processing"
-                        >
-                            <SelectTrigger
-                                id="task-status"
-                                :aria-invalid="Boolean(form.errors.status)"
+            <form @submit.prevent="submit">
+                <DialogBody>
+                    <TaskTitleField
+                        v-model="form.title"
+                        :label="t('tasks.create.title')"
+                        :error="form.errors.title"
+                        :placeholder="t('tasks.create.title_placeholder')"
+                        :disabled="form.processing"
+                        autofocus
+                        @input="form.clearErrors('title')"
+                    />
+                    <TaskDescriptionField
+                        v-model="form.description"
+                        :label="t('tasks.create.description')"
+                        :error="form.errors.description"
+                        :placeholder="t('tasks.create.description_placeholder')"
+                        :disabled="form.processing"
+                        @input="form.clearErrors('description')"
+                    />
+                    <div class="grid gap-4 sm:grid-cols-3">
+                        <div class="space-y-2">
+                            <Label for="task-status">{{
+                                t('tasks.create.status')
+                            }}</Label>
+                            <Select
+                                v-model="form.status"
+                                :disabled="form.processing"
                             >
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="status in statuses"
-                                    :key="status.id"
-                                    :value="status.key"
+                                <SelectTrigger
+                                    id="task-status"
+                                    :aria-invalid="Boolean(form.errors.status)"
                                 >
-                                    {{ status.name }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="form.errors.status" />
-                    </div>
-                    <div class="space-y-2">
-                        <Label for="task-priority">{{
-                            t('tasks.create.priority')
-                        }}</Label>
-                        <Select
-                            v-model="form.priority"
-                            :disabled="form.processing"
-                        >
-                            <SelectTrigger
-                                id="task-priority"
-                                :aria-invalid="Boolean(form.errors.priority)"
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="status in statuses"
+                                        :key="status.id"
+                                        :value="status.key"
+                                    >
+                                        {{ status.name }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.status" />
+                        </div>
+                        <div class="space-y-2">
+                            <Label for="task-priority">{{
+                                t('tasks.create.priority')
+                            }}</Label>
+                            <Select
+                                v-model="form.priority"
+                                :disabled="form.processing"
                             >
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="priority in priorities"
-                                    :key="priority.id"
-                                    :value="priority.key"
+                                <SelectTrigger
+                                    id="task-priority"
+                                    :aria-invalid="
+                                        Boolean(form.errors.priority)
+                                    "
                                 >
-                                    {{ priority.name }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="form.errors.priority" />
-                    </div>
-                    <div class="space-y-2">
-                        <Label for="due_date">{{
-                            t('tasks.create.due_date')
-                        }}</Label>
-                        <Input
-                            id="due_date"
-                            v-model="form.due_date"
-                            type="date"
-                            :disabled="form.processing"
-                            :aria-invalid="Boolean(form.errors.due_date)"
-                            :aria-describedby="
-                                form.errors.due_date
-                                    ? 'due-date-error'
-                                    : undefined
-                            "
-                        />
-                        <InputError
-                            id="due-date-error"
-                            :message="form.errors.due_date"
-                        />
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <Label for="task-recurring-rule">{{
-                        t('tasks.create.repeat')
-                    }}</Label>
-                    <Select
-                        v-model="form.recurring_rule"
-                        :disabled="!form.is_recurring || form.processing"
-                    >
-                        <SelectTrigger
-                            id="task-recurring-rule"
-                            :aria-invalid="Boolean(form.errors.recurring_rule)"
-                        >
-                            <SelectValue
-                                :placeholder="
-                                    form.is_recurring
-                                        ? t(
-                                              'tasks.create.frequency_placeholder',
-                                          )
-                                        : t('tasks.create.no_repeat')
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem
+                                        v-for="priority in priorities"
+                                        :key="priority.id"
+                                        :value="priority.key"
+                                    >
+                                        {{ priority.name }}
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.priority" />
+                        </div>
+                        <div class="space-y-2">
+                            <Label for="due_date">{{
+                                t('tasks.create.due_date')
+                            }}</Label>
+                            <Input
+                                id="due_date"
+                                v-model="form.due_date"
+                                type="date"
+                                :disabled="form.processing"
+                                :aria-invalid="Boolean(form.errors.due_date)"
+                                :aria-describedby="
+                                    form.errors.due_date
+                                        ? 'due-date-error'
+                                        : undefined
                                 "
                             />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="none">{{
-                                t('tasks.create.no_repeat')
-                            }}</SelectItem>
-                            <SelectItem value="FREQ=DAILY">{{
-                                t('tasks.recurring.daily')
-                            }}</SelectItem>
-                            <SelectItem value="FREQ=WEEKLY">{{
-                                t('tasks.recurring.weekly')
-                            }}</SelectItem>
-                            <SelectItem value="FREQ=MONTHLY">{{
-                                t('tasks.recurring.monthly')
-                            }}</SelectItem>
-                            <SelectItem value="FREQ=YEARLY">{{
-                                t('tasks.recurring.yearly')
-                            }}</SelectItem>
-                            <SelectItem value="FREQ=DAILY;INTERVAL=2">{{
-                                t('tasks.recurring.every_2_days')
-                            }}</SelectItem>
-                            <SelectItem value="FREQ=WEEKLY;INTERVAL=2">{{
-                                t('tasks.recurring.every_2_weeks')
-                            }}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <InputError :message="form.errors.recurring_rule" />
-                    <div
-                        class="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-border/70 bg-muted/25 px-3.5"
-                    >
-                        <Checkbox
-                            id="task-is-recurring"
-                            :model-value="form.is_recurring"
-                            class="size-4.5 data-[state=checked]:border-orange-600 data-[state=checked]:bg-orange-600"
-                            :disabled="form.processing"
-                            @update:model-value="
-                                form.is_recurring = Boolean($event)
-                            "
-                        />
-                        <Label
-                            for="task-is-recurring"
-                            class="cursor-pointer text-sm font-normal text-muted-foreground"
-                        >
-                            {{ t('tasks.create.repeat_task') }}
-                        </Label>
+                            <InputError
+                                id="due-date-error"
+                                :message="form.errors.due_date"
+                            />
+                        </div>
                     </div>
-                </div>
-                <DialogFooter
-                    class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                >
+                    <div class="space-y-2">
+                        <Label for="task-recurring-rule">{{
+                            t('tasks.create.repeat')
+                        }}</Label>
+                        <Select
+                            v-model="form.recurring_rule"
+                            :disabled="!form.is_recurring || form.processing"
+                        >
+                            <SelectTrigger
+                                id="task-recurring-rule"
+                                :aria-invalid="
+                                    Boolean(form.errors.recurring_rule)
+                                "
+                            >
+                                <SelectValue
+                                    :placeholder="
+                                        form.is_recurring
+                                            ? t(
+                                                  'tasks.create.frequency_placeholder',
+                                              )
+                                            : t('tasks.create.no_repeat')
+                                    "
+                                />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="none">{{
+                                    t('tasks.create.no_repeat')
+                                }}</SelectItem>
+                                <SelectItem value="FREQ=DAILY">{{
+                                    t('tasks.recurring.daily')
+                                }}</SelectItem>
+                                <SelectItem value="FREQ=WEEKLY">{{
+                                    t('tasks.recurring.weekly')
+                                }}</SelectItem>
+                                <SelectItem value="FREQ=MONTHLY">{{
+                                    t('tasks.recurring.monthly')
+                                }}</SelectItem>
+                                <SelectItem value="FREQ=YEARLY">{{
+                                    t('tasks.recurring.yearly')
+                                }}</SelectItem>
+                                <SelectItem value="FREQ=DAILY;INTERVAL=2">{{
+                                    t('tasks.recurring.every_2_days')
+                                }}</SelectItem>
+                                <SelectItem value="FREQ=WEEKLY;INTERVAL=2">{{
+                                    t('tasks.recurring.every_2_weeks')
+                                }}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="form.errors.recurring_rule" />
+                        <div
+                            class="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-border/70 bg-muted/25 px-3.5"
+                        >
+                            <Checkbox
+                                id="task-is-recurring"
+                                :model-value="form.is_recurring"
+                                class="size-4.5 data-[state=checked]:border-orange-600 data-[state=checked]:bg-orange-600"
+                                :disabled="form.processing"
+                                @update:model-value="
+                                    form.is_recurring = Boolean($event)
+                                "
+                            />
+                            <Label
+                                for="task-is-recurring"
+                                class="cursor-pointer text-sm font-normal text-muted-foreground"
+                            >
+                                {{ t('tasks.create.repeat_task') }}
+                            </Label>
+                        </div>
+                    </div>
+                </DialogBody>
+                <DialogActions>
                     <Button
                         type="button"
                         variant="outline"
@@ -279,7 +285,7 @@ async function submit(): Promise<void> {
                                 : t('tasks.create.submit')
                         }}
                     </Button>
-                </DialogFooter>
+                </DialogActions>
             </form>
         </WorkspaceDialogContent>
     </Dialog>

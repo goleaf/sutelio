@@ -83,3 +83,41 @@ test('task create and overview compose the same focused task fields', function (
             ->toContain('<TaskDescriptionField');
     }
 });
+
+test('workspace dialogs compose shared body and action spacing', function () {
+    $bodyPath = resource_path('js/components/shared/DialogBody.vue');
+    $actionsPath = resource_path('js/components/shared/DialogActions.vue');
+
+    expect(File::exists($bodyPath))->toBeTrue()
+        ->and(File::exists($actionsPath))->toBeTrue();
+
+    expect(File::get($bodyPath))
+        ->toContain('data-slot="dialog-body"')
+        ->toContain('space-y-6 px-4 py-5 sm:px-8 sm:py-6')
+        ->toContain('<slot />');
+
+    expect(File::get($actionsPath))
+        ->toContain("import { DialogFooter } from '@/components/ui/dialog'")
+        ->toContain('data-slot="dialog-actions"')
+        ->toContain('border-t border-border/70')
+        ->toContain('px-4 py-4')
+        ->toContain('sm:px-8')
+        ->toContain('<slot />');
+});
+
+test('active create dialogs reuse shared body and action composition', function () {
+    foreach ([
+        'project create' => 'project/ProjectCreateDialog.vue',
+        'task create' => 'task/TaskCreateDialog.vue',
+    ] as $name => $file) {
+        $source = File::get(resource_path("js/components/{$file}"));
+
+        expect($source, $name)
+            ->toContain("import DialogActions from '@/components/shared/DialogActions.vue'")
+            ->toContain("import DialogBody from '@/components/shared/DialogBody.vue'")
+            ->toContain('<DialogBody>')
+            ->toContain('<DialogActions>')
+            ->not->toContain('space-y-6 px-6 py-6 sm:px-8')
+            ->not->toContain('gap-2 border-t border-border/70 pt-5 sm:gap-2');
+    }
+});

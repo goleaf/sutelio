@@ -572,14 +572,18 @@ test('task creation fields expose complete invalid and disabled states', functio
         ->toContain('<TaskDescriptionField')
         ->toContain(':error="form.errors.description"')
         ->toContain(':disabled="form.processing"')
-        ->toContain(':aria-invalid="Boolean(form.errors.priority)"')
+        ->toContain('Boolean(form.errors.priority)')
         ->toContain(':aria-invalid="Boolean(form.errors.due_date)"')
         ->toContain('form.errors.recurring_rule')
         ->toContain(':disabled="!form.is_recurring || form.processing"')
         ->toContain('<InputError :message="form.errors.priority" />')
         ->toContain('id="due-date-error"')
         ->toContain(':message="form.errors.due_date"')
-        ->toContain('<InputError :message="form.errors.recurring_rule" />');
+        ->toContain('<InputError :message="form.errors.recurring_rule" />')
+        ->and($descriptionField)
+        ->toContain(':aria-describedby="describedBy"')
+        ->toContain(':aria-invalid="invalid"')
+        ->toContain(':disabled="disabled"');
 });
 
 test('destructive actions use application confirmations instead of browser dialogs', function (string $file) {
