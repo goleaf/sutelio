@@ -5532,3 +5532,8 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 
 - The canonical rename evidence commit `28800bd` is pushed to `https://github.com/goleaf/sutelio.git`; a post-push fetch confirms local HEAD, `origin/main`, and GitHub's `main` are identical. The tracked tree was clean immediately before this checklist-only closure, the ignored Task 20 APK still matches SHA-256 `9c1a881418553bf09d3d2641b6cd3c5a820bd594135f82ddd4e77db2f711dccb`, and no application source mutation remains planned.
 - This closure marks the Task 20 evidence commit and all four Task 21 steps complete. After its own semantic commit and normal push, Task 22 may resolve the physical USB target; emulator shutdown and read-only device discovery remain the only pre-install actions, and installation of the exact verified APK remains the final mutation.
+
+## Sutelio Final Delivery — Task 21 Canonical Status Consistency
+
+- Post-publication review found that `docs/architecture.md` and four active requirement status cells still described already completed Task 18, Task 19, or Task 21 gates as pending. This final documentation-only correction aligns those canonical statuses with the observed browser, complete-suite, APK/emulator, repository, checkout, and Herd evidence; it changes no application source, query, route, schema, dependency, build artifact, or device state.
+- The Task 20 APK remains ignored and byte-identical at SHA-256 `9c1a881418553bf09d3d2641b6cd3c5a820bd594135f82ddd4e77db2f711dccb`. After this correction's semantic commit and normal push, no source, documentation, or Git mutation remains planned before Task 22 resolves one physical Samsung over USB.
