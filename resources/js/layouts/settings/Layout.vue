@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import {
     User,
     Shield,
@@ -16,6 +16,7 @@ import { computed } from 'vue';
 import { edit as editProfile } from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import SettingsSectionMenu from '@/components/settings/SettingsSectionMenu.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { useUi } from '@/composables/useUi';
 import { edit as editBackup } from '@/routes/backup';
@@ -114,65 +115,43 @@ const metricIcons = {
 </script>
 
 <template>
-    <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-        <div class="mx-auto max-w-app space-y-6">
-            <WorkspacePageHeader
-                :eyebrow="pageEyebrow"
-                :title="pageTitle"
-                :description="pageDescription"
-            >
-                <template v-if="settingsMetrics?.length" #metrics>
-                    <WorkspaceMetric
-                        v-for="metric in settingsMetrics"
-                        :key="`${metric.label}-${metric.value}`"
-                        :label="metric.label"
-                        :value="metric.value"
-                        :icon="metricIcons[metric.icon]"
-                        :tone="metric.tone"
-                    />
-                </template>
-            </WorkspacePageHeader>
-
-            <div
-                class="flex flex-col gap-6 rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6 lg:flex-row lg:gap-8"
-            >
-                <SettingsSectionMenu
-                    :items="navItems"
-                    :current-label="t('settings.navigation.current_section')"
-                    :open-label="t('settings.navigation.open_sections')"
+    <WorkspacePageFrame>
+        <WorkspacePageHeader
+            :eyebrow="pageEyebrow"
+            :title="pageTitle"
+            :description="pageDescription"
+        >
+            <template #icon>
+                <component
+                    :is="activeNavItem?.icon ?? User"
+                    aria-hidden="true"
                 />
-                <div class="hidden w-52 shrink-0 self-start lg:block">
-                    <nav
-                        :aria-label="
-                            props.navigationLabel ?? t('account.menu.settings')
-                        "
-                        class="flex flex-col gap-1 rounded-xl bg-muted/55 p-1"
-                    >
-                        <Link
-                            v-for="item in navItems"
-                            :key="item.href"
-                            :href="item.href"
-                            :aria-current="item.active ? 'page' : undefined"
-                            :class="[
-                                'flex min-h-11 shrink-0 items-center gap-3 rounded-lg px-3 py-2 text-sm whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none',
-                                item.active
-                                    ? 'bg-card font-medium text-orange-800 shadow-sm'
-                                    : 'text-muted-foreground hover:bg-card/70 hover:text-foreground',
-                            ]"
-                        >
-                            <component
-                                :is="item.icon"
-                                class="size-4"
-                                aria-hidden="true"
-                            />
-                            {{ item.label }}
-                        </Link>
-                    </nav>
-                </div>
-                <div class="settings-page min-w-0 flex-1">
-                    <slot />
-                </div>
+            </template>
+
+            <template v-if="settingsMetrics?.length" #metrics>
+                <WorkspaceMetric
+                    v-for="metric in settingsMetrics"
+                    :key="`${metric.label}-${metric.value}`"
+                    :label="metric.label"
+                    :value="metric.value"
+                    :icon="metricIcons[metric.icon]"
+                    :tone="metric.tone"
+                />
+            </template>
+        </WorkspacePageHeader>
+
+        <div
+            class="flex flex-col gap-6 rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6 lg:flex-row lg:gap-8"
+        >
+            <SettingsSectionMenu
+                :items="navItems"
+                :label="props.navigationLabel ?? t('account.menu.settings')"
+                :current-label="t('settings.navigation.current_section')"
+                :open-label="t('settings.navigation.open_sections')"
+            />
+            <div class="settings-page min-w-0 flex-1">
+                <slot />
             </div>
         </div>
-    </div>
+    </WorkspacePageFrame>
 </template>

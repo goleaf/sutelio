@@ -50,8 +50,12 @@ const moreAttentionFilter = computed(() =>
     ),
 );
 
-function priorityWidth(count: number): string {
-    return `${Math.max((count / priorityMaximum.value) * 100, count > 0 ? 8 : 0)}%`;
+function priorityScale(count: number): number {
+    return Math.max(count / priorityMaximum.value, count > 0 ? 0.08 : 0);
+}
+
+function percentageScale(value: number): number {
+    return Math.min(1, Math.max(0, value / 100));
 }
 
 function dueLabel(task: ProjectTask): string {
@@ -76,13 +80,9 @@ function dueLabel(task: ProjectTask): string {
         :aria-label="t('projects.show.pulse.title')"
     >
         <div class="border-b border-border/70 px-5 py-5 sm:px-6">
-            <LeadingIconHeading content-class="gap-0">
+            <LeadingIconHeading tile tile-tone="brand" content-class="gap-0">
                 <template #icon>
-                    <span
-                        class="flex size-10 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
-                    >
-                        <Gauge class="size-5" aria-hidden="true" />
-                    </span>
+                    <Gauge />
                 </template>
 
                 <h2 class="font-semibold tracking-tight">
@@ -113,8 +113,12 @@ function dueLabel(task: ProjectTask): string {
                     :aria-valuenow="metrics.completion_rate"
                 >
                     <div
-                        class="h-full rounded-full bg-emerald-500 transition-[width] duration-500 motion-reduce:transition-none"
-                        :style="{ width: `${metrics.completion_rate}%` }"
+                        class="h-full w-full origin-left scale-x-[var(--progress)] rounded-full bg-emerald-500 transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
+                        :style="{
+                            '--progress': percentageScale(
+                                metrics.completion_rate,
+                            ),
+                        }"
                     />
                 </div>
             </div>
@@ -122,7 +126,7 @@ function dueLabel(task: ProjectTask): string {
             <div class="mt-5 grid grid-cols-3 gap-2">
                 <button
                     type="button"
-                    class="min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
                     @click="emit('filter', 'overdue')"
                 >
                     <span class="block text-base font-semibold tabular-nums">{{
@@ -135,7 +139,7 @@ function dueLabel(task: ProjectTask): string {
                 </button>
                 <button
                     type="button"
-                    class="min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
                     @click="emit('filter', 'due_soon')"
                 >
                     <span class="block text-base font-semibold tabular-nums">{{
@@ -148,7 +152,7 @@ function dueLabel(task: ProjectTask): string {
                 </button>
                 <button
                     type="button"
-                    class="min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
                     @click="emit('filter', 'unassigned')"
                 >
                     <span class="block text-base font-semibold tabular-nums">{{
@@ -194,9 +198,9 @@ function dueLabel(task: ProjectTask): string {
                         aria-hidden="true"
                     >
                         <div
-                            class="h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none"
+                            class="h-full w-full origin-left scale-x-[var(--progress)] rounded-full transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
                             :style="{
-                                width: priorityWidth(priority.count),
+                                '--progress': priorityScale(priority.count),
                                 backgroundColor: safeDefinitionColor(
                                     priority.color,
                                 ),
@@ -229,7 +233,7 @@ function dueLabel(task: ProjectTask): string {
                     v-for="task in attentionTasks.data"
                     :key="task.id"
                     type="button"
-                    class="group flex min-h-11 w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift group flex min-h-11 w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
                     @click="emit('select', task)"
                 >
                     <CalendarClock

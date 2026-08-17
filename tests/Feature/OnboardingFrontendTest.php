@@ -58,7 +58,7 @@ test('onboarding shell exposes progress status validation and mobile-safe action
         ->toContain("? 'step'")
         ->toContain('role="progressbar"')
         ->toContain(':aria-valuenow="progress.percent"')
-        ->toContain('aria-live="polite"')
+        ->toContain('<StatusNotice')
         ->toContain('sticky bottom-0')
         ->toContain('var(--safe-area-inset-bottom)')
         ->toContain('grid-cols-2')
@@ -68,7 +68,9 @@ test('onboarding shell exposes progress status validation and mobile-safe action
         ->toContain('motion-reduce:transition-none')
         ->toContain('forced-colors:')
         ->and($styles)
-        ->toContain('--safe-area-inset-bottom: env(safe-area-inset-bottom)')
+        ->toContain('env(safe-area-inset-bottom, 0px)')
+        ->toContain('var(--inset-bottom, 0px)')
+        ->toContain('--page-safe-area-inset-bottom:')
         ->and($panel)
         ->toContain('role="alert"')
         ->toContain('validation-summary')
@@ -90,6 +92,47 @@ test('onboarding visible actions and assistive messages come from semantic copy'
         ->toContain('copy.status');
 });
 
+test('onboarding hides unavailable existing choices and explains the create only path', function () {
+    foreach ([
+        'WorkspaceStep' => 'workspaces',
+        'ProjectStep' => 'projects',
+        'TaskStep' => 'tasks',
+    ] as $component => $options) {
+        $source = File::get(resource_path("js/components/onboarding/{$component}.vue"));
+
+        expect($source)
+            ->toContain("const hasExistingOptions = computed(() => props.{$options}.length > 0);")
+            ->toMatch('/hasExistingOptions\s+\?\s+copy\.description\s+:\s+copy\.create_description/')
+            ->toContain('v-if="hasExistingOptions"')
+            ->toContain('v-else-if="!hasExistingOptions || mode === \'create\'"')
+            ->not->toContain(":disabled=\"processing || {$options}.length === 0\"");
+    }
+});
+
+test('onboarding entity step headings stay truthful in create and select modes', function () {
+    foreach ([
+        'en' => [
+            'workspace' => 'Set up your workspace',
+            'project' => 'Give the work a project',
+            'task' => 'Define the next action',
+        ],
+        'lt' => [
+            'workspace' => 'Paruoškite darbo erdvę',
+            'project' => 'Priskirkite darbui projektą',
+            'task' => 'Nustatykite kitą veiksmą',
+        ],
+        'ru' => [
+            'workspace' => 'Настройте рабочее пространство',
+            'project' => 'Определите проект для работы',
+            'task' => 'Определите следующее действие',
+        ],
+    ] as $locale => $headings) {
+        foreach ($headings as $step => $heading) {
+            expect(trans("onboarding.steps.{$step}.title", locale: $locale))->toBe($heading);
+        }
+    }
+});
+
 test('dashboard continuation and settings replay use accessible policy-aware Wayfinder controls', function () {
     $dashboard = File::get(resource_path('js/pages/Dashboard.vue'));
     $checklist = File::get(resource_path('js/components/onboarding/OnboardingChecklist.vue'));
@@ -108,7 +151,7 @@ test('dashboard continuation and settings replay use accessible policy-aware Way
         ->toContain('checklist.has_team_member')
         ->toContain('checklist.has_security_factor')
         ->toContain('min-h-11')
-        ->toContain('aria-live="polite"')
+        ->toContain('<StatusNotice')
         ->not->toContain('percent')
         ->and($preferences)
         ->toContain('canReplayOnboarding')

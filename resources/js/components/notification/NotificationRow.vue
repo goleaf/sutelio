@@ -8,8 +8,10 @@ import {
     Clock3,
     MessageSquareText,
 } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Component } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import type { IconTileTone } from '@/components/shared/IconTile.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
@@ -17,7 +19,7 @@ import {
     notificationContent,
     notificationPresentation,
 } from './notification-inbox';
-import type { NotificationItem } from './notification-inbox';
+import type { NotificationItem, NotificationTone } from './notification-inbox';
 
 const props = defineProps<{
     notification: NotificationItem;
@@ -28,6 +30,20 @@ const emit = defineEmits<{
     open: [notification: NotificationItem];
 }>();
 const { copy, formatDate } = useWorkspaceUi();
+const justMarkedRead = ref(false);
+const iconTones: Record<NotificationTone, IconTileTone> = {
+    blue: 'information',
+    emerald: 'success',
+    orange: 'brand',
+    red: 'destructive',
+};
+
+watch(
+    () => props.notification.is_read,
+    (isRead, wasRead) => {
+        justMarkedRead.value = isRead && !wasRead;
+    },
+);
 
 const content = computed(() =>
     notificationContent(props.notification, {
@@ -64,17 +80,12 @@ const icon = computed<Component>(
         })[presentation.value.icon],
 );
 
-const iconTone = computed(() => {
+const iconTone = computed<IconTileTone>(() => {
     if (props.notification.is_read) {
-        return 'bg-muted text-muted-foreground';
+        return 'muted';
     }
 
-    return {
-        blue: 'bg-sky-500/12 text-sky-700',
-        emerald: 'bg-emerald-500/12 text-emerald-700',
-        orange: 'bg-orange-500/12 text-orange-700',
-        red: 'bg-red-500/12 text-red-700',
-    }[presentation.value.tone];
+    return iconTones[presentation.value.tone];
 });
 </script>
 
@@ -96,14 +107,13 @@ const iconTone = computed(() => {
             aria-hidden="true"
         />
 
-        <div
-            :class="[
-                'flex size-11 items-center justify-center rounded-2xl',
-                iconTone,
-            ]"
+        <IconTile
+            :tone="iconTone"
+            size="md"
+            :class="{ 'ui-status-pop': justMarkedRead }"
         >
-            <component :is="icon" class="size-5" aria-hidden="true" />
-        </div>
+            <component :is="icon" />
+        </IconTile>
 
         <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">

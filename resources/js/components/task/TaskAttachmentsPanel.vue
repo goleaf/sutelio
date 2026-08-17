@@ -4,6 +4,7 @@ import { Download, Paperclip, Trash2, Upload } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InlineState from '@/components/shared/InlineState.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -99,12 +100,15 @@ function formatSize(bytes: number): string {
 
 <template>
     <section class="rounded-panel border border-border/80 bg-card p-5">
-        <div class="flex items-center gap-2">
-            <Paperclip class="size-4 text-orange-700" aria-hidden="true" />
+        <LeadingIconHeading tile tile-tone="brand">
+            <template #icon>
+                <Paperclip />
+            </template>
+
             <h2 class="text-base font-semibold">
                 {{ t('tasks.detail.attachments') }}
             </h2>
-        </div>
+        </LeadingIconHeading>
 
         <form class="mt-4 space-y-2" @submit.prevent="upload">
             <div class="flex flex-col gap-2 sm:flex-row">

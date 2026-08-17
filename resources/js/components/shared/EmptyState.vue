@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { AlertTriangle, ArrowRight, LoaderCircle } from '@lucide/vue';
+import {
+    AlertTriangle,
+    ArrowRight,
+    LoaderCircle,
+    PackageOpen,
+} from '@lucide/vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -46,12 +52,15 @@ const emit = defineEmits<{ action: [] }>();
             "
             aria-hidden="true"
         />
-        <div
-            class="relative mb-5 flex size-16 items-center justify-center rounded-2xl border shadow-sm"
-            :class="
+        <IconTile
+            size="lg"
+            class="relative mb-5"
+            :tone="
                 status === 'error'
-                    ? 'border-red-500/15 bg-red-500/[0.08] text-red-700'
-                    : 'border-orange-500/15 bg-orange-500/[0.08] text-orange-700'
+                    ? 'destructive'
+                    : status === 'loading'
+                      ? 'information'
+                      : 'brand'
             "
         >
             <slot name="icon">
@@ -65,22 +74,9 @@ const emit = defineEmits<{ action: [] }>();
                     class="size-7"
                     aria-hidden="true"
                 />
-                <svg
-                    v-else
-                    class="size-7"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.5"
-                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                </svg>
+                <PackageOpen v-else aria-hidden="true" />
             </slot>
-        </div>
+        </IconTile>
         <h3 class="relative text-lg font-semibold tracking-tight">
             {{ title }}
         </h3>

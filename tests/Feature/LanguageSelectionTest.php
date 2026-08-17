@@ -25,18 +25,21 @@ test('a first guest visit uses browser language for presentation and still requi
             ->where('localization.options', [
                 [
                     'code' => 'en',
+                    'default_week_start' => 'sunday',
                     'native_name' => 'English',
                     'localized_name' => 'Anglų',
                     'flag_url' => '/images/flags/gb.svg',
                 ],
                 [
                     'code' => 'lt',
+                    'default_week_start' => 'monday',
                     'native_name' => 'Lietuvių',
                     'localized_name' => 'Lietuvių',
                     'flag_url' => '/images/flags/lt.svg',
                 ],
                 [
                     'code' => 'ru',
+                    'default_week_start' => 'monday',
                     'native_name' => 'Русский',
                     'localized_name' => 'Rusų',
                     'flag_url' => '/images/flags/ru.svg',
@@ -86,7 +89,10 @@ test('unsupported language choices never change session cookie or account state'
 
 test('account language outranks the device cookie and authenticated changes persist everywhere', function () {
     $user = User::factory()->create();
-    $preferences = UserPreference::factory()->for($user)->create(['language' => 'en']);
+    $preferences = UserPreference::factory()->for($user)->create([
+        'language' => 'en',
+        'week_start' => 'sunday',
+    ]);
 
     $this->actingAs($user)
         ->withCookie(LANGUAGE_COOKIE, 'ru')
@@ -102,7 +108,24 @@ test('account language outranks the device cookie and authenticated changes pers
         ->assertSessionHas('locale', 'lt')
         ->assertCookie(LANGUAGE_COOKIE, 'lt');
 
-    expect($preferences->fresh()->language)->toBe('lt');
+    expect($preferences->fresh()->language)->toBe('lt')
+        ->and($preferences->fresh()->week_start)->toBe('monday');
+});
+
+test('an authenticated English language change restores the Sunday default', function () {
+    $user = User::factory()->create();
+    $preferences = UserPreference::factory()->for($user)->create([
+        'language' => 'ru',
+        'week_start' => 'monday',
+    ]);
+
+    $this->actingAs($user)
+        ->from(route('dashboard'))
+        ->put('/locale', ['language' => 'en'])
+        ->assertRedirect(route('dashboard'));
+
+    expect($preferences->fresh()->language)->toBe('en')
+        ->and($preferences->fresh()->week_start)->toBe('sunday');
 });
 
 test('settings and onboarding language changes refresh the device preference', function () {

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'meta' => [
+        'description' => 'Plan tasks, projects, and collaborative work in one focused workspace.',
+    ],
     'common' => [
         'actions' => [
             'add' => 'Add',
@@ -41,12 +44,19 @@ return [
         'states' => [
             'loading' => 'Loading',
             'not_set' => 'Not set',
+            'opening' => 'Opening…',
+            'processing' => 'Working…',
+            'processing_hint' => 'Please wait — this action will finish automatically.',
             'selected' => ':count selected',
             'unassigned' => 'Unassigned',
             'unknown' => 'Unknown',
+            'uploading' => 'Uploading…',
         ],
         'toast' => [
             'close' => 'Close notification',
+            'connection_offline' => 'You are offline. Check your connection and try again.',
+            'connection_restored' => 'Connection restored.',
+            'network_error' => 'The request could not be completed. Check your connection and try again.',
             'notifications' => 'Notifications',
             'undo' => 'Undo',
         ],
@@ -60,6 +70,26 @@ return [
         ],
         'saving' => 'Changing language...',
         'switcher_label' => 'Change language',
+    ],
+    'timezones' => [
+        'detected' => 'Detected from this device: :timezone',
+        'empty' => 'No timezone matches your search.',
+        'open' => 'Search and choose a timezone',
+        'search_placeholder' => 'Search by city, region, or timezone',
+        'regions' => [
+            'utc' => 'World time',
+            'africa' => 'Africa',
+            'america' => 'America',
+            'antarctica' => 'Antarctica',
+            'arctic' => 'Arctic',
+            'asia' => 'Asia',
+            'atlantic' => 'Atlantic',
+            'australia' => 'Australia',
+            'europe' => 'Europe',
+            'indian' => 'Indian Ocean',
+            'pacific' => 'Pacific Ocean',
+            'other' => 'Other',
+        ],
     ],
     'auth' => [
         'common' => [

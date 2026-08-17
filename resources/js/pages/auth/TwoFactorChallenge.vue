@@ -10,7 +10,6 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 import { store } from '@/routes/two-factor/login';
 import type { TwoFactorConfigContent } from '@/types';
@@ -90,10 +89,10 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     type="submit"
                     size="lg"
                     class="w-full"
-                    :disabled="processing"
+                    :loading="processing"
+                    :loading-label="t('auth.two_factor.continue')"
                 >
-                    <Spinner v-if="processing" />
-                    <ShieldCheck v-else class="size-4" aria-hidden="true" />
+                    <ShieldCheck class="size-4" aria-hidden="true" />
                     {{ t('auth.two_factor.continue') }}
                 </Button>
                 <div class="text-center text-sm text-muted-foreground">
@@ -131,10 +130,10 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     type="submit"
                     size="lg"
                     class="w-full"
-                    :disabled="processing"
+                    :loading="processing"
+                    :loading-label="t('auth.two_factor.continue')"
                 >
-                    <Spinner v-if="processing" />
-                    <ShieldCheck v-else class="size-4" aria-hidden="true" />
+                    <ShieldCheck class="size-4" aria-hidden="true" />
                     {{ t('auth.two_factor.continue') }}
                 </Button>
 

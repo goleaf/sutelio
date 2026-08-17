@@ -80,7 +80,7 @@ async function switchWorkspace(workspace: Workspace) {
                             class="grid min-w-0 flex-1 text-left leading-tight"
                         >
                             <span
-                                class="truncate text-[10px] font-semibold tracking-widest text-sidebar-foreground/50 uppercase"
+                                class="truncate text-[10px] font-semibold tracking-widest text-sidebar-foreground/80 uppercase"
                             >
                                 {{ labels.workspace }}
                             </span>
@@ -103,7 +103,7 @@ async function switchWorkspace(workspace: Workspace) {
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
-                    class="w-(--reka-dropdown-menu-trigger-width) min-w-64 rounded-lg"
+                    class="w-(--reka-dropdown-menu-trigger-width) max-w-[calc(100dvw-1rem)] min-w-64 rounded-lg"
                     :side="
                         isMobile
                             ? 'bottom'

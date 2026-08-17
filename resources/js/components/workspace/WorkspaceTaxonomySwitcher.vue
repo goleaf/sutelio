@@ -2,9 +2,10 @@
 import { CircleDotDashed, Flag, Palette, Tags } from '@lucide/vue';
 import type { LucideIcon } from '@lucide/vue';
 import { computed } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import type { IconTileTone } from '@/components/shared/IconTile.vue';
 import type { WorkspaceTaxonomySection } from '@/components/workspace/workspace-stewardship';
 import { useUi } from '@/composables/useUi';
-import { cn } from '@/lib/utils';
 
 defineProps<{
     activeSection: WorkspaceTaxonomySection;
@@ -21,28 +22,28 @@ const items = computed<
     {
         section: WorkspaceTaxonomySection;
         icon: LucideIcon;
-        tone: string;
+        tone: IconTileTone;
     }[]
 >(() => [
     {
         section: 'statuses',
         icon: CircleDotDashed,
-        tone: 'text-emerald-700',
+        tone: 'success',
     },
     {
         section: 'priorities',
         icon: Flag,
-        tone: 'text-amber-700',
+        tone: 'warning',
     },
     {
         section: 'labels',
         icon: Palette,
-        tone: 'text-sky-700',
+        tone: 'information',
     },
     {
         section: 'tags',
         icon: Tags,
-        tone: 'text-violet-700',
+        tone: 'cobalt',
     },
 ]);
 </script>
@@ -66,16 +67,9 @@ const items = computed<
             :aria-pressed="activeSection === item.section"
             @click="emit('update:activeSection', item.section)"
         >
-            <span
-                :class="
-                    cn(
-                        'flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted/70',
-                        item.tone,
-                    )
-                "
-            >
-                <component :is="item.icon" class="size-4" aria-hidden="true" />
-            </span>
+            <IconTile :tone="item.tone" size="sm">
+                <component :is="item.icon" />
+            </IconTile>
             <span class="min-w-0 flex-1">
                 <span class="block text-sm font-medium break-words">
                     {{

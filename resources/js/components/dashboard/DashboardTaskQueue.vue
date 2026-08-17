@@ -7,6 +7,7 @@ import {
     CalendarClock,
 } from '@lucide/vue';
 import { computed } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -38,7 +39,7 @@ const queueDesign = computed(() => {
     if (props.tone === 'overdue') {
         return {
             icon: AlertTriangle,
-            iconClass: 'border-red-500/15 bg-red-500/10 text-red-700',
+            tileTone: 'destructive' as const,
             badgeVariant: 'destructive' as const,
         };
     }
@@ -46,14 +47,14 @@ const queueDesign = computed(() => {
     if (props.tone === 'today') {
         return {
             icon: CalendarClock,
-            iconClass: 'border-sky-500/15 bg-sky-500/10 text-sky-700',
+            tileTone: 'information' as const,
             badgeVariant: 'secondary' as const,
         };
     }
 
     return {
         icon: CalendarCheck2,
-        iconClass: 'border-orange-500/15 bg-orange-500/10 text-orange-700',
+        tileTone: 'brand' as const,
         badgeVariant: 'outline' as const,
     };
 });
@@ -74,18 +75,13 @@ function formattedDueDate(todo: Todo): string {
 <template>
     <Card class="@container gap-0 overflow-hidden py-0">
         <header class="border-b border-border/70 px-5 py-5 sm:px-6">
-            <LeadingIconHeading content-class="gap-0">
+            <LeadingIconHeading
+                tile
+                :tile-tone="queueDesign.tileTone"
+                content-class="gap-0"
+            >
                 <template #icon>
-                    <span
-                        class="flex size-11 items-center justify-center rounded-2xl border"
-                        :class="queueDesign.iconClass"
-                    >
-                        <component
-                            :is="queueDesign.icon"
-                            class="size-5"
-                            aria-hidden="true"
-                        />
-                    </span>
+                    <component :is="queueDesign.icon" />
                 </template>
 
                 <div class="flex items-center gap-2">
@@ -104,11 +100,9 @@ function formattedDueDate(todo: Todo): string {
             v-if="todos.length === 0"
             class="flex min-h-36 items-center gap-3 px-5 py-6 text-sm text-muted-foreground sm:px-6"
         >
-            <span
-                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted"
-            >
-                <CalendarCheck2 class="size-4" aria-hidden="true" />
-            </span>
+            <IconTile tone="muted" size="sm">
+                <CalendarCheck2 />
+            </IconTile>
             {{ emptyMessage }}
         </div>
 
@@ -121,7 +115,7 @@ function formattedDueDate(todo: Todo): string {
                 <Link
                     :href="showTodo(todo)"
                     prefetch
-                    class="group flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border border-border/80 bg-background px-3 py-3 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.045] focus-visible:ring-2 focus-visible:ring-orange-500/35 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift group flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border border-border/80 bg-background px-3 py-3 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.045] focus-visible:ring-2 focus-visible:ring-orange-500/35 focus-visible:outline-none motion-reduce:transition-none"
                     :aria-label="
                         t('dashboard.open_task', { title: todo.title })
                     "

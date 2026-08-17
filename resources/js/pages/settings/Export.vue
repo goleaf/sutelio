@@ -25,6 +25,7 @@ import type {
     ImportFormat,
 } from '@/components/settings/data/data-safety';
 import DataScopeBanner from '@/components/settings/data/DataScopeBanner.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -265,10 +266,18 @@ async function confirmImport(): Promise<void> {
 
         <Card>
             <CardHeader>
-                <CardTitle>{{ t('settings.export.export_title') }}</CardTitle>
-                <CardDescription>{{
-                    t('settings.export.export_description')
-                }}</CardDescription>
+                <LeadingIconHeading tile tile-tone="brand">
+                    <template #icon>
+                        <Download />
+                    </template>
+
+                    <CardTitle>{{
+                        t('settings.export.export_title')
+                    }}</CardTitle>
+                    <CardDescription>{{
+                        t('settings.export.export_description')
+                    }}</CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent class="grid gap-3 sm:grid-cols-3">
                 <Button
@@ -276,7 +285,7 @@ async function confirmImport(): Promise<void> {
                     :key="format.value"
                     :as-child="true"
                     variant="outline"
-                    class="h-auto min-h-24 justify-start rounded-2xl bg-muted/20 p-0 text-left whitespace-normal hover:border-orange-500/25 hover:bg-orange-500/[0.05]"
+                    class="ui-lift h-auto min-h-24 justify-start rounded-2xl bg-muted/20 p-0 text-left whitespace-normal hover:border-orange-500/25 hover:bg-orange-500/[0.05]"
                 >
                     <a
                         :href="
@@ -285,15 +294,9 @@ async function confirmImport(): Promise<void> {
                         class="flex h-full w-full items-start gap-3 px-4 py-4"
                         @click="announceExport(format.value)"
                     >
-                        <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                        >
-                            <component
-                                :is="format.icon"
-                                class="size-4"
-                                aria-hidden="true"
-                            />
-                        </span>
+                        <IconTile tone="brand" size="sm">
+                            <component :is="format.icon" />
+                        </IconTile>
                         <span class="min-w-0">
                             <span class="block font-semibold">{{
                                 format.label
@@ -310,10 +313,18 @@ async function confirmImport(): Promise<void> {
 
         <Card>
             <CardHeader>
-                <CardTitle>{{ t('settings.export.import_title') }}</CardTitle>
-                <CardDescription>{{
-                    t('settings.export.import_description')
-                }}</CardDescription>
+                <LeadingIconHeading tile tile-tone="information">
+                    <template #icon>
+                        <Upload />
+                    </template>
+
+                    <CardTitle>{{
+                        t('settings.export.import_title')
+                    }}</CardTitle>
+                    <CardDescription>{{
+                        t('settings.export.import_description')
+                    }}</CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent v-if="canImport" class="space-y-5">
                 <ol
@@ -373,7 +384,7 @@ async function confirmImport(): Promise<void> {
                     <label
                         v-for="format in importFormats"
                         :key="format.value"
-                        class="inline-flex min-h-24 cursor-pointer items-start gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-orange-500 hover:border-orange-500/25 hover:bg-orange-500/[0.05] motion-reduce:transition-none"
+                        class="ui-lift inline-flex min-h-24 cursor-pointer items-start gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-orange-500 hover:border-orange-500/25 hover:bg-orange-500/[0.05] motion-reduce:transition-none"
                         :class="{
                             'pointer-events-none opacity-50':
                                 previewRequest.processing ||
@@ -403,9 +414,7 @@ async function confirmImport(): Promise<void> {
                             "
                             @change="handleImport($event, format.value)"
                         />
-                        <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                        >
+                        <IconTile tone="information" size="sm">
                             <Spinner
                                 v-if="
                                     previewRequest.processing &&
@@ -413,7 +422,7 @@ async function confirmImport(): Promise<void> {
                                 "
                             />
                             <Upload v-else class="size-4" aria-hidden="true" />
-                        </span>
+                        </IconTile>
                         <span class="min-w-0">
                             <span class="block font-semibold">{{
                                 format.label
@@ -460,11 +469,9 @@ async function confirmImport(): Promise<void> {
                     "
                 >
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
-                        <span
-                            class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                        >
-                            <FileCheck2 class="size-4" aria-hidden="true" />
-                        </span>
+                        <IconTile tone="success" size="sm">
+                            <FileCheck2 />
+                        </IconTile>
                         <dl
                             class="grid min-w-0 flex-1 gap-3 text-sm sm:grid-cols-3"
                         >
@@ -565,16 +572,13 @@ async function confirmImport(): Promise<void> {
                             <Button
                                 type="button"
                                 class="min-h-11"
-                                :disabled="importRequest.processing"
-                                :aria-busy="importRequest.processing"
+                                :loading="importRequest.processing"
+                                :loading-label="
+                                    t('settings.export.confirm_import')
+                                "
                                 @click="confirmImport"
                             >
-                                <Spinner v-if="importRequest.processing" />
-                                <Upload
-                                    v-else
-                                    class="size-4"
-                                    aria-hidden="true"
-                                />
+                                <Upload class="size-4" aria-hidden="true" />
                                 {{ t('settings.export.confirm_import') }}
                             </Button>
                         </div>
@@ -583,15 +587,13 @@ async function confirmImport(): Promise<void> {
             </CardContent>
             <CardContent v-else>
                 <LeadingIconHeading
+                    tile
+                    tile-tone="muted"
                     class="rounded-xl border border-border/80 bg-muted/35 p-4"
                     content-class="gap-0"
                 >
                     <template #icon>
-                        <span
-                            class="flex size-10 items-center justify-center rounded-xl bg-background text-muted-foreground ring-1 ring-border/70"
-                        >
-                            <LockKeyhole class="size-4" aria-hidden="true" />
-                        </span>
+                        <LockKeyhole />
                     </template>
 
                     <h3 class="font-semibold">

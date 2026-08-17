@@ -502,7 +502,7 @@ async function deleteDefinition(): Promise<void> {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                                 align="end"
-                                class="w-72 max-w-[calc(100vw-2rem)]"
+                                class="w-72 max-w-[calc(100dvw-2rem)]"
                             >
                                 <DropdownMenuItem
                                     class="break-words whitespace-normal"

@@ -53,6 +53,7 @@ const emit = defineEmits<{
 const selected = computed(() =>
     props.tasks.find((item) => item.id === props.selectedId),
 );
+const hasExistingOptions = computed(() => props.tasks.length > 0);
 const selectedPriority = computed(() =>
     props.priorities.find((item) => item.id === props.priorityId),
 );
@@ -89,9 +90,12 @@ const dueDate = computed({
 <template>
     <div class="space-y-5">
         <p class="text-sm leading-6 text-muted-foreground">
-            {{ copy.description }}
+            {{
+                hasExistingOptions ? copy.description : copy.create_description
+            }}
         </p>
         <div
+            v-if="hasExistingOptions"
             class="grid grid-cols-2 gap-2 rounded-2xl bg-muted/55 p-1.5"
             role="group"
         >
@@ -100,7 +104,7 @@ const dueDate = computed({
                 variant="ghost"
                 class="min-h-11"
                 :aria-pressed="mode === 'select'"
-                :disabled="processing || tasks.length === 0"
+                :disabled="processing"
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'select')"
                 >{{ copy.choose_existing }}</Button
@@ -118,7 +122,7 @@ const dueDate = computed({
         </div>
 
         <div
-            v-if="mode === 'select' && tasks.length"
+            v-if="mode === 'select' && hasExistingOptions"
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-2">
@@ -143,12 +147,13 @@ const dueDate = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <LeadingIconHeading content-class="gap-2">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="gap-2"
+                >
                     <template #icon>
-                        <ListChecks
-                            class="size-5 text-orange-600"
-                            aria-hidden="true"
-                        />
+                        <ListChecks />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
@@ -168,7 +173,7 @@ const dueDate = computed({
         </div>
 
         <div
-            v-else-if="mode === 'create'"
+            v-else-if="!hasExistingOptions || mode === 'create'"
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-4">
@@ -274,20 +279,28 @@ const dueDate = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <LeadingIconHeading content-class="gap-2">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="gap-2"
+                >
                     <template #icon>
-                        <span
-                            class="block size-3 rounded-full ring-4 ring-background"
-                            :style="{
-                                backgroundColor:
-                                    selectedPriority?.color ?? '#ff6038',
-                            }"
-                            aria-hidden="true"
-                        />
+                        <ListChecks />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
-                    <p class="text-sm font-medium break-words">
+                    <p
+                        class="flex items-center gap-2 text-sm font-medium break-words"
+                    >
+                        <span
+                            class="size-2 shrink-0 rounded-full"
+                            :style="{
+                                backgroundColor:
+                                    selectedPriority?.color ??
+                                    'var(--brand-orange)',
+                            }"
+                            aria-hidden="true"
+                        />
                         {{ title || copy.title_placeholder }}
                     </p>
                     <p

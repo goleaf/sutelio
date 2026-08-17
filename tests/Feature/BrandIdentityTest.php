@@ -22,6 +22,11 @@ $nativeBrandPublishedFiles = [
     'nativephp/android/app/build.gradle.kts',
     'nativephp/android/app/src/main/AndroidManifest.xml',
     'nativephp/android/app/src/main/ic_launcher-playstore.png',
+    'nativephp/android/app/src/main/java/com/nativephp/mobile/bridge/PHPBridge.kt',
+    'nativephp/android/app/src/main/java/com/nativephp/mobile/network/PHPWebViewClient.kt',
+    'nativephp/android/app/src/main/java/com/nativephp/mobile/network/WebViewManager.kt',
+    'nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelCookieStore.kt',
+    'nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelSecurity.kt',
     'nativephp/ios/NativePHP.xcodeproj/project.pbxproj',
     'nativephp/ios/NativePHP/Info.plist',
     'nativephp/ios/NativePHP-simulator-Info.plist',
@@ -110,6 +115,22 @@ $createNativeBrandInstallerFixture = static function (
         base_path('vendor/nativephp/mobile/resources/androidstudio/app/src/main/AndroidManifest.xml'),
         $temporaryRoot.'/vendor/nativephp/mobile/resources/androidstudio/app/src/main/AndroidManifest.xml',
     );
+
+    foreach ([
+        'java/com/nativephp/mobile/bridge/PHPBridge.kt',
+        'java/com/nativephp/mobile/network/PHPWebViewClient.kt',
+        'java/com/nativephp/mobile/network/WebViewManager.kt',
+        'java/com/nativephp/mobile/security/LaravelCookieStore.kt',
+        'java/com/nativephp/mobile/security/LaravelSecurity.kt',
+    ] as $androidSourcePath) {
+        $templatePath = 'vendor/nativephp/mobile/resources/androidstudio/app/src/main/'.$androidSourcePath;
+        $generatedPath = 'nativephp/android/app/src/main/'.$androidSourcePath;
+
+        File::ensureDirectoryExists(dirname($temporaryRoot.'/'.$templatePath));
+        File::ensureDirectoryExists(dirname($temporaryRoot.'/'.$generatedPath));
+        File::copy(base_path($templatePath), $temporaryRoot.'/'.$templatePath);
+        File::copy(base_path($templatePath), $temporaryRoot.'/'.$generatedPath);
+    }
     File::copy(
         base_path('vendor/nativephp/mobile/resources/androidstudio/app/src/main/ic_launcher-playstore.png'),
         $temporaryRoot.'/vendor/nativephp/mobile/resources/androidstudio/app/src/main/ic_launcher-playstore.png',
@@ -732,11 +753,17 @@ test('the native brand installer canonicalizes a fresh NativePHP template and is
         $gradle = File::get($temporaryRoot.'/nativephp/android/app/build.gradle.kts');
         $manifest = File::get($temporaryRoot.'/nativephp/android/app/src/main/AndroidManifest.xml');
         $project = File::get($temporaryRoot.'/nativephp/ios/NativePHP.xcodeproj/project.pbxproj');
+        $webViewManager = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/network/WebViewManager.kt');
+        $phpWebViewClient = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/network/PHPWebViewClient.kt');
+        $phpBridge = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/bridge/PHPBridge.kt');
+        $cookieStore = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelCookieStore.kt');
+        $laravelSecurity = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelSecurity.kt');
 
         expect($gradle)
             ->toContain('namespace = "com.nativephp.mobile"')
             ->toContain('applicationId = "com.goleaf.sutelio"')
             ->not->toContain('applicationId = "REPLACE_APP_ID"')
+            ->not->toContain('Android-Request-Inspector-WebView')
             ->and($manifest)
             ->toContain('android:label="Sutelio"')
             ->toContain('<!-- NATIVEPHP-DEEPLINKS-START -->')
@@ -753,7 +780,30 @@ test('the native brand installer canonicalizes a fresh NativePHP template and is
             ->and(substr_count($project, 'PRODUCT_BUNDLE_IDENTIFIER = com.nativephp.NativePHPTests;'))
             ->toBe(2)
             ->and(substr_count($project, 'PRODUCT_BUNDLE_IDENTIFIER = com.nativephp.NativePHPUITests;'))
-            ->toBe(2);
+            ->toBe(2)
+            ->and($webViewManager)
+            ->toContain('context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0')
+            ->not->toContain('RequestInspectorWebViewClient')
+            ->not->toContain('request.requestHeaders.forEach')
+            ->not->toContain('JS provided token: $token')
+            ->not->toContain('reqId=$requestId')
+            ->and($phpWebViewClient)
+            ->not->toContain('RESPONSE HEADERS: ${responseHeaders}')
+            ->not->toContain('Final request headers: $headers')
+            ->not->toContain('Setting cookie from response: $value')
+            ->not->toContain('Stored cookie from Set-Cookie header: $cookie')
+            ->and($phpBridge)
+            ->not->toContain('Response first 200 chars: ${response.take(200)}')
+            ->not->toContain('Cookie line: $cookieLine')
+            ->not->toContain('Stored cookie: $cookieValue')
+            ->and($cookieStore)
+            ->not->toContain('Stored cookie: $name=$value')
+            ->not->toContain('Cookie header: $cookieString')
+            ->not->toContain('→ $key = $value')
+            ->and($laravelSecurity)
+            ->not->toContain('Extracted CSRF token from JSON: $csrfToken')
+            ->not->toContain('Extracted CSRF token from form: $csrfToken')
+            ->not->toContain('Stored CSRF token manually: $token');
 
         foreach (['NativePHP/Info.plist', 'NativePHP-simulator-Info.plist'] as $plistPath) {
             $plist = File::get($temporaryRoot.'/nativephp/ios/'.$plistPath);
@@ -914,7 +964,7 @@ test('the native brand installer rejects a mixed template and canonical identity
         expect($process->isSuccessful())
             ->toBeFalse()
             ->and($process->getErrorOutput().$process->getOutput())
-            ->toContain('entirely fresh-template or entirely canonical')
+            ->toContain('identity fields must be entirely NativePHP template or entirely canonical Sutelio values')
             ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
             ->toBe($before);
     } finally {

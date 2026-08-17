@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
     AlertTriangle,
-    ArrowDownAZ,
     CheckCircle2,
     Columns3,
     List,
@@ -9,9 +8,9 @@ import {
     Search,
     SlidersHorizontal,
     Star,
-    X,
 } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
+import FilterSheet from '@/components/shared/FilterSheet.vue';
 import WorkspaceSegmentedButton from '@/components/shared/WorkspaceSegmentedButton.vue';
 import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedControl.vue';
 import {
@@ -22,23 +21,9 @@ import {
     toggleTaskFocusFilter,
 } from '@/components/task/task-focus';
 import type { TaskFocusFilter } from '@/components/task/task-focus';
+import TaskFilterFields from '@/components/task/TaskFilterFields.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-} from '@/components/ui/sheet';
-import { useTaskDefinitions } from '@/composables/useTaskDefinitions';
 import { useUi } from '@/composables/useUi';
 import type { TodoFilters } from '@/types/api';
 import type { Project, TaskDefinitionCatalog } from '@/types/models';
@@ -51,9 +36,6 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ update: [filters: TodoFilters] }>();
 const { locale, t } = useUi();
-const { statuses, priorities } = useTaskDefinitions(
-    () => props.taskDefinitions,
-);
 const search = ref('');
 const projectId = ref('all');
 const status = ref('all');
@@ -97,26 +79,24 @@ const activeFilterLabel = computed(() =>
     ),
 );
 
-watch(
-    () => props.filters,
-    (filters) => {
-        search.value = filters.search ?? '';
-        projectId.value = filters.project_id ?? 'all';
-        status.value = filters.status ?? 'all';
-        priority.value = filters.priority ?? 'all';
-        sort.value = filters.sort || 'default';
-        direction.value = filters.direction ?? 'asc';
-        perPage.value = String(filters.per_page ?? 50) as '100' | '25' | '50';
-        view.value = filters.view ?? 'list';
-        focusFilters.value = {
-            completed_today: filters.completed_today,
-            is_favorite: filters.is_favorite,
-            is_pinned: filters.is_pinned,
-            overdue: filters.overdue,
-        };
-    },
-    { immediate: true, deep: true },
-);
+watch(() => props.filters, synchronizeFilters, { immediate: true, deep: true });
+
+function synchronizeFilters(filters: TodoFilters): void {
+    search.value = filters.search ?? '';
+    projectId.value = filters.project_id ?? 'all';
+    status.value = filters.status ?? 'all';
+    priority.value = filters.priority ?? 'all';
+    sort.value = filters.sort || 'default';
+    direction.value = filters.direction ?? 'asc';
+    perPage.value = String(filters.per_page ?? 50) as '100' | '25' | '50';
+    view.value = filters.view ?? 'list';
+    focusFilters.value = {
+        completed_today: filters.completed_today,
+        is_favorite: filters.is_favorite,
+        is_pinned: filters.is_pinned,
+        overdue: filters.overdue,
+    };
+}
 
 function currentFilters(): TodoFilters {
     return mergeTaskFilterState(props.filters, {
@@ -138,6 +118,14 @@ function currentFilters(): TodoFilters {
 function apply(): void {
     mobileFiltersOpen.value = false;
     emit('update', currentFilters());
+}
+
+function handleMobileFiltersOpenChange(value: boolean): void {
+    mobileFiltersOpen.value = value;
+
+    if (!value) {
+        synchronizeFilters(props.filters);
+    }
 }
 
 function toggleFocus(key: TaskFocusFilter): void {
@@ -287,315 +275,45 @@ function setView(nextView: 'board' | 'list'): void {
             </WorkspaceSegmentedControl>
         </div>
 
-        <div class="hidden gap-3 md:grid md:grid-cols-3 xl:grid-cols-6">
-            <Select
-                v-model="projectId"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('tasks.filters.project')"
-                >
-                    <SelectValue :placeholder="t('tasks.filters.project')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">{{
-                        t('tasks.filters.all_projects')
-                    }}</SelectItem>
-                    <SelectItem
-                        v-for="project in projects"
-                        :key="project.id"
-                        :value="project.id"
-                    >
-                        {{ project.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <Select
-                v-model="status"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('tasks.filters.status')"
-                >
-                    <SelectValue :placeholder="t('tasks.filters.status')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">{{
-                        t('tasks.filters.all_statuses')
-                    }}</SelectItem>
-                    <SelectItem
-                        v-for="item in statuses"
-                        :key="item.id"
-                        :value="item.key"
-                    >
-                        {{ item.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <Select
-                v-model="priority"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('tasks.filters.priority')"
-                >
-                    <SelectValue :placeholder="t('tasks.filters.priority')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">{{
-                        t('tasks.filters.all_priorities')
-                    }}</SelectItem>
-                    <SelectItem
-                        v-for="item in priorities"
-                        :key="item.id"
-                        :value="item.key"
-                    >
-                        {{ item.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-            <Select
-                v-model="sort"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('tasks.filters.sort')"
-                >
-                    <SelectValue :placeholder="t('tasks.filters.sort')" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="default">{{
-                        t('tasks.filters.default_order')
-                    }}</SelectItem>
-                    <SelectItem value="due_date">{{
-                        t('tasks.filters.due_date')
-                    }}</SelectItem>
-                    <SelectItem value="priority">{{
-                        t('tasks.filters.priority')
-                    }}</SelectItem>
-                    <SelectItem value="status">{{
-                        t('tasks.filters.status')
-                    }}</SelectItem>
-                    <SelectItem value="title">{{
-                        t('tasks.filters.title')
-                    }}</SelectItem>
-                    <SelectItem value="created_at">{{
-                        t('tasks.filters.created')
-                    }}</SelectItem>
-                </SelectContent>
-            </Select>
-            <Button
-                type="button"
-                variant="outline"
-                class="min-h-11"
-                :disabled="processing"
-                @click="
-                    direction = direction === 'asc' ? 'desc' : 'asc';
-                    apply();
-                "
-            >
-                <ArrowDownAZ class="size-4" aria-hidden="true" />
-                {{
-                    direction === 'asc'
-                        ? t('tasks.filters.ascending')
-                        : t('tasks.filters.descending')
-                }}
-            </Button>
-            <div class="flex gap-2">
-                <Select
-                    v-model="perPage"
-                    :disabled="processing"
-                    @update:model-value="apply"
-                >
-                    <SelectTrigger
-                        class="min-h-11"
-                        :aria-label="t('tasks.filters.per_page')"
-                    >
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    class="min-h-11 min-w-11"
-                    :aria-label="t('tasks.filters.clear')"
-                    :disabled="processing || activeFilterCount === 0"
-                    @click="clear"
-                >
-                    <X class="size-4" aria-hidden="true" />
-                </Button>
-            </div>
-        </div>
+        <TaskFilterFields
+            v-model:project-id="projectId"
+            v-model:status="status"
+            v-model:priority="priority"
+            v-model:sort="sort"
+            v-model:direction="direction"
+            v-model:per-page="perPage"
+            mode="desktop"
+            :projects="projects"
+            :task-definitions="taskDefinitions"
+            :disabled="processing"
+            :clear-disabled="activeFilterCount === 0"
+            @commit="apply"
+            @clear="clear"
+        />
 
-        <Sheet
-            :open="mobileFiltersOpen"
-            @update:open="mobileFiltersOpen = $event"
+        <FilterSheet
+            :model-value="mobileFiltersOpen"
+            :title="t('tasks.filters.filters')"
+            :description="t('tasks.filters.description')"
+            :clear-label="t('tasks.filters.clear')"
+            :apply-label="t('tasks.filters.apply')"
+            :clear-disabled="activeFilterCount === 0"
+            :processing="processing"
+            @update:model-value="handleMobileFiltersOpenChange"
+            @clear="clear"
+            @apply="apply"
         >
-            <SheetContent
-                side="bottom"
-                class="max-h-[92vh] overflow-y-auto rounded-t-feature"
-            >
-                <SheetHeader>
-                    <SheetTitle>{{ t('tasks.filters.filters') }}</SheetTitle>
-                    <SheetDescription>{{
-                        t('tasks.filters.description')
-                    }}</SheetDescription>
-                </SheetHeader>
-                <div class="grid gap-4 px-4 pb-6">
-                    <Select v-model="projectId">
-                        <SelectTrigger
-                            class="min-h-11"
-                            :aria-label="t('tasks.filters.project')"
-                        >
-                            <SelectValue
-                                :placeholder="t('tasks.filters.project')"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">{{
-                                t('tasks.filters.all_projects')
-                            }}</SelectItem>
-                            <SelectItem
-                                v-for="project in projects"
-                                :key="project.id"
-                                :value="project.id"
-                            >
-                                {{ project.name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select v-model="status">
-                        <SelectTrigger
-                            class="min-h-11"
-                            :aria-label="t('tasks.filters.status')"
-                        >
-                            <SelectValue
-                                :placeholder="t('tasks.filters.status')"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">{{
-                                t('tasks.filters.all_statuses')
-                            }}</SelectItem>
-                            <SelectItem
-                                v-for="item in statuses"
-                                :key="item.id"
-                                :value="item.key"
-                            >
-                                {{ item.name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select v-model="priority">
-                        <SelectTrigger
-                            class="min-h-11"
-                            :aria-label="t('tasks.filters.priority')"
-                        >
-                            <SelectValue
-                                :placeholder="t('tasks.filters.priority')"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">{{
-                                t('tasks.filters.all_priorities')
-                            }}</SelectItem>
-                            <SelectItem
-                                v-for="item in priorities"
-                                :key="item.id"
-                                :value="item.key"
-                            >
-                                {{ item.name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select v-model="sort">
-                        <SelectTrigger
-                            class="min-h-11"
-                            :aria-label="t('tasks.filters.sort')"
-                        >
-                            <SelectValue
-                                :placeholder="t('tasks.filters.sort')"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="default">{{
-                                t('tasks.filters.default_order')
-                            }}</SelectItem>
-                            <SelectItem value="due_date">{{
-                                t('tasks.filters.due_date')
-                            }}</SelectItem>
-                            <SelectItem value="priority">{{
-                                t('tasks.filters.priority')
-                            }}</SelectItem>
-                            <SelectItem value="status">{{
-                                t('tasks.filters.status')
-                            }}</SelectItem>
-                            <SelectItem value="title">{{
-                                t('tasks.filters.title')
-                            }}</SelectItem>
-                            <SelectItem value="created_at">{{
-                                t('tasks.filters.created')
-                            }}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        class="min-h-11"
-                        @click="
-                            direction = direction === 'asc' ? 'desc' : 'asc'
-                        "
-                    >
-                        <ArrowDownAZ class="size-4" aria-hidden="true" />
-                        {{
-                            direction === 'asc'
-                                ? t('tasks.filters.ascending')
-                                : t('tasks.filters.descending')
-                        }}
-                    </Button>
-                    <Select v-model="perPage">
-                        <SelectTrigger
-                            class="min-h-11"
-                            :aria-label="t('tasks.filters.per_page')"
-                        >
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="25">25</SelectItem>
-                            <SelectItem value="50">50</SelectItem>
-                            <SelectItem value="100">100</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <div class="grid grid-cols-2 gap-3">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            class="min-h-11"
-                            :disabled="activeFilterCount === 0"
-                            @click="clear"
-                        >
-                            {{ t('tasks.filters.clear') }}
-                        </Button>
-                        <Button type="button" class="min-h-11" @click="apply">
-                            {{ t('tasks.filters.apply') }}
-                        </Button>
-                    </div>
-                </div>
-            </SheetContent>
-        </Sheet>
+            <TaskFilterFields
+                v-model:project-id="projectId"
+                v-model:status="status"
+                v-model:priority="priority"
+                v-model:sort="sort"
+                v-model:direction="direction"
+                v-model:per-page="perPage"
+                mode="mobile"
+                :projects="projects"
+                :task-definitions="taskDefinitions"
+            />
+        </FilterSheet>
     </div>
 </template>

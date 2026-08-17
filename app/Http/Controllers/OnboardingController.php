@@ -23,7 +23,7 @@ use App\Models\User;
 use App\Models\UserPreference;
 use App\Queries\OnboardingQuery;
 use App\Services\LocalePreference;
-use DateTimeZone;
+use App\Services\TimeZoneCatalog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,8 +31,11 @@ use Inertia\Response;
 
 class OnboardingController extends Controller
 {
-    public function index(Request $request, OnboardingQuery $onboardingQuery): Response|RedirectResponse
-    {
+    public function index(
+        Request $request,
+        OnboardingQuery $onboardingQuery,
+        TimeZoneCatalog $timeZoneCatalog,
+    ): Response|RedirectResponse {
         $user = $request->user();
 
         abort_unless($user instanceof User, 403);
@@ -46,10 +49,11 @@ class OnboardingController extends Controller
         }
 
         $copy = __('onboarding');
+        $language = UserLanguage::tryFrom($request->getLocale()) ?? UserLanguage::English;
 
         return Inertia::render('onboarding/Index', [
             ...$onboardingQuery->forUser($user, $preferences, $isReplay),
-            'timezones' => DateTimeZone::listIdentifiers(),
+            'timezoneGroups' => $timeZoneCatalog->forLanguage($language),
             'copy' => is_array($copy) ? $copy : [],
         ]);
     }

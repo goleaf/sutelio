@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm, usePage } from '@inertiajs/vue3';
-import { RotateCcw, Save, Sparkles } from '@lucide/vue';
+import {
+    Check,
+    Languages,
+    PanelsTopLeft,
+    RotateCcw,
+    Save,
+    Sparkles,
+} from '@lucide/vue';
 import { watchEffect } from 'vue';
 import { restart as restartOnboarding } from '@/actions/App/Http/Controllers/OnboardingController';
 import InputError from '@/components/InputError.vue';
 import LanguageFlag from '@/components/localization/LanguageFlag.vue';
+import TimezoneCombobox from '@/components/preferences/TimezoneCombobox.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
+import StatusNotice from '@/components/shared/StatusNotice.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -22,13 +31,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
 import { useLanguagePreference } from '@/composables/useLanguagePreference';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import { update } from '@/routes/preferences';
 import type { SettingsLayoutProps } from '@/types';
 import type { UserPreference } from '@/types/models';
+import type { TimeZoneGroup } from '@/types/timezone';
 
 type PreferenceFields = Pick<
     UserPreference,
@@ -43,7 +52,7 @@ type PreferenceFields = Pick<
 
 const props = defineProps<{
     preferences: PreferenceFields;
-    timezones: string[];
+    timezoneGroups: TimeZoneGroup[];
     canReplayOnboarding: boolean;
 }>();
 const toast = useToast();
@@ -87,10 +96,20 @@ function handleLanguageChange(value: unknown): void {
         return;
     }
 
+    const previousWeekStart = form.week_start;
     form.language = value as PreferenceFields['language'];
+    const selectedLanguage = page.props.localization.options.find(
+        (option) => option.code === value,
+    );
+
+    if (selectedLanguage) {
+        form.week_start = selectedLanguage.default_week_start;
+    }
+
     saveLanguage(value, {
         onError: (language) => {
             form.language = language;
+            form.week_start = previousWeekStart;
         },
     });
 }
@@ -105,11 +124,17 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
     <div class="space-y-6">
         <form @submit.prevent="submit" class="space-y-6">
             <Card>
-                <CardHeader
-                    ><CardTitle>{{
-                        t('settings.preferences.display')
-                    }}</CardTitle></CardHeader
-                >
+                <CardHeader>
+                    <LeadingIconHeading tile tile-tone="brand">
+                        <template #icon>
+                            <PanelsTopLeft />
+                        </template>
+
+                        <CardTitle>{{
+                            t('settings.preferences.display')
+                        }}</CardTitle>
+                    </LeadingIconHeading>
+                </CardHeader>
                 <CardContent class="space-y-4">
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="space-y-2">
@@ -176,11 +201,17 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                 </CardContent>
             </Card>
             <Card>
-                <CardHeader
-                    ><CardTitle>{{
-                        t('settings.preferences.locale')
-                    }}</CardTitle></CardHeader
-                >
+                <CardHeader>
+                    <LeadingIconHeading tile tile-tone="brand">
+                        <template #icon>
+                            <Languages />
+                        </template>
+
+                        <CardTitle>{{
+                            t('settings.preferences.locale')
+                        }}</CardTitle>
+                    </LeadingIconHeading>
+                </CardHeader>
                 <CardContent class="space-y-4">
                     <p class="text-sm text-muted-foreground">
                         {{ t('settings.preferences.locale_description') }}
@@ -231,39 +262,22 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                                     form.errors.language
                                 "
                             />
-                            <p
+                            <StatusNotice
                                 v-if="languageForm.processing"
-                                class="text-sm text-muted-foreground"
-                                role="status"
-                                aria-live="polite"
-                            >
-                                {{ t('localization.saving') }}
-                            </p>
+                                :message="t('localization.saving')"
+                                status="loading"
+                            />
                         </div>
                         <div class="space-y-2">
                             <Label for="timezone">{{
                                 t('settings.preferences.timezone')
                             }}</Label>
-                            <Select
+                            <TimezoneCombobox
                                 v-model="form.timezone"
+                                :groups="timezoneGroups"
                                 :disabled="form.processing"
-                            >
-                                <SelectTrigger
-                                    id="timezone"
-                                    :aria-invalid="
-                                        Boolean(form.errors.timezone)
-                                    "
-                                    ><SelectValue
-                                /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem
-                                        v-for="tz in props.timezones"
-                                        :key="tz"
-                                        :value="tz"
-                                        >{{ tz }}</SelectItem
-                                    >
-                                </SelectContent>
-                            </Select>
+                                :invalid="Boolean(form.errors.timezone)"
+                            />
                             <InputError :message="form.errors.timezone" />
                         </div>
                         <div class="space-y-2">
@@ -352,8 +366,17 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                 </CardContent>
             </Card>
             <div class="flex justify-end">
-                <Button type="submit" size="lg" :disabled="form.processing">
-                    <Spinner v-if="form.processing" />
+                <Button
+                    type="submit"
+                    size="lg"
+                    :loading="form.processing"
+                    :loading-label="t('settings.preferences.save')"
+                >
+                    <Check
+                        v-if="form.recentlySuccessful"
+                        class="ui-status-pop size-4"
+                        aria-hidden="true"
+                    />
                     <Save v-else class="size-4" aria-hidden="true" />
                     {{ t('settings.preferences.save') }}
                 </Button>
@@ -365,13 +388,9 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
             class="overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/60"
         >
             <CardHeader class="sm:flex-row sm:items-center sm:justify-between">
-                <LeadingIconHeading class="flex-1">
+                <LeadingIconHeading tile tile-tone="brand" class="flex-1">
                     <template #icon>
-                        <span
-                            class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
-                        >
-                            <Sparkles class="size-5" aria-hidden="true" />
-                        </span>
+                        <Sparkles />
                     </template>
 
                     <p
@@ -390,29 +409,25 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                     type="button"
                     variant="outline"
                     class="mt-4 min-h-11 shrink-0 border-orange-300 bg-background/80 sm:mt-0"
-                    :disabled="replayForm.processing"
+                    :loading="replayForm.processing"
+                    :loading-label="t('settings.preferences.replay.action')"
                     @click="replayOnboarding"
                 >
-                    <Spinner v-if="replayForm.processing" />
-                    <RotateCcw v-else class="size-4" aria-hidden="true" />
+                    <RotateCcw class="size-4" aria-hidden="true" />
                     {{ t('settings.preferences.replay.action') }}
                 </Button>
             </CardHeader>
             <CardContent v-if="replayForm.processing || replayForm.hasErrors">
-                <p
-                    class="text-sm text-muted-foreground"
-                    :class="{ 'text-destructive': replayForm.hasErrors }"
-                    :role="replayForm.hasErrors ? 'alert' : undefined"
-                    aria-live="polite"
-                >
-                    {{
+                <StatusNotice
+                    :message="
                         t(
                             replayForm.hasErrors
                                 ? 'settings.preferences.replay.error'
                                 : 'settings.preferences.replay.processing',
                         )
-                    }}
-                </p>
+                    "
+                    :status="replayForm.hasErrors ? 'error' : 'loading'"
+                />
             </CardContent>
         </Card>
     </div>

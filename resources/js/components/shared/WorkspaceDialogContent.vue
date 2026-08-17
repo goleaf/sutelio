@@ -43,12 +43,12 @@ const accentClasses = computed(() =>
     <DialogContent
         :show-close-button="false"
         :class="[
-            'flex max-h-[calc(100svh-1.5rem)] w-[calc(100vw-1.5rem)] flex-col gap-0 overflow-hidden rounded-feature border-border/80 p-0 shadow-[0_32px_90px_-45px_rgba(15,23,42,0.75)]',
+            'flex max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] flex-col gap-0 overflow-hidden rounded-feature border-border/80 p-0 shadow-[0_32px_90px_-45px_rgba(15,23,42,0.75)] sm:max-h-[calc(100dvh-1.5rem)] sm:w-[calc(100%-1.5rem)]',
             maxWidthClass,
         ]"
     >
         <div
-            class="relative shrink-0 overflow-hidden border-b border-border/70 bg-muted/30 px-6 py-6 sm:px-8"
+            class="relative shrink-0 overflow-hidden border-b border-border/70 bg-muted/30 px-4 py-5 sm:px-8 sm:py-6"
         >
             <span
                 class="absolute inset-y-0 left-0 w-1.5"
@@ -60,13 +60,13 @@ const accentClasses = computed(() =>
                 :class="accentClasses.ornament"
                 aria-hidden="true"
             />
-            <DialogHeader class="relative pr-10 text-left">
-                <DialogTitle class="text-xl tracking-tight">
+            <DialogHeader class="relative min-w-0 pr-11 text-left">
+                <DialogTitle class="text-xl tracking-tight wrap-anywhere">
                     {{ title }}
                 </DialogTitle>
                 <DialogDescription
                     v-if="description"
-                    class="max-w-md leading-6"
+                    class="max-w-md leading-6 wrap-anywhere"
                 >
                     {{ description }}
                 </DialogDescription>

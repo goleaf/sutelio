@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
-import { Tag as TagIcon } from '@lucide/vue';
+import { Tag as TagIcon, Tags } from '@lucide/vue';
 import { ref } from 'vue';
 import ColorSwatch from '@/components/shared/ColorSwatch.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label as FormLabel } from '@/components/ui/label';
@@ -96,9 +97,15 @@ async function toggleTag(tag: Tag): Promise<void> {
 
 <template>
     <section class="rounded-panel border border-border/80 bg-card p-5">
-        <h2 class="text-base font-semibold">
-            {{ t('tasks.detail.labels_and_tags') }}
-        </h2>
+        <LeadingIconHeading tile tile-tone="brand">
+            <template #icon>
+                <Tags />
+            </template>
+
+            <h2 class="text-base font-semibold">
+                {{ t('tasks.detail.labels_and_tags') }}
+            </h2>
+        </LeadingIconHeading>
         <div class="mt-4 space-y-5">
             <fieldset class="space-y-2">
                 <legend class="mb-2 text-sm font-medium">

@@ -21,7 +21,10 @@ class LocaleController extends Controller
         $user = $request->user();
 
         if ($user instanceof User) {
-            $updateUserPreferences->execute($user, ['language' => $language->value]);
+            $updateUserPreferences->execute($user, [
+                'language' => $language->value,
+                'week_start' => $language->defaultWeekStart(),
+            ]);
         }
 
         return back()->withCookie($localePreference->remember($request, $language));

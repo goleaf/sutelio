@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ArrowLeft } from '@lucide/vue';
+import { ArrowLeft, ListChecks } from '@lucide/vue';
 import { ref, watch } from 'vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import TaskDetailContent from '@/components/task/TaskDetailContent.vue';
 import { Button } from '@/components/ui/button';
@@ -47,31 +48,33 @@ function deleted(): void {
     <div>
         <Head :title="currentTodo.title" />
 
-        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-app flex-col gap-6">
-                <WorkspacePageHeader
-                    :eyebrow="t('tasks.detail.title')"
-                    :title="currentTodo.title"
-                    :description="t('tasks.detail.page_description')"
-                >
-                    <template #actions>
-                        <Button as-child variant="outline" size="lg">
-                            <Link :href="tasksIndex.url()">
-                                <ArrowLeft class="size-4" aria-hidden="true" />
-                                {{ t('common.actions.back') }}
-                            </Link>
-                        </Button>
-                    </template>
-                </WorkspacePageHeader>
+        <WorkspacePageFrame>
+            <WorkspacePageHeader
+                :eyebrow="t('tasks.detail.title')"
+                :title="currentTodo.title"
+                :description="t('tasks.detail.page_description')"
+            >
+                <template #icon>
+                    <ListChecks aria-hidden="true" />
+                </template>
 
-                <TaskDetailContent
-                    :todo="currentTodo"
-                    :task-definitions="taskDefinitions"
-                    @deleted="deleted"
-                    @refresh="refresh"
-                    @updated="updated"
-                />
-            </div>
-        </div>
+                <template #actions>
+                    <Button as-child variant="outline" size="lg">
+                        <Link :href="tasksIndex.url()">
+                            <ArrowLeft class="size-4" aria-hidden="true" />
+                            {{ t('common.actions.back') }}
+                        </Link>
+                    </Button>
+                </template>
+            </WorkspacePageHeader>
+
+            <TaskDetailContent
+                :todo="currentTodo"
+                :task-definitions="taskDefinitions"
+                @deleted="deleted"
+                @refresh="refresh"
+                @updated="updated"
+            />
+        </WorkspacePageFrame>
     </div>
 </template>

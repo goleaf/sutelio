@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="application-name" content="{{ $page['props']['name'] }}">
         <meta name="apple-mobile-web-app-title" content="{{ $page['props']['name'] }}">
+        <meta name="description" content="{{ __('ui.meta.description') }}">
         <meta name="theme-color" content="#123C8B">
 
         <link rel="icon" href="/favicon.ico" sizes="any">

@@ -83,11 +83,13 @@ test('shared controls and presentation sources consume the Sutelio orange contra
         ->implode("\n");
 
     expect($button)
-        ->toContain('bg-orange-600 text-white')
+        ->toContain('bg-linear-to-br from-orange-600 via-orange-600 to-orange-700 text-white')
         ->not->toContain('bg-primary text-primary-foreground')
         ->and($checkbox)
-        ->toContain('data-[state=checked]:border-orange-600')
-        ->toContain('data-[state=checked]:bg-orange-600')
+        ->toContain('data-[state=checked]:border-orange-700')
+        ->toContain('data-[state=checked]:from-orange-600')
+        ->toContain('data-[state=checked]:via-orange-600')
+        ->toContain('data-[state=checked]:to-orange-700')
         ->toContain('data-[state=checked]:text-white')
         ->and($presentationSource)
         ->not->toMatch('/bg-(?:orange-500|primary)[^\'"\n]*text-primary-foreground/')

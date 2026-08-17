@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
-import { BadgeCheck, Camera, ImageUp, Trash2 } from '@lucide/vue';
+import {
+    BadgeCheck,
+    Camera,
+    Check,
+    ImageUp,
+    Save,
+    Trash2,
+    UserRound,
+} from '@lucide/vue';
 import {
     computed,
     onBeforeUnmount,
@@ -28,7 +36,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useInitials } from '@/composables/useInitials';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
@@ -188,13 +195,9 @@ onBeforeUnmount(clearAvatarPreview);
     <div class="max-w-4xl space-y-6">
         <Card>
             <CardHeader>
-                <LeadingIconHeading>
+                <LeadingIconHeading tile tile-tone="brand">
                     <template #icon>
-                        <div
-                            class="flex size-10 items-center justify-center rounded-xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700"
-                        >
-                            <Camera class="size-5" aria-hidden="true" />
-                        </div>
+                        <Camera />
                     </template>
 
                     <CardTitle>{{ labels.avatar.title }}</CardTitle>
@@ -249,29 +252,22 @@ onBeforeUnmount(clearAvatarPreview);
                             <Button
                                 v-if="avatarForm.avatar"
                                 type="submit"
-                                :disabled="avatarForm.processing"
+                                :loading="avatarForm.processing"
+                                :loading-label="labels.avatar.uploading"
                             >
-                                <Spinner v-if="avatarForm.processing" />
-                                {{
-                                    avatarForm.processing
-                                        ? labels.avatar.uploading
-                                        : labels.avatar.upload
-                                }}
+                                <ImageUp class="size-4" aria-hidden="true" />
+                                {{ labels.avatar.upload }}
                             </Button>
                             <Button
                                 v-if="user.avatar_url && !avatarForm.avatar"
                                 type="button"
                                 variant="outline"
                                 class="text-destructive hover:text-destructive"
-                                :disabled="avatarRemoveForm.processing"
+                                :loading="avatarRemoveForm.processing"
+                                :loading-label="labels.avatar.remove"
                                 @click="removeAvatar"
                             >
-                                <Spinner v-if="avatarRemoveForm.processing" />
-                                <Trash2
-                                    v-else
-                                    class="size-4"
-                                    aria-hidden="true"
-                                />
+                                <Trash2 class="size-4" aria-hidden="true" />
                                 {{ labels.avatar.remove }}
                             </Button>
                         </div>
@@ -295,9 +291,16 @@ onBeforeUnmount(clearAvatarPreview);
                             :aria-valuenow="avatarForm.progress.percentage"
                         >
                             <div
-                                class="h-full rounded-full bg-orange-600 transition-[width] duration-200 motion-reduce:transition-none"
+                                class="h-full w-full origin-left scale-x-[var(--progress)] rounded-full bg-orange-600 transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
                                 :style="{
-                                    width: `${avatarForm.progress.percentage}%`,
+                                    '--progress': Math.min(
+                                        1,
+                                        Math.max(
+                                            0,
+                                            (avatarForm.progress.percentage ??
+                                                0) / 100,
+                                        ),
+                                    ),
                                 }"
                             />
                         </div>
@@ -309,10 +312,16 @@ onBeforeUnmount(clearAvatarPreview);
 
         <Card>
             <CardHeader>
-                <CardTitle>{{ labels.personal.title }}</CardTitle>
-                <CardDescription>{{
-                    labels.personal.description
-                }}</CardDescription>
+                <LeadingIconHeading tile tile-tone="brand">
+                    <template #icon>
+                        <UserRound />
+                    </template>
+
+                    <CardTitle>{{ labels.personal.title }}</CardTitle>
+                    <CardDescription>{{
+                        labels.personal.description
+                    }}</CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent class="space-y-5">
                 <form
@@ -352,21 +361,22 @@ onBeforeUnmount(clearAvatarPreview);
                         <Button
                             type="submit"
                             size="lg"
-                            :disabled="
-                                profileForm.processing || !profileForm.isDirty
-                            "
+                            :disabled="!profileForm.isDirty"
+                            :loading="profileForm.processing"
+                            :loading-label="labels.personal.saving"
                         >
-                            <Spinner v-if="profileForm.processing" />
-                            {{
-                                profileForm.processing
-                                    ? labels.personal.saving
-                                    : labels.personal.save
-                            }}
+                            <Check
+                                v-if="profileForm.recentlySuccessful"
+                                class="ui-status-pop size-4"
+                                aria-hidden="true"
+                            />
+                            <Save v-else class="size-4" aria-hidden="true" />
+                            {{ labels.personal.save }}
                         </Button>
                         <Alert
                             v-if="profileForm.recentlySuccessful"
                             variant="success"
-                            class="min-w-0 flex-1 py-2.5"
+                            class="ui-status-pop min-w-0 flex-1 py-2.5"
                         >
                             <BadgeCheck aria-hidden="true" />
                             <AlertDescription class="font-medium">

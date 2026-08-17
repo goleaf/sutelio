@@ -190,6 +190,7 @@ export type OnboardingCopy = {
     };
     workspace: {
         description: string;
+        create_description: string;
         choose_existing: string;
         create_new: string;
         existing_label: string;
@@ -204,6 +205,7 @@ export type OnboardingCopy = {
     };
     project: {
         description: string;
+        create_description: string;
         choose_existing: string;
         create_new: string;
         existing_label: string;
@@ -219,6 +221,7 @@ export type OnboardingCopy = {
     };
     task: {
         description: string;
+        create_description: string;
         choose_existing: string;
         create_new: string;
         existing_label: string;

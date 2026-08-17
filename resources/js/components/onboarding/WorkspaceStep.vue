@@ -40,6 +40,7 @@ const emit = defineEmits<{
 const selected = computed(() =>
     props.workspaces.find((item) => item.id === props.selectedId),
 );
+const hasExistingOptions = computed(() => props.workspaces.length > 0);
 const selectedId = computed({
     get: () => props.selectedId,
     set: (value: string) => emit('update:selectedId', value),
@@ -57,9 +58,12 @@ const description = computed({
 <template>
     <div class="space-y-5">
         <p class="text-sm leading-6 text-muted-foreground">
-            {{ copy.description }}
+            {{
+                hasExistingOptions ? copy.description : copy.create_description
+            }}
         </p>
         <div
+            v-if="hasExistingOptions"
             class="grid grid-cols-2 gap-2 rounded-2xl bg-muted/55 p-1.5"
             role="group"
         >
@@ -68,7 +72,7 @@ const description = computed({
                 variant="ghost"
                 class="min-h-11"
                 :aria-pressed="mode === 'select'"
-                :disabled="processing || workspaces.length === 0"
+                :disabled="processing"
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'select')"
             >
@@ -88,7 +92,7 @@ const description = computed({
         </div>
 
         <div
-            v-if="mode === 'select' && workspaces.length"
+            v-if="mode === 'select' && hasExistingOptions"
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-2">
@@ -113,12 +117,13 @@ const description = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <LeadingIconHeading content-class="gap-2">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="gap-2"
+                >
                     <template #icon>
-                        <Building2
-                            class="size-5 text-orange-600"
-                            aria-hidden="true"
-                        />
+                        <Building2 />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
@@ -136,7 +141,7 @@ const description = computed({
         </div>
 
         <div
-            v-else-if="mode === 'create'"
+            v-else-if="!hasExistingOptions || mode === 'create'"
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-4">
@@ -169,12 +174,13 @@ const description = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <LeadingIconHeading content-class="gap-2">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="gap-2"
+                >
                     <template #icon>
-                        <Building2
-                            class="size-5 text-orange-600"
-                            aria-hidden="true"
-                        />
+                        <Building2 />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>

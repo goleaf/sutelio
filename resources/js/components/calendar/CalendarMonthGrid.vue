@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { CalendarCheck2, CheckCircle2 } from '@lucide/vue';
+import { CalendarCheck2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { buildCalendarDays } from '@/components/calendar/calendar-date';
 import type {
     CalendarState,
     CalendarTodo,
 } from '@/components/calendar/calendar-types';
-import ColorSwatch from '@/components/shared/ColorSwatch.vue';
+import CalendarTaskItem from '@/components/calendar/CalendarTaskItem.vue';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
-import { show as todoShow } from '@/routes/todos';
 
 const props = defineProps<{
     calendar: CalendarState;
@@ -108,38 +106,12 @@ function priorityLabel(todo: CalendarTodo): string {
 
                 <ul v-if="day.todos.length" class="grid gap-2 p-3">
                     <li v-for="todo in day.todos" :key="todo.id">
-                        <Link
-                            :href="todoShow(todo)"
-                            prefetch
-                            class="group flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-border/80 bg-card px-3 py-2.5 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.035] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
-                            :aria-label="todo.title"
-                        >
-                            <ColorSwatch
-                                :color="todo.priority_definition?.color"
-                                size="md"
-                                emphasized
-                            />
-                            <span class="min-w-0 flex-1">
-                                <span
-                                    class="block truncate text-sm font-medium"
-                                >
-                                    {{ todo.title }}
-                                </span>
-                                <span
-                                    class="mt-0.5 block truncate text-xs text-muted-foreground"
-                                >
-                                    {{
-                                        todo.project?.name ??
-                                        priorityLabel(todo)
-                                    }}
-                                </span>
-                            </span>
-                            <CheckCircle2
-                                v-if="todo.is_completed"
-                                class="size-4 shrink-0 text-emerald-600"
-                                aria-hidden="true"
-                            />
-                        </Link>
+                        <CalendarTaskItem
+                            :todo="todo"
+                            :secondary="
+                                todo.project?.name ?? priorityLabel(todo)
+                            "
+                        />
                     </li>
                 </ul>
 
@@ -224,26 +196,11 @@ function priorityLabel(todo: CalendarTodo): string {
                             :key="todo.id"
                             class="min-w-0"
                         >
-                            <Link
-                                :href="todoShow(todo)"
-                                prefetch
-                                class="group flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-border/70 bg-background px-2 py-1.5 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.04] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
-                                :aria-label="todo.title"
-                            >
-                                <ColorSwatch
-                                    :color="todo.priority_definition?.color"
-                                />
-                                <span
-                                    class="min-w-0 flex-1 truncate text-[0.7rem] font-medium"
-                                >
-                                    {{ todo.title }}
-                                </span>
-                                <CheckCircle2
-                                    v-if="todo.is_completed"
-                                    class="size-3.5 shrink-0 text-emerald-600"
-                                    aria-hidden="true"
-                                />
-                            </Link>
+                            <CalendarTaskItem
+                                :todo="todo"
+                                density="dense"
+                                class="border-border/70 bg-background"
+                            />
                         </li>
                     </ul>
 

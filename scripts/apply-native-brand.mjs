@@ -67,6 +67,155 @@ const templateIosAppId = 'com.nativephp.app';
 const templateAppName = 'NativePHP';
 const templateScheme = 'nativephp';
 const fixedAndroidNamespace = 'com.nativephp.mobile';
+const requestInspectorDependency =
+    'implementation("com.github.acsbendi:Android-Request-Inspector-WebView:1.0.3")';
+const androidSensitiveSourceDefinitions = [
+    {
+        relativePath:
+            'app/src/main/java/com/nativephp/mobile/network/WebViewManager.kt',
+        label: 'NativePHP Android WebView manager',
+        replacements: [
+            [
+                'import com.acsbendi.requestinspectorwebview.RequestInspectorWebViewClient',
+                '',
+            ],
+            [
+                'WebView.setWebContentsDebuggingEnabled(true)',
+                'WebView.setWebContentsDebuggingEnabled(\n            context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0\n        )',
+            ],
+            [
+                '            private val requestInspector = RequestInspectorWebViewClient(webView)\n',
+                '',
+            ],
+            [
+                '                Log.d(TAG, "🔄 Intercepting $method request to $url")',
+                '                Log.d(TAG, "🔄 Intercepting $method request")',
+            ],
+            [
+                [
+                    '                request.requestHeaders.forEach { (key, value) ->',
+                    '                    Log.d("$TAG-Headers", "📋 $key: $value")',
+                    '                }',
+                    '',
+                ].join('\n'),
+                '',
+            ],
+            [
+                '                val inspectorResponse = requestInspector.shouldInterceptRequest(view, request)\n',
+                '',
+            ],
+            [
+                '                        inspectorResponse',
+                '                        null',
+            ],
+            [
+                '        Log.d("$TAG-JS", "📦 POST data captured (fetch/XHR) for: $url reqId=$requestId (length=${data.length})")',
+                '        Log.d("$TAG-JS", "📦 POST data captured (fetch/XHR, length=${data.length})")',
+            ],
+            [
+                '        Log.d("$TAG-JS", "📦 POST data captured (form) for: $url path=$path (length=${data.length})")',
+                '        Log.d("$TAG-JS", "📦 POST data captured (form, length=${data.length})")',
+            ],
+            [
+                '        Log.d("$TAG-CSRF", "🔑 JS provided token: $token")',
+                '        Log.d("$TAG-CSRF", "🔑 JS provided a CSRF token")',
+            ],
+            [
+                '                    Log.d("$TAG-CSRF", "🔑 Extracted token from POST data: $token")',
+                '                    Log.d("$TAG-CSRF", "🔑 Extracted a CSRF token from POST data")',
+            ],
+            [
+                '                        Log.d("$TAG-CSRF", "🔑 Extracted token from form data: $token")',
+                '                        Log.d("$TAG-CSRF", "🔑 Extracted a CSRF token from form data")',
+            ],
+        ],
+    },
+    {
+        relativePath:
+            'app/src/main/java/com/nativephp/mobile/network/PHPWebViewClient.kt',
+        label: 'NativePHP Android PHP WebView client',
+        replacements: [
+            [
+                '                Log.d(TAG, "RESPONSE HEADERS: ${responseHeaders}")',
+                '                Log.d(TAG, "PHP asset response received")',
+            ],
+            [
+                '        Log.d(TAG, "📤 Final request headers: $headers")',
+                '        Log.d(TAG, "📤 Prepared ${headers.size} request headers")',
+            ],
+            [
+                '                Log.d(TAG, "🍪 Setting cookie from response: $value")',
+                '                Log.d(TAG, "🍪 Applying response cookie")',
+            ],
+            [
+                '               Log.d(TAG, "🍪 Stored cookie from Set-Cookie header: $cookie")',
+                '               Log.d(TAG, "🍪 Stored response cookie")',
+            ],
+        ],
+    },
+    {
+        relativePath:
+            'app/src/main/java/com/nativephp/mobile/bridge/PHPBridge.kt',
+        label: 'NativePHP Android PHP bridge',
+        replacements: [
+            [
+                '        Log.d(TAG, "Response first 200 chars: ${response.take(200)}")',
+                '        Log.d(TAG, "PHP response received")',
+            ],
+            [
+                '                Log.d(TAG, "Cookie line: $cookieLine")',
+                '                Log.d(TAG, "Response cookie found")',
+            ],
+            [
+                '                    Log.d(TAG, "Stored cookie: $cookieValue")',
+                '                    Log.d(TAG, "Stored response cookie")',
+            ],
+        ],
+    },
+    {
+        relativePath:
+            'app/src/main/java/com/nativephp/mobile/security/LaravelCookieStore.kt',
+        label: 'NativePHP Android Laravel cookie store',
+        replacements: [
+            [
+                '            Log.d(TAG, "🍪 Stored cookie: $name=$value")',
+                '            Log.d(TAG, "🍪 Stored cookie: $name")',
+            ],
+            [
+                '        Log.d(TAG, "📤 Cookie header: $cookieString")',
+                '        Log.d(TAG, "📤 Cookie header prepared")',
+            ],
+            [
+                [
+                    '        Log.d(TAG, "📦 Stored cookies:")',
+                    '        cookies.forEach { (key, value) ->',
+                    '            Log.d(TAG, "   → $key = $value")',
+                    '        }',
+                ].join('\n'),
+                '        Log.d(TAG, "📦 Stored cookie count: ${cookies.size}")',
+            ],
+        ],
+    },
+    {
+        relativePath:
+            'app/src/main/java/com/nativephp/mobile/security/LaravelSecurity.kt',
+        label: 'NativePHP Android Laravel security store',
+        replacements: [
+            [
+                '                    Log.d(TAG, "🔑 Extracted CSRF token from JSON: $csrfToken")',
+                '                    Log.d(TAG, "🔑 Extracted a CSRF token from JSON")',
+            ],
+            [
+                '                    Log.d(TAG, "🔑 Extracted CSRF token from form: $csrfToken")',
+                '                    Log.d(TAG, "🔑 Extracted a CSRF token from form")',
+            ],
+            [
+                '        Log.d(TAG, "📥 Stored CSRF token manually: $token")',
+                '        Log.d(TAG, "📥 Stored a CSRF token manually")',
+            ],
+        ],
+    },
+];
 const canonicalDeepLinkBlock = `            <!-- NATIVEPHP-DEEPLINKS-START -->
             <!-- Deep Links (Custom Scheme) -->
             <intent-filter>
@@ -358,12 +507,34 @@ function inspectGradle(sourceText) {
         );
     }
 
-    return classifyValue(
+    const applicationIdState = classifyValue(
         applicationId,
         templateAppId,
         canonicalAppId,
         'Generated NativePHP Android applicationId',
     );
+    const inspectorArtifactOccurrences = countOccurrences(
+        activeSource,
+        'Android-Request-Inspector-WebView',
+    );
+    const inspectorDependencyOccurrences = countOccurrences(
+        activeSource,
+        requestInspectorDependency,
+    );
+
+    if (
+        inspectorArtifactOccurrences > 1 ||
+        inspectorArtifactOccurrences !== inspectorDependencyOccurrences
+    ) {
+        throw new Error(
+            'Generated NativePHP Android request-inspector dependency must be the exact NativePHP 4.2 declaration or absent.',
+        );
+    }
+
+    return [
+        applicationIdState,
+        inspectorDependencyOccurrences === 1 ? 'template' : 'canonical',
+    ];
 }
 
 function countOccurrences(sourceText, needle) {
@@ -538,9 +709,16 @@ function inspectInfoPlist(sourceText, label) {
 }
 
 function canonicalizeGradle(templateText) {
-    return templateText.replace(
+    const identifiedTemplate = templateText.replace(
         /^([\t ]*applicationId[\t ]*=[\t ]*)"REPLACE_APP_ID"([\t ]*)$/m,
         `$1"${canonicalAppId}"$2`,
+    );
+
+    return replaceExactly(
+        identifiedTemplate,
+        `    ${requestInspectorDependency}\n`,
+        '',
+        'NativePHP Android request-inspector dependency',
     );
 }
 
@@ -598,6 +776,65 @@ function canonicalizeInfoPlist(templateText) {
             /(<key>\s*CFBundleURLSchemes\s*<\/key>\s*<array>\s*<string>)[^<]*(<\/string>\s*<\/array>)/,
             `$1${canonicalScheme}$2`,
         );
+}
+
+function replaceExactly(sourceText, from, to, label) {
+    const occurrences = countOccurrences(sourceText, from);
+
+    if (occurrences !== 1) {
+        throw new Error(
+            `${label} source patch must match exactly once; found ${occurrences}.`,
+        );
+    }
+
+    return sourceText.replace(from, to);
+}
+
+function canonicalizeSensitiveAndroidSource(templateText, replacements, label) {
+    return replacements.reduce(
+        (contents, [from, to], index) =>
+            replaceExactly(
+                contents,
+                from,
+                to,
+                `${label} replacement ${index + 1}`,
+            ),
+        templateText,
+    );
+}
+
+function buildSensitiveAndroidSourceEntry(definition) {
+    const templatePath = resolve(vendorAndroidRoot, definition.relativePath);
+    const destination = resolve(androidGeneratedRoot, definition.relativePath);
+    const templateContents = assertNonemptyFile(
+        workspaceRoot,
+        templatePath,
+        `${definition.label} template`,
+    ).toString('utf8');
+    const currentContents = assertNonemptyFile(
+        nativeRoot,
+        destination,
+        definition.label,
+    ).toString('utf8');
+    const canonicalContents = canonicalizeSensitiveAndroidSource(
+        templateContents,
+        definition.replacements,
+        definition.label,
+    );
+    const currentHash = sha256(currentContents);
+    const templateHash = sha256(templateContents);
+    const canonicalHash = sha256(canonicalContents);
+
+    if (currentHash !== templateHash && currentHash !== canonicalHash) {
+        throw new Error(
+            `${definition.label} must be the exact NativePHP 4.2 template or the exact Sutelio security-hardened source.`,
+        );
+    }
+
+    return {
+        destination,
+        contents: Buffer.from(canonicalContents, 'utf8'),
+    };
 }
 
 function assertIdentityFieldsState(inspectedState, label) {
@@ -868,6 +1105,9 @@ function buildPublicationPlan() {
     const identityState = assertUniformIdentityState(
         identityEntries.map((entry) => entry.state),
     );
+    const sensitiveSourceEntries = androidSensitiveSourceDefinitions.map(
+        buildSensitiveAndroidSourceEntry,
+    );
 
     assertCatalogReferences();
 
@@ -951,11 +1191,13 @@ function buildPublicationPlan() {
         }
     }
 
-    return [...identityEntries, ...assetEntries].map((entry) => ({
-        destination: entry.destination,
-        contents: entry.contents,
-        hash: sha256(entry.contents),
-    }));
+    return [...identityEntries, ...sensitiveSourceEntries, ...assetEntries].map(
+        (entry) => ({
+            destination: entry.destination,
+            contents: entry.contents,
+            hash: sha256(entry.contents),
+        }),
+    );
 }
 
 function assertPlansMatch(firstPlan, secondPlan) {

@@ -15,6 +15,7 @@ import type {
     OnboardingWorkspace,
 } from '@/components/onboarding/onboarding-types';
 import { onboardingPluralForm } from '@/components/onboarding/onboarding-types';
+import IconTile from '@/components/shared/IconTile.vue';
 import { resolveIntlLocale } from '@/lib/formatters';
 
 const props = defineProps<{
@@ -67,11 +68,9 @@ const countMessage = computed(() => {
             class="rounded-2xl border border-border/80 bg-muted/20 p-4 sm:p-5"
         >
             <div class="flex items-center gap-3">
-                <span
-                    class="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20"
-                >
-                    <Check class="size-5" aria-hidden="true" />
-                </span>
+                <IconTile tone="success" size="sm" class="ui-status-pop">
+                    <Check />
+                </IconTile>
                 <div>
                     <h2 class="font-semibold">{{ copy.ready_title }}</h2>
                     <p class="text-sm text-muted-foreground">
@@ -85,11 +84,9 @@ const countMessage = computed(() => {
                     :key="row.key"
                     class="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
                 >
-                    <component
-                        :is="row.icon"
-                        class="mt-0.5 size-4 shrink-0 text-orange-600"
-                        aria-hidden="true"
-                    />
+                    <IconTile tone="muted" size="sm">
+                        <component :is="row.icon" />
+                    </IconTile>
                     <div class="min-w-0">
                         <dt
                             class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"

@@ -12,7 +12,9 @@ import {
     Users,
 } from '@lucide/vue';
 import { computed } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
@@ -191,133 +193,129 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
             "
         />
 
-        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-app flex-col gap-6">
-                <WorkspacePageHeader
-                    :eyebrow="t('workspaces.management.eyebrow')"
-                    :title="
-                        t('workspaces.management.title', {
-                            workspace: workspace.name,
-                        })
-                    "
-                    :description="t('workspaces.management.description')"
-                >
-                    <template #actions>
-                        <Badge
-                            v-if="workspace.is_current"
-                            variant="outline"
-                            class="h-11 border-emerald-500/25 bg-emerald-500/10 px-4 text-emerald-700"
-                        >
-                            <CheckCircle2 aria-hidden="true" />
-                            {{ t('workspaces.current') }}
-                        </Badge>
-                        <Link
-                            :href="workspaceIndex()"
-                            :class="
-                                buttonVariants({
-                                    variant: 'outline',
-                                    size: 'lg',
-                                })
-                            "
-                        >
-                            <ArrowLeft aria-hidden="true" />
-                            {{ t('workspaces.management.back') }}
-                        </Link>
-                    </template>
+        <WorkspacePageFrame>
+            <WorkspacePageHeader
+                :eyebrow="t('workspaces.management.eyebrow')"
+                :title="
+                    t('workspaces.management.title', {
+                        workspace: workspace.name,
+                    })
+                "
+                :description="t('workspaces.management.description')"
+            >
+                <template #icon>
+                    <Building2 aria-hidden="true" />
+                </template>
 
-                    <template #metrics>
-                        <WorkspaceMetric
-                            :label="t('workspaces.members')"
-                            :value="formatNumber(workspace.members_count ?? 0)"
-                            :icon="Users"
-                            tone="orange"
-                        />
-                        <WorkspaceMetric
-                            :label="t('workspaces.projects')"
-                            :value="formatNumber(workspace.projects_count ?? 0)"
-                            :icon="Folder"
-                            tone="blue"
-                        />
-                        <WorkspaceMetric
-                            :label="t('workspaces.tasks')"
-                            :value="formatNumber(workspace.todos_count ?? 0)"
-                            :icon="CheckSquare"
-                            tone="emerald"
-                        />
-                    </template>
-                </WorkspacePageHeader>
-
-                <section
-                    class="rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6"
-                >
-                    <div
-                        class="mb-6 flex flex-col gap-4 border-b border-border/70 pb-5 lg:flex-row lg:items-center lg:justify-between"
+                <template #actions>
+                    <Badge
+                        v-if="workspace.is_current"
+                        variant="outline"
+                        class="h-11 border-emerald-500/25 bg-emerald-500/10 px-4 text-emerald-700"
                     >
-                        <div class="flex min-w-0 items-center gap-3">
-                            <div
-                                class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
-                            >
-                                <Building2 class="size-5" aria-hidden="true" />
-                            </div>
-                            <div class="min-w-0">
-                                <p class="truncate font-semibold">
-                                    {{ workspace.name }}
-                                </p>
-                                <p
-                                    class="truncate text-sm text-muted-foreground"
-                                >
-                                    {{ workspace.owner?.name ?? '—' }}
-                                </p>
-                            </div>
-                        </div>
+                        <CheckCircle2 aria-hidden="true" />
+                        {{ t('workspaces.current') }}
+                    </Badge>
+                    <Link
+                        :href="workspaceIndex()"
+                        :class="
+                            buttonVariants({
+                                variant: 'outline',
+                                size: 'lg',
+                            })
+                        "
+                    >
+                        <ArrowLeft aria-hidden="true" />
+                        {{ t('workspaces.management.back') }}
+                    </Link>
+                </template>
 
-                        <WorkspaceManagementNavigation
-                            class="w-full lg:w-auto"
-                            :active-section="section"
-                            :items="navigationItems"
-                            :label="t('workspaces.management.navigation.label')"
-                            :current-label="
-                                t(
-                                    'workspaces.management.navigation.current_section',
-                                )
-                            "
-                            :open-label="
-                                t(
-                                    'workspaces.management.navigation.open_sections',
-                                )
-                            "
-                        />
+                <template #metrics>
+                    <WorkspaceMetric
+                        :label="t('workspaces.members')"
+                        :value="formatNumber(workspace.members_count ?? 0)"
+                        :icon="Users"
+                        tone="orange"
+                    />
+                    <WorkspaceMetric
+                        :label="t('workspaces.projects')"
+                        :value="formatNumber(workspace.projects_count ?? 0)"
+                        :icon="Folder"
+                        tone="blue"
+                    />
+                    <WorkspaceMetric
+                        :label="t('workspaces.tasks')"
+                        :value="formatNumber(workspace.todos_count ?? 0)"
+                        :icon="CheckSquare"
+                        tone="emerald"
+                    />
+                </template>
+            </WorkspacePageHeader>
+
+            <section
+                class="rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6"
+            >
+                <div
+                    class="mb-6 flex flex-col gap-4 border-b border-border/70 pb-5 lg:flex-row lg:items-center lg:justify-between"
+                >
+                    <div class="flex min-w-0 items-center gap-3">
+                        <IconTile tone="brand" size="md">
+                            <Building2 />
+                        </IconTile>
+                        <div class="min-w-0">
+                            <p class="truncate font-semibold">
+                                {{ workspace.name }}
+                            </p>
+                            <p class="truncate text-sm text-muted-foreground">
+                                {{ workspace.owner?.name ?? '—' }}
+                            </p>
+                        </div>
                     </div>
 
-                    <WorkspaceOverviewPanel
-                        v-if="section === 'overview'"
-                        :workspace="workspace"
+                    <WorkspaceManagementNavigation
+                        class="w-full lg:w-auto"
+                        :active-section="section"
+                        :items="navigationItems"
+                        :label="t('workspaces.management.navigation.label')"
+                        :current-label="
+                            t(
+                                'workspaces.management.navigation.current_section',
+                            )
+                        "
+                        :open-label="
+                            t('workspaces.management.navigation.open_sections')
+                        "
                     />
-                    <WorkspaceMembersPanel
-                        v-else-if="section === 'members'"
-                        :workspace="workspace"
-                        :members="members"
-                        :invitations="invitations"
-                        :locale="locale"
-                        :routes="memberRoutes"
-                    />
-                    <WorkspaceConfigurationPanel
-                        v-else-if="section === 'configuration'"
-                        :workspace="workspace"
-                        :labels="labels"
-                        :tags="tags"
-                        :task-statuses="taskStatuses"
-                        :task-priorities="taskPriorities"
-                        :locale="locale"
-                        :routes="metadataRoutes"
-                    />
-                    <WorkspaceDangerPanel
-                        v-else
-                        :workspace="workspace"
-                        :members="members"
-                    />
-                </section>
-            </div>
-        </div>
+                </div>
+
+                <WorkspaceOverviewPanel
+                    v-if="section === 'overview'"
+                    :workspace="workspace"
+                />
+                <WorkspaceMembersPanel
+                    v-else-if="section === 'members'"
+                    :workspace="workspace"
+                    :members="members"
+                    :invitations="invitations"
+                    :locale="locale"
+                    :routes="memberRoutes"
+                />
+                <WorkspaceConfigurationPanel
+                    v-else-if="section === 'configuration'"
+                    :workspace="workspace"
+                    :labels="labels"
+                    :tags="tags"
+                    :task-statuses="taskStatuses"
+                    :task-priorities="taskPriorities"
+                    :locale="locale"
+                    :routes="metadataRoutes"
+                />
+                <WorkspaceDangerPanel
+                    v-else
+                    :workspace="workspace"
+                    :members="members"
+                />
+            </section>
+        </WorkspacePageFrame>
     </div>
 </template>

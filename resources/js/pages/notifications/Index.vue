@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { Bell, CheckCheck, Inbox, MailOpen } from '@lucide/vue';
+import { Bell, BellRing, CheckCheck, Inbox, MailOpen } from '@lucide/vue';
 import { nextTick, ref, watch } from 'vue';
 import {
     buildNotificationQuery,
@@ -16,6 +16,7 @@ import type {
 import NotificationFeed from '@/components/notification/NotificationFeed.vue';
 import NotificationFilters from '@/components/notification/NotificationFilters.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -38,6 +39,7 @@ const toast = useToast();
 const { copy, formatNumber, locale } = useWorkspaceUi();
 const processingIds = ref<Set<string>>(new Set());
 const markingAll = ref(false);
+const markingAllSucceeded = ref(false);
 const filtering = ref(false);
 const filterRequest = ref(0);
 const visibleNotifications = ref<NotificationItem[]>([
@@ -195,6 +197,7 @@ function markAllRead(): void {
     }
 
     markingAll.value = true;
+    markingAllSucceeded.value = false;
     router.post(
         markAllReadRoute().url,
         {},
@@ -203,6 +206,7 @@ function markAllRead(): void {
             preserveState: true,
             only: ['notifications', 'stats', 'filters', 'today'],
             onSuccess: () => {
+                markingAllSucceeded.value = true;
                 toast.success(copy.value.notifications.marked_all);
 
                 if (props.filters.status === 'unread') {
@@ -266,68 +270,77 @@ watch(() => props.notifications.data, showBrowserNotifications, {
 <template>
     <Head :title="copy.notifications.title" />
 
-    <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-        <div class="mx-auto flex max-w-app flex-col gap-6">
-            <WorkspacePageHeader
-                :eyebrow="copy.common.workspace_intelligence"
-                :title="copy.notifications.title"
-                :description="copy.notifications.description"
-            >
-                <template #actions>
-                    <Button
-                        type="button"
-                        size="lg"
-                        class="motion-reduce:transition-none"
-                        :disabled="markingAll || stats.unread === 0"
-                        @click="markAllRead"
-                    >
-                        <Spinner v-if="markingAll" />
-                        <CheckCheck v-else class="size-4" aria-hidden="true" />
-                        {{ copy.notifications.mark_all }}
-                    </Button>
-                </template>
+    <WorkspacePageFrame>
+        <WorkspacePageHeader
+            :eyebrow="copy.common.workspace_intelligence"
+            :title="copy.notifications.title"
+            :description="copy.notifications.description"
+        >
+            <template #icon>
+                <BellRing aria-hidden="true" />
+            </template>
 
-                <template #metrics>
-                    <WorkspaceMetric
-                        :label="copy.notifications.total"
-                        :value="formatNumber(stats.total)"
-                        :icon="Inbox"
-                        tone="orange"
+            <template #actions>
+                <Button
+                    type="button"
+                    size="lg"
+                    class="motion-reduce:transition-none"
+                    :disabled="markingAll || stats.unread === 0"
+                    @click="markAllRead"
+                >
+                    <Spinner v-if="markingAll" />
+                    <CheckCheck
+                        v-else
+                        :class="[
+                            'size-4',
+                            markingAllSucceeded ? 'ui-status-pop' : '',
+                        ]"
+                        aria-hidden="true"
                     />
-                    <WorkspaceMetric
-                        :label="copy.notifications.unread"
-                        :value="formatNumber(stats.unread)"
-                        :icon="Bell"
-                        tone="blue"
-                    />
-                    <WorkspaceMetric
-                        :label="copy.notifications.cleared"
-                        :value="formatNumber(stats.read)"
-                        :icon="MailOpen"
-                        tone="emerald"
-                    />
-                </template>
-            </WorkspacePageHeader>
+                    {{ copy.notifications.mark_all }}
+                </Button>
+            </template>
 
-            <NotificationFilters
-                :filters="filters"
-                :stats="stats"
-                :processing="filtering"
-                :result-summary="resultSummary()"
-                @update="updateFilters"
-            />
+            <template #metrics>
+                <WorkspaceMetric
+                    :label="copy.notifications.total"
+                    :value="formatNumber(stats.total)"
+                    :icon="Inbox"
+                    tone="orange"
+                />
+                <WorkspaceMetric
+                    :label="copy.notifications.unread"
+                    :value="formatNumber(stats.unread)"
+                    :icon="Bell"
+                    tone="blue"
+                />
+                <WorkspaceMetric
+                    :label="copy.notifications.cleared"
+                    :value="formatNumber(stats.read)"
+                    :icon="MailOpen"
+                    tone="emerald"
+                />
+            </template>
+        </WorkspacePageHeader>
 
-            <NotificationFeed
-                :filters="filters"
-                :items="visibleNotifications"
-                :notifications="notifications"
-                :processing-ids="processingIds"
-                :filtering="filtering"
-                :today-date="today"
-                @navigate="visitResults"
-                @open="openNotification"
-                @mark-read="markRead"
-            />
-        </div>
-    </div>
+        <NotificationFilters
+            :filters="filters"
+            :stats="stats"
+            :processing="filtering"
+            :result-summary="resultSummary()"
+            @update="updateFilters"
+        />
+
+        <NotificationFeed
+            :filters="filters"
+            :items="visibleNotifications"
+            :notifications="notifications"
+            :processing-ids="processingIds"
+            :filtering="filtering"
+            :today-date="today"
+            @navigate="visitResults"
+            @open="openNotification"
+            @mark-read="markRead"
+        />
+    </WorkspacePageFrame>
 </template>

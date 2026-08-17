@@ -19,7 +19,15 @@ test('preferences page is the canonical settings page for regional and navigatio
             ->where('preferences.time_format', 'H:i')
             ->where('preferences.start_page', 'dashboard')
             ->where('preferences.week_start', 'sunday')
-            ->where('timezones', fn ($timezones): bool => $timezones->contains('Europe/Vilnius')));
+            ->where('timezoneGroups', fn ($groups): bool => $groups->contains(
+                fn (array $group): bool => $group['key'] === 'europe'
+                    && $group['label'] === 'Europe'
+                    && collect($group['options'])->contains(
+                        fn (array $option): bool => $option['value'] === 'Europe/Vilnius'
+                            && str_contains($option['label'], 'Lithuania'),
+                    ),
+            ))
+            ->missing('timezones'));
 });
 
 test('legacy appearance page redirects to preferences', function () {

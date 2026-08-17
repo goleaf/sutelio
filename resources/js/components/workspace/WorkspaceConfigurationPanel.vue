@@ -381,28 +381,23 @@ async function deleteMetadata(): Promise<void> {
             class="flex flex-col gap-4 rounded-2xl border border-orange-500/15 bg-orange-500/[0.04] p-5 sm:flex-row sm:items-end sm:justify-between"
         >
             <div class="max-w-3xl">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
+                <LeadingIconHeading tile tile-tone="brand">
+                    <template #icon>
+                        <ListChecks />
+                    </template>
+
+                    <h2
+                        id="workspace-configuration-title"
+                        class="text-xl font-semibold tracking-tight"
                     >
-                        <ListChecks class="size-5" aria-hidden="true" />
-                    </div>
-                    <div>
-                        <h2
-                            id="workspace-configuration-title"
-                            class="text-xl font-semibold tracking-tight"
-                        >
-                            {{ t('workspaces.management.configuration.title') }}
-                        </h2>
-                        <p class="mt-1 text-sm leading-6 text-muted-foreground">
-                            {{
-                                t(
-                                    'workspaces.management.configuration.description',
-                                )
-                            }}
-                        </p>
-                    </div>
-                </div>
+                        {{ t('workspaces.management.configuration.title') }}
+                    </h2>
+                    <p class="text-sm leading-6 text-muted-foreground">
+                        {{
+                            t('workspaces.management.configuration.description')
+                        }}
+                    </p>
+                </LeadingIconHeading>
             </div>
             <SearchField
                 id="metadata-search"
@@ -444,13 +439,9 @@ async function deleteMetadata(): Promise<void> {
 
         <Card v-else-if="activeSection === 'labels'" class="border-sky-500/15">
             <CardHeader>
-                <LeadingIconHeading>
+                <LeadingIconHeading tile tile-tone="information">
                     <template #icon>
-                        <div
-                            class="flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700"
-                        >
-                            <Palette class="size-5" aria-hidden="true" />
-                        </div>
+                        <Palette />
                     </template>
 
                     <CardTitle>
@@ -704,13 +695,9 @@ async function deleteMetadata(): Promise<void> {
 
         <Card v-else-if="activeSection === 'tags'" class="border-violet-500/15">
             <CardHeader>
-                <LeadingIconHeading>
+                <LeadingIconHeading tile tile-tone="information">
                     <template #icon>
-                        <div
-                            class="flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700"
-                        >
-                            <TagIcon class="size-5" aria-hidden="true" />
-                        </div>
+                        <TagIcon />
                     </template>
 
                     <CardTitle>

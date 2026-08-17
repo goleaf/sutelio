@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, Languages, LoaderCircle } from '@lucide/vue';
+import { Check, Languages } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import LanguageFlag from '@/components/localization/LanguageFlag.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
@@ -39,7 +39,7 @@ function confirmLanguage(): void {
     <Dialog :open="localization.requires_selection">
         <DialogContent
             :show-close-button="false"
-            class="overflow-hidden p-0 sm:max-w-xl"
+            class="p-0 sm:max-w-xl"
             @escape-key-down.prevent
             @pointer-down-outside.prevent
             @interact-outside.prevent
@@ -48,18 +48,18 @@ function confirmLanguage(): void {
                 class="relative overflow-hidden border-b border-border/70 bg-orange-500/[0.06] px-6 py-7 sm:px-8"
             >
                 <span
-                    class="absolute -top-16 -right-10 size-40 rounded-full border-[24px] border-orange-500/10 motion-safe:animate-pulse motion-reduce:animate-none"
+                    class="absolute -top-16 -right-10 size-40 rounded-full border-[24px] border-orange-500/10"
                     aria-hidden="true"
                 />
                 <DialogHeader class="relative gap-3 text-left">
-                    <LeadingIconHeading>
+                    <LeadingIconHeading
+                        tile
+                        tile-tone="brand"
+                        tile-size="lg"
+                        icon-class="ui-status-pop"
+                    >
                         <template #icon>
-                            <span
-                                class="flex size-12 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-500/20"
-                                aria-hidden="true"
-                            >
-                                <Languages class="size-6" />
-                            </span>
+                            <Languages />
                         </template>
 
                         <DialogTitle class="text-2xl tracking-[-0.035em]">
@@ -84,7 +84,7 @@ function confirmLanguage(): void {
                         v-for="option in localization.options"
                         :key="option.code"
                         type="button"
-                        class="group flex min-h-16 w-full items-center gap-4 rounded-2xl border px-4 py-3 text-left transition-all focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                        class="group flex min-h-16 w-full items-center gap-4 rounded-2xl border px-4 py-3 text-left transition-[color,background-color,border-color,box-shadow,transform] duration-[var(--motion-feedback)] ease-[var(--ease-emphasized)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         :class="
                             selectedLanguage === option.code
                                 ? 'border-orange-500 bg-orange-500/[0.07] shadow-sm'
@@ -132,19 +132,11 @@ function confirmLanguage(): void {
                     type="submit"
                     size="lg"
                     class="min-h-11 w-full"
-                    :disabled="form.processing"
+                    :loading="form.processing"
+                    :loading-label="previewCopy.saving"
                 >
-                    <LoaderCircle
-                        v-if="form.processing"
-                        class="size-4 animate-spin motion-reduce:animate-none"
-                        aria-hidden="true"
-                    />
-                    <Languages v-else class="size-4" aria-hidden="true" />
-                    {{
-                        form.processing
-                            ? previewCopy.saving
-                            : previewCopy.continue
-                    }}
+                    <Languages class="size-4" aria-hidden="true" />
+                    {{ previewCopy.continue }}
                 </Button>
             </form>
         </DialogContent>

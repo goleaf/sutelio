@@ -87,13 +87,17 @@ test('workspace taxonomy helpers expose only supported sections and complete cou
 test('workspace management uses responsive navigation and progressive disclosure', () => {
     const showPage = source('../pages/workspaces/Show.vue');
     const navigation = source('./workspace/WorkspaceManagementNavigation.vue');
+    const responsiveNavigation = source(
+        './shared/ResponsiveSectionNavigation.vue',
+    );
     const configuration = source('./workspace/WorkspaceConfigurationPanel.vue');
 
     assert.match(showPage, /WorkspaceManagementNavigation/);
-    assert.match(navigation, /DropdownMenu/);
-    assert.match(navigation, /WorkspaceSegmentedControl/);
-    assert.match(navigation, /aria-current/);
+    assert.match(navigation, /ResponsiveSectionNavigation/);
     assert.match(navigation, /prefetch="click"/);
+    assert.match(responsiveNavigation, /DropdownMenu/);
+    assert.match(responsiveNavigation, /WorkspaceSegmentedControl/);
+    assert.match(responsiveNavigation, /aria-current/);
     assert.match(configuration, /activeSection/);
     assert.match(configuration, /WorkspaceTaxonomySwitcher/);
     assert.match(configuration, /nextTick/);
@@ -117,7 +121,7 @@ test('workspace portfolio and taxonomy rows hide secondary actions in menus', ()
     assert.match(portfolio, /DropdownMenu/);
     assert.match(definitionCard, /DropdownMenu/);
     assert.match(definitionCard, /workspaces\.actions_label/);
-    assert.match(definitionCard, /max-w-\[calc\(100vw-2rem\)\]/);
+    assert.match(definitionCard, /max-w-\[calc\(100dvw-2rem\)\]/);
     assert.match(definitionCard, /focus:ring-2/);
     assert.match(definitionCard, /break-all/);
     assert.match(configuration, /DropdownMenu/);

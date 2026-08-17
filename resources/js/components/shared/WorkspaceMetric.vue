@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import type { IconTileTone } from '@/components/shared/IconTile.vue';
 
 withDefaults(
     defineProps<{
@@ -13,25 +15,23 @@ withDefaults(
     },
 );
 
-const toneClasses = {
-    orange: 'bg-orange-500/12 text-orange-700',
-    blue: 'bg-sky-500/12 text-sky-700',
-    emerald: 'bg-emerald-500/12 text-emerald-700',
-    violet: 'bg-violet-500/12 text-violet-700',
-    slate: 'bg-foreground/6 text-foreground/70',
+const tileTones: Record<
+    'orange' | 'blue' | 'emerald' | 'violet' | 'slate',
+    IconTileTone
+> = {
+    orange: 'brand',
+    blue: 'information',
+    emerald: 'success',
+    violet: 'cobalt',
+    slate: 'muted',
 };
 </script>
 
 <template>
     <div class="flex min-w-0 items-center gap-3 px-5 py-4">
-        <div
-            :class="[
-                'flex size-10 shrink-0 items-center justify-center rounded-2xl',
-                toneClasses[tone],
-            ]"
-        >
-            <component :is="icon" class="size-4.5" aria-hidden="true" />
-        </div>
+        <IconTile :tone="tileTones[tone]" size="md">
+            <component :is="icon" />
+        </IconTile>
         <div class="min-w-0">
             <p class="truncate text-xs font-medium text-muted-foreground">
                 {{ label }}

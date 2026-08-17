@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { Search } from '@lucide/vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import LanguageSwitcher from '@/components/localization/LanguageSwitcher.vue';
+import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useUi } from '@/composables/useUi';
+import { useUiStore } from '@/stores/ui';
 import type { BreadcrumbItem } from '@/types';
 
 withDefaults(
@@ -12,6 +16,9 @@ withDefaults(
         breadcrumbs: () => [],
     },
 );
+
+const { t } = useUi();
+const ui = useUiStore();
 </script>
 
 <template>
@@ -24,7 +31,16 @@ withDefaults(
                 <Breadcrumbs :breadcrumbs="breadcrumbs" />
             </template>
         </div>
-        <div class="ml-auto shrink-0">
+        <div class="ml-auto flex shrink-0 items-center gap-1">
+            <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                :aria-label="t('commands.placeholder')"
+                @click="ui.openCommandPalette"
+            >
+                <Search class="size-4" aria-hidden="true" />
+            </Button>
             <LanguageSwitcher />
         </div>
     </header>

@@ -40,11 +40,11 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     <DialogContent
       data-slot="sheet-content"
       :class="cn(
-        'bg-card data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none fixed z-50 flex flex-col gap-4 shadow-[0_32px_90px_-40px_rgba(15,23,42,0.65)] transition ease-in-out motion-reduce:transition-none data-[state=closed]:duration-300 data-[state=open]:duration-500',
+        'bg-card data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none fixed z-50 flex max-h-[100dvh] flex-col gap-4 overflow-y-auto overscroll-contain shadow-[0_32px_90px_-40px_rgba(15,23,42,0.65)] transition ease-[var(--ease-emphasized)] motion-reduce:transition-none data-[state=closed]:duration-[195ms] data-[state=open]:duration-[var(--motion-spatial)]',
         side === 'right'
-          && 'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l border-border/80 sm:max-w-sm',
+          && 'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-full max-w-sm border-l border-border/80',
         side === 'left'
-          && 'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r border-border/80 sm:max-w-sm',
+          && 'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-full max-w-sm border-r border-border/80',
         side === 'top'
           && 'data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b border-border/80',
         side === 'bottom'

@@ -27,6 +27,7 @@ class CreateNewUser implements CreatesNewUsers
         Validator::make($input, [
             ...$this->profileRules(),
             'language' => ['sometimes', Rule::enum(UserLanguage::class)],
+            'timezone' => ['sometimes', 'string', 'timezone:all'],
             'password' => $this->passwordRules(),
         ])->validate();
 
@@ -44,6 +45,8 @@ class CreateNewUser implements CreatesNewUsers
                 ...UserPreference::defaults(),
                 ...UserPreference::pendingOnboardingDefaults(),
                 'language' => $language->value,
+                'timezone' => $input['timezone'] ?? UserPreference::defaults()['timezone'],
+                'week_start' => $language->defaultWeekStart(),
             ]);
 
             return $user;

@@ -44,6 +44,7 @@ const emit = defineEmits<{
 const selected = computed(() =>
     props.projects.find((item) => item.id === props.selectedId),
 );
+const hasExistingOptions = computed(() => props.projects.length > 0);
 const selectedId = computed({
     get: () => props.selectedId,
     set: (value: string) => emit('update:selectedId', value),
@@ -69,9 +70,12 @@ const icon = computed({
 <template>
     <div class="space-y-5">
         <p class="text-sm leading-6 text-muted-foreground">
-            {{ copy.description }}
+            {{
+                hasExistingOptions ? copy.description : copy.create_description
+            }}
         </p>
         <div
+            v-if="hasExistingOptions"
             class="grid grid-cols-2 gap-2 rounded-2xl bg-muted/55 p-1.5"
             role="group"
         >
@@ -80,7 +84,7 @@ const icon = computed({
                 variant="ghost"
                 class="min-h-11"
                 :aria-pressed="mode === 'select'"
-                :disabled="processing || projects.length === 0"
+                :disabled="processing"
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'select')"
                 >{{ copy.choose_existing }}</Button
@@ -98,7 +102,7 @@ const icon = computed({
         </div>
 
         <div
-            v-if="mode === 'select' && projects.length"
+            v-if="mode === 'select' && hasExistingOptions"
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-2">
@@ -123,17 +127,24 @@ const icon = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <LeadingIconHeading content-class="gap-2">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="gap-2"
+                >
                     <template #icon>
-                        <FolderKanban
-                            class="size-5"
-                            :style="{ color: selected?.color }"
-                            aria-hidden="true"
-                        />
+                        <FolderKanban />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
-                    <p class="text-sm font-medium break-words">
+                    <p
+                        class="flex items-center gap-2 text-sm font-medium break-words"
+                    >
+                        <span
+                            class="size-2 shrink-0 rounded-full"
+                            :style="{ backgroundColor: selected?.color }"
+                            aria-hidden="true"
+                        />
                         {{ selected?.name }}
                     </p>
                 </LeadingIconHeading>
@@ -141,7 +152,7 @@ const icon = computed({
         </div>
 
         <div
-            v-else-if="mode === 'create'"
+            v-else-if="!hasExistingOptions || mode === 'create'"
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-4">
@@ -197,17 +208,24 @@ const icon = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <LeadingIconHeading content-class="gap-2">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="gap-2"
+                >
                     <template #icon>
-                        <FolderKanban
-                            class="size-5"
-                            :style="{ color }"
-                            aria-hidden="true"
-                        />
+                        <FolderKanban />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
-                    <p class="text-sm font-medium break-words">
+                    <p
+                        class="flex items-center gap-2 text-sm font-medium break-words"
+                    >
+                        <span
+                            class="size-2 shrink-0 rounded-full"
+                            :style="{ backgroundColor: color }"
+                            aria-hidden="true"
+                        />
                         {{ name || copy.name_placeholder }}
                     </p>
                     <p

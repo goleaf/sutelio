@@ -29,12 +29,12 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
 <template>
   <DialogPortal>
     <DialogOverlay
-      class="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/65 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none"
+      class="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-black/65 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:duration-[var(--motion-spatial)] data-[state=closed]:duration-[195ms] data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:data-[state=open]:animate-none motion-reduce:data-[state=closed]:animate-none"
     >
       <DialogContent
         :class="
           cn(
-            'relative z-50 my-8 grid w-full max-w-[calc(100%-2rem)] gap-4 rounded-panel border border-border/80 bg-card p-6 shadow-dialog duration-200 md:w-full lg:max-w-lg',
+            'relative z-50 my-2 grid max-h-[calc(100dvh-1rem)] w-full max-w-[calc(100%-1rem)] gap-4 overflow-y-auto overscroll-contain rounded-panel border border-border/80 bg-card p-4 shadow-dialog sm:my-4 sm:max-w-[calc(100%-2rem)] sm:p-6 md:w-full lg:max-w-lg',
             props.class,
           )
         "

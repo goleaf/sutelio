@@ -14,16 +14,31 @@ dataset('leading icon heading consumers', [
     'onboarding task step' => ['components/onboarding/TaskStep.vue', 2],
     'onboarding workspace step' => ['components/onboarding/WorkspaceStep.vue', 2],
     'data scope banner' => ['components/settings/data/DataScopeBanner.vue', 1],
-    'workspace configuration' => ['components/workspace/WorkspaceConfigurationPanel.vue', 2],
+    'workspace configuration' => ['components/workspace/WorkspaceConfigurationPanel.vue', 3],
     'workspace danger panel' => ['components/workspace/WorkspaceDangerPanel.vue', 3],
-    'workspace members panel' => ['components/workspace/WorkspaceMembersPanel.vue', 2],
+    'workspace members panel' => ['components/workspace/WorkspaceMembersPanel.vue', 4],
     'workspace overview panel' => ['components/workspace/WorkspaceOverviewPanel.vue', 1],
     'settings members page' => ['pages/settings/Members.vue', 2],
-    'settings profile page' => ['pages/settings/Profile.vue', 1],
-    'settings preferences page' => ['pages/settings/Preferences.vue', 1],
+    'settings profile page' => ['pages/settings/Profile.vue', 2],
+    'settings preferences page' => ['pages/settings/Preferences.vue', 3],
     'settings backup page' => ['pages/settings/Backup.vue', 1],
-    'settings export page' => ['pages/settings/Export.vue', 1],
-    'settings security page' => ['pages/settings/Security.vue', 1],
+    'settings export page' => ['pages/settings/Export.vue', 3],
+    'settings security page' => ['pages/settings/Security.vue', 2],
+]);
+
+dataset('workspace page frame consumers', [
+    'dashboard' => 'pages/Dashboard.vue',
+    'activity' => 'pages/activity/Index.vue',
+    'calendar' => 'pages/calendar/Index.vue',
+    'notifications' => 'pages/notifications/Index.vue',
+    'project index' => 'pages/projects/Index.vue',
+    'project detail' => 'pages/projects/Show.vue',
+    'task index' => 'pages/tasks/Index.vue',
+    'task detail' => 'pages/tasks/Show.vue',
+    'workspace index' => 'pages/workspaces/Index.vue',
+    'workspace detail' => 'pages/workspaces/Show.vue',
+    'guided onboarding' => 'pages/onboarding/Index.vue',
+    'settings layout' => 'layouts/settings/Layout.vue',
 ]);
 
 test('leading icon headings keep the icon top aligned beside a wrapping text stack', function () {
@@ -51,8 +66,7 @@ test('every audited icon title and subtitle cluster uses the shared alignment co
 test('primary workspace pages use the shared warm precision header', function (string $page) {
     expect(File::get(resource_path("js/pages/{$page}")))
         ->toContain('WorkspacePageHeader')
-        ->toContain('bg-muted/20')
-        ->toContain('max-w-app');
+        ->toContain('WorkspacePageFrame');
 })->with([
     'dashboard' => 'Dashboard.vue',
     'activity' => 'activity/Index.vue',
@@ -67,8 +81,7 @@ test('primary workspace pages use the shared warm precision header', function (s
 test('project operations compose the shared warm precision header', function () {
     expect(File::get(resource_path('js/pages/projects/Show.vue')))
         ->toContain('ProjectOperationsHeader')
-        ->toContain('bg-muted/20')
-        ->toContain('max-w-app')
+        ->toContain('WorkspacePageFrame')
         ->and(File::get(resource_path('js/components/project/ProjectOperationsHeader.vue')))
         ->toContain('WorkspacePageHeader');
 });
@@ -112,8 +125,10 @@ test('weekly productivity exposes honest reduced-motion bars and a semantic data
     expect($source)
         ->toContain('const completedTotal = computed')
         ->toContain('const createdTotal = computed')
-        ->toContain('value === 0')
-        ->toContain("? '0%'")
+        ->toContain('function barScale(value: number): number')
+        ->toContain('value === 0 ? 0')
+        ->toContain('scale-y-[var(--bar-scale)]')
+        ->toContain('transition-transform')
         ->toContain('motion-reduce:transition-none')
         ->toContain('<table')
         ->toContain('<caption')
@@ -200,10 +215,9 @@ test('shared shells carry the projects page visual language', function () {
         ->toContain('bg-muted/20')
         ->toContain('rounded-feature')
         ->and(File::get(resource_path('js/layouts/settings/Layout.vue')))
-        ->toContain('bg-muted/20')
+        ->toContain('WorkspacePageFrame')
         ->toContain('rounded-panel')
         ->toContain('WorkspacePageHeader')
-        ->toContain('max-w-app')
         ->and(File::get(resource_path('js/components/ui/card/Card.vue')))
         ->toContain('rounded-panel')
         ->toContain('border-border/80');
@@ -237,39 +251,251 @@ test('the frontend is light only without dormant dark appearance branches', func
         ->not->toContain('/theme.js');
 });
 
-test('shared motion primitives animate navigation surfaces and interactions safely', function () {
+test('shared motion primitives keep generic surfaces static and interactions measured', function () {
     $css = File::get(resource_path('css/app.css'));
 
     expect($css)
-        ->toContain('--ease-emphasized:')
-        ->toContain('@keyframes ui-enter')
-        ->toContain('.ui-page-surface > *')
-        ->toContain('.ui-surface')
-        ->toContain('.ui-stagger > *')
+        ->toContain('--motion-snap: 90ms;')
+        ->toContain('--motion-feedback: 130ms;')
+        ->toContain('--motion-state: 190ms;')
+        ->toContain('--motion-spatial: 260ms;')
+        ->toContain('--motion-signature: 340ms;')
+        ->not->toContain('@keyframes ui-enter')
+        ->not->toContain('.ui-page-surface > *')
+        ->not->toContain('.ui-surface')
+        ->not->toContain('.ui-stagger > *')
         ->toContain('@media (prefers-reduced-motion: reduce)')
         ->and(File::get(resource_path('js/components/ui/button/index.ts')))
         ->toContain('ui-control')
         ->and(File::get(resource_path('js/components/ui/card/Card.vue')))
-        ->toContain('ui-surface')
+        ->not->toContain('ui-surface')
         ->and(File::get(resource_path('js/components/ui/sidebar/SidebarInset.vue')))
-        ->toContain('ui-page-surface')
+        ->not->toContain('ui-page-surface')
         ->and(File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue')))
-        ->toContain('ui-page-surface')
+        ->not->toContain('ui-page-surface')
         ->and(File::get(resource_path('js/components/shared/WorkspacePageHeader.vue')))
-        ->toContain('ui-enter')
+        ->not->toContain('ui-enter')
         ->and(File::get(resource_path('js/pages/onboarding/Index.vue')))
         ->toContain('<Transition name="ui-step" mode="out-in">')
         ->toContain(':key="activeStep"');
 
+    foreach (File::allFiles(resource_path('js')) as $file) {
+        if (! in_array($file->getExtension(), ['ts', 'vue'], true)) {
+            continue;
+        }
+
+        expect($file->getContents(), $file->getRelativePathname())
+            ->not->toContain('ui-stagger')
+            ->not->toContain('transition-all');
+    }
+});
+
+test('the canonical stylesheet owns viewport safe responsive interaction primitives', function () {
+    $css = File::get(resource_path('css/app.css'));
+
+    expect($css)
+        ->toContain('env(safe-area-inset-top, 0px)')
+        ->toContain('env(safe-area-inset-right, 0px)')
+        ->toContain('env(safe-area-inset-bottom, 0px)')
+        ->toContain('env(safe-area-inset-left, 0px)')
+        ->toContain('var(--inset-top, 0px)')
+        ->toContain('var(--inset-right, 0px)')
+        ->toContain('var(--inset-bottom, 0px)')
+        ->toContain('var(--inset-left, 0px)')
+        ->toContain('--page-safe-area-inset-top:')
+        ->toContain('--page-safe-area-inset-right:')
+        ->toContain('--page-safe-area-inset-bottom:')
+        ->toContain('--page-safe-area-inset-left:')
+        ->toContain('@media (orientation: portrait)')
+        ->toContain('@media (orientation: landscape)')
+        ->toContain('body.nativephp-safe-area')
+        ->toContain('--page-gutter-inline: clamp(')
+        ->toContain('--page-gutter-block: clamp(')
+        ->toContain('.ui-page-frame')
+        ->toContain('.ui-page-container')
+        ->toContain('@media (hover: hover) and (pointer: fine)')
+        ->toContain('@media (pointer: coarse)')
+        ->toContain('min-block-size: 2.75rem')
+        ->toContain('min-inline-size: 2.75rem')
+        ->toContain('@media (forced-colors: active)')
+        ->toContain('@media (prefers-reduced-motion: reduce)');
+});
+
+test('mobile toast viewport remains inside the physical and native safe area', function () {
+    expect(File::get(resource_path('css/app.css')))
+        ->toContain('@media (max-width: 37.5rem)')
+        ->toContain('[data-sonner-toaster]')
+        ->toContain('inset-inline:')
+        ->toContain('var(--safe-area-inset-left)')
+        ->toContain('var(--safe-area-inset-right)')
+        ->toContain('width: auto !important')
+        ->toContain('[data-sonner-toast]')
+        ->toContain('width: 100% !important');
+});
+
+test('small sidebar and onboarding copy keeps accessible contrast', function () {
+    expect(File::get(resource_path('js/components/ui/sidebar/SidebarGroupLabel.vue')))
+        ->toContain('text-sidebar-foreground/75')
+        ->not->toContain('text-sidebar-foreground/70')
+        ->and(File::get(resource_path('js/components/AppSidebar.vue')))
+        ->toContain('text-sidebar-foreground/75')
+        ->not->toContain('text-sidebar-foreground/55')
+        ->and(File::get(resource_path('js/components/workspace/WorkspaceSwitcher.vue')))
+        ->toContain('text-sidebar-foreground/80')
+        ->not->toContain('text-sidebar-foreground/50')
+        ->and(File::get(resource_path('js/components/onboarding/OnboardingShell.vue')))
+        ->toContain('text-foreground/75')
+        ->and(File::get(resource_path('js/pages/onboarding/Index.vue')))
+        ->toContain('<meta name="description" :content="activeCopy.description" />')
+        ->and(File::get(resource_path('js/components/localization/LanguageSwitcher.vue')))
+        ->toContain('useId')
+        ->toContain(':aria-labelledby="`${labelId} ${codeId}`"')
+        ->not->toContain(':aria-label="t(\'localization.switcher_label\')"')
+        ->and(File::get(resource_path('views/app.blade.php')))
+        ->toContain('name="description"')
+        ->toContain("__('ui.meta.description')");
+});
+
+test('the frontend keeps one supported Tailwind CSS first build boundary', function () {
+    $stylesheets = collect(File::allFiles(resource_path()))
+        ->filter(fn (SplFileInfo $file): bool => in_array(
+            $file->getExtension(),
+            ['css', 'less', 'sass', 'scss', 'styl'],
+            true,
+        ))
+        ->map(fn (SplFileInfo $file): string => $file->getRelativePathname())
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($stylesheets)
+        ->toBe(['css/app.css'])
+        ->and(File::get(resource_path('css/app.css')))
+        ->toStartWith("@import 'tailwindcss';")
+        ->toContain("@import 'tw-animate-css';")
+        ->and(File::get(base_path('package.json')))
+        ->not->toMatch('/"sass(?:-embedded)?"\s*:/')
+        ->and(File::get(base_path('vite.config.ts')))
+        ->toContain("input: ['resources/css/app.css', 'resources/js/app.ts']")
+        ->and(File::get(resource_path('views/app.blade.php')))
+        ->toContain('viewport-fit=cover')
+        ->toContain('class="nativephp-safe-area font-sans antialiased"')
+        ->toContain("@vite(['resources/css/app.css', 'resources/js/app.ts'");
+});
+
+test('primary surfaces share one mobile first page frame', function (string $path) {
+    $source = File::get(resource_path("js/{$path}"));
+
+    expect($source)
+        ->toContain("import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue'")
+        ->toContain('<WorkspacePageFrame')
+        ->toContain('</WorkspacePageFrame>')
+        ->not->toContain('min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8');
+})->with('workspace page frame consumers');
+
+test('the shared page frame exposes one shrink safe bounded container', function () {
+    expect(File::get(resource_path('js/components/shared/WorkspacePageFrame.vue')))
+        ->toContain('data-slot="workspace-page-frame"')
+        ->toContain('ui-page-frame')
+        ->toContain('data-slot="workspace-page-container"')
+        ->toContain('ui-page-container')
+        ->toContain('<slot />');
+});
+
+test('workspace headers wrap long copy and stack actions on narrow screens', function () {
+    expect(File::get(resource_path('js/components/shared/WorkspacePageHeader.vue')))
+        ->toContain('min-w-0 flex-1')
+        ->toContain('wrap-anywhere')
+        ->toContain('grid w-full min-w-0 grid-cols-1 gap-2')
+        ->toContain('sm:flex sm:w-auto sm:flex-wrap')
+        ->toContain('lg:shrink-0');
+});
+
+test('shared overlays use dynamic viewport bounds and mobile first spacing', function () {
     foreach ([
-        'components/notification/NotificationFeed.vue',
-        'components/task/TaskList.vue',
-        'pages/projects/Index.vue',
-        'pages/workspaces/Index.vue',
+        'components/shared/WorkspaceDialogContent.vue',
+        'components/shared/FilterSheet.vue',
+        'components/ui/dialog/DialogContent.vue',
+        'components/ui/dialog/DialogScrollContent.vue',
+        'components/ui/sheet/SheetContent.vue',
     ] as $path) {
         expect(File::get(resource_path("js/{$path}")), $path)
-            ->toContain('ui-stagger');
+            ->toContain('100dvh')
+            ->not->toContain('100vw')
+            ->not->toContain('92vh');
     }
+
+    foreach ([
+        'components/activity/ActivityFilterPanel.vue',
+        'components/project/ProjectTaskFilters.vue',
+        'components/task/TaskFilterBar.vue',
+    ] as $path) {
+        expect(File::get(resource_path("js/{$path}")), $path)
+            ->toContain('<FilterSheet')
+            ->not->toContain('92vh');
+    }
+
+    expect(File::get(resource_path('js/components/AppHeader.vue')))
+        ->toContain('class="w-full max-w-xs p-4 sm:p-6"')
+        ->not->toContain('class="w-[300px] p-6"');
+
+    expect(File::get(resource_path('js/components/localization/FirstRunLanguageDialog.vue')))
+        ->toContain('class="p-0 sm:max-w-xl"')
+        ->not->toContain('class="overflow-hidden p-0 sm:max-w-xl"');
+});
+
+test('intentional horizontal regions contain touch panning without page overscroll', function (string $path) {
+    expect(File::get(resource_path("js/{$path}")))
+        ->toContain('overflow-x-auto')
+        ->toContain('overscroll-x-contain')
+        ->toContain('touch-pan-x');
+})->with([
+    'activity category rail' => 'components/activity/ActivityFilterPanel.vue',
+    'segmented controls' => 'components/shared/WorkspaceSegmentedControl.vue',
+    'task board' => 'components/task/BoardView.vue',
+]);
+
+test('calendar navigation lets the localized period shrink between touch targets', function () {
+    expect(File::get(resource_path('js/components/calendar/CalendarPeriodNavigator.vue')))
+        ->toContain('min-w-0 flex-1 text-center')
+        ->toContain('wrap-anywhere')
+        ->not->toContain('min-w-44');
+});
+
+test('first party presentation avoids static viewport width escape hatches', function () {
+    foreach ([resource_path('js'), resource_path('css')] as $directory) {
+        foreach (File::allFiles($directory) as $file) {
+            if (! in_array($file->getExtension(), ['css', 'ts', 'vue'], true)) {
+                continue;
+            }
+
+            expect($file->getContents(), $file->getRelativePathname())
+                ->not->toContain('100vw');
+        }
+    }
+
+    expect(File::get(resource_path('js/components/TwoFactorSetupModal.vue')))
+        ->toContain('w-64 max-w-full')
+        ->and(File::get(resource_path('js/components/localization/LanguageSwitcher.vue')))
+        ->toContain('w-64 max-w-[calc(100dvw-1rem)]')
+        ->and(File::get(resource_path('js/components/workspace/WorkspaceSwitcher.vue')))
+        ->toContain('max-w-[calc(100dvw-1rem)]')
+        ->toContain('min-w-64');
+});
+
+test('shared compact actions expand to touch targets on coarse pointers', function () {
+    expect(File::get(resource_path('js/components/shared/WorkspaceSegmentedButton.vue')))
+        ->toContain('pointer-coarse:min-h-11')
+        ->and(File::get(resource_path('js/components/ui/sidebar/index.ts')))
+        ->toContain('pointer-coarse:min-h-11')
+        ->and(File::get(resource_path('js/components/ui/sidebar/SidebarRail.vue')))
+        ->toContain('pointer-coarse:hidden')
+        ->and(File::get(resource_path('js/components/ui/dropdown-menu/DropdownMenuItem.vue')))
+        ->toContain('pointer-coarse:min-h-11')
+        ->and(File::get(resource_path('js/components/ui/select/SelectItem.vue')))
+        ->toContain('pointer-coarse:min-h-11')
+        ->and(File::get(resource_path('js/components/ui/sonner/Sonner.vue')))
+        ->toContain('pointer-coarse:!min-h-11');
 });
 
 test('primary user actions pair localized labels with meaningful icons', function (string $path, string $icon) {
@@ -327,8 +553,7 @@ test('guided onboarding follows the warm responsive route design contract', func
     $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
 
     expect($page)
-        ->toContain('bg-muted/20')
-        ->toContain('max-w-app')
+        ->toContain('WorkspacePageFrame')
         ->toContain('OnboardingShell')
         ->and($shell)
         ->toContain('xl:grid-cols-[minmax(15rem,0.34fr)_minmax(0,1fr)]')
@@ -396,8 +621,8 @@ test('data import exposes inert preview and execution loading states', function 
         ->toContain('const previewRequest = useHttp<ImportPayload, ImportPreviewResponse>')
         ->toContain('const importRequest = useHttp<ImportPayload, ImportResponse>')
         ->toContain('previewRequest.processing ||')
-        ->toContain(':aria-busy="importRequest.processing"')
-        ->toContain('<Spinner v-if="importRequest.processing" />')
+        ->toContain(':loading="importRequest.processing"')
+        ->toContain(':loading-label=')
         ->toContain('previewRequest.progress || importRequest.progress')
         ->toContain('pointer-events-none opacity-50');
 });
@@ -413,7 +638,7 @@ test('autosave uses lifecycle safe Vue watcher cleanup', function () {
 test('workspace dialogs preserve the projects visual contract on every viewport', function () {
     expect(File::get(resource_path('js/components/shared/WorkspaceDialogContent.vue')))
         ->toContain('rounded-feature')
-        ->toContain('max-h-[calc(100svh-1.5rem)]')
+        ->toContain('max-h-[calc(100dvh-1rem)]')
         ->toContain('overflow-y-auto')
         ->toContain('inset-y-0 left-0 w-1.5')
         ->toContain('border-orange-500/20')
@@ -482,10 +707,10 @@ test('workspace portfolio exposes complete management actions with shared dialog
 
 test('settings save forms reuse shared large loading actions', function (string $page) {
     expect(File::get(resource_path("js/pages/settings/{$page}.vue")))
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('<Spinner v-if="form.processing" />')
-        ->toContain(':disabled="form.processing"')
+        ->toContain(':loading="form.processing"')
+        ->toContain(':loading-label=')
         ->toContain('size="lg"')
+        ->not->toContain('<Spinner v-if="form.processing" />')
         ->not->toContain('bg-orange-600 text-white hover:bg-orange-700');
 })->with([
     'preferences' => 'Preferences',
@@ -501,20 +726,23 @@ test('notification option copy keeps a readable mobile hierarchy', function () {
 
 test('member actions reuse shared loading and large dialog controls', function () {
     expect(File::get(resource_path('js/pages/settings/Members.vue')))
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('<Spinner v-if="inviteForm.processing" />')
-        ->toContain('<Spinner v-if="removeForm.processing" />')
-        ->toContain(':disabled="inviteForm.processing"')
+        ->toContain(':loading="inviteForm.processing"')
+        ->toContain(':loading="removeForm.processing"')
+        ->toContain(':loading-label="copy.inviting"')
+        ->toContain(':loading-label="copy.removing"')
         ->toContain('size="lg"')
+        ->not->toContain('<Spinner v-if="inviteForm.processing" />')
+        ->not->toContain('<Spinner v-if="removeForm.processing" />')
         ->not->toContain('LoaderCircle')
         ->not->toContain('class="min-h-11 cursor-pointer rounded-xl"');
 });
 
 test('shared confirmations use the shared large loading action contract', function () {
     expect(File::get(resource_path('js/components/shared/WorkspaceConfirmDialog.vue')))
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('<Spinner v-if="processing" />')
+        ->toContain(':loading="processing"')
+        ->toContain(':disabled="processing || !confirmationMatches"')
         ->toContain('size="lg"')
+        ->not->toContain("import { Spinner } from '@/components/ui/spinner'")
         ->not->toContain('class="min-h-11 cursor-pointer rounded-xl"')
         ->not->toContain('bg-orange-600 text-white hover:bg-orange-700');
 });
@@ -532,15 +760,16 @@ test('remaining settings forms expose complete processing states', function () {
     $security = File::get(resource_path('js/pages/settings/Security.vue'));
 
     expect($backup)
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('<Spinner v-if="creating" />')
+        ->toContain(':loading="creating"')
+        ->toContain(':loading-label=')
+        ->not->toContain('<Spinner v-if="creating" />')
         ->toContain('size="lg"')
         ->and($profile)
         ->toContain('size="lg"')
         ->and(substr_count($profile, ':disabled="profileForm.processing"'))
         ->toBeGreaterThanOrEqual(2)
         ->and(substr_count($security, ':disabled="passwordForm.processing"'))
-        ->toBeGreaterThanOrEqual(4)
+        ->toBeGreaterThanOrEqual(3)
         ->and(substr_count($security, 'size="lg"'))
         ->toBeGreaterThanOrEqual(3);
 });
@@ -639,8 +868,11 @@ test('task focus desk discloses active filters and selection state', function ()
         ->toContain('tasks.filters.active_count')
         ->toContain('class="min-h-11"')
         ->not->toContain('class="min-h-9"')
-        ->and(File::get(resource_path('js/components/task/TaskResultsBar.vue')))
+        ->and(File::get(resource_path('js/components/shared/ResultSummary.vue')))
         ->toContain('aria-live="polite"')
+        ->toContain('aria-atomic="true"')
+        ->and(File::get(resource_path('js/components/task/TaskResultsBar.vue')))
+        ->toContain('<ResultSummary')
         ->toContain('selectionMode')
         ->toContain('min-h-11')
         ->toContain('pagination.meta.from')
@@ -691,7 +923,8 @@ test('shared segmented controls preserve the projects visual and accessibility c
     expect(File::get(resource_path('js/components/shared/WorkspaceSegmentedControl.vue')))
         ->toContain("role?: 'group' | 'tablist'")
         ->toContain(':aria-label="label"')
-        ->toContain('overflow-x-auto rounded-xl bg-muted p-1')
+        ->toContain('overflow-x-auto')
+        ->toContain('rounded-xl bg-muted p-1')
         ->toContain("'w-full lg:flex-col'")
         ->and(File::get(resource_path('js/components/shared/WorkspaceSegmentedButton.vue')))
         ->toContain('min-h-10 min-w-max')
@@ -721,6 +954,7 @@ test('calendar planning workspace uses URL state and focused accessible componen
     $page = File::get(resource_path('js/pages/calendar/Index.vue'));
     $navigator = File::get(resource_path('js/components/calendar/CalendarPeriodNavigator.vue'));
     $month = File::get(resource_path('js/components/calendar/CalendarMonthGrid.vue'));
+    $taskItem = File::get(resource_path('js/components/calendar/CalendarTaskItem.vue'));
     $attention = File::get(resource_path('js/components/calendar/CalendarAttentionRail.vue'));
 
     expect($page)
@@ -743,6 +977,8 @@ test('calendar planning workspace uses URL state and focused accessible componen
         ->and($month)
         ->toContain('md:hidden')
         ->toContain('md:grid')
+        ->toContain('CalendarTaskItem')
+        ->and($taskItem)
         ->toContain('min-h-11')
         ->toContain('prefetch')
         ->and($attention)
@@ -801,7 +1037,9 @@ test('authentication submissions share the large projects action rhythm', functi
     expect(File::get(resource_path("js/pages/auth/{$page}.vue")))
         ->toContain('disable-while-processing')
         ->toContain('size="lg"')
-        ->toContain('<Spinner v-if="processing" />');
+        ->toContain(':loading="processing"')
+        ->toContain(':loading-label=')
+        ->not->toContain('<Spinner v-if="processing" />');
 })->with([
     'login' => 'Login',
     'registration' => 'Register',
@@ -832,8 +1070,11 @@ test('passkey verification uses the shared large loading action', function () {
 
 test('shared navigation feedback uses localized labels and the projects orange accent', function () {
     expect(File::get(resource_path('js/app.ts')))
-        ->toContain("color: '#FF6038'")
+        ->toContain('progress: false')
         ->not->toContain("color: '#4B5563'")
+        ->and(File::get(resource_path('js/components/shared/GlobalBusyOverlay.vue')))
+        ->toContain('bg-orange-600')
+        ->toContain("t('common.states.processing_hint')")
         ->and(File::get(resource_path('js/components/ui/spinner/Spinner.vue')))
         ->toContain("t('common.states.loading')")
         ->and(File::get(resource_path('js/components/ui/breadcrumb/Breadcrumb.vue')))
@@ -873,7 +1114,9 @@ test('shared transient surfaces use the warm precision interaction contract', fu
 
 test('shared controls use warm checked focus and feedback states', function () {
     expect(File::get(resource_path('js/components/ui/checkbox/Checkbox.vue')))
-        ->toContain('data-[state=checked]:bg-orange-600')
+        ->toContain('data-[state=checked]:from-orange-600')
+        ->toContain('data-[state=checked]:via-orange-600')
+        ->toContain('data-[state=checked]:to-orange-700')
         ->toContain('data-[state=checked]:text-white')
         ->toContain('focus-visible:ring-orange-500/25')
         ->toContain('rounded-md')
@@ -891,7 +1134,7 @@ test('shared controls use warm checked focus and feedback states', function () {
         ->toContain('hover:border-orange-500/25')
         ->toContain('motion-reduce:transition-none')
         ->and(File::get(resource_path('js/components/ui/button/index.ts')))
-        ->toContain('bg-orange-600 text-white')
+        ->toContain('bg-linear-to-br from-orange-600 via-orange-600 to-orange-700 text-white')
         ->toContain('motion-reduce:transition-none');
 });
 
@@ -973,7 +1216,7 @@ test('segmented and inline controls respect reduced motion', function (string $c
         ->toContain('motion-reduce:transition-none');
 })->with([
     'shared segmented button' => 'components/shared/WorkspaceSegmentedButton.vue',
-    'settings navigation' => 'components/settings/SettingsSectionMenu.vue',
+    'responsive section navigation' => 'components/shared/ResponsiveSectionNavigation.vue',
     'two factor challenge toggle' => 'pages/auth/TwoFactorChallenge.vue',
 ]);
 

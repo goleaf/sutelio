@@ -21,6 +21,7 @@ test('new users can register', function () {
         'name' => 'Test User',
         'email' => 'test@example.com',
         'language' => 'lt',
+        'timezone' => 'Europe/Vilnius',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
@@ -31,8 +32,8 @@ test('new users can register', function () {
     $this->assertDatabaseHas('user_preferences', [
         'user_id' => auth()->id(),
         'language' => 'lt',
-        'timezone' => 'UTC',
-        'week_start' => 'sunday',
+        'timezone' => 'Europe/Vilnius',
+        'week_start' => 'monday',
         'onboarding_step' => 'welcome',
         'onboarding_completed_at' => null,
         'onboarding_skipped_at' => null,
@@ -50,6 +51,20 @@ test('registration rejects an unsupported language without creating an account',
         'password' => 'password',
         'password_confirmation' => 'password',
     ])->assertSessionHasErrors('language');
+
+    $this->assertGuest();
+    $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+});
+
+test('registration rejects an invalid detected timezone without creating an account', function () {
+    $this->post(route('register.store'), [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'language' => 'ru',
+        'timezone' => 'Not/A-Timezone',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors('timezone');
 
     $this->assertGuest();
     $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);

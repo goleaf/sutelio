@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
@@ -102,11 +101,11 @@ defineProps<{
                 type="submit"
                 size="lg"
                 class="mt-4 w-full"
-                :disabled="processing"
+                :loading="processing"
+                :loading-label="t('auth.login.submit')"
                 data-test="login-button"
             >
-                <Spinner v-if="processing" />
-                <LogIn v-else class="size-4" aria-hidden="true" />
+                <LogIn class="size-4" aria-hidden="true" />
                 {{ t('auth.login.submit') }}
             </Button>
         </div>

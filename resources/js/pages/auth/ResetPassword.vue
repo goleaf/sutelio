@@ -7,7 +7,6 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 import { update } from '@/routes/password';
 
@@ -90,11 +89,11 @@ const inputEmail = ref(props.email);
                 type="submit"
                 size="lg"
                 class="mt-4 w-full"
-                :disabled="processing"
+                :loading="processing"
+                :loading-label="t('auth.reset_password.submit')"
                 data-test="reset-password-button"
             >
-                <Spinner v-if="processing" />
-                <KeyRound v-else class="size-4" aria-hidden="true" />
+                <KeyRound class="size-4" aria-hidden="true" />
                 {{ t('auth.reset_password.submit') }}
             </Button>
         </div>

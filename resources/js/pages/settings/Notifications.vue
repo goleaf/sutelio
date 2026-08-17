@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
-import { BellRing, Mail, Monitor, Save } from '@lucide/vue';
+import { BellRing, Check, Mail, Monitor, Save } from '@lucide/vue';
 import { computed, onMounted, ref, watchEffect } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -12,7 +14,6 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import { update } from '@/routes/preferences';
@@ -93,12 +94,20 @@ async function requestBrowserPermission(): Promise<void> {
         <form @submit.prevent="submit">
             <Card>
                 <CardHeader>
-                    <CardTitle>{{
-                        t('settings.notifications.channels_title')
-                    }}</CardTitle>
-                    <CardDescription>
-                        {{ t('settings.notifications.channels_description') }}
-                    </CardDescription>
+                    <LeadingIconHeading tile tile-tone="brand">
+                        <template #icon>
+                            <BellRing />
+                        </template>
+
+                        <CardTitle>{{
+                            t('settings.notifications.channels_title')
+                        }}</CardTitle>
+                        <CardDescription>
+                            {{
+                                t('settings.notifications.channels_description')
+                            }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent class="space-y-3">
                     <div
@@ -106,15 +115,9 @@ async function requestBrowserPermission(): Promise<void> {
                         :key="option.key"
                         class="flex min-h-20 items-center gap-4 rounded-2xl border border-border/70 bg-muted/20 p-4 transition-colors hover:bg-muted/35"
                     >
-                        <div
-                            class="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700"
-                        >
-                            <component
-                                :is="option.icon"
-                                class="size-5"
-                                aria-hidden="true"
-                            />
-                        </div>
+                        <IconTile tone="information" size="md">
+                            <component :is="option.icon" />
+                        </IconTile>
                         <Label
                             :for="option.key"
                             class="min-w-0 flex-1 cursor-pointer flex-col items-start gap-0"
@@ -163,6 +166,7 @@ async function requestBrowserPermission(): Promise<void> {
                                 variant="outline"
                                 @click="requestBrowserPermission"
                             >
+                                <Monitor class="size-4" aria-hidden="true" />
                                 {{
                                     t(
                                         'settings.notifications.browser_request_permission',
@@ -177,8 +181,17 @@ async function requestBrowserPermission(): Promise<void> {
                 </CardContent>
             </Card>
             <div class="mt-4 flex justify-end">
-                <Button type="submit" size="lg" :disabled="form.processing">
-                    <Spinner v-if="form.processing" />
+                <Button
+                    type="submit"
+                    size="lg"
+                    :loading="form.processing"
+                    :loading-label="t('common.actions.save')"
+                >
+                    <Check
+                        v-if="form.recentlySuccessful"
+                        class="ui-status-pop size-4"
+                        aria-hidden="true"
+                    />
                     <Save v-else class="size-4" aria-hidden="true" />
                     {{ t('common.actions.save') }}
                 </Button>

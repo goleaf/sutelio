@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
-import { Shield, ShieldCheck } from '@lucide/vue';
+import {
+    Check,
+    LockKeyhole,
+    Save,
+    Shield,
+    ShieldCheck,
+    ShieldOff,
+} from '@lucide/vue';
 import { ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
@@ -16,7 +23,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import { disable, enable } from '@/routes/two-factor';
@@ -84,12 +90,18 @@ function disable2FA(): void {
     <div class="space-y-6">
         <Card>
             <CardHeader>
-                <CardTitle>{{
-                    t('settings.security.update_password')
-                }}</CardTitle>
-                <CardDescription>{{
-                    t('settings.security.password_description')
-                }}</CardDescription>
+                <LeadingIconHeading tile tile-tone="brand">
+                    <template #icon>
+                        <LockKeyhole />
+                    </template>
+
+                    <CardTitle>{{
+                        t('settings.security.update_password')
+                    }}</CardTitle>
+                    <CardDescription>{{
+                        t('settings.security.password_description')
+                    }}</CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent>
                 <form
@@ -153,9 +165,15 @@ function disable2FA(): void {
                     <Button
                         type="submit"
                         size="lg"
-                        :disabled="passwordForm.processing"
+                        :loading="passwordForm.processing"
+                        :loading-label="t('settings.security.update_password')"
                     >
-                        <Spinner v-if="passwordForm.processing" />
+                        <Check
+                            v-if="passwordForm.recentlySuccessful"
+                            class="ui-status-pop size-4"
+                            aria-hidden="true"
+                        />
+                        <Save v-else class="size-4" aria-hidden="true" />
                         {{ t('settings.security.update_password') }}
                     </Button>
                 </form>
@@ -164,9 +182,12 @@ function disable2FA(): void {
 
         <Card v-if="canManageTwoFactor">
             <CardHeader>
-                <LeadingIconHeading>
+                <LeadingIconHeading
+                    tile
+                    :tile-tone="twoFactorEnabled ? 'success' : 'warning'"
+                >
                     <template #icon>
-                        <Shield class="size-5" aria-hidden="true" />
+                        <Shield />
                     </template>
 
                     <CardTitle>{{
@@ -182,7 +203,13 @@ function disable2FA(): void {
                     v-if="twoFactorEnabled"
                     class="flex flex-col gap-3 sm:flex-row sm:items-center"
                 >
-                    <Alert variant="success" class="flex-1 py-3">
+                    <Alert
+                        variant="success"
+                        class="flex-1 py-3"
+                        :class="{
+                            'ui-status-pop': twoFactorForm.recentlySuccessful,
+                        }"
+                    >
                         <ShieldCheck aria-hidden="true" />
                         <AlertDescription class="font-medium">
                             {{ t('settings.security.enabled_state') }}
@@ -192,8 +219,10 @@ function disable2FA(): void {
                         variant="destructive"
                         size="lg"
                         @click="showDisableDialog = true"
-                        >{{ t('common.actions.disable') }}</Button
                     >
+                        <ShieldOff class="size-4" aria-hidden="true" />
+                        {{ t('common.actions.disable') }}
+                    </Button>
                 </div>
                 <div
                     v-else
@@ -207,10 +236,11 @@ function disable2FA(): void {
                     </Alert>
                     <Button
                         size="lg"
-                        :disabled="twoFactorForm.processing"
+                        :loading="twoFactorForm.processing"
+                        :loading-label="t('common.actions.enable')"
                         @click="enable2FA"
                     >
-                        <Spinner v-if="twoFactorForm.processing" />
+                        <ShieldCheck class="size-4" aria-hidden="true" />
                         {{ t('common.actions.enable') }}
                     </Button>
                 </div>

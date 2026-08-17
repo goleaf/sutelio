@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ListChecks, Sparkles, UsersRound } from '@lucide/vue';
 import type { OnboardingCopy } from '@/components/onboarding/onboarding-types';
+import IconTile from '@/components/shared/IconTile.vue';
 
 defineProps<{ copy: OnboardingCopy['welcome'] }>();
 
@@ -22,11 +23,9 @@ const features = [
                 :key="feature.key"
                 class="rounded-2xl border border-border/80 bg-muted/25 p-4"
             >
-                <component
-                    :is="feature.icon"
-                    class="size-5 text-orange-600"
-                    aria-hidden="true"
-                />
+                <IconTile tone="brand" size="sm">
+                    <component :is="feature.icon" />
+                </IconTile>
                 <h2 class="mt-4 text-base font-semibold">
                     {{ copy[`${feature.key}_title`] }}
                 </h2>

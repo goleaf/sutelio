@@ -4,6 +4,7 @@ import { MessageSquare, Pencil, Trash2 } from '@lucide/vue';
 import { reactive, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InlineState from '@/components/shared/InlineState.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -171,8 +172,11 @@ async function deleteComment(): Promise<void> {
 
 <template>
     <section class="rounded-panel border border-border/80 bg-card p-5">
-        <div class="flex items-center gap-2">
-            <MessageSquare class="size-4 text-orange-700" aria-hidden="true" />
+        <LeadingIconHeading tile tile-tone="brand">
+            <template #icon>
+                <MessageSquare />
+            </template>
+
             <h2 class="text-base font-semibold">
                 {{
                     t('tasks.detail.comments_count', {
@@ -180,7 +184,7 @@ async function deleteComment(): Promise<void> {
                     })
                 }}
             </h2>
-        </div>
+        </LeadingIconHeading>
 
         <form class="mt-4 space-y-2" @submit.prevent="createComment">
             <textarea

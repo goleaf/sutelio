@@ -65,7 +65,15 @@ test('pending users can render their resumable onboarding page', function () {
             ->where('state', [])
             ->has('copy.meta.title')
             ->has('copy.meta.description')
-            ->where('timezones', fn ($timezones): bool => $timezones->contains('Europe/Vilnius')));
+            ->where('timezoneGroups', fn ($groups): bool => $groups->contains(
+                fn (array $group): bool => $group['key'] === 'europe'
+                    && $group['label'] === 'Europa'
+                    && collect($group['options'])->contains(
+                        fn (array $option): bool => $option['value'] === 'Europe/Vilnius'
+                            && str_contains($option['label'], 'Lietuva'),
+                    ),
+            ))
+            ->missing('timezones'));
 });
 
 test('completed users leave onboarding for their selected start page', function () {

@@ -15,6 +15,7 @@ import {
 } from '@/components/settings/data/data-safety';
 import DataScopeBanner from '@/components/settings/data/DataScopeBanner.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import {
@@ -46,6 +46,7 @@ const props = defineProps<{ backups: Backup[] }>();
 const toast = useToast();
 const { formatDate: formatLocalizedDate, formatNumber, locale, t } = useUi();
 const creating = ref(false);
+const creatingSucceeded = ref(false);
 const restoring = ref(false);
 const selectedBackup = ref<Backup | null>(null);
 const availableSummary = computed(() => {
@@ -66,12 +67,14 @@ watchEffect(() => {
 
 function createBackup(): void {
     creating.value = true;
+    creatingSucceeded.value = false;
     router.post(
         createBackupRoute().url,
         {},
         {
             preserveScroll: true,
             onSuccess: () => {
+                creatingSucceeded.value = true;
                 toast.success(t('settings.backup.created'));
             },
             onError: () => {
@@ -145,17 +148,17 @@ function formatDate(timestamp: number): string {
                     <Button
                         size="lg"
                         class="min-h-11"
-                        :disabled="creating"
-                        :aria-busy="creating"
+                        :loading="creating"
+                        :loading-label="t('settings.backup.creating')"
                         @click="createBackup"
                     >
-                        <Spinner v-if="creating" />
+                        <CheckCircle2
+                            v-if="creatingSucceeded"
+                            class="ui-status-pop size-4"
+                            aria-hidden="true"
+                        />
                         <Download v-else class="size-4" aria-hidden="true" />
-                        {{
-                            creating
-                                ? t('settings.backup.creating')
-                                : t('settings.backup.create')
-                        }}
+                        {{ t('settings.backup.create') }}
                     </Button>
                 </CardAction>
             </CardHeader>
@@ -192,13 +195,12 @@ function formatDate(timestamp: number): string {
                                                 })
                                             }}
                                         </h3>
+                                        <IconTile tone="success" size="sm">
+                                            <CheckCircle2 />
+                                        </IconTile>
                                         <span
-                                            class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-[11px] font-medium text-emerald-800 ring-1 ring-emerald-500/20"
+                                            class="text-[11px] font-medium text-emerald-800"
                                         >
-                                            <CheckCircle2
-                                                class="size-3"
-                                                aria-hidden="true"
-                                            />
                                             {{ t('settings.backup.verified') }}
                                         </span>
                                     </div>
@@ -287,7 +289,7 @@ function formatDate(timestamp: number): string {
             class="rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-sm text-amber-950"
             aria-labelledby="backup-restore-risk-title"
         >
-            <LeadingIconHeading content-class="gap-0">
+            <LeadingIconHeading tile tile-tone="warning" content-class="gap-0">
                 <template #icon>
                     <TriangleAlert class="size-5" aria-hidden="true" />
                 </template>

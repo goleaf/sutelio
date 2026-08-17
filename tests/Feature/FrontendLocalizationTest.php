@@ -206,6 +206,41 @@ test('frontend formatters and document locale synchronization are centralized', 
         ->toContain("document.documentElement.dir = 'ltr'");
 });
 
+test('timezone selection uses one grouped searchable accessible component', function () {
+    $componentPath = resource_path('js/components/preferences/TimezoneCombobox.vue');
+
+    expect(File::exists($componentPath))->toBeTrue();
+
+    $component = File::get($componentPath);
+    $onboarding = File::get(resource_path('js/components/onboarding/PreferencesStep.vue'));
+    $settings = File::get(resource_path('js/pages/settings/Preferences.vue'));
+
+    expect($component)
+        ->toContain('ComboboxRoot')
+        ->toContain('ComboboxInput')
+        ->toContain(':open="isOpen"')
+        ->toContain('@update:open="handleOpenChange"')
+        ->toContain('v-model="searchTerm"')
+        ->toContain("searchTerm.value = ''")
+        ->toContain('ComboboxGroup')
+        ->toContain('ComboboxLabel')
+        ->toContain('ComboboxEmpty')
+        ->toContain(':text-value="option.search_terms"')
+        ->toContain('${option.search_terms} ${label} ${group.label}')
+        ->toContain("t('timezones.search_placeholder')")
+        ->toContain("t('timezones.empty')")
+        ->and($onboarding)
+        ->toContain('<TimezoneCombobox')
+        ->toContain('const previousWeekStart = weekStart.value')
+        ->toContain('weekStart.value = previousWeekStart')
+        ->not->toContain('v-for="value in timezones"')
+        ->and($settings)
+        ->toContain('<TimezoneCombobox')
+        ->toContain('const previousWeekStart = form.week_start')
+        ->toContain('form.week_start = previousWeekStart')
+        ->not->toContain('v-for="tz in props.timezones"');
+});
+
 test('shared frontend copy follows the supported user locale with English fallback', function () {
     $user = User::factory()->create();
     $workspace = Workspace::factory()->for($user, 'owner')->create();

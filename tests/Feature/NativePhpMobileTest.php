@@ -216,7 +216,8 @@ test('the NativePHP v4 development workflow is configured', function () {
         )
         ->and($applicationEntryPoint)->toContain(
             "import { axiosAdapter } from '@inertiajs/core';",
-            'http: axiosAdapter()',
+            'createGlobalBusyHttpClient',
+            'http: createGlobalBusyHttpClient(axiosAdapter(), globalBusy)',
         )
         ->and(config('nativephp.hot_reload.watch_paths'))->toContain(
             'app',
@@ -626,6 +627,34 @@ test('the NativePHP bundle preserves migrations without local SQLite artifacts',
         File::deleteDirectory($source);
         File::deleteDirectory($destination);
     }
+});
+
+test('the NativePHP bundle excludes repository tooling and local diagnostic state', function () {
+    $repositoryOnlyPaths = [
+        '.ai',
+        '.amp',
+        '.claude',
+        '.codex',
+        '.cursor',
+        '.evoskill',
+        '.factory',
+        '.grok',
+        '.mcp.json',
+        '.npmrc',
+        '.pi',
+        '.playwright-mcp',
+        '.superpowers',
+        'graphify-out',
+        'storage/inertia-devtools',
+    ];
+    $cleanupExcludedFiles = config('nativephp.cleanup_exclude_files');
+    $bundleExclusions = BundleFileManager::excludes($cleanupExcludedFiles);
+
+    expect($cleanupExcludedFiles)->toContain(...$repositoryOnlyPaths)
+        ->and($bundleExclusions)->toContain(...array_map(
+            static fn (string $path): string => '/'.$path,
+            $repositoryOnlyPaths,
+        ));
 });
 
 test('the NativePHP Jump workflow starts with Vite through one manual script', function () {

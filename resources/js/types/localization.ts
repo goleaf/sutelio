@@ -5,6 +5,7 @@ export interface LanguageOption {
     native_name: string;
     localized_name: string;
     flag_url: string;
+    default_week_start: 'sunday' | 'monday';
 }
 
 export interface LocalizationCopy {

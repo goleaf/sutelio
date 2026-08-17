@@ -5,6 +5,8 @@ import { destroy } from '@/actions/Laravel/Passkeys/Http/Controllers/PasskeyRegi
 import Heading from '@/components/Heading.vue';
 import PasskeyItem from '@/components/PasskeyItem.vue';
 import PasskeyRegister from '@/components/PasskeyRegister.vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { useUi } from '@/composables/useUi';
 import type { Passkey } from '@/types/auth';
 
@@ -33,11 +35,17 @@ const handleRegisterSuccess = () => {
 
 <template>
     <div v-if="canManagePasskeys" class="space-y-6">
-        <Heading
-            variant="small"
-            :title="t('account.passkeys.title')"
-            :description="t('account.passkeys.manage_description')"
-        />
+        <LeadingIconHeading tile tile-tone="brand">
+            <template #icon>
+                <KeyRound />
+            </template>
+
+            <Heading
+                variant="small"
+                :title="t('account.passkeys.title')"
+                :description="t('account.passkeys.manage_description')"
+            />
+        </LeadingIconHeading>
 
         <div class="overflow-hidden rounded-lg border border-border">
             <template v-if="passkeys.length">
@@ -50,11 +58,9 @@ const handleRegisterSuccess = () => {
             </template>
 
             <div v-else class="p-8 text-center">
-                <div
-                    class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted"
-                >
-                    <KeyRound class="h-7 w-7 text-muted-foreground" />
-                </div>
+                <IconTile tone="muted" size="lg" class="mx-auto mb-4">
+                    <KeyRound />
+                </IconTile>
                 <p class="font-medium">{{ t('account.passkeys.empty') }}</p>
                 <p class="mt-1 text-sm text-muted-foreground">
                     {{ t('account.passkeys.description') }}

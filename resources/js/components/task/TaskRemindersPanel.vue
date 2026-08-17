@@ -4,6 +4,7 @@ import { Bell, Trash2 } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InlineState from '@/components/shared/InlineState.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -86,12 +87,15 @@ async function deleteReminder(reminder: Reminder): Promise<void> {
 
 <template>
     <section class="rounded-panel border border-border/80 bg-card p-5">
-        <div class="flex items-center gap-2">
-            <Bell class="size-4 text-orange-700" aria-hidden="true" />
+        <LeadingIconHeading tile tile-tone="brand">
+            <template #icon>
+                <Bell />
+            </template>
+
             <h2 class="text-base font-semibold">
                 {{ t('tasks.detail.reminders') }}
             </h2>
-        </div>
+        </LeadingIconHeading>
 
         <form
             class="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_10rem_auto]"

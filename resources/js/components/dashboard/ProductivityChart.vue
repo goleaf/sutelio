@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Activity, CheckCircle2, PlusCircle } from '@lucide/vue';
 import { computed } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import { Card } from '@/components/ui/card';
 import { useUi } from '@/composables/useUi';
 
@@ -25,10 +26,8 @@ const maxValue = computed(() =>
     ),
 );
 
-function barHeight(value: number): string {
-    return value === 0
-        ? '0%'
-        : `${Math.max((value / maxValue.value) * 100, 6)}%`;
+function barScale(value: number): number {
+    return value === 0 ? 0 : Math.max(value / maxValue.value, 0.06);
 }
 
 function formatWeekday(date: string): string {
@@ -117,11 +116,9 @@ function formatFullDate(date: string): string {
                         v-if="!hasActivity"
                         class="flex min-h-56 flex-col items-center justify-center gap-3 text-center"
                     >
-                        <span
-                            class="flex size-12 items-center justify-center rounded-2xl border border-orange-500/15 bg-orange-500/[0.06] text-orange-700"
-                        >
-                            <Activity class="size-5" aria-hidden="true" />
-                        </span>
+                        <IconTile tone="brand" size="lg">
+                            <Activity />
+                        </IconTile>
                         <p class="max-w-xs text-sm text-muted-foreground">
                             {{ t('dashboard.no_weekly_activity') }}
                         </p>
@@ -162,13 +159,17 @@ function formatFullDate(date: string): string {
                                             {{ formatNumber(day.completed) }}
                                         </div>
                                         <div
-                                            class="w-full max-w-5 rounded-t-md bg-orange-500/85 transition-[height] duration-300 motion-reduce:transition-none"
-                                            :style="{
-                                                height: barHeight(
-                                                    day.completed,
-                                                ),
-                                            }"
-                                        />
+                                            class="flex min-h-0 w-full max-w-5 flex-1 items-end"
+                                        >
+                                            <div
+                                                class="h-full w-full origin-bottom scale-y-[var(--bar-scale)] rounded-t-md bg-orange-500/85 transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
+                                                :style="{
+                                                    '--bar-scale': barScale(
+                                                        day.completed,
+                                                    ),
+                                                }"
+                                            />
+                                        </div>
                                     </div>
                                     <div
                                         class="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1"
@@ -179,11 +180,17 @@ function formatFullDate(date: string): string {
                                             {{ formatNumber(day.created) }}
                                         </span>
                                         <div
-                                            class="w-full max-w-5 rounded-t-md bg-sky-500/70 transition-[height] duration-300 motion-reduce:transition-none"
-                                            :style="{
-                                                height: barHeight(day.created),
-                                            }"
-                                        />
+                                            class="flex min-h-0 w-full max-w-5 flex-1 items-end"
+                                        >
+                                            <div
+                                                class="h-full w-full origin-bottom scale-y-[var(--bar-scale)] rounded-t-md bg-sky-500/70 transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
+                                                :style="{
+                                                    '--bar-scale': barScale(
+                                                        day.created,
+                                                    ),
+                                                }"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                                 <span

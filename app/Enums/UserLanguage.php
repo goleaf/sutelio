@@ -28,6 +28,15 @@ enum UserLanguage: string
         };
     }
 
+    /** @return 'sunday'|'monday' */
+    public function defaultWeekStart(): string
+    {
+        return match ($this) {
+            self::English => 'sunday',
+            self::Lithuanian, self::Russian => 'monday',
+        };
+    }
+
     public function localizedName(self $displayLanguage): string
     {
         return $displayLanguage->translation("ui.settings.preferences.languages.{$this->value}");
@@ -57,7 +66,7 @@ enum UserLanguage: string
     }
 
     /**
-     * @return list<array{code: string, native_name: string, localized_name: string, flag_url: string}>
+     * @return list<array{code: string, native_name: string, localized_name: string, flag_url: string, default_week_start: 'sunday'|'monday'}>
      */
     public static function frontendOptions(): array
     {
@@ -67,6 +76,7 @@ enum UserLanguage: string
                 'native_name' => $language->nativeName(),
                 'localized_name' => __("ui.settings.preferences.languages.{$language->value}"),
                 'flag_url' => $language->flagUrl(),
+                'default_week_start' => $language->defaultWeekStart(),
             ],
             self::cases(),
         );

@@ -14,6 +14,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import SearchField from '@/components/shared/SearchField.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
@@ -320,7 +321,11 @@ async function cancelInvitation(): Promise<void> {
         >
             <Card class="gap-0 overflow-hidden py-0">
                 <CardHeader class="gap-5 border-b py-5 sm:py-6">
-                    <div class="space-y-1.5">
+                    <LeadingIconHeading tile tile-tone="brand">
+                        <template #icon>
+                            <Users />
+                        </template>
+
                         <CardTitle id="workspace-members-title">
                             {{
                                 t('workspaces.management.members.roster_title')
@@ -333,7 +338,7 @@ async function cancelInvitation(): Promise<void> {
                                 )
                             }}
                         </CardDescription>
-                    </div>
+                    </LeadingIconHeading>
                     <SearchField
                         id="management-member-search"
                         v-model="searchQuery"
@@ -495,14 +500,9 @@ async function cancelInvitation(): Promise<void> {
                         v-else
                         class="flex min-h-56 flex-col items-center justify-center px-6 py-12 text-center"
                     >
-                        <div
-                            class="flex size-11 items-center justify-center rounded-full bg-muted"
-                        >
-                            <Search
-                                class="size-5 text-muted-foreground"
-                                aria-hidden="true"
-                            />
-                        </div>
+                        <IconTile tone="muted" size="md">
+                            <Search />
+                        </IconTile>
                         <p class="mt-4 text-sm font-semibold">
                             {{ t('workspaces.management.members.no_results') }}
                         </p>
@@ -522,13 +522,9 @@ async function cancelInvitation(): Promise<void> {
                 class="xl:sticky xl:top-6"
             >
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="brand">
                         <template #icon>
-                            <div
-                                class="flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
-                            >
-                                <UserPlus class="size-5" aria-hidden="true" />
-                            </div>
+                            <UserPlus />
                         </template>
 
                         <CardTitle>
@@ -633,16 +629,9 @@ async function cancelInvitation(): Promise<void> {
 
             <Card v-else class="bg-muted/25 xl:sticky xl:top-6">
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="muted">
                         <template #icon>
-                            <div
-                                class="flex size-10 items-center justify-center rounded-xl border bg-background"
-                            >
-                                <LockKeyhole
-                                    class="size-5"
-                                    aria-hidden="true"
-                                />
-                            </div>
+                            <LockKeyhole />
                         </template>
 
                         <CardTitle>
@@ -661,12 +650,18 @@ async function cancelInvitation(): Promise<void> {
             class="gap-0 overflow-hidden py-0"
         >
             <CardHeader class="border-b py-5 sm:py-6">
-                <CardTitle>
-                    {{ t('workspaces.management.invitations.title') }}
-                </CardTitle>
-                <CardDescription>
-                    {{ t('workspaces.management.invitations.description') }}
-                </CardDescription>
+                <LeadingIconHeading tile tile-tone="information">
+                    <template #icon>
+                        <Mail />
+                    </template>
+
+                    <CardTitle>
+                        {{ t('workspaces.management.invitations.title') }}
+                    </CardTitle>
+                    <CardDescription>
+                        {{ t('workspaces.management.invitations.description') }}
+                    </CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent class="p-0">
                 <ul v-if="invitations.length" class="divide-y" role="list">
@@ -676,11 +671,9 @@ async function cancelInvitation(): Promise<void> {
                         class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
                     >
                         <div class="flex min-w-0 items-start gap-3">
-                            <div
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                            >
-                                <Mail class="size-4" aria-hidden="true" />
-                            </div>
+                            <IconTile tone="information" size="sm">
+                                <Mail />
+                            </IconTile>
                             <div class="min-w-0">
                                 <div class="flex flex-wrap items-center gap-2">
                                     <p class="truncate text-sm font-semibold">

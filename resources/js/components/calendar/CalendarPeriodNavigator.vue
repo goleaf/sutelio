@@ -80,7 +80,7 @@ function changeView(view: CalendarView): void {
                 <ChevronLeft class="size-5" aria-hidden="true" />
             </Button>
 
-            <div class="min-w-44 text-center sm:min-w-64">
+            <div class="min-w-0 flex-1 text-center sm:min-w-64 sm:flex-none">
                 <p
                     class="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase"
                 >
@@ -88,7 +88,7 @@ function changeView(view: CalendarView): void {
                 </p>
                 <h2
                     id="calendar-period-heading"
-                    class="mt-1 text-sm font-semibold capitalize sm:text-base"
+                    class="mt-1 text-sm font-semibold wrap-anywhere capitalize sm:text-base"
                 >
                     {{ periodLabel }}
                 </h2>

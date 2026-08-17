@@ -11,7 +11,6 @@ import PasskeyVerify from '@/components/PasskeyVerify.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 import { store } from '@/routes/password/confirm';
 
@@ -66,11 +65,11 @@ watchEffect(() => {
                 <Button
                     size="lg"
                     class="w-full"
-                    :disabled="processing"
+                    :loading="processing"
+                    :loading-label="t('auth.confirm_password.submit')"
                     data-test="confirm-password-button"
                 >
-                    <Spinner v-if="processing" />
-                    <ShieldCheck v-else class="size-4" aria-hidden="true" />
+                    <ShieldCheck class="size-4" aria-hidden="true" />
                     {{ t('auth.confirm_password.submit') }}
                 </Button>
             </div>

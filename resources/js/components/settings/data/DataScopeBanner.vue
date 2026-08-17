@@ -16,12 +16,12 @@ const presentation = computed(() =>
     props.scope === 'workspace'
         ? {
               icon: Building2,
-              iconClass: 'bg-orange-500/10 text-orange-800 ring-orange-500/15',
+              tileTone: 'cobalt' as const,
               railClass: 'bg-orange-500',
           }
         : {
               icon: Database,
-              iconClass: 'bg-amber-500/10 text-amber-800 ring-amber-500/20',
+              tileTone: 'information' as const,
               railClass: 'bg-amber-500',
           },
 );
@@ -36,20 +36,14 @@ const presentation = computed(() =>
             :class="['absolute inset-y-0 left-0 w-1.5', presentation.railClass]"
             aria-hidden="true"
         />
-        <LeadingIconHeading class="pl-1 sm:gap-4" content-class="gap-0">
+        <LeadingIconHeading
+            tile
+            :tile-tone="presentation.tileTone"
+            class="pl-1 sm:gap-4"
+            content-class="gap-0"
+        >
             <template #icon>
-                <span
-                    :class="[
-                        'flex size-11 items-center justify-center rounded-xl ring-1',
-                        presentation.iconClass,
-                    ]"
-                >
-                    <component
-                        :is="presentation.icon"
-                        class="size-5"
-                        aria-hidden="true"
-                    />
-                </span>
+                <component :is="presentation.icon" />
             </template>
 
             <div class="flex flex-wrap items-center gap-2">

@@ -4,6 +4,7 @@ import { CheckCircle2, Clock3, ListChecks, Plus } from '@lucide/vue';
 import { computed, nextTick, ref } from 'vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import {
     activeTaskFilterCount,
@@ -312,84 +313,86 @@ function deleteTodo(): void {
 <template>
     <div>
         <Head :title="t('tasks.index.title')" />
-        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-app flex-col gap-6">
-                <WorkspacePageHeader
-                    :eyebrow="t('tasks.board.to_do')"
-                    :title="t('tasks.index.title')"
-                    :description="
-                        t('tasks.index.count', {
-                            count: formatNumber(stats.total),
-                        })
-                    "
-                >
-                    <template #actions>
-                        <Button
-                            size="lg"
-                            :disabled="!workspace.id"
-                            @click="showCreateDialog = true"
-                        >
-                            <Plus class="size-4" aria-hidden="true" />
-                            {{ t('tasks.create.new_task') }}
-                        </Button>
-                    </template>
-                    <template #metrics>
-                        <WorkspaceMetric
-                            :label="t('tasks.stats.total')"
-                            :value="formatNumber(stats.total)"
-                            :icon="ListChecks"
-                            tone="orange"
-                        />
-                        <WorkspaceMetric
-                            :label="t('tasks.stats.pending')"
-                            :value="formatNumber(stats.pending)"
-                            :icon="Clock3"
-                            tone="blue"
-                        />
-                        <WorkspaceMetric
-                            :label="t('tasks.stats.completed')"
-                            :value="formatNumber(stats.completed)"
-                            :icon="CheckCircle2"
-                            tone="emerald"
-                        />
-                    </template>
-                </WorkspacePageHeader>
+        <WorkspacePageFrame>
+            <WorkspacePageHeader
+                :eyebrow="t('tasks.board.to_do')"
+                :title="t('tasks.index.title')"
+                :description="
+                    t('tasks.index.count', {
+                        count: formatNumber(stats.total),
+                    })
+                "
+            >
+                <template #icon>
+                    <ListChecks aria-hidden="true" />
+                </template>
 
-                <div
-                    ref="taskQueueFallback"
-                    tabindex="-1"
-                    :aria-busy="filtering"
-                    class="focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none"
-                >
-                    <TaskWorkspacePanel
-                        :active-filter-count="activeFilterCount"
-                        :all-selected="allSelected"
-                        :bulk-processing="bulkProcessing"
-                        :busy-todo-id="busyTodoId"
-                        :filters="filters"
-                        :filtering="filtering"
-                        :projects="projects.data"
-                        :selected-ids="selectedIds"
-                        :selection-mode="selectionMode"
-                        :task-definitions="taskDefinitions"
-                        :todos="todos"
-                        @bulk-action="requestBulkAction"
-                        @clear-filters="applyFilters(clearTaskFilters(filters))"
-                        @clear-selection="setSelectionMode(false)"
-                        @create="showCreateDialog = true"
-                        @delete="requestDelete"
-                        @move="moveTodo"
-                        @navigate="handlePagination"
-                        @select="selectTodo"
-                        @select-page="selectPage"
-                        @toggle-completion="toggleCompletion"
-                        @toggle-selection="bulkSelect.toggle($event.id)"
-                        @update-filters="applyFilters"
-                        @update-selection-mode="setSelectionMode"
+                <template #actions>
+                    <Button
+                        size="lg"
+                        :disabled="!workspace.id"
+                        @click="showCreateDialog = true"
+                    >
+                        <Plus class="size-4" aria-hidden="true" />
+                        {{ t('tasks.create.new_task') }}
+                    </Button>
+                </template>
+                <template #metrics>
+                    <WorkspaceMetric
+                        :label="t('tasks.stats.total')"
+                        :value="formatNumber(stats.total)"
+                        :icon="ListChecks"
+                        tone="orange"
                     />
-                </div>
+                    <WorkspaceMetric
+                        :label="t('tasks.stats.pending')"
+                        :value="formatNumber(stats.pending)"
+                        :icon="Clock3"
+                        tone="blue"
+                    />
+                    <WorkspaceMetric
+                        :label="t('tasks.stats.completed')"
+                        :value="formatNumber(stats.completed)"
+                        :icon="CheckCircle2"
+                        tone="emerald"
+                    />
+                </template>
+            </WorkspacePageHeader>
+
+            <div
+                ref="taskQueueFallback"
+                tabindex="-1"
+                :aria-busy="filtering"
+                class="focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none"
+            >
+                <TaskWorkspacePanel
+                    :active-filter-count="activeFilterCount"
+                    :all-selected="allSelected"
+                    :bulk-processing="bulkProcessing"
+                    :busy-todo-id="busyTodoId"
+                    :filters="filters"
+                    :filtering="filtering"
+                    :projects="projects.data"
+                    :selected-ids="selectedIds"
+                    :selection-mode="selectionMode"
+                    :task-definitions="taskDefinitions"
+                    :todos="todos"
+                    @bulk-action="requestBulkAction"
+                    @clear-filters="applyFilters(clearTaskFilters(filters))"
+                    @clear-selection="setSelectionMode(false)"
+                    @create="showCreateDialog = true"
+                    @delete="requestDelete"
+                    @move="moveTodo"
+                    @navigate="handlePagination"
+                    @select="selectTodo"
+                    @select-page="selectPage"
+                    @toggle-completion="toggleCompletion"
+                    @toggle-selection="bulkSelect.toggle($event.id)"
+                    @update-filters="applyFilters"
+                    @update-selection-mode="setSelectionMode"
+                />
             </div>
-        </div>
+        </WorkspacePageFrame>
 
         <TaskDetail
             v-if="selectedTodo"

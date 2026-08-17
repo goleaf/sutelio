@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-    ArrowUpDown,
-    Filter,
-    RotateCcw,
-    Search,
-    SlidersHorizontal,
-} from '@lucide/vue';
+import { Filter, RotateCcw, Search, SlidersHorizontal } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import { hasProjectFilters } from '@/components/project/project-operations';
 import type {
@@ -14,24 +8,10 @@ import type {
     ProjectFilters,
     ProjectSort,
 } from '@/components/project/project-operations';
+import ProjectTaskFilterFields from '@/components/project/ProjectTaskFilterFields.vue';
+import FilterSheet from '@/components/shared/FilterSheet.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-} from '@/components/ui/sheet';
-import { useTaskDefinitions } from '@/composables/useTaskDefinitions';
 import { useUi } from '@/composables/useUi';
 import type { TaskDefinitionCatalog } from '@/types/models';
 
@@ -44,9 +24,6 @@ const props = defineProps<{
 
 const emit = defineEmits<{ update: [filters: ProjectFilters] }>();
 const { t } = useUi();
-const { priorities, statuses } = useTaskDefinitions(
-    () => props.taskDefinitions,
-);
 const mobileOpen = ref(false);
 const search = ref('');
 const status = ref('all');
@@ -83,18 +60,16 @@ const activeFilterCount = computed(() => {
     ].filter(Boolean).length;
 });
 
-watch(
-    () => props.filters,
-    (filters) => {
-        search.value = filters.search ?? '';
-        status.value = filters.status ?? 'all';
-        priority.value = filters.priority ?? 'all';
-        assignee.value = filters.assignee ?? 'all';
-        attention.value = filters.attention;
-        sort.value = filters.sort;
-    },
-    { deep: true, immediate: true },
-);
+watch(() => props.filters, synchronizeFilters, { deep: true, immediate: true });
+
+function synchronizeFilters(filters: ProjectFilters): void {
+    search.value = filters.search ?? '';
+    status.value = filters.status ?? 'all';
+    priority.value = filters.priority ?? 'all';
+    assignee.value = filters.assignee ?? 'all';
+    attention.value = filters.attention;
+    sort.value = filters.sort;
+}
 
 function currentFilters(): ProjectFilters {
     return {
@@ -110,6 +85,14 @@ function currentFilters(): ProjectFilters {
 function apply(): void {
     mobileOpen.value = false;
     emit('update', currentFilters());
+}
+
+function handleMobileFiltersOpenChange(value: boolean): void {
+    mobileOpen.value = value;
+
+    if (!value) {
+        synchronizeFilters(props.filters);
+    }
 }
 
 function applyAttention(value: ProjectAttention): void {
@@ -204,110 +187,18 @@ function clear(): void {
             </Button>
         </div>
 
-        <div class="mt-4 hidden gap-3 lg:grid lg:grid-cols-4">
-            <Select
-                v-model="status"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('projects.show.filters.status')"
-                >
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">{{
-                        t('projects.show.filters.all_statuses')
-                    }}</SelectItem>
-                    <SelectItem
-                        v-for="item in statuses"
-                        :key="item.id"
-                        :value="item.id"
-                    >
-                        {{ item.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-
-            <Select
-                v-model="priority"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('projects.show.filters.priority')"
-                >
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">{{
-                        t('projects.show.filters.all_priorities')
-                    }}</SelectItem>
-                    <SelectItem
-                        v-for="item in priorities"
-                        :key="item.id"
-                        :value="item.id"
-                    >
-                        {{ item.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-
-            <Select
-                v-model="assignee"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('projects.show.filters.assignee')"
-                >
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="all">{{
-                        t('projects.show.filters.all_assignees')
-                    }}</SelectItem>
-                    <SelectItem
-                        v-for="member in assignees"
-                        :key="member.id"
-                        :value="member.id"
-                    >
-                        {{ member.name }}
-                    </SelectItem>
-                </SelectContent>
-            </Select>
-
-            <Select
-                v-model="sort"
-                :disabled="processing"
-                @update:model-value="apply"
-            >
-                <SelectTrigger
-                    class="min-h-11"
-                    :aria-label="t('projects.show.filters.sort')"
-                >
-                    <ArrowUpDown class="size-4" aria-hidden="true" />
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="position">{{
-                        t('projects.show.filters.task_order')
-                    }}</SelectItem>
-                    <SelectItem value="due_date">{{
-                        t('projects.show.filters.due_date')
-                    }}</SelectItem>
-                    <SelectItem value="priority">{{
-                        t('projects.show.filters.priority_order')
-                    }}</SelectItem>
-                    <SelectItem value="updated">{{
-                        t('projects.show.filters.updated')
-                    }}</SelectItem>
-                </SelectContent>
-            </Select>
-        </div>
+        <ProjectTaskFilterFields
+            v-model:status="status"
+            v-model:priority="priority"
+            v-model:assignee="assignee"
+            v-model:attention="attention"
+            v-model:sort="sort"
+            mode="desktop"
+            :assignees="assignees"
+            :task-definitions="taskDefinitions"
+            :disabled="processing"
+            @commit="apply"
+        />
 
         <div
             class="mt-4 hidden items-center gap-2 border-t border-border/60 pt-4 lg:flex"
@@ -356,149 +247,28 @@ function clear(): void {
             }}
         </p>
 
-        <Sheet v-model:open="mobileOpen">
-            <SheetContent
-                side="bottom"
-                class="max-h-[92vh] overflow-y-auto rounded-t-feature"
-            >
-                <SheetHeader>
-                    <SheetTitle>{{
-                        t('projects.show.filters.title')
-                    }}</SheetTitle>
-                    <SheetDescription>{{
-                        t('projects.show.filters.description')
-                    }}</SheetDescription>
-                </SheetHeader>
-
-                <div class="grid gap-5 px-4 py-5">
-                    <div class="grid gap-2">
-                        <span class="text-sm font-medium">{{
-                            t('projects.show.filters.status')
-                        }}</span>
-                        <Select v-model="status">
-                            <SelectTrigger class="min-h-11">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{{
-                                    t('projects.show.filters.all_statuses')
-                                }}</SelectItem>
-                                <SelectItem
-                                    v-for="item in statuses"
-                                    :key="item.id"
-                                    :value="item.id"
-                                    >{{ item.name }}</SelectItem
-                                >
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div class="grid gap-2 sm:grid-cols-2">
-                        <Select v-model="priority">
-                            <SelectTrigger
-                                class="min-h-11"
-                                :aria-label="
-                                    t('projects.show.filters.priority')
-                                "
-                            >
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{{
-                                    t('projects.show.filters.all_priorities')
-                                }}</SelectItem>
-                                <SelectItem
-                                    v-for="item in priorities"
-                                    :key="item.id"
-                                    :value="item.id"
-                                    >{{ item.name }}</SelectItem
-                                >
-                            </SelectContent>
-                        </Select>
-                        <Select v-model="assignee">
-                            <SelectTrigger
-                                class="min-h-11"
-                                :aria-label="
-                                    t('projects.show.filters.assignee')
-                                "
-                            >
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">{{
-                                    t('projects.show.filters.all_assignees')
-                                }}</SelectItem>
-                                <SelectItem
-                                    v-for="member in assignees"
-                                    :key="member.id"
-                                    :value="member.id"
-                                    >{{ member.name }}</SelectItem
-                                >
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div
-                        class="grid grid-cols-2 gap-2"
-                        role="group"
-                        :aria-label="t('projects.show.filters.attention')"
-                    >
-                        <button
-                            v-for="option in attentionOptions"
-                            :key="option.value"
-                            type="button"
-                            :aria-pressed="attention === option.value"
-                            class="min-h-11 rounded-xl border px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
-                            :class="
-                                attention === option.value
-                                    ? 'border-orange-500/25 bg-orange-500/10 text-orange-800'
-                                    : 'border-border/80 text-muted-foreground'
-                            "
-                            @click="attention = option.value"
-                        >
-                            {{ option.label }}
-                        </button>
-                    </div>
-
-                    <Select v-model="sort">
-                        <SelectTrigger
-                            class="min-h-11"
-                            :aria-label="t('projects.show.filters.sort')"
-                        >
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="position">{{
-                                t('projects.show.filters.task_order')
-                            }}</SelectItem>
-                            <SelectItem value="due_date">{{
-                                t('projects.show.filters.due_date')
-                            }}</SelectItem>
-                            <SelectItem value="priority">{{
-                                t('projects.show.filters.priority_order')
-                            }}</SelectItem>
-                            <SelectItem value="updated">{{
-                                t('projects.show.filters.updated')
-                            }}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <SheetFooter class="grid grid-cols-2 gap-2 sm:grid-cols-2">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        class="min-h-11"
-                        :disabled="!hasProjectFilters(currentFilters())"
-                        @click="clear"
-                    >
-                        {{ t('projects.show.filters.clear') }}
-                    </Button>
-                    <Button type="button" class="min-h-11" @click="apply">
-                        {{ t('projects.show.filters.apply') }}
-                    </Button>
-                </SheetFooter>
-            </SheetContent>
-        </Sheet>
+        <FilterSheet
+            :model-value="mobileOpen"
+            :title="t('projects.show.filters.title')"
+            :description="t('projects.show.filters.description')"
+            :clear-label="t('projects.show.filters.clear')"
+            :apply-label="t('projects.show.filters.apply')"
+            :clear-disabled="!hasProjectFilters(currentFilters())"
+            :processing="processing"
+            @update:model-value="handleMobileFiltersOpenChange"
+            @clear="clear"
+            @apply="apply"
+        >
+            <ProjectTaskFilterFields
+                v-model:status="status"
+                v-model:priority="priority"
+                v-model:assignee="assignee"
+                v-model:attention="attention"
+                v-model:sort="sort"
+                mode="mobile"
+                :assignees="assignees"
+                :task-definitions="taskDefinitions"
+            />
+        </FilterSheet>
     </section>
 </template>

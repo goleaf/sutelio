@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, ChevronDown, Languages, LoaderCircle } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, useId } from 'vue';
 import FirstRunLanguageDialog from '@/components/localization/FirstRunLanguageDialog.vue';
 import LanguageFlag from '@/components/localization/LanguageFlag.vue';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ import { useUi } from '@/composables/useUi';
 
 const { form, localization, saveLanguage } = useLanguagePreference();
 const { t } = useUi();
+const labelId = useId();
+const codeId = useId();
 const currentOption = computed(
     () =>
         localization.value.options.find(
@@ -39,9 +41,12 @@ function handleLanguageChange(value: unknown): void {
                 variant="outline"
                 size="sm"
                 class="min-h-11 gap-2 bg-background/90 px-3 shadow-sm"
-                :aria-label="t('localization.switcher_label')"
+                :aria-labelledby="`${labelId} ${codeId}`"
                 :disabled="form.processing"
             >
+                <span :id="labelId" class="sr-only">
+                    {{ t('localization.switcher_label') }}
+                </span>
                 <LoaderCircle
                     v-if="form.processing"
                     class="size-4 animate-spin motion-reduce:animate-none"
@@ -52,14 +57,16 @@ function handleLanguageChange(value: unknown): void {
                     :src="currentOption.flag_url"
                 />
                 <Languages v-else class="size-4" aria-hidden="true" />
-                <span class="uppercase">{{ localization.current }}</span>
+                <span :id="codeId" class="uppercase">
+                    {{ localization.current }}
+                </span>
                 <ChevronDown
                     class="size-3.5 text-muted-foreground"
                     aria-hidden="true"
                 />
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" class="w-64">
+        <DropdownMenuContent align="end" class="w-64 max-w-[calc(100dvw-1rem)]">
             <DropdownMenuLabel>
                 {{ t('localization.choose') }}
             </DropdownMenuLabel>

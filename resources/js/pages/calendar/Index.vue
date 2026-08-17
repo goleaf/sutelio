@@ -17,6 +17,7 @@ import CalendarMonthGrid from '@/components/calendar/CalendarMonthGrid.vue';
 import CalendarPeriodNavigator from '@/components/calendar/CalendarPeriodNavigator.vue';
 import CalendarWeekView from '@/components/calendar/CalendarWeekView.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
 import { calendar as calendarRoute } from '@/routes';
@@ -78,69 +79,71 @@ function navigate(view: CalendarView, anchorDate: string): void {
     <div>
         <Head :title="copy.calendar.title" />
 
-        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-app flex-col gap-6">
-                <WorkspacePageHeader
-                    :eyebrow="copy.common.workspace_intelligence"
-                    :title="copy.calendar.title"
-                    :description="copy.calendar.description"
-                >
-                    <template #metrics>
-                        <WorkspaceMetric
-                            :label="copy.calendar.visible_tasks"
-                            :value="formatNumber(todos.length)"
-                            :icon="CalendarDays"
-                            tone="orange"
-                        />
-                        <WorkspaceMetric
-                            :label="copy.calendar.due_today"
-                            :value="formatNumber(todayCount)"
-                            :icon="Clock3"
-                            tone="blue"
-                        />
-                        <WorkspaceMetric
-                            :label="copy.calendar.overdue"
-                            :value="formatNumber(overdueCount)"
-                            :icon="AlertCircle"
-                            tone="slate"
-                        />
-                    </template>
-                </WorkspacePageHeader>
+        <WorkspacePageFrame>
+            <WorkspacePageHeader
+                :eyebrow="copy.common.workspace_intelligence"
+                :title="copy.calendar.title"
+                :description="copy.calendar.description"
+            >
+                <template #icon>
+                    <CalendarDays aria-hidden="true" />
+                </template>
 
-                <section
-                    class="rounded-panel border border-border/80 bg-card p-3 shadow-panel sm:p-4"
-                >
-                    <CalendarPeriodNavigator
-                        :calendar="calendar"
-                        :period-label="periodLabel"
-                        :processing="isNavigating"
-                        @navigate="navigate"
+                <template #metrics>
+                    <WorkspaceMetric
+                        :label="copy.calendar.visible_tasks"
+                        :value="formatNumber(todos.length)"
+                        :icon="CalendarDays"
+                        tone="orange"
                     />
+                    <WorkspaceMetric
+                        :label="copy.calendar.due_today"
+                        :value="formatNumber(todayCount)"
+                        :icon="Clock3"
+                        tone="blue"
+                    />
+                    <WorkspaceMetric
+                        :label="copy.calendar.overdue"
+                        :value="formatNumber(overdueCount)"
+                        :icon="AlertCircle"
+                        tone="slate"
+                    />
+                </template>
+            </WorkspacePageHeader>
 
-                    <div
-                        class="grid min-w-0 gap-4 pt-4 xl:grid-cols-[minmax(0,1fr)_19rem] xl:gap-5"
-                    >
-                        <div class="min-w-0">
-                            <CalendarMonthGrid
-                                v-if="calendar.view === 'month'"
-                                :calendar="calendar"
-                                :todos="todos"
-                            />
-                            <CalendarWeekView
-                                v-else-if="calendar.view === 'week'"
-                                :calendar="calendar"
-                                :todos="todos"
-                            />
-                            <CalendarAgendaView v-else :todos="todos" />
-                        </div>
+            <section
+                class="rounded-panel border border-border/80 bg-card p-3 shadow-panel sm:p-4"
+            >
+                <CalendarPeriodNavigator
+                    :calendar="calendar"
+                    :period-label="periodLabel"
+                    :processing="isNavigating"
+                    @navigate="navigate"
+                />
 
-                        <CalendarAttentionRail
-                            :todos="overdueTodos"
-                            :count="overdueCount"
+                <div
+                    class="grid min-w-0 gap-4 pt-4 xl:grid-cols-[minmax(0,1fr)_19rem] xl:gap-5"
+                >
+                    <div class="min-w-0">
+                        <CalendarMonthGrid
+                            v-if="calendar.view === 'month'"
+                            :calendar="calendar"
+                            :todos="todos"
                         />
+                        <CalendarWeekView
+                            v-else-if="calendar.view === 'week'"
+                            :calendar="calendar"
+                            :todos="todos"
+                        />
+                        <CalendarAgendaView v-else :todos="todos" />
                     </div>
-                </section>
-            </div>
-        </div>
+
+                    <CalendarAttentionRail
+                        :todos="overdueTodos"
+                        :count="overdueCount"
+                    />
+                </div>
+            </section>
+        </WorkspacePageFrame>
     </div>
 </template>

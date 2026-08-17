@@ -21,6 +21,7 @@ import ProjectPulse from '@/components/project/ProjectPulse.vue';
 import ProjectTaskFilters from '@/components/project/ProjectTaskFilters.vue';
 import ProjectTaskQueue from '@/components/project/ProjectTaskQueue.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import TaskCreateDialog from '@/components/task/TaskCreateDialog.vue';
 import TaskDetail from '@/components/task/TaskDetail.vue';
 import { useToast } from '@/composables/useToast';
@@ -424,65 +425,61 @@ async function submitProjectAction(
     <div>
         <Head :title="project.name" />
 
-        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-app flex-col gap-6">
-                <ProjectOperationsHeader
-                    :project="project"
-                    :metrics="metrics"
-                    :processing-action="processingAction"
-                    @back="router.visit(projectsIndex(workspace.id).url)"
-                    @new-task="showCreateDialog = true"
-                    @duplicate="duplicateProject"
-                    @archive="archiveProject"
-                    @restore="restoreProject"
-                />
+        <WorkspacePageFrame>
+            <ProjectOperationsHeader
+                :project="project"
+                :metrics="metrics"
+                :processing-action="processingAction"
+                @back="router.visit(projectsIndex(workspace.id).url)"
+                @new-task="showCreateDialog = true"
+                @duplicate="duplicateProject"
+                @archive="archiveProject"
+                @restore="restoreProject"
+            />
+
+            <div
+                class="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]"
+            >
+                <div class="xl:sticky xl:top-6 xl:col-start-2 xl:row-start-1">
+                    <ProjectPulse
+                        :metrics="metrics"
+                        :attention-tasks="attentionTasks"
+                        :priority-distribution="priorityDistribution"
+                        :today="today"
+                        @select="selectTodo"
+                        @filter="filterAttention"
+                    />
+                </div>
 
                 <div
-                    class="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]"
+                    ref="queueFallbackRef"
+                    tabindex="-1"
+                    :aria-label="t('projects.show.results.title')"
+                    class="min-w-0 space-y-6 rounded-panel focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none xl:col-start-1 xl:row-start-1"
                 >
-                    <div
-                        class="xl:sticky xl:top-6 xl:col-start-2 xl:row-start-1"
-                    >
-                        <ProjectPulse
-                            :metrics="metrics"
-                            :attention-tasks="attentionTasks"
-                            :priority-distribution="priorityDistribution"
-                            :today="today"
-                            @select="selectTodo"
-                            @filter="filterAttention"
-                        />
-                    </div>
-
-                    <div
-                        ref="queueFallbackRef"
-                        tabindex="-1"
-                        :aria-label="t('projects.show.results.title')"
-                        class="min-w-0 space-y-6 rounded-panel focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none xl:col-start-1 xl:row-start-1"
-                    >
-                        <ProjectTaskFilters
-                            :filters="filters"
-                            :task-definitions="taskDefinitions"
-                            :assignees="assignees"
-                            :processing="filtering"
-                            @update="applyFilters"
-                        />
-                        <ProjectTaskQueue
-                            :archived="project.is_archived"
-                            :todos="queueTodos"
-                            :filters="filters"
-                            :processing="filtering"
-                            :busy-task-id="busyTaskId"
-                            :today="today"
-                            @select="selectTodo"
-                            @toggle="toggleCompletion"
-                            @delete="todoToDelete = $event"
-                            @create="showCreateDialog = true"
-                            @clear="clearFilters"
-                        />
-                    </div>
+                    <ProjectTaskFilters
+                        :filters="filters"
+                        :task-definitions="taskDefinitions"
+                        :assignees="assignees"
+                        :processing="filtering"
+                        @update="applyFilters"
+                    />
+                    <ProjectTaskQueue
+                        :archived="project.is_archived"
+                        :todos="queueTodos"
+                        :filters="filters"
+                        :processing="filtering"
+                        :busy-task-id="busyTaskId"
+                        :today="today"
+                        @select="selectTodo"
+                        @toggle="toggleCompletion"
+                        @delete="todoToDelete = $event"
+                        @create="showCreateDialog = true"
+                        @clear="clearFilters"
+                    />
                 </div>
             </div>
-        </div>
+        </WorkspacePageFrame>
 
         <TaskDetail
             v-if="selectedTodo"

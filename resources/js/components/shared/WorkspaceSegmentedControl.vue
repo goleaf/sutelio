@@ -23,7 +23,7 @@ const props = withDefaults(
         :aria-label="label"
         :class="
             cn(
-                'flex w-fit max-w-full gap-1 overflow-x-auto rounded-xl bg-muted p-1',
+                'flex w-fit max-w-full touch-pan-x gap-1 overflow-x-auto overscroll-x-contain rounded-xl bg-muted p-1',
                 vertical ? 'w-full lg:flex-col' : 'inline-flex',
                 props.class,
             )

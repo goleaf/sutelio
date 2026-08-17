@@ -11,6 +11,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -33,7 +34,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
 import {
     invite as inviteWorkspaceMember,
@@ -346,14 +346,9 @@ function removeMember(): void {
                         v-else
                         class="flex min-h-56 flex-col items-center justify-center px-6 py-12 text-center"
                     >
-                        <div
-                            class="flex size-11 items-center justify-center rounded-full bg-muted"
-                        >
-                            <Search
-                                class="size-5 text-muted-foreground"
-                                aria-hidden="true"
-                            />
-                        </div>
+                        <IconTile tone="muted" size="md">
+                            <Search />
+                        </IconTile>
                         <p class="mt-4 text-sm font-semibold">
                             {{ copy.no_results_title }}
                         </p>
@@ -366,13 +361,9 @@ function removeMember(): void {
 
             <Card v-if="can_manage_members" class="xl:sticky xl:top-6">
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="brand">
                         <template #icon>
-                            <div
-                                class="flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
-                            >
-                                <UserPlus class="size-5" aria-hidden="true" />
-                            </div>
+                            <UserPlus />
                         </template>
 
                         <CardTitle>{{ copy.invite_title }}</CardTitle>
@@ -443,15 +434,11 @@ function removeMember(): void {
                             type="submit"
                             size="lg"
                             class="w-full"
-                            :disabled="inviteForm.processing"
+                            :loading="inviteForm.processing"
+                            :loading-label="copy.inviting"
                         >
-                            <Spinner v-if="inviteForm.processing" />
-                            <UserPlus v-else aria-hidden="true" />
-                            {{
-                                inviteForm.processing
-                                    ? copy.inviting
-                                    : copy.invite_action
-                            }}
+                            <UserPlus aria-hidden="true" />
+                            {{ copy.invite_action }}
                         </Button>
                     </form>
                 </CardContent>
@@ -459,16 +446,9 @@ function removeMember(): void {
 
             <Card v-else class="bg-muted/25 xl:sticky xl:top-6">
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="muted">
                         <template #icon>
-                            <div
-                                class="flex size-10 items-center justify-center rounded-xl border bg-background"
-                            >
-                                <LockKeyhole
-                                    class="size-5"
-                                    aria-hidden="true"
-                                />
-                            </div>
+                            <LockKeyhole />
                         </template>
 
                         <CardTitle>{{ copy.read_only_title }}</CardTitle>
@@ -507,11 +487,9 @@ function removeMember(): void {
                 max-width-class="sm:max-w-md"
             >
                 <div class="space-y-6 px-6 py-6 sm:px-8">
-                    <div
-                        class="flex size-11 items-center justify-center rounded-2xl border border-destructive/15 bg-destructive/10 text-destructive"
-                    >
-                        <UserCog class="size-5" aria-hidden="true" />
-                    </div>
+                    <IconTile tone="destructive" size="md">
+                        <UserCog />
+                    </IconTile>
                     <DialogFooter
                         class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
                     >
@@ -528,16 +506,12 @@ function removeMember(): void {
                             type="button"
                             variant="destructive"
                             size="lg"
-                            :disabled="removeForm.processing"
+                            :loading="removeForm.processing"
+                            :loading-label="copy.removing"
                             @click="removeMember"
                         >
-                            <Spinner v-if="removeForm.processing" />
-                            <Trash2 v-else aria-hidden="true" />
-                            {{
-                                removeForm.processing
-                                    ? copy.removing
-                                    : copy.remove_action
-                            }}
+                            <Trash2 aria-hidden="true" />
+                            {{ copy.remove_action }}
                         </Button>
                     </DialogFooter>
                 </div>

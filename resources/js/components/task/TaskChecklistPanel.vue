@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
-import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from '@lucide/vue';
+import {
+    ArrowDown,
+    ArrowUp,
+    ListChecks,
+    Plus,
+    Save,
+    Trash2,
+} from '@lucide/vue';
 import { reactive, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InlineState from '@/components/shared/InlineState.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -286,9 +294,15 @@ async function confirmDelete(): Promise<void> {
 
 <template>
     <section class="rounded-panel border border-border/80 bg-card p-5">
-        <h2 class="text-base font-semibold">
-            {{ t('tasks.detail.checklists') }}
-        </h2>
+        <LeadingIconHeading tile tile-tone="brand">
+            <template #icon>
+                <ListChecks />
+            </template>
+
+            <h2 class="text-base font-semibold">
+                {{ t('tasks.detail.checklists') }}
+            </h2>
+        </LeadingIconHeading>
 
         <div class="mt-4 space-y-4">
             <article

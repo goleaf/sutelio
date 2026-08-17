@@ -8,7 +8,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
@@ -61,11 +60,11 @@ defineProps<{
                 <Button
                     size="lg"
                     class="w-full"
-                    :disabled="processing"
+                    :loading="processing"
+                    :loading-label="t('auth.forgot_password.submit')"
                     data-test="email-password-reset-link-button"
                 >
-                    <Spinner v-if="processing" />
-                    <Send v-else class="size-4" aria-hidden="true" />
+                    <Send class="size-4" aria-hidden="true" />
                     {{ t('auth.forgot_password.submit') }}
                 </Button>
             </div>

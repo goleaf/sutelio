@@ -6,6 +6,9 @@ import type {
     OnboardingProgress,
 } from '@/components/onboarding/onboarding-types';
 import { orderedOnboardingSteps } from '@/components/onboarding/onboarding-types';
+import IconTile from '@/components/shared/IconTile.vue';
+import StatusNotice from '@/components/shared/StatusNotice.vue';
+import type { StatusNoticeStatus } from '@/components/shared/StatusNotice.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -37,6 +40,24 @@ const percentLabel = computed(() =>
     ),
 );
 const statusMessage = computed(() => props.copy.status[props.saveStatus]);
+const saveNoticeStatus = computed<StatusNoticeStatus>(() => {
+    if (props.saveStatus === 'saving') {
+        return 'loading';
+    }
+
+    if (props.saveStatus === 'saved') {
+        return 'success';
+    }
+
+    if (props.saveStatus === 'error') {
+        return 'error';
+    }
+
+    return 'information';
+});
+const progressScale = computed(() =>
+    Math.min(1, Math.max(0, props.progress.percent / 100)),
+);
 </script>
 
 <template>
@@ -68,8 +89,8 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                 :aria-valuenow="progress.percent"
             >
                 <div
-                    class="h-full rounded-full bg-orange-500 transition-[width] duration-300 motion-reduce:transition-none forced-colors:bg-[Highlight]"
-                    :style="{ width: `${progress.percent}%` }"
+                    class="h-full w-full origin-left scale-x-[var(--progress)] rounded-full bg-orange-500 transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none forced-colors:bg-[Highlight]"
+                    :style="{ '--progress': progressScale }"
                 />
             </div>
         </header>
@@ -84,11 +105,9 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                 <div
                     class="flex items-center gap-3 border-b border-border/70 pb-5"
                 >
-                    <span
-                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700 ring-1 ring-orange-500/15"
-                    >
-                        <Route class="size-5" aria-hidden="true" />
-                    </span>
+                    <IconTile tone="brand">
+                        <Route />
+                    </IconTile>
                     <div class="min-w-0">
                         <p
                             class="text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
@@ -142,7 +161,7 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                             </span>
                             <span
                                 v-if="step === progress.step"
-                                class="mt-0.5 block text-xs leading-5 text-muted-foreground"
+                                class="mt-0.5 block text-xs leading-5 text-foreground/75"
                             >
                                 {{ copy.steps[step].description }}
                             </span>
@@ -158,13 +177,10 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                     <slot />
                 </div>
 
-                <p
-                    class="min-h-5 px-2 text-sm text-muted-foreground"
-                    aria-live="polite"
-                    aria-atomic="true"
-                >
-                    {{ statusMessage }}
-                </p>
+                <StatusNotice
+                    :message="statusMessage"
+                    :status="saveNoticeStatus"
+                />
             </div>
         </div>
 

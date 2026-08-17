@@ -17,6 +17,7 @@ import type {
 import ActivityFilterPanel from '@/components/activity/ActivityFilterPanel.vue';
 import ActivityTimeline from '@/components/activity/ActivityTimeline.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
@@ -91,128 +92,130 @@ function resultSummary(): string {
 <template>
     <Head :title="copy.activity.title" />
 
-    <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-        <div class="mx-auto flex max-w-app flex-col gap-6">
-            <WorkspacePageHeader
-                :eyebrow="copy.common.workspace_intelligence"
-                :title="copy.activity.title"
-                :description="copy.activity.description"
-            >
-                <template #metrics>
-                    <WorkspaceMetric
-                        :label="copy.activity.total_actions"
-                        :value="formatNumber(metrics.recorded_actions)"
-                        :icon="History"
-                        tone="orange"
-                    />
-                    <WorkspaceMetric
-                        :label="copy.activity.contributors"
-                        :value="formatNumber(metrics.contributors)"
-                        :icon="UsersRound"
-                        tone="blue"
-                    />
-                    <WorkspaceMetric
-                        :label="copy.activity.recent_changes"
-                        :value="formatNumber(metrics.recent_changes)"
-                        :icon="Sparkles"
-                        tone="emerald"
-                    />
-                </template>
-            </WorkspacePageHeader>
+    <WorkspacePageFrame>
+        <WorkspacePageHeader
+            :eyebrow="copy.common.workspace_intelligence"
+            :title="copy.activity.title"
+            :description="copy.activity.description"
+        >
+            <template #icon>
+                <History aria-hidden="true" />
+            </template>
 
-            <div
-                class="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]"
-            >
-                <ActivityFilterPanel
-                    :filters="filters"
-                    :categories="categories"
-                    :contributors="contributors"
-                    :processing="filtering"
-                    @update="updateFilters"
+            <template #metrics>
+                <WorkspaceMetric
+                    :label="copy.activity.total_actions"
+                    :value="formatNumber(metrics.recorded_actions)"
+                    :icon="History"
+                    tone="orange"
                 />
+                <WorkspaceMetric
+                    :label="copy.activity.contributors"
+                    :value="formatNumber(metrics.contributors)"
+                    :icon="UsersRound"
+                    tone="blue"
+                />
+                <WorkspaceMetric
+                    :label="copy.activity.recent_changes"
+                    :value="formatNumber(metrics.recent_changes)"
+                    :icon="Sparkles"
+                    tone="emerald"
+                />
+            </template>
+        </WorkspacePageHeader>
 
-                <section
-                    class="min-w-0 overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel"
-                    :aria-busy="filtering"
+        <div
+            class="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]"
+        >
+            <ActivityFilterPanel
+                :filters="filters"
+                :categories="categories"
+                :contributors="contributors"
+                :processing="filtering"
+                @update="updateFilters"
+            />
+
+            <section
+                class="min-w-0 overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel"
+                :aria-busy="filtering"
+            >
+                <div
+                    class="flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-4 sm:px-6"
+                    aria-live="polite"
                 >
+                    <div>
+                        <p class="text-sm font-semibold">
+                            {{ copy.activity.result_count }}
+                        </p>
+                        <p class="mt-0.5 text-xs text-muted-foreground">
+                            {{ resultSummary() }}
+                        </p>
+                    </div>
                     <div
-                        class="flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-4 sm:px-6"
-                        aria-live="polite"
+                        v-if="filtering"
+                        class="flex items-center gap-2 text-xs font-medium text-muted-foreground"
+                        role="status"
                     >
-                        <div>
-                            <p class="text-sm font-semibold">
-                                {{ copy.activity.result_count }}
-                            </p>
-                            <p class="mt-0.5 text-xs text-muted-foreground">
-                                {{ resultSummary() }}
-                            </p>
-                        </div>
-                        <div
-                            v-if="filtering"
-                            class="flex items-center gap-2 text-xs font-medium text-muted-foreground"
-                            role="status"
-                        >
-                            <LoaderCircle
-                                class="size-4 animate-spin motion-reduce:animate-none"
-                                aria-hidden="true"
-                            />
-                            {{ copy.activity.updating_results }}
-                        </div>
-                        <div
-                            v-else
-                            class="flex items-center gap-2 text-xs text-muted-foreground"
-                        >
-                            <span
-                                class="size-2 rounded-full bg-emerald-500"
-                                aria-hidden="true"
-                            />
-                            {{ copy.activity.workspace_ledger }}
-                        </div>
+                        <LoaderCircle
+                            class="size-4 animate-spin motion-reduce:animate-none"
+                            aria-hidden="true"
+                        />
+                        {{ copy.activity.updating_results }}
+                    </div>
+                    <div
+                        v-else
+                        class="flex items-center gap-2 text-xs text-muted-foreground"
+                    >
+                        <span
+                            class="size-2 rounded-full bg-emerald-500"
+                            aria-hidden="true"
+                        />
+                        {{ copy.activity.workspace_ledger }}
+                    </div>
+                </div>
+
+                <InfiniteScroll data="activities" manual>
+                    <div class="px-4 py-6 sm:px-6 sm:py-7">
+                        <ActivityTimeline
+                            :activities="activities.data"
+                            :filtered="hasActivityFilters(filters)"
+                        />
                     </div>
 
-                    <InfiniteScroll data="activities" manual>
-                        <div class="px-4 py-6 sm:px-6 sm:py-7">
-                            <ActivityTimeline
-                                :activities="activities.data"
-                                :filtered="hasActivityFilters(filters)"
-                            />
-                        </div>
-
-                        <template #next="{ loading, fetch, hasMore }">
-                            <div
-                                v-if="activities.data.length"
-                                class="flex min-h-20 items-center justify-center border-t border-border/70 px-4 py-4"
+                    <template #next="{ loading, fetch, hasMore }">
+                        <div
+                            v-if="activities.data.length"
+                            class="flex min-h-20 items-center justify-center border-t border-border/70 px-4 py-4"
+                        >
+                            <Button
+                                v-if="hasMore"
+                                type="button"
+                                variant="outline"
+                                class="min-w-40 motion-reduce:transition-none"
+                                :disabled="loading"
+                                @click="fetch"
                             >
-                                <Button
-                                    v-if="hasMore"
-                                    type="button"
-                                    variant="outline"
-                                    class="min-w-40 motion-reduce:transition-none"
-                                    :disabled="loading"
-                                    @click="fetch"
-                                >
-                                    <LoaderCircle
-                                        v-if="loading"
-                                        class="size-4 animate-spin motion-reduce:animate-none"
-                                        aria-hidden="true"
-                                    />
-                                    {{
-                                        loading
-                                            ? copy.activity.loading_older
-                                            : copy.activity.load_older
-                                    }}
-                                </Button>
-                                <p
-                                    v-else
-                                    class="text-xs font-medium text-muted-foreground"
-                                >
-                                    {{ copy.activity.end_of_activity }}
-                                </p>
-                            </div>
-                        </template>
-                    </InfiniteScroll>
-                </section>
-            </div>
+                                <LoaderCircle
+                                    v-if="loading"
+                                    class="size-4 animate-spin motion-reduce:animate-none"
+                                    aria-hidden="true"
+                                />
+                                {{
+                                    loading
+                                        ? copy.activity.loading_older
+                                        : copy.activity.load_older
+                                }}
+                            </Button>
+                            <p
+                                v-else
+                                class="text-xs font-medium text-muted-foreground"
+                            >
+                                {{ copy.activity.end_of_activity }}
+                            </p>
+                        </div>
+                    </template>
+                </InfiniteScroll>
+            </section>
         </div>
-    </div>
+    </WorkspacePageFrame>
 </template>

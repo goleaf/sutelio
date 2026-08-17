@@ -16,6 +16,7 @@ import { ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import DialogActions from '@/components/shared/DialogActions.vue';
 import DialogBody from '@/components/shared/DialogBody.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Badge } from '@/components/ui/badge';
@@ -120,11 +121,9 @@ async function switchWorkspace(): Promise<void> {
                 class="overflow-hidden border-orange-500/15 bg-orange-500/[0.04]"
             >
                 <CardHeader class="pb-3">
-                    <div
-                        class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                    >
-                        <Users class="size-5" aria-hidden="true" />
-                    </div>
+                    <IconTile tone="brand" size="sm">
+                        <Users />
+                    </IconTile>
                     <CardDescription>
                         {{ t('workspaces.members') }}
                     </CardDescription>
@@ -135,11 +134,9 @@ async function switchWorkspace(): Promise<void> {
             </Card>
             <Card class="overflow-hidden border-sky-500/15 bg-sky-500/[0.04]">
                 <CardHeader class="pb-3">
-                    <div
-                        class="flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700"
-                    >
-                        <Folder class="size-5" aria-hidden="true" />
-                    </div>
+                    <IconTile tone="information" size="sm">
+                        <Folder />
+                    </IconTile>
                     <CardDescription>
                         {{ t('workspaces.projects') }}
                     </CardDescription>
@@ -152,11 +149,9 @@ async function switchWorkspace(): Promise<void> {
                 class="overflow-hidden border-emerald-500/15 bg-emerald-500/[0.04]"
             >
                 <CardHeader class="pb-3">
-                    <div
-                        class="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700"
-                    >
-                        <CheckSquare class="size-5" aria-hidden="true" />
-                    </div>
+                    <IconTile tone="success" size="sm">
+                        <CheckSquare />
+                    </IconTile>
                     <CardDescription>
                         {{ t('workspaces.tasks') }}
                     </CardDescription>
@@ -291,13 +286,9 @@ async function switchWorkspace(): Promise<void> {
 
             <Card class="xl:sticky xl:top-6">
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="brand">
                         <template #icon>
-                            <div
-                                class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                            >
-                                <Pencil class="size-5" aria-hidden="true" />
-                            </div>
+                            <Pencil />
                         </template>
 
                         <CardTitle>

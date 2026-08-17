@@ -12,9 +12,9 @@ return [
     'steps' => [
         'welcome' => ['title' => 'Tegul darbai tampa lengvesni', 'description' => 'Trumpas vedamas kelias pavers jūsų nuostatas ir pirmąsias idėjas naudinga darbo erdve.'],
         'preferences' => ['title' => 'Pritaikykite „Sutelio“ sau', 'description' => 'Pasirinkite, kaip jums turi veikti datos, laikas, planavimas ir pirmasis ekranas.'],
-        'workspace' => ['title' => 'Pasirinkite darbo erdvę', 'description' => 'Darbo erdvė laiko narius, projektus, užduotis ir duomenis vienoje aiškioje riboje.'],
-        'project' => ['title' => 'Suteikite darbui vietą', 'description' => 'Pasirinkite vykdomą projektą arba sukurkite konkretų projektą norimam rezultatui.'],
-        'task' => ['title' => 'Sukurkite pirmąjį kitą veiksmą', 'description' => 'Paverskite projektą tikra priskiriama užduotimi su aiškia būsena ir terminu.'],
+        'workspace' => ['title' => 'Paruoškite darbo erdvę', 'description' => 'Darbo erdvė laiko narius, projektus, užduotis ir duomenis vienoje aiškioje riboje.'],
+        'project' => ['title' => 'Priskirkite darbui projektą', 'description' => 'Susiekite šią darbo erdvę su konkrečiu projektu norimam rezultatui.'],
+        'task' => ['title' => 'Nustatykite kitą veiksmą', 'description' => 'Paverskite projektą tikra priskiriama užduotimi su aiškia būsena ir terminu.'],
         'product_map' => ['title' => 'Žinokite, kur kas yra', 'description' => 'Kiekviena sritis turi vieną paskirtį, todėl programoje nereikės klaidžioti.'],
         'safety' => ['title' => 'Bendradarbiaukite neprarasdami kontrolės', 'description' => 'Vaidmenys, paskyros sauga ir atsarginės kopijos saugo augančios erdvės darbus.'],
         'results' => ['title' => 'Jūsų darbo erdvė paruošta', 'description' => 'Peržiūrėkite nustatymus ir tęskite darbą „Sutelio“ jau turėdami tikrą užduotį.'],
@@ -80,6 +80,7 @@ return [
     ],
     'workspace' => [
         'description' => 'Naudokite darbo erdvę, į kurią jau esate pakviesti, arba sukurkite naują ribą savo darbams.',
+        'create_description' => 'Sukurkite pirmąją darbo erdvę, kad projektai ir užduotys turėtų aiškią, saugią vietą.',
         'choose_existing' => 'Pasirinkti esamą',
         'create_new' => 'Sukurti naują',
         'existing_label' => 'Pasiekiama darbo erdvė',
@@ -94,6 +95,7 @@ return [
     ],
     'project' => [
         'description' => 'Projektas sujungia užduotis pagal prasmingą rezultatą, o ne tik kategoriją.',
+        'create_description' => 'Sukurkite pirmąjį šios darbo erdvės projektą, skirtą norimam rezultatui pasiekti.',
         'choose_existing' => 'Pasirinkti esamą',
         'create_new' => 'Sukurti naują',
         'existing_label' => 'Aktyvus projektas',
@@ -109,6 +111,7 @@ return [
     ],
     'task' => [
         'description' => 'Naudinga užduotis prasideda aiškiu veiksmu ir pakankamu kontekstu suprasti, kada ji atlikta.',
+        'create_description' => 'Sukurkite pirmą konkretų kitą šio projekto veiksmą.',
         'choose_existing' => 'Pasirinkti esamą',
         'create_new' => 'Sukurti naują',
         'existing_label' => 'Aktyvi užduotis',

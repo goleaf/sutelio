@@ -1,22 +1,11 @@
 <script setup lang="ts">
-import { CalendarClock, Filter, RotateCcw, UsersRound } from '@lucide/vue';
+import { Filter, RotateCcw } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import ActivityFilterFields from '@/components/activity/ActivityFilterFields.vue';
+import FilterSheet from '@/components/shared/FilterSheet.vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '@/components/ui/sheet';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
 import type {
     ActivityCategory,
@@ -82,7 +71,7 @@ function clearFilters(): void {
     <div class="contents">
         <div class="lg:hidden">
             <div
-                class="-mx-1 mb-3 flex gap-2 overflow-x-auto px-1 pb-1"
+                class="-mx-1 mb-3 flex touch-pan-x gap-2 overflow-x-auto overscroll-x-contain px-1 pb-1"
                 role="group"
                 :aria-label="copy.activity.category_label"
             >
@@ -104,8 +93,16 @@ function clearFilters(): void {
                 </button>
             </div>
 
-            <Sheet v-model:open="mobileOpen">
-                <SheetTrigger :as-child="true">
+            <FilterSheet
+                v-model="mobileOpen"
+                :title="copy.activity.filters_title"
+                :description="copy.activity.filters_description"
+                :clear-label="copy.activity.clear_filters"
+                :clear-disabled="processing || !hasActivityFilters(filters)"
+                :processing="processing"
+                @clear="clearFilters"
+            >
+                <template #trigger>
                     <Button
                         type="button"
                         variant="outline"
@@ -113,7 +110,9 @@ function clearFilters(): void {
                         aria-describedby="activity-mobile-filter-status"
                     >
                         <span class="flex items-center gap-2">
-                            <Filter class="size-4" aria-hidden="true" />
+                            <IconTile tone="brand" size="sm">
+                                <Filter />
+                            </IconTile>
                             {{ copy.activity.filters_title }}
                         </span>
                         <span
@@ -122,115 +121,27 @@ function clearFilters(): void {
                             aria-hidden="true"
                         />
                     </Button>
-                </SheetTrigger>
-                <span id="activity-mobile-filter-status" class="sr-only">
-                    {{
-                        hasActivityFilters(filters)
-                            ? copy.activity.active_filters_status
-                            : copy.activity.no_active_filters_status
-                    }}
-                </span>
-                <SheetContent
-                    side="bottom"
-                    class="max-h-[92vh] overflow-y-auto rounded-t-feature"
-                >
-                    <SheetHeader>
-                        <SheetTitle>{{
-                            copy.activity.filters_title
-                        }}</SheetTitle>
-                        <SheetDescription>
-                            {{ copy.activity.filters_description }}
-                        </SheetDescription>
-                    </SheetHeader>
+                </template>
+                <template #status>
+                    <span id="activity-mobile-filter-status" class="sr-only">
+                        {{
+                            hasActivityFilters(filters)
+                                ? copy.activity.active_filters_status
+                                : copy.activity.no_active_filters_status
+                        }}
+                    </span>
+                </template>
 
-                    <div class="grid gap-6 px-4 pb-7">
-                        <div class="grid gap-4">
-                            <div class="grid gap-2 text-sm font-medium">
-                                <span class="flex items-center gap-2">
-                                    <UsersRound
-                                        class="size-4 text-muted-foreground"
-                                        aria-hidden="true"
-                                    />
-                                    {{ copy.activity.contributor_label }}
-                                </span>
-                                <Select
-                                    v-model="actorModel"
-                                    :disabled="processing"
-                                >
-                                    <SelectTrigger
-                                        class="w-full"
-                                        :aria-label="
-                                            copy.activity.contributor_label
-                                        "
-                                    >
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">{{
-                                            copy.activity.all_contributors
-                                        }}</SelectItem>
-                                        <SelectItem
-                                            v-for="contributor in contributors"
-                                            :key="contributor.id"
-                                            :value="contributor.id"
-                                        >
-                                            {{ contributor.name }}
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div class="grid gap-2 text-sm font-medium">
-                                <span class="flex items-center gap-2">
-                                    <CalendarClock
-                                        class="size-4 text-muted-foreground"
-                                        aria-hidden="true"
-                                    />
-                                    {{ copy.activity.period_label }}
-                                </span>
-                                <Select
-                                    v-model="periodModel"
-                                    :disabled="processing"
-                                >
-                                    <SelectTrigger
-                                        class="w-full"
-                                        :aria-label="copy.activity.period_label"
-                                    >
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">{{
-                                            copy.activity.period_all
-                                        }}</SelectItem>
-                                        <SelectItem value="7d">{{
-                                            copy.activity.period_7d
-                                        }}</SelectItem>
-                                        <SelectItem value="30d">{{
-                                            copy.activity.period_30d
-                                        }}</SelectItem>
-                                        <SelectItem value="90d">{{
-                                            copy.activity.period_90d
-                                        }}</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            class="motion-reduce:transition-none"
-                            :disabled="
-                                processing || !hasActivityFilters(filters)
-                            "
-                            @click="clearFilters"
-                        >
-                            <RotateCcw class="size-4" aria-hidden="true" />
-                            {{ copy.activity.clear_filters }}
-                        </Button>
-                    </div>
-                </SheetContent>
-            </Sheet>
+                <div class="grid gap-6">
+                    <ActivityFilterFields
+                        v-model:actor="actorModel"
+                        v-model:period="periodModel"
+                        mode="mobile"
+                        :contributors="contributors"
+                        :disabled="processing"
+                    />
+                </div>
+            </FilterSheet>
         </div>
 
         <aside
@@ -238,13 +149,23 @@ function clearFilters(): void {
             :aria-label="copy.activity.filters_title"
         >
             <div class="border-b border-border/70 px-1 pb-4">
-                <div class="flex items-center gap-2 text-sm font-semibold">
-                    <Filter class="size-4 text-orange-600" aria-hidden="true" />
-                    {{ copy.activity.filters_title }}
-                </div>
-                <p class="mt-1.5 text-xs leading-5 text-muted-foreground">
-                    {{ copy.activity.filters_description }}
-                </p>
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    tile-size="sm"
+                    content-class="gap-1"
+                >
+                    <template #icon>
+                        <Filter />
+                    </template>
+
+                    <p class="text-sm font-semibold">
+                        {{ copy.activity.filters_title }}
+                    </p>
+                    <p class="text-xs leading-5 text-muted-foreground">
+                        {{ copy.activity.filters_description }}
+                    </p>
+                </LeadingIconHeading>
             </div>
 
             <div class="space-y-6 pt-5">
@@ -278,67 +199,13 @@ function clearFilters(): void {
                     </div>
                 </div>
 
-                <div class="grid gap-2 px-1 text-sm font-medium">
-                    <span class="flex items-center gap-2">
-                        <UsersRound
-                            class="size-4 text-muted-foreground"
-                            aria-hidden="true"
-                        />
-                        {{ copy.activity.contributor_label }}
-                    </span>
-                    <Select v-model="actorModel" :disabled="processing">
-                        <SelectTrigger
-                            class="w-full"
-                            :aria-label="copy.activity.contributor_label"
-                        >
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">{{
-                                copy.activity.all_contributors
-                            }}</SelectItem>
-                            <SelectItem
-                                v-for="contributor in contributors"
-                                :key="contributor.id"
-                                :value="contributor.id"
-                            >
-                                {{ contributor.name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <div class="grid gap-2 px-1 text-sm font-medium">
-                    <span class="flex items-center gap-2">
-                        <CalendarClock
-                            class="size-4 text-muted-foreground"
-                            aria-hidden="true"
-                        />
-                        {{ copy.activity.period_label }}
-                    </span>
-                    <Select v-model="periodModel" :disabled="processing">
-                        <SelectTrigger
-                            class="w-full"
-                            :aria-label="copy.activity.period_label"
-                        >
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">{{
-                                copy.activity.period_all
-                            }}</SelectItem>
-                            <SelectItem value="7d">{{
-                                copy.activity.period_7d
-                            }}</SelectItem>
-                            <SelectItem value="30d">{{
-                                copy.activity.period_30d
-                            }}</SelectItem>
-                            <SelectItem value="90d">{{
-                                copy.activity.period_90d
-                            }}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+                <ActivityFilterFields
+                    v-model:actor="actorModel"
+                    v-model:period="periodModel"
+                    mode="desktop"
+                    :contributors="contributors"
+                    :disabled="processing"
+                />
 
                 <Button
                     type="button"

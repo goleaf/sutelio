@@ -2,6 +2,15 @@
 import { router } from '@inertiajs/vue3';
 import { Search, Folder, CheckSquare, Settings, LogOut } from '@lucide/vue';
 import { ref, computed, watch } from 'vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUi } from '@/composables/useUi';
 import { dashboard, logout, projects } from '@/routes';
@@ -12,7 +21,7 @@ import { useUiStore } from '@/stores/ui';
 const ui = useUiStore();
 const { t } = useUi();
 const query = ref('');
-const inputRef = ref<HTMLInputElement>();
+const inputRef = ref<InstanceType<typeof Input> | null>(null);
 
 interface CommandItem {
     id: string;
@@ -88,7 +97,7 @@ watch(
     (open) => {
         if (open) {
             query.value = '';
-            setTimeout(() => inputRef.value?.focus(), 100);
+            setTimeout(() => inputRef.value?.$el?.focus(), 100);
         }
     },
 );
@@ -103,73 +112,69 @@ function handleKeydown(e: KeyboardEvent) {
         ui.closeCommandPalette();
     }
 }
+
+function handleOpenChange(open: boolean): void {
+    if (!open) {
+        ui.closeCommandPalette();
+    }
+}
 </script>
 
 <template>
-    <Teleport to="body">
-        <Transition name="fade">
-            <div
-                v-if="ui.commandPaletteOpen"
-                class="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 pt-[20vh]"
-                @click="ui.closeCommandPalette"
-            >
-                <div
-                    class="w-full max-w-md overflow-hidden rounded-xl border bg-background shadow-2xl"
-                    @click.stop
-                >
-                    <div class="flex items-center border-b px-4">
-                        <Search class="h-4 w-4 text-muted-foreground" />
-                        <Input
-                            ref="inputRef"
-                            v-model="query"
-                            :placeholder="t('commands.placeholder')"
-                            class="border-0 shadow-none focus-visible:ring-0"
-                            @keydown="handleKeydown"
-                        />
-                    </div>
-                    <div class="max-h-[300px] overflow-y-auto p-2">
-                        <template
-                            v-for="(items, section) in groupedCommands"
-                            :key="section"
-                        >
-                            <p
-                                class="px-2 py-1 text-xs font-medium text-muted-foreground"
-                            >
-                                {{ section }}
-                            </p>
-                            <button
-                                v-for="cmd in items"
-                                :key="cmd.id"
-                                class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-muted"
-                                @click="executeCommand(cmd)"
-                            >
-                                <component
-                                    :is="cmd.icon"
-                                    class="h-4 w-4 text-muted-foreground"
-                                />
-                                {{ cmd.label }}
-                            </button>
-                        </template>
-                        <p
-                            v-if="filteredCommands.length === 0"
-                            class="px-3 py-6 text-center text-sm text-muted-foreground"
-                        >
-                            {{ t('commands.empty') }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </Transition>
-    </Teleport>
-</template>
+    <Dialog :open="ui.commandPaletteOpen" @update:open="handleOpenChange">
+        <DialogContent class="gap-0 overflow-hidden p-0 sm:max-w-md">
+            <DialogHeader class="sr-only">
+                <DialogTitle>{{ t('commands.placeholder') }}</DialogTitle>
+                <DialogDescription>
+                    {{ t('commands.navigation') }}
+                </DialogDescription>
+            </DialogHeader>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.15s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
+            <div class="flex items-center border-b px-4 pr-14">
+                <Search
+                    class="size-4 text-muted-foreground"
+                    aria-hidden="true"
+                />
+                <Input
+                    ref="inputRef"
+                    v-model="query"
+                    :aria-label="t('commands.placeholder')"
+                    :placeholder="t('commands.placeholder')"
+                    class="border-0 shadow-none focus-visible:ring-0"
+                    @keydown="handleKeydown"
+                />
+            </div>
+            <div class="max-h-[300px] overflow-y-auto p-2">
+                <template
+                    v-for="(items, section) in groupedCommands"
+                    :key="section"
+                >
+                    <p
+                        class="px-2 py-1 text-xs font-medium text-muted-foreground"
+                    >
+                        {{ section }}
+                    </p>
+                    <Button
+                        v-for="cmd in items"
+                        :key="cmd.id"
+                        type="button"
+                        variant="ghost"
+                        class="h-auto min-h-11 w-full justify-start gap-3 px-3 py-2 font-normal"
+                        @click="executeCommand(cmd)"
+                    >
+                        <IconTile tone="muted" size="sm">
+                            <component :is="cmd.icon" />
+                        </IconTile>
+                        {{ cmd.label }}
+                    </Button>
+                </template>
+                <p
+                    v-if="filteredCommands.length === 0"
+                    class="px-3 py-6 text-center text-sm text-muted-foreground"
+                >
+                    {{ t('commands.empty') }}
+                </p>
+            </div>
+        </DialogContent>
+    </Dialog>
+</template>

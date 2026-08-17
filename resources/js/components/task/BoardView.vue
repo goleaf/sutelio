@@ -65,7 +65,10 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
 </script>
 
 <template>
-    <div class="overflow-x-auto pb-2" :aria-label="t('tasks.board.label')">
+    <div
+        class="touch-pan-x overflow-x-auto overscroll-x-contain pb-2"
+        :aria-label="t('tasks.board.label')"
+    >
         <div
             class="flex min-w-max gap-4 xl:grid xl:min-w-0"
             :style="{

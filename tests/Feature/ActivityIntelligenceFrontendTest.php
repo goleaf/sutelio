@@ -21,16 +21,22 @@ test('activity intelligence page uses server filters and manual infinite scroll'
 
 test('activity controls keep desktop and mobile filter experiences accessible', function () {
     $filters = file_get_contents(resource_path('js/components/activity/ActivityFilterPanel.vue'));
+    $fields = file_get_contents(resource_path('js/components/activity/ActivityFilterFields.vue'));
 
     expect($filters)
         ->toContain('aria-pressed')
-        ->toContain('Sheet')
-        ->toContain('Select')
+        ->toContain('FilterSheet')
+        ->toContain('ActivityFilterFields')
         ->toContain('min-h-11')
         ->toContain('aria-describedby')
         ->toContain('active_filters_status')
         ->toContain('focus-visible:ring')
-        ->toContain('motion-reduce:transition-none');
+        ->toContain('motion-reduce:transition-none')
+        ->and($fields)
+        ->toContain('Select')
+        ->toContain('mode?: \'desktop\' | \'mobile\'')
+        ->toContain(':aria-label="copy.activity.contributor_label"')
+        ->toContain(':aria-label="copy.activity.period_label"');
 });
 
 test('activity timeline localizes complete sentences and historical event fallbacks', function () {

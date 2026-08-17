@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'meta' => [
+        'description' => 'Planuokite užduotis, projektus ir bendrą darbą vienoje aiškioje darbo erdvėje.',
+    ],
     'common' => [
         'actions' => [
             'add' => 'Pridėti',
@@ -41,12 +44,19 @@ return [
         'states' => [
             'loading' => 'Įkeliama',
             'not_set' => 'Nenustatyta',
+            'opening' => 'Atveriama…',
+            'processing' => 'Vykdoma…',
+            'processing_hint' => 'Palaukite — veiksmas bus baigtas automatiškai.',
             'selected' => 'Pasirinkta: :count',
             'unassigned' => 'Nepriskirta',
             'unknown' => 'Nežinomas',
+            'uploading' => 'Įkeliama…',
         ],
         'toast' => [
             'close' => 'Uždaryti pranešimą',
+            'connection_offline' => 'Nėra interneto ryšio. Patikrinkite ryšį ir bandykite dar kartą.',
+            'connection_restored' => 'Ryšys atkurtas.',
+            'network_error' => 'Užklausos nepavyko įvykdyti. Patikrinkite ryšį ir bandykite dar kartą.',
             'notifications' => 'Pranešimai',
             'undo' => 'Atšaukti veiksmą',
         ],
@@ -60,6 +70,26 @@ return [
         ],
         'saving' => 'Keičiama kalba...',
         'switcher_label' => 'Keisti kalbą',
+    ],
+    'timezones' => [
+        'detected' => 'Aptikta šiame įrenginyje: :timezone',
+        'empty' => 'Pagal paiešką laiko juostų nerasta.',
+        'open' => 'Ieškoti ir pasirinkti laiko juostą',
+        'search_placeholder' => 'Ieškokite miesto, regiono arba laiko juostos',
+        'regions' => [
+            'utc' => 'Pasaulinis laikas',
+            'africa' => 'Afrika',
+            'america' => 'Amerika',
+            'antarctica' => 'Antarktida',
+            'arctic' => 'Arktis',
+            'asia' => 'Azija',
+            'atlantic' => 'Atlanto vandenynas',
+            'australia' => 'Australija',
+            'europe' => 'Europa',
+            'indian' => 'Indijos vandenynas',
+            'pacific' => 'Ramusis vandenynas',
+            'other' => 'Kita',
+        ],
     ],
     'auth' => [
         'common' => [

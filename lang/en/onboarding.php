@@ -12,9 +12,9 @@ return [
     'steps' => [
         'welcome' => ['title' => 'Make work feel lighter', 'description' => 'A short guided route will turn your preferences and first ideas into a useful workspace.'],
         'preferences' => ['title' => 'Make Sutelio yours', 'description' => 'Choose how dates, time, planning, and your first screen should work for you.'],
-        'workspace' => ['title' => 'Choose your workspace', 'description' => 'A workspace keeps its members, projects, tasks, and data inside one clear boundary.'],
-        'project' => ['title' => 'Give the work a home', 'description' => 'Select a current project or create a focused project for the outcome you want.'],
-        'task' => ['title' => 'Create your first next action', 'description' => 'Turn the project into a real, assignable task with an honest status and due date.'],
+        'workspace' => ['title' => 'Set up your workspace', 'description' => 'A workspace keeps its members, projects, tasks, and data inside one clear boundary.'],
+        'project' => ['title' => 'Give the work a project', 'description' => 'Connect this workspace to a focused project for the outcome you want.'],
+        'task' => ['title' => 'Define the next action', 'description' => 'Turn the project into a real, assignable task with an honest status and due date.'],
         'product_map' => ['title' => 'Know where everything lives', 'description' => 'Each area has one purpose, so you can move through the product without hunting.'],
         'safety' => ['title' => 'Collaborate without losing control', 'description' => 'Roles, account security, and backups protect the work as your workspace grows.'],
         'results' => ['title' => 'Your workspace is ready', 'description' => 'Review what you configured, then continue into Sutelio with real work already in place.'],
@@ -80,6 +80,7 @@ return [
     ],
     'workspace' => [
         'description' => 'Use an invited workspace you already belong to, or create a new boundary for your own work.',
+        'create_description' => 'Create your first workspace to give projects and tasks a clear, secure home.',
         'choose_existing' => 'Choose existing',
         'create_new' => 'Create new',
         'existing_label' => 'Available workspace',
@@ -94,6 +95,7 @@ return [
     ],
     'project' => [
         'description' => 'A project groups tasks around a meaningful result, not just a category.',
+        'create_description' => 'Create the first project in this workspace around a result you want to achieve.',
         'choose_existing' => 'Choose existing',
         'create_new' => 'Create new',
         'existing_label' => 'Active project',
@@ -109,6 +111,7 @@ return [
     ],
     'task' => [
         'description' => 'A useful task starts with a clear action and enough context to know when it is done.',
+        'create_description' => 'Create the first concrete next action for this project.',
         'choose_existing' => 'Choose existing',
         'create_new' => 'Create new',
         'existing_label' => 'Active task',

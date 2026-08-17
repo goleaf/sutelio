@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps, usePage } from '@inertiajs/vue3';
 import { UserPlus } from '@lucide/vue';
-import { watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
+import { detectBrowserTimezone } from '@/lib/timezone';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
@@ -19,6 +19,11 @@ defineProps<{
 
 const { t } = useUi();
 const page = usePage();
+const detectedTimezone = ref('UTC');
+
+onMounted(() => {
+    detectedTimezone.value = detectBrowserTimezone() ?? 'UTC';
+});
 
 watchEffect(() => {
     setLayoutProps({
@@ -43,6 +48,7 @@ watchEffect(() => {
             name="language"
             :value="page.props.localization.current"
         />
+        <input type="hidden" name="timezone" :value="detectedTimezone" />
         <div class="grid gap-6">
             <div class="grid gap-2">
                 <Label for="name">{{ t('auth.common.name') }}</Label>
@@ -107,11 +113,11 @@ watchEffect(() => {
                 type="submit"
                 size="lg"
                 class="mt-2 w-full"
-                :disabled="processing"
+                :loading="processing"
+                :loading-label="t('auth.register.submit')"
                 data-test="register-user-button"
             >
-                <Spinner v-if="processing" />
-                <UserPlus v-else class="size-4" aria-hidden="true" />
+                <UserPlus class="size-4" aria-hidden="true" />
                 {{ t('auth.register.submit') }}
             </Button>
         </div>

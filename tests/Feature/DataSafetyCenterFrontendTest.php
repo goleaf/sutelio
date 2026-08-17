@@ -10,7 +10,6 @@ test('settings expose the current section on mobile and retain desktop navigatio
     expect($layout)
         ->toContain("import SettingsSectionMenu from '@/components/settings/SettingsSectionMenu.vue'")
         ->toContain('<SettingsSectionMenu')
-        ->toContain('lg:block')
         ->and(File::exists($menuPath))->toBeTrue();
 
     if (! File::exists($menuPath)) {
@@ -18,6 +17,11 @@ test('settings expose the current section on mobile and retain desktop navigatio
     }
 
     expect(File::get($menuPath))
+        ->toContain('ResponsiveSectionNavigation')
+        ->toContain(':current-label="currentLabel"')
+        ->toContain(':open-label="openLabel"');
+
+    expect(File::get(resource_path('js/components/shared/ResponsiveSectionNavigation.vue')))
         ->toContain('DropdownMenuTrigger')
         ->toContain('DropdownMenuItem')
         ->toContain('<Link')
@@ -26,7 +30,7 @@ test('settings expose the current section on mobile and retain desktop navigatio
         ->toContain('whitespace-normal')
         ->toContain('break-words')
         ->toContain('motion-reduce:transition-none')
-        ->toContain('class="sr-only">{{ openLabel }}</span>')
+        ->toContain('class="sr-only">{{ props.openLabel }}</span>')
         ->not->toContain('truncate')
         ->not->toContain(':aria-label="openLabel"');
 });

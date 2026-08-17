@@ -151,7 +151,7 @@ watch(
                                 class="relative mx-auto flex max-w-md items-center overflow-hidden"
                             >
                                 <div
-                                    class="relative mx-auto aspect-square w-64 overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_16px_45px_-32px_rgba(255,96,56,0.5)]"
+                                    class="relative mx-auto aspect-square w-64 max-w-full overflow-hidden rounded-2xl border border-border/80 bg-card shadow-[0_16px_45px_-32px_rgba(255,96,56,0.5)]"
                                 >
                                     <div
                                         v-if="!qrCodeSvg"

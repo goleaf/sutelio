@@ -31,7 +31,10 @@ defineProps<Props>();
                         </BreadcrumbLink>
                     </template>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator v-if="index !== breadcrumbs.length - 1" />
+                <BreadcrumbSeparator
+                    v-if="index !== breadcrumbs.length - 1"
+                    aria-hidden="true"
+                />
             </template>
         </BreadcrumbList>
     </Breadcrumb>

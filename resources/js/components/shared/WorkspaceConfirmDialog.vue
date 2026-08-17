@@ -3,6 +3,7 @@ import { TriangleAlert } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import DialogActions from '@/components/shared/DialogActions.vue';
 import DialogBody from '@/components/shared/DialogBody.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
@@ -65,18 +66,14 @@ function confirm(): void {
             max-width-class="sm:max-w-md"
         >
             <DialogBody>
-                <div
-                    class="flex size-11 items-center justify-center rounded-2xl border"
-                    :class="
-                        destructive
-                            ? 'border-destructive/15 bg-destructive/10 text-destructive'
-                            : 'border-orange-500/15 bg-orange-500/10 text-orange-700'
-                    "
+                <IconTile
+                    :tone="destructive ? 'destructive' : 'brand'"
+                    size="md"
                 >
                     <slot name="icon">
-                        <TriangleAlert class="size-5" aria-hidden="true" />
+                        <TriangleAlert />
                     </slot>
-                </div>
+                </IconTile>
                 <div v-if="confirmationText" class="space-y-2">
                     <Label for="workspace-confirmation-text">
                         {{ confirmationLabel ?? confirmationText }}
@@ -104,7 +101,7 @@ function confirm(): void {
                     :variant="destructive ? 'destructive' : 'default'"
                     size="lg"
                     :loading="processing"
-                    :disabled="!confirmationMatches"
+                    :disabled="processing || !confirmationMatches"
                     @click="confirm"
                 >
                     {{ confirmLabel }}

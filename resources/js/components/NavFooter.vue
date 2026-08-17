@@ -27,13 +27,14 @@ defineProps<Props>();
                     <SidebarMenuButton
                         class="text-neutral-600 hover:text-neutral-800"
                         as-child
+                        :tooltip="item.title"
                     >
                         <a
                             :href="toUrl(item.href)"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <component :is="item.icon" />
+                            <component :is="item.icon" aria-hidden="true" />
                             <span>{{ item.title }}</span>
                         </a>
                     </SidebarMenuButton>

@@ -18,9 +18,11 @@ import {
 import { computed, nextTick, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
+import IconTile from '@/components/shared/IconTile.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
+import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -335,436 +337,393 @@ function manageWorkspace(workspace: Workspace): void {
     <div>
         <Head :title="t('workspaces.title')" />
 
-        <div class="min-h-full bg-muted/20 px-4 py-5 sm:p-6 lg:p-8">
-            <div class="mx-auto flex max-w-app flex-col gap-6">
-                <WorkspacePageHeader
-                    :eyebrow="t('workspaces.eyebrow')"
-                    :title="t('workspaces.title')"
-                    :description="t('workspaces.page_description')"
-                >
-                    <template #actions>
-                        <Button
-                            size="lg"
-                            data-workspace-create
-                            @click="openCreateDialog"
-                        >
-                            <Plus class="size-4" aria-hidden="true" />
-                            {{ t('workspaces.new') }}
-                        </Button>
-                    </template>
+        <WorkspacePageFrame>
+            <WorkspacePageHeader
+                :eyebrow="t('workspaces.eyebrow')"
+                :title="t('workspaces.title')"
+                :description="t('workspaces.page_description')"
+            >
+                <template #icon>
+                    <Building2 aria-hidden="true" />
+                </template>
 
-                    <template #metrics>
-                        <WorkspaceMetric
-                            :label="t('workspaces.title')"
-                            :value="formatNumber(portfolioTotals.workspaces)"
-                            :icon="Building2"
-                            tone="orange"
-                        />
-                        <WorkspaceMetric
-                            :label="t('workspaces.members')"
-                            :value="formatNumber(portfolioTotals.members)"
-                            :icon="Users"
-                            tone="emerald"
-                        />
-                        <WorkspaceMetric
-                            :label="t('workspaces.projects')"
-                            :value="formatNumber(portfolioTotals.projects)"
-                            :icon="Folder"
-                            tone="blue"
-                        />
-                        <WorkspaceMetric
-                            :label="t('workspaces.tasks')"
-                            :value="formatNumber(portfolioTotals.tasks)"
-                            :icon="CheckSquare"
-                            tone="violet"
-                        />
-                    </template>
-                </WorkspacePageHeader>
-
-                <section
-                    class="rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6"
-                >
-                    <div
-                        v-if="workspaces.data.length"
-                        class="grid gap-3 border-b border-border/70 pb-5 sm:grid-cols-[minmax(0,1fr)_13rem]"
+                <template #actions>
+                    <Button
+                        size="lg"
+                        data-workspace-create
+                        @click="openCreateDialog"
                     >
-                        <div class="relative">
-                            <Label for="workspace-search" class="sr-only">
-                                {{ t('workspaces.search_label') }}
-                            </Label>
-                            <Search
-                                class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
-                                aria-hidden="true"
-                            />
-                            <Input
-                                id="workspace-search"
-                                v-model="searchQuery"
-                                type="search"
-                                :placeholder="
-                                    t('workspaces.search_placeholder')
-                                "
-                                class="pl-10"
-                            />
-                        </div>
-                        <div>
-                            <Label for="workspace-sort" class="sr-only">
-                                {{ t('workspaces.sort_label') }}
-                            </Label>
-                            <Select v-model="sortOrder">
-                                <SelectTrigger
-                                    id="workspace-sort"
-                                    class="w-full"
-                                >
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="name_asc">
-                                        {{ t('workspaces.sort.name_asc') }}
-                                    </SelectItem>
-                                    <SelectItem value="name_desc">
-                                        {{ t('workspaces.sort.name_desc') }}
-                                    </SelectItem>
-                                    <SelectItem value="newest">
-                                        {{ t('workspaces.sort.newest') }}
-                                    </SelectItem>
-                                    <SelectItem value="oldest">
-                                        {{ t('workspaces.sort.oldest') }}
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        <Plus class="size-4" aria-hidden="true" />
+                        {{ t('workspaces.new') }}
+                    </Button>
+                </template>
+
+                <template #metrics>
+                    <WorkspaceMetric
+                        :label="t('workspaces.title')"
+                        :value="formatNumber(portfolioTotals.workspaces)"
+                        :icon="Building2"
+                        tone="orange"
+                    />
+                    <WorkspaceMetric
+                        :label="t('workspaces.members')"
+                        :value="formatNumber(portfolioTotals.members)"
+                        :icon="Users"
+                        tone="emerald"
+                    />
+                    <WorkspaceMetric
+                        :label="t('workspaces.projects')"
+                        :value="formatNumber(portfolioTotals.projects)"
+                        :icon="Folder"
+                        tone="blue"
+                    />
+                    <WorkspaceMetric
+                        :label="t('workspaces.tasks')"
+                        :value="formatNumber(portfolioTotals.tasks)"
+                        :icon="CheckSquare"
+                        tone="violet"
+                    />
+                </template>
+            </WorkspacePageHeader>
+
+            <section
+                class="rounded-panel border border-border/80 bg-card p-4 shadow-panel sm:p-6"
+            >
+                <div
+                    v-if="workspaces.data.length"
+                    class="grid gap-3 border-b border-border/70 pb-5 sm:grid-cols-[minmax(0,1fr)_13rem]"
+                >
+                    <div class="relative">
+                        <Label for="workspace-search" class="sr-only">
+                            {{ t('workspaces.search_label') }}
+                        </Label>
+                        <Search
+                            class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
+                            aria-hidden="true"
+                        />
+                        <Input
+                            id="workspace-search"
+                            v-model="searchQuery"
+                            type="search"
+                            :placeholder="t('workspaces.search_placeholder')"
+                            class="pl-10"
+                        />
                     </div>
+                    <div>
+                        <Label for="workspace-sort" class="sr-only">
+                            {{ t('workspaces.sort_label') }}
+                        </Label>
+                        <Select v-model="sortOrder">
+                            <SelectTrigger id="workspace-sort" class="w-full">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="name_asc">
+                                    {{ t('workspaces.sort.name_asc') }}
+                                </SelectItem>
+                                <SelectItem value="name_desc">
+                                    {{ t('workspaces.sort.name_desc') }}
+                                </SelectItem>
+                                <SelectItem value="newest">
+                                    {{ t('workspaces.sort.newest') }}
+                                </SelectItem>
+                                <SelectItem value="oldest">
+                                    {{ t('workspaces.sort.oldest') }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
 
-                    <p
-                        v-if="workspaces.data.length"
-                        class="mt-4 text-sm text-muted-foreground"
-                        aria-live="polite"
-                        aria-atomic="true"
-                    >
-                        {{
-                            t('workspaces.result_summary', {
-                                visible: formatNumber(
-                                    filteredWorkspaces.length,
-                                ),
-                                total: formatNumber(portfolioTotals.workspaces),
-                            })
-                        }}
-                    </p>
+                <p
+                    v-if="workspaces.data.length"
+                    class="mt-4 text-sm text-muted-foreground"
+                    aria-live="polite"
+                    aria-atomic="true"
+                >
+                    {{
+                        t('workspaces.result_summary', {
+                            visible: formatNumber(filteredWorkspaces.length),
+                            total: formatNumber(portfolioTotals.workspaces),
+                        })
+                    }}
+                </p>
 
-                    <div
-                        v-if="filteredWorkspaces.length"
-                        class="ui-stagger mt-5 grid items-start gap-4 lg:grid-cols-2"
+                <div
+                    v-if="filteredWorkspaces.length"
+                    class="mt-5 grid items-start gap-4 lg:grid-cols-2"
+                >
+                    <Card
+                        v-for="(workspace, index) in filteredWorkspaces"
+                        :key="workspace.id"
+                        class="group relative flex flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(255,96,56,0.5)] motion-reduce:transform-none"
+                        :class="
+                            isCurrentWorkspace(workspace)
+                                ? 'border-emerald-500/30 ring-1 ring-emerald-500/10 lg:col-span-2'
+                                : ''
+                        "
                     >
-                        <Card
-                            v-for="(workspace, index) in filteredWorkspaces"
-                            :key="workspace.id"
-                            class="group relative flex flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(255,96,56,0.5)] motion-reduce:transform-none"
+                        <span
+                            class="absolute inset-y-0 left-0 w-1.5"
                             :class="
                                 isCurrentWorkspace(workspace)
-                                    ? 'border-emerald-500/30 ring-1 ring-emerald-500/10 lg:col-span-2'
-                                    : ''
+                                    ? 'bg-emerald-500'
+                                    : 'bg-orange-500'
                             "
+                            aria-hidden="true"
+                        />
+                        <span
+                            class="absolute -right-4 -bottom-9 text-8xl leading-none font-semibold tracking-[-0.1em] text-foreground/[0.025] select-none"
+                            aria-hidden="true"
                         >
-                            <span
-                                class="absolute inset-y-0 left-0 w-1.5"
-                                :class="
-                                    isCurrentWorkspace(workspace)
-                                        ? 'bg-emerald-500'
-                                        : 'bg-orange-500'
-                                "
-                                aria-hidden="true"
-                            />
-                            <span
-                                class="absolute -right-4 -bottom-9 text-8xl leading-none font-semibold tracking-[-0.1em] text-foreground/[0.025] select-none"
-                                aria-hidden="true"
+                            {{ String(index + 1).padStart(2, '0') }}
+                        </span>
+                        <CardHeader class="relative gap-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <IconTile tone="brand" size="md">
+                                    <Building2 />
+                                </IconTile>
+                                <Badge
+                                    v-if="isCurrentWorkspace(workspace)"
+                                    variant="outline"
+                                    class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700"
+                                >
+                                    <CheckCircle2 aria-hidden="true" />
+                                    {{ t('workspaces.current') }}
+                                </Badge>
+                            </div>
+                            <div class="space-y-2">
+                                <CardTitle
+                                    class="tracking-[-0.02em] break-words"
+                                >
+                                    {{ workspace.name }}
+                                </CardTitle>
+                                <p
+                                    class="line-clamp-3 text-sm leading-6 break-words text-muted-foreground"
+                                >
+                                    {{
+                                        workspace.description ??
+                                        t('workspaces.no_description')
+                                    }}
+                                </p>
+                                <p
+                                    v-if="workspace.owner?.name"
+                                    class="flex items-center gap-1.5 text-xs text-muted-foreground"
+                                >
+                                    <span class="font-medium text-foreground">
+                                        {{ t('workspaces.owner') }}:
+                                    </span>
+                                    <span class="break-words">
+                                        {{ workspace.owner.name }}
+                                    </span>
+                                </p>
+                            </div>
+                        </CardHeader>
+                        <CardContent class="relative mt-auto space-y-4">
+                            <div
+                                class="grid grid-cols-3 divide-x divide-border/70 rounded-xl border border-border/70 bg-muted/25"
                             >
-                                {{ String(index + 1).padStart(2, '0') }}
-                            </span>
-                            <CardHeader class="relative gap-4">
                                 <div
-                                    class="flex items-start justify-between gap-3"
+                                    class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
+                                    :title="t('workspaces.members')"
                                 >
-                                    <div
-                                        class="flex size-11 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
-                                    >
-                                        <Building2
-                                            class="size-5"
-                                            aria-hidden="true"
-                                        />
-                                    </div>
-                                    <Badge
-                                        v-if="isCurrentWorkspace(workspace)"
-                                        variant="outline"
-                                        class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700"
-                                    >
-                                        <CheckCircle2 aria-hidden="true" />
-                                        {{ t('workspaces.current') }}
-                                    </Badge>
-                                </div>
-                                <div class="space-y-2">
-                                    <CardTitle
-                                        class="tracking-[-0.02em] break-words"
-                                    >
-                                        {{ workspace.name }}
-                                    </CardTitle>
-                                    <p
-                                        class="line-clamp-3 text-sm leading-6 break-words text-muted-foreground"
-                                    >
+                                    <Users
+                                        class="size-4 text-muted-foreground"
+                                        aria-hidden="true"
+                                    />
+                                    <span class="font-medium tabular-nums">
                                         {{
-                                            workspace.description ??
-                                            t('workspaces.no_description')
+                                            formatNumber(
+                                                workspace.members_count ?? 0,
+                                            )
                                         }}
-                                    </p>
-                                    <p
-                                        v-if="workspace.owner?.name"
-                                        class="flex items-center gap-1.5 text-xs text-muted-foreground"
-                                    >
-                                        <span
-                                            class="font-medium text-foreground"
-                                        >
-                                            {{ t('workspaces.owner') }}:
-                                        </span>
-                                        <span class="break-words">
-                                            {{ workspace.owner.name }}
-                                        </span>
-                                    </p>
+                                    </span>
                                 </div>
-                            </CardHeader>
-                            <CardContent class="relative mt-auto space-y-4">
                                 <div
-                                    class="grid grid-cols-3 divide-x divide-border/70 rounded-xl border border-border/70 bg-muted/25"
+                                    class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
+                                    :title="t('workspaces.projects')"
                                 >
-                                    <div
-                                        class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
-                                        :title="t('workspaces.members')"
-                                    >
-                                        <Users
-                                            class="size-4 text-muted-foreground"
-                                            aria-hidden="true"
-                                        />
-                                        <span class="font-medium tabular-nums">
-                                            {{
-                                                formatNumber(
-                                                    workspace.members_count ??
-                                                        0,
-                                                )
-                                            }}
-                                        </span>
-                                    </div>
-                                    <div
-                                        class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
-                                        :title="t('workspaces.projects')"
-                                    >
-                                        <Folder
-                                            class="size-4 text-muted-foreground"
-                                            aria-hidden="true"
-                                        />
-                                        <span class="font-medium tabular-nums">
-                                            {{
-                                                formatNumber(
-                                                    workspace.projects_count ??
-                                                        0,
-                                                )
-                                            }}
-                                        </span>
-                                    </div>
-                                    <div
-                                        class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
-                                        :title="t('workspaces.tasks')"
-                                    >
-                                        <CheckSquare
-                                            class="size-4 text-muted-foreground"
-                                            aria-hidden="true"
-                                        />
-                                        <span class="font-medium tabular-nums">
-                                            {{
-                                                formatNumber(
-                                                    workspace.todos_count ?? 0,
-                                                )
-                                            }}
-                                        </span>
-                                    </div>
+                                    <Folder
+                                        class="size-4 text-muted-foreground"
+                                        aria-hidden="true"
+                                    />
+                                    <span class="font-medium tabular-nums">
+                                        {{
+                                            formatNumber(
+                                                workspace.projects_count ?? 0,
+                                            )
+                                        }}
+                                    </span>
                                 </div>
-
                                 <div
-                                    class="flex flex-wrap items-center gap-2"
-                                    :aria-label="
-                                        t('workspaces.actions_label', {
-                                            name: workspace.name,
-                                        })
+                                    class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
+                                    :title="t('workspaces.tasks')"
+                                >
+                                    <CheckSquare
+                                        class="size-4 text-muted-foreground"
+                                        aria-hidden="true"
+                                    />
+                                    <span class="font-medium tabular-nums">
+                                        {{
+                                            formatNumber(
+                                                workspace.todos_count ?? 0,
+                                            )
+                                        }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex flex-wrap items-center gap-2"
+                                :aria-label="
+                                    t('workspaces.actions_label', {
+                                        name: workspace.name,
+                                    })
+                                "
+                            >
+                                <Button
+                                    size="sm"
+                                    class="min-h-11 flex-1 sm:flex-none"
+                                    :disabled="switchRequest.processing"
+                                    @click="manageWorkspace(workspace)"
+                                >
+                                    <Settings2 aria-hidden="true" />
+                                    {{ t('workspaces.actions.manage') }}
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    class="min-h-11 flex-1 sm:flex-none"
+                                    :disabled="
+                                        switchRequest.processing ||
+                                        isCurrentWorkspace(workspace)
+                                    "
+                                    @click="switchWorkspace(workspace)"
+                                >
+                                    <Spinner
+                                        v-if="
+                                            switchingWorkspaceId ===
+                                            workspace.id
+                                        "
+                                    />
+                                    <CheckCircle2
+                                        v-else-if="
+                                            isCurrentWorkspace(workspace)
+                                        "
+                                        aria-hidden="true"
+                                    />
+                                    <RefreshCw v-else aria-hidden="true" />
+                                    {{
+                                        isCurrentWorkspace(workspace)
+                                            ? t('workspaces.current')
+                                            : switchingWorkspaceId ===
+                                                workspace.id
+                                              ? t('workspaces.switching')
+                                              : t('workspaces.actions.switch')
+                                    }}
+                                </Button>
+                                <DropdownMenu
+                                    v-if="
+                                        canUpdateWorkspace(workspace) ||
+                                        canDuplicateWorkspace(workspace) ||
+                                        canDeleteWorkspace(workspace)
                                     "
                                 >
-                                    <Button
-                                        size="sm"
-                                        class="min-h-11 flex-1 sm:flex-none"
-                                        :disabled="switchRequest.processing"
-                                        @click="manageWorkspace(workspace)"
-                                    >
-                                        <Settings2 aria-hidden="true" />
-                                        {{ t('workspaces.actions.manage') }}
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        class="min-h-11 flex-1 sm:flex-none"
-                                        :disabled="
-                                            switchRequest.processing ||
-                                            isCurrentWorkspace(workspace)
-                                        "
-                                        @click="switchWorkspace(workspace)"
-                                    >
-                                        <Spinner
+                                    <DropdownMenuTrigger :as-child="true">
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            class="size-11 shrink-0"
+                                            :aria-label="
+                                                t('workspaces.actions_label', {
+                                                    name: workspace.name,
+                                                })
+                                            "
+                                            @click="
+                                                capturePortfolioDialogTrigger
+                                            "
+                                        >
+                                            <MoreHorizontal
+                                                aria-hidden="true"
+                                            />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                            v-if="canUpdateWorkspace(workspace)"
+                                            @select="openEditDialog(workspace)"
+                                        >
+                                            <Pencil aria-hidden="true" />
+                                            {{ t('workspaces.actions.edit') }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
                                             v-if="
-                                                switchingWorkspaceId ===
-                                                workspace.id
+                                                canDuplicateWorkspace(workspace)
                                             "
-                                        />
-                                        <CheckCircle2
-                                            v-else-if="
-                                                isCurrentWorkspace(workspace)
+                                            @select="
+                                                openDuplicateDialog(workspace)
                                             "
-                                            aria-hidden="true"
-                                        />
-                                        <RefreshCw v-else aria-hidden="true" />
-                                        {{
-                                            isCurrentWorkspace(workspace)
-                                                ? t('workspaces.current')
-                                                : switchingWorkspaceId ===
-                                                    workspace.id
-                                                  ? t('workspaces.switching')
-                                                  : t(
-                                                        'workspaces.actions.switch',
-                                                    )
-                                        }}
-                                    </Button>
-                                    <DropdownMenu
-                                        v-if="
-                                            canUpdateWorkspace(workspace) ||
-                                            canDuplicateWorkspace(workspace) ||
-                                            canDeleteWorkspace(workspace)
-                                        "
-                                    >
-                                        <DropdownMenuTrigger :as-child="true">
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                size="icon"
-                                                class="size-11 shrink-0"
-                                                :aria-label="
-                                                    t(
-                                                        'workspaces.actions_label',
-                                                        {
-                                                            name: workspace.name,
-                                                        },
-                                                    )
-                                                "
-                                                @click="
-                                                    capturePortfolioDialogTrigger
-                                                "
-                                            >
-                                                <MoreHorizontal
-                                                    aria-hidden="true"
-                                                />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem
-                                                v-if="
-                                                    canUpdateWorkspace(
-                                                        workspace,
-                                                    )
-                                                "
-                                                @select="
-                                                    openEditDialog(workspace)
-                                                "
-                                            >
-                                                <Pencil aria-hidden="true" />
-                                                {{
-                                                    t('workspaces.actions.edit')
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                v-if="
+                                        >
+                                            <Copy aria-hidden="true" />
+                                            {{
+                                                t(
+                                                    'workspaces.actions.duplicate',
+                                                )
+                                            }}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator
+                                            v-if="
+                                                canDeleteWorkspace(workspace) &&
+                                                (canUpdateWorkspace(
+                                                    workspace,
+                                                ) ||
                                                     canDuplicateWorkspace(
                                                         workspace,
-                                                    )
-                                                "
-                                                @select="
-                                                    openDuplicateDialog(
-                                                        workspace,
-                                                    )
-                                                "
-                                            >
-                                                <Copy aria-hidden="true" />
-                                                {{
-                                                    t(
-                                                        'workspaces.actions.duplicate',
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuSeparator
-                                                v-if="
-                                                    canDeleteWorkspace(
-                                                        workspace,
-                                                    ) &&
-                                                    (canUpdateWorkspace(
-                                                        workspace,
-                                                    ) ||
-                                                        canDuplicateWorkspace(
-                                                            workspace,
-                                                        ))
-                                                "
-                                            />
-                                            <DropdownMenuItem
-                                                v-if="
-                                                    canDeleteWorkspace(
-                                                        workspace,
-                                                    )
-                                                "
-                                                class="text-destructive focus:text-destructive"
-                                                @select="
-                                                    openDeleteDialog(workspace)
-                                                "
-                                            >
-                                                <Trash2 aria-hidden="true" />
-                                                {{
-                                                    t(
-                                                        'workspaces.actions.delete',
-                                                    )
-                                                }}
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                                                    ))
+                                            "
+                                        />
+                                        <DropdownMenuItem
+                                            v-if="canDeleteWorkspace(workspace)"
+                                            class="text-destructive focus:text-destructive"
+                                            @select="
+                                                openDeleteDialog(workspace)
+                                            "
+                                        >
+                                            <Trash2 aria-hidden="true" />
+                                            {{ t('workspaces.actions.delete') }}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
 
-                    <EmptyState
-                        v-else-if="workspaces.data.length"
-                        compact
-                        :title="t('workspaces.no_results')"
-                        :description="t('workspaces.no_results_description')"
-                    >
-                        <template #icon>
-                            <Search class="size-7" aria-hidden="true" />
-                        </template>
-                    </EmptyState>
+                <EmptyState
+                    v-else-if="workspaces.data.length"
+                    compact
+                    :title="t('workspaces.no_results')"
+                    :description="t('workspaces.no_results_description')"
+                >
+                    <template #icon>
+                        <Search class="size-7" aria-hidden="true" />
+                    </template>
+                </EmptyState>
 
-                    <EmptyState
-                        v-else
-                        :title="t('workspaces.empty')"
-                        :description="t('workspaces.empty_description')"
-                        :action-label="t('workspaces.create')"
-                        @action="setCreateDialog(true)"
-                    >
-                        <template #icon>
-                            <Building2 class="size-7" aria-hidden="true" />
-                        </template>
-                    </EmptyState>
-                </section>
-            </div>
-        </div>
+                <EmptyState
+                    v-else
+                    :title="t('workspaces.empty')"
+                    :description="t('workspaces.empty_description')"
+                    :action-label="t('workspaces.create')"
+                    @action="setCreateDialog(true)"
+                >
+                    <template #icon>
+                        <Building2 class="size-7" aria-hidden="true" />
+                    </template>
+                </EmptyState>
+            </section>
+        </WorkspacePageFrame>
 
         <Dialog :open="showCreateDialog" @update:open="setCreateDialog">
             <WorkspaceDialogContent

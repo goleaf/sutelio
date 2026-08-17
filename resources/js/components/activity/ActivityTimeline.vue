@@ -5,6 +5,7 @@ import {
     Bot,
     CheckCircle2,
     CirclePlus,
+    History,
     Link2,
     PackageOpen,
     PenLine,
@@ -16,6 +17,9 @@ import {
 import { computed } from 'vue';
 import type { Component } from 'vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import type { IconTileTone } from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
 import type { ActivityLog } from '@/types/models';
 
@@ -193,28 +197,28 @@ function eventIcon(event: ActivityLog['event']): Component {
     );
 }
 
-function eventTone(event: ActivityLog['event']): string {
+function eventTone(event: ActivityLog['event']): IconTileTone {
     if (event === 'created') {
-        return 'bg-orange-500/12 text-orange-700';
+        return 'brand';
     }
 
     if (['updated', 'attached', 'detached'].includes(event)) {
-        return 'bg-sky-500/12 text-sky-700';
+        return 'information';
     }
 
     if (['completed', 'uncompleted'].includes(event)) {
-        return 'bg-emerald-500/12 text-emerald-700';
+        return 'success';
     }
 
     if (event === 'recurrence_generated') {
-        return 'bg-violet-500/12 text-violet-700';
+        return 'warning';
     }
 
     if (event === 'deleted') {
-        return 'bg-red-500/12 text-red-700';
+        return 'destructive';
     }
 
-    return 'bg-foreground/6 text-foreground/70';
+    return 'muted';
 }
 </script>
 
@@ -225,11 +229,23 @@ function eventTone(event: ActivityLog['event']): string {
             :key="group.key"
             class="grid gap-4 md:grid-cols-[8rem_minmax(0,1fr)]"
         >
-            <h2
-                class="pt-2 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+            <LeadingIconHeading
+                tile
+                tile-tone="cobalt"
+                tile-size="sm"
+                class="pt-1"
+                content-class="gap-0"
             >
-                {{ group.label }}
-            </h2>
+                <template #icon>
+                    <History />
+                </template>
+
+                <h2
+                    class="pt-2 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+                >
+                    {{ group.label }}
+                </h2>
+            </LeadingIconHeading>
 
             <div
                 class="relative space-y-2 before:absolute before:top-5 before:bottom-5 before:left-5 before:w-px before:bg-border"
@@ -239,18 +255,13 @@ function eventTone(event: ActivityLog['event']): string {
                     :key="activity.id"
                     class="group relative grid grid-cols-[2.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-transparent p-2 transition-colors duration-200 hover:border-border hover:bg-muted/35 motion-reduce:transition-none sm:grid-cols-[2.5rem_minmax(0,1fr)_auto] sm:items-center"
                 >
-                    <div
-                        :class="[
-                            'relative z-10 flex size-10 items-center justify-center rounded-2xl ring-4 ring-card',
-                            eventTone(activity.event),
-                        ]"
+                    <IconTile
+                        :tone="eventTone(activity.event)"
+                        size="md"
+                        class="relative z-10 ring-4 ring-card"
                     >
-                        <component
-                            :is="eventIcon(activity.event)"
-                            class="size-4.5"
-                            aria-hidden="true"
-                        />
-                    </div>
+                        <component :is="eventIcon(activity.event)" />
+                    </IconTile>
 
                     <div class="min-w-0 py-0.5">
                         <p

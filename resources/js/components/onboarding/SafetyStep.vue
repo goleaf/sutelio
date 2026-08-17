@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DatabaseBackup, ShieldCheck, UsersRound } from '@lucide/vue';
 import type { OnboardingCopy } from '@/components/onboarding/onboarding-types';
+import IconTile from '@/components/shared/IconTile.vue';
 
 defineProps<{
     copy: OnboardingCopy['safety'];
@@ -8,9 +9,9 @@ defineProps<{
 }>();
 
 const topics = [
-    { key: 'team', icon: UsersRound },
-    { key: 'security', icon: ShieldCheck },
-    { key: 'backup', icon: DatabaseBackup },
+    { key: 'team', icon: UsersRound, tone: 'information' },
+    { key: 'security', icon: ShieldCheck, tone: 'success' },
+    { key: 'backup', icon: DatabaseBackup, tone: 'warning' },
 ] as const;
 </script>
 
@@ -22,11 +23,9 @@ const topics = [
                 :key="topic.key"
                 class="rounded-2xl border border-border/80 bg-muted/20 p-4"
             >
-                <component
-                    :is="topic.icon"
-                    class="size-5 text-orange-600"
-                    aria-hidden="true"
-                />
+                <IconTile :tone="topic.tone" size="sm">
+                    <component :is="topic.icon" />
+                </IconTile>
                 <h2 class="mt-4 font-semibold">
                     {{ copy[`${topic.key}_title`] }}
                 </h2>

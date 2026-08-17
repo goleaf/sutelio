@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import { Clock3 } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LanguageFlag from '@/components/localization/LanguageFlag.vue';
 import type {
     OnboardingCopy,
     OnboardingPreferences,
 } from '@/components/onboarding/onboarding-types';
+import TimezoneCombobox from '@/components/preferences/TimezoneCombobox.vue';
+import IconTile from '@/components/shared/IconTile.vue';
+import StatusNotice from '@/components/shared/StatusNotice.vue';
 import { Label } from '@/components/ui/label';
 import {
     Select,
@@ -19,12 +22,14 @@ import {
 import { useLanguagePreference } from '@/composables/useLanguagePreference';
 import { useUi } from '@/composables/useUi';
 import { formatDateValue } from '@/lib/formatters';
+import { detectBrowserTimezone } from '@/lib/timezone';
 import type { SupportedLanguage } from '@/types';
+import type { TimeZoneGroup } from '@/types/timezone';
 
 const props = defineProps<{
     copy: OnboardingCopy['preferences'];
     draft: OnboardingPreferences;
-    timezones: string[];
+    timezoneGroups: TimeZoneGroup[];
     errors: Record<string, string>;
     processing: boolean;
 }>();
@@ -50,19 +55,38 @@ const timeFormat = preferenceModel('time_format');
 const defaultView = preferenceModel('default_view');
 const startPage = preferenceModel('start_page');
 const weekStart = preferenceModel('week_start');
+const detectedTimezone = ref<string | null>(null);
 
 function handleLanguageChange(value: unknown): void {
     if (typeof value !== 'string') {
         return;
     }
 
+    const previousWeekStart = weekStart.value;
     language.value = value as SupportedLanguage;
+    const selectedLanguage = page.props.localization.options.find(
+        (option) => option.code === value,
+    );
+
+    if (selectedLanguage) {
+        weekStart.value = selectedLanguage.default_week_start;
+    }
+
     saveLanguage(value, {
         onError: (currentLanguage) => {
             language.value = currentLanguage;
+            weekStart.value = previousWeekStart;
         },
     });
 }
+
+onMounted(() => {
+    const detected = detectBrowserTimezone();
+
+    if (detected === timezone.value) {
+        detectedTimezone.value = detected;
+    }
+});
 
 const preview = computed(() =>
     formatDateValue(
@@ -117,35 +141,30 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
                 <InputError
                     :message="languageForm.errors.language ?? errors.language"
                 />
-                <p
+                <StatusNotice
                     v-if="languageForm.processing"
-                    class="text-sm text-muted-foreground"
-                    role="status"
-                    aria-live="polite"
-                >
-                    {{ t('localization.saving') }}
-                </p>
+                    :message="t('localization.saving')"
+                    status="loading"
+                />
             </div>
             <div class="space-y-2">
                 <Label for="timezone">{{ copy.timezone }}</Label>
-                <Select v-model="timezone" :disabled="processing">
-                    <SelectTrigger
-                        id="timezone"
-                        :aria-invalid="Boolean(errors.timezone)"
-                    >
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem
-                            v-for="value in timezones"
-                            :key="value"
-                            :value="value"
-                        >
-                            {{ value }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
+                <TimezoneCombobox
+                    v-model="timezone"
+                    :groups="timezoneGroups"
+                    :disabled="processing"
+                    :invalid="Boolean(errors.timezone)"
+                />
                 <InputError :message="errors.timezone" />
+                <StatusNotice
+                    v-if="detectedTimezone"
+                    :message="
+                        t('timezones.detected', {
+                            timezone: detectedTimezone,
+                        })
+                    "
+                    status="information"
+                />
             </div>
             <div class="space-y-2">
                 <Label for="date_format">{{ copy.date_format }}</Label>
@@ -252,7 +271,9 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
         <aside
             class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
         >
-            <Clock3 class="size-5 text-orange-600" aria-hidden="true" />
+            <IconTile tone="brand">
+                <Clock3 />
+            </IconTile>
             <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
             <p class="mt-1 text-sm leading-6 text-muted-foreground">
                 {{ copy.preview_description }}

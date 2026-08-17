@@ -27,15 +27,22 @@ test('project operations use scoped Wayfinder visits and manual result loading',
 
 test('project filters expose accessible desktop and mobile controls', function () {
     $filters = File::get(resource_path('js/components/project/ProjectTaskFilters.vue'));
+    $fields = File::get(resource_path('js/components/project/ProjectTaskFilterFields.vue'));
 
     expect($filters)
-        ->toContain('Sheet')
-        ->toContain('Select')
+        ->toContain('FilterSheet')
+        ->toContain('ProjectTaskFilterFields')
         ->toContain('type="search"')
         ->toContain('min-h-11')
         ->toContain('aria-pressed')
         ->toContain('aria-live')
-        ->toContain('motion-reduce:transition-none');
+        ->toContain('motion-reduce:transition-none')
+        ->and($fields)
+        ->toContain('Select')
+        ->toContain('mode?: \'desktop\' | \'mobile\'')
+        ->toContain('min-h-11')
+        ->toContain('aria-pressed')
+        ->toContain('focus-visible:ring');
 });
 
 test('project header and pulse communicate state without color alone', function () {

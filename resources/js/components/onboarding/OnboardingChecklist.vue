@@ -12,7 +12,9 @@ import {
     X,
 } from '@lucide/vue';
 import { dismissChecklist } from '@/actions/App/Http/Controllers/OnboardingController';
+import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
+import StatusNotice from '@/components/shared/StatusNotice.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useUi } from '@/composables/useUi';
@@ -55,13 +57,13 @@ function dismiss(): void {
                 aria-hidden="true"
             />
             <CardHeader class="relative gap-3 pr-16 sm:pr-20">
-                <LeadingIconHeading content-class="max-w-3xl">
+                <LeadingIconHeading
+                    tile
+                    tile-tone="brand"
+                    content-class="max-w-3xl"
+                >
                     <template #icon>
-                        <div
-                            class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
-                        >
-                            <Sparkles class="size-5" aria-hidden="true" />
-                        </div>
+                        <Sparkles />
                     </template>
 
                     <h2
@@ -92,10 +94,15 @@ function dismiss(): void {
                     <li v-if="checklist.can_invite && checklist.workspace_id">
                         <Link
                             :href="workspaceMembers(checklist.workspace_id)"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                            class="ui-lift group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
-                            <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-700"
+                            <IconTile
+                                :tone="
+                                    checklist.has_team_member
+                                        ? 'success'
+                                        : 'brand'
+                                "
+                                size="md"
                             >
                                 <Check
                                     v-if="checklist.has_team_member"
@@ -107,7 +114,7 @@ function dismiss(): void {
                                     class="size-5"
                                     aria-hidden="true"
                                 />
-                            </span>
+                            </IconTile>
                             <span class="min-w-0 flex-1">
                                 <span class="flex flex-wrap items-center gap-2">
                                     <span class="font-medium">{{
@@ -144,13 +151,11 @@ function dismiss(): void {
                     <li>
                         <Link
                             :href="editNotifications()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                            class="ui-lift group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
-                            <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700"
-                            >
-                                <BellRing class="size-5" aria-hidden="true" />
-                            </span>
+                            <IconTile tone="information" size="md">
+                                <BellRing />
+                            </IconTile>
                             <span class="min-w-0 flex-1">
                                 <span class="font-medium">{{
                                     t(
@@ -176,11 +181,9 @@ function dismiss(): void {
                     <li>
                         <Link
                             :href="editSecurity()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                            class="ui-lift group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
-                            <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700"
-                            >
+                            <IconTile tone="success" size="md">
                                 <Check
                                     v-if="checklist.has_security_factor"
                                     class="size-5"
@@ -191,7 +194,7 @@ function dismiss(): void {
                                     class="size-5"
                                     aria-hidden="true"
                                 />
-                            </span>
+                            </IconTile>
                             <span class="min-w-0 flex-1">
                                 <span class="flex flex-wrap items-center gap-2">
                                     <span class="font-medium">{{
@@ -230,16 +233,11 @@ function dismiss(): void {
                     <li v-if="checklist.workspace_id">
                         <Link
                             :href="editExport()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                            class="ui-lift group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
-                            <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700"
-                            >
-                                <FileArchive
-                                    class="size-5"
-                                    aria-hidden="true"
-                                />
-                            </span>
+                            <IconTile tone="cobalt" size="md">
+                                <FileArchive />
+                            </IconTile>
                             <span class="min-w-0 flex-1">
                                 <span class="font-medium">{{
                                     t('dashboard.onboarding.export_action')
@@ -263,16 +261,11 @@ function dismiss(): void {
                     <li v-if="checklist.can_manage_backups">
                         <Link
                             :href="editBackups()"
-                            class="group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
+                            class="ui-lift group flex min-h-16 items-center gap-3 rounded-2xl border bg-background/85 p-3.5 transition-colors hover:border-orange-300 hover:bg-background focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         >
-                            <span
-                                class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"
-                            >
-                                <DatabaseBackup
-                                    class="size-5"
-                                    aria-hidden="true"
-                                />
-                            </span>
+                            <IconTile tone="muted" size="md">
+                                <DatabaseBackup />
+                            </IconTile>
                             <span class="min-w-0 flex-1">
                                 <span class="font-medium">{{
                                     t('dashboard.onboarding.backup_action')
@@ -294,21 +287,18 @@ function dismiss(): void {
                     </li>
                 </ul>
 
-                <p
+                <StatusNotice
                     v-if="dismissForm.processing || dismissForm.hasErrors"
-                    class="mt-3 text-sm text-muted-foreground"
-                    :class="{ 'text-destructive': dismissForm.hasErrors }"
-                    :role="dismissForm.hasErrors ? 'alert' : undefined"
-                    aria-live="polite"
-                >
-                    {{
+                    class="mt-3"
+                    :message="
                         t(
                             dismissForm.hasErrors
                                 ? 'dashboard.onboarding.dismiss_error'
                                 : 'dashboard.onboarding.dismissing',
                         )
-                    }}
-                </p>
+                    "
+                    :status="dismissForm.hasErrors ? 'error' : 'loading'"
+                />
             </CardContent>
         </Card>
     </section>

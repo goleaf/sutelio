@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import Breadcrumbs from '@/components/Breadcrumbs.vue';
+import CommandPalette from '@/components/shared/CommandPalette.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,6 +38,7 @@ import { getInitials } from '@/composables/useInitials';
 import { useUi } from '@/composables/useUi';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import { useUiStore } from '@/stores/ui';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -51,8 +53,9 @@ const page = usePage();
 const auth = computed(() => page.props.auth);
 const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
 const { t } = useUi();
+const ui = useUiStore();
 
-const activeItemStyles = 'text-neutral-900';
+const activeItemStyles = 'font-semibold text-neutral-900';
 
 const mainNavItems = computed<NavItem[]>(() => [
     {
@@ -88,11 +91,15 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 variant="ghost"
                                 size="icon"
                                 class="mr-2 h-9 w-9"
+                                :aria-label="t('common.navigation.menu')"
                             >
-                                <Menu class="h-5 w-5" />
+                                <Menu class="h-5 w-5" aria-hidden="true" />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="left" class="w-[300px] p-6">
+                        <SheetContent
+                            side="left"
+                            class="w-full max-w-xs p-4 sm:p-6"
+                        >
                             <SheetTitle class="sr-only">{{
                                 t('common.navigation.menu')
                             }}</SheetTitle>
@@ -107,6 +114,11 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         v-for="item in mainNavItems"
                                         :key="item.title"
                                         :href="item.href"
+                                        :aria-current="
+                                            isCurrentUrl(item.href)
+                                                ? 'page'
+                                                : undefined
+                                        "
                                         class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent"
                                         :class="
                                             whenCurrentUrl(
@@ -119,6 +131,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                             v-if="item.icon"
                                             :is="item.icon"
                                             class="h-5 w-5"
+                                            aria-hidden="true"
                                         />
                                         {{ item.title }}
                                     </Link>
@@ -136,6 +149,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                             v-if="item.icon"
                                             :is="item.icon"
                                             class="h-5 w-5"
+                                            aria-hidden="true"
                                         />
                                         <span>{{ item.title }}</span>
                                     </a>
@@ -170,11 +184,17 @@ const rightNavItems = computed<NavItem[]>(() => [
                                         'h-9 cursor-pointer px-3',
                                     ]"
                                     :href="item.href"
+                                    :aria-current="
+                                        isCurrentUrl(item.href)
+                                            ? 'page'
+                                            : undefined
+                                    "
                                 >
                                     <component
                                         v-if="item.icon"
                                         :is="item.icon"
                                         class="mr-2 h-4 w-4"
+                                        aria-hidden="true"
                                     />
                                     {{ item.title }}
                                 </Link>
@@ -193,9 +213,12 @@ const rightNavItems = computed<NavItem[]>(() => [
                             variant="ghost"
                             size="icon"
                             class="group h-9 w-9 cursor-pointer"
+                            :aria-label="t('commands.placeholder')"
+                            @click="ui.openCommandPalette"
                         >
                             <Search
                                 class="size-5 opacity-80 group-hover:opacity-100"
+                                aria-hidden="true"
                             />
                         </Button>
 
@@ -206,7 +229,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                             >
                                 <TooltipProvider :delay-duration="0">
                                     <Tooltip>
-                                        <TooltipTrigger>
+                                        <TooltipTrigger :as-child="true">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
@@ -224,6 +247,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                                     <component
                                                         :is="item.icon"
                                                         class="size-5 opacity-80 group-hover:opacity-100"
+                                                        aria-hidden="true"
                                                     />
                                                 </a>
                                             </Button>
@@ -243,6 +267,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 variant="ghost"
                                 size="icon"
                                 class="relative size-10 w-auto rounded-full p-1 focus-within:ring-2 focus-within:ring-primary"
+                                :aria-label="auth.user.name"
                             >
                                 <Avatar
                                     class="size-8 overflow-hidden rounded-full"
@@ -278,5 +303,6 @@ const rightNavItems = computed<NavItem[]>(() => [
                 <Breadcrumbs :breadcrumbs="breadcrumbs" />
             </div>
         </div>
+        <CommandPalette />
     </div>
 </template>

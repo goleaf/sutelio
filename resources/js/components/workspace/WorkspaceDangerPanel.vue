@@ -155,13 +155,9 @@ async function deleteWorkspace(): Promise<void> {
                 class="border-amber-500/20"
             >
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="warning">
                         <template #icon>
-                            <div
-                                class="flex size-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700"
-                            >
-                                <Crown class="size-5" aria-hidden="true" />
-                            </div>
+                            <Crown />
                         </template>
 
                         <CardTitle>
@@ -244,13 +240,9 @@ async function deleteWorkspace(): Promise<void> {
                 class="border-destructive/20"
             >
                 <CardHeader>
-                    <LeadingIconHeading>
+                    <LeadingIconHeading tile tile-tone="destructive">
                         <template #icon>
-                            <div
-                                class="flex size-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive"
-                            >
-                                <Trash2 class="size-5" aria-hidden="true" />
-                            </div>
+                            <Trash2 />
                         </template>
 
                         <CardTitle>
@@ -311,13 +303,9 @@ async function deleteWorkspace(): Promise<void> {
 
         <Card v-else class="bg-muted/25">
             <CardHeader>
-                <LeadingIconHeading>
+                <LeadingIconHeading tile tile-tone="muted">
                     <template #icon>
-                        <div
-                            class="flex size-10 items-center justify-center rounded-xl border bg-background"
-                        >
-                            <LockKeyhole class="size-5" aria-hidden="true" />
-                        </div>
+                        <LockKeyhole />
                     </template>
 
                     <CardTitle>

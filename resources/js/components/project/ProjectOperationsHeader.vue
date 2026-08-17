@@ -5,6 +5,7 @@ import {
     CheckCircle2,
     CircleDotDashed,
     Copy,
+    FolderKanban,
     ListChecks,
     MoreHorizontal,
     Plus,
@@ -52,6 +53,10 @@ const { formatNumber, t } = useUi();
         :title="project.name"
         :description="project.description ?? t('projects.show.no_description')"
     >
+        <template #icon>
+            <FolderKanban aria-hidden="true" />
+        </template>
+
         <template #back>
             <Button
                 type="button"

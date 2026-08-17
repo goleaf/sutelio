@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tailwind Native Responsive"
+  short_description: "Responsive Tailwind and NativePHP UI workflow"
+  default_prompt: "Use $tailwind-native-responsive to audit and improve this Tailwind CSS 4 interface for web and NativePHP."

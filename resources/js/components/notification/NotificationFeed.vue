@@ -3,6 +3,7 @@ import { BellOff, ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed } from 'vue';
 import NotificationRow from '@/components/notification/NotificationRow.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
+import SurfacePanel from '@/components/shared/SurfacePanel.vue';
 import { Button } from '@/components/ui/button';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
 import { groupNotifications } from './notification-inbox';
@@ -26,7 +27,6 @@ const emit = defineEmits<{
     navigate: [url: string];
 }>();
 const { copy, formatNumber } = useWorkspaceUi();
-
 const groups = computed(() => groupNotifications(props.items, props.todayDate));
 
 const emptyCopy = computed(() => {
@@ -72,8 +72,8 @@ function groupLabel(key: 'earlier' | 'today'): string {
 </script>
 
 <template>
-    <section
-        class="overflow-hidden rounded-panel border border-border/80 bg-card shadow-panel"
+    <SurfacePanel
+        as="section"
         :aria-label="copy.notifications.feed_label"
         :aria-busy="filtering"
     >
@@ -104,7 +104,7 @@ function groupLabel(key: 'earlier' | 'today'): string {
                     </span>
                 </div>
 
-                <div class="ui-stagger grid gap-2" role="list">
+                <div class="grid gap-2" role="list">
                     <NotificationRow
                         v-for="notification in group.items"
                         :key="notification.id"
@@ -181,5 +181,5 @@ function groupLabel(key: 'earlier' | 'today'): string {
                 </Button>
             </div>
         </nav>
-    </section>
+    </SurfacePanel>
 </template>

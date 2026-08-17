@@ -22,7 +22,7 @@ const slot = computed(() => context?.value.slots[props.index])
     v-bind="forwarded"
     data-slot="input-otp-slot"
     :data-active="slot?.isActive"
-    :class="cn('data-[active=true]:border-orange-500 data-[active=true]:ring-orange-500/20 data-[active=true]:aria-invalid:ring-destructive/20 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive border-input relative flex size-11 items-center justify-center border-y border-r bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 text-sm font-medium shadow-xs transition-all outline-none first:rounded-l-xl first:border-l last:rounded-r-xl data-[active=true]:z-10 data-[active=true]:ring-[3px]', props.class)"
+    :class="cn('data-[active=true]:border-orange-500 data-[active=true]:ring-orange-500/20 data-[active=true]:aria-invalid:ring-destructive/20 aria-invalid:border-destructive data-[active=true]:aria-invalid:border-destructive border-input relative flex size-11 items-center justify-center border-y border-r bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 text-sm font-medium shadow-xs transition-[color,background-color,border-color,box-shadow] duration-[var(--motion-feedback)] ease-[var(--ease-emphasized)] outline-none first:rounded-l-xl first:border-l last:rounded-r-xl data-[active=true]:z-10 data-[active=true]:ring-[3px]', props.class)"
   >
     {{ slot?.char }}
     <div v-if="slot?.hasFakeCaret" class="pointer-events-none absolute inset-0 flex items-center justify-center">

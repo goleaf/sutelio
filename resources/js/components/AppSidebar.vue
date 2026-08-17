@@ -132,7 +132,16 @@ function projectHref(project: Project) {
                                 page.url.includes(project.id)
                             "
                         >
-                            <Link :href="projectHref(project)" prefetch>
+                            <Link
+                                :href="projectHref(project)"
+                                prefetch
+                                :aria-current="
+                                    page.component === 'projects/Show' &&
+                                    page.url.includes(project.id)
+                                        ? 'page'
+                                        : undefined
+                                "
+                            >
                                 <span
                                     class="size-2.5 shrink-0 rounded-full border border-black/10 shadow-sm"
                                     :style="{
@@ -146,7 +155,7 @@ function projectHref(project: Project) {
                 </SidebarMenu>
                 <p
                     v-if="navigation.projects.length === 0"
-                    class="px-2 py-2 text-xs text-sidebar-foreground/55 group-data-[collapsible=icon]:hidden"
+                    class="px-2 py-2 text-xs text-sidebar-foreground/75 group-data-[collapsible=icon]:hidden"
                 >
                     {{ navigation.labels.noProjects }}
                 </p>

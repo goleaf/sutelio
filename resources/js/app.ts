@@ -1,16 +1,25 @@
 import { axiosAdapter } from '@inertiajs/core';
 import { createInertiaApp, router } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
-import { createApp, h } from 'vue';
+import { createApp, Fragment, h } from 'vue';
+import GlobalBusyOverlay from '@/components/shared/GlobalBusyOverlay.vue';
+import NetworkStatusNotifier from '@/components/shared/NetworkStatusNotifier.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
+import {
+    bindGlobalBusyToRouter,
+    createGlobalBusyHttpClient,
+    globalBusy,
+} from '@/lib/globalBusy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Sutelio';
 
+bindGlobalBusyToRouter(router, globalBusy);
+
 createInertiaApp({
-    http: axiosAdapter(),
+    http: createGlobalBusyHttpClient(axiosAdapter(), globalBusy),
     title: (title) => (title ? `${title} - ${appName}` : appName),
     setup({ el, App, props, plugin }) {
         if (!el) {
@@ -18,7 +27,14 @@ createInertiaApp({
         }
 
         const pinia = createPinia();
-        const app = createApp({ render: () => h(App, props) });
+        const app = createApp({
+            render: () =>
+                h(Fragment, null, [
+                    h(App, props),
+                    h(GlobalBusyOverlay),
+                    h(NetworkStatusNotifier),
+                ]),
+        });
         app.use(plugin);
         app.use(pinia);
         app.mount(el);
@@ -33,9 +49,7 @@ createInertiaApp({
                 return AppLayout;
         }
     },
-    progress: {
-        color: '#FF6038',
-    },
+    progress: false,
 });
 
 initializeFlashToast();

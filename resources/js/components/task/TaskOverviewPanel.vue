@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
-import { Save } from '@lucide/vue';
+import { Save, User } from '@lucide/vue';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import TaskDescriptionField from '@/components/task/TaskDescriptionField.vue';
 import TaskTitleField from '@/components/task/TaskTitleField.vue';
 import { Button } from '@/components/ui/button';
@@ -92,9 +93,15 @@ async function save(): Promise<void> {
     <section
         class="rounded-panel border border-border/80 bg-card p-5 shadow-panel"
     >
-        <h2 class="mb-4 text-base font-semibold">
-            {{ t('tasks.detail.overview') }}
-        </h2>
+        <LeadingIconHeading tile tile-tone="brand" class="mb-4">
+            <template #icon>
+                <User />
+            </template>
+
+            <h2 class="text-base font-semibold">
+                {{ t('tasks.detail.overview') }}
+            </h2>
+        </LeadingIconHeading>
         <form class="space-y-4" @submit.prevent="save">
             <TaskTitleField
                 v-model="form.title"
