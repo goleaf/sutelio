@@ -254,3 +254,37 @@ test('workspace management search inputs reuse the shared search field', functio
             ->not->toContain('type="search"');
     }
 });
+
+test('shared result and pagination frames own status and navigation layout only', function () {
+    $resultPath = resource_path('js/components/shared/ResultSummary.vue');
+    $paginationPath = resource_path('js/components/shared/PaginationBar.vue');
+
+    expect(File::exists($resultPath))->toBeTrue()
+        ->and(File::exists($paginationPath))->toBeTrue();
+
+    expect(File::get($resultPath))
+        ->toContain('data-slot="result-summary"')
+        ->toContain('aria-live="polite"')
+        ->toContain(':aria-busy="props.pending ? \'true\' : undefined"')
+        ->toContain('{{ props.summary }}')
+        ->toContain('{{ props.detail }}');
+
+    expect(File::get($paginationPath))
+        ->toContain('data-slot="pagination-bar"')
+        ->toContain(':aria-label="props.label"')
+        ->toContain('{{ props.summary }}')
+        ->toContain('<slot />')
+        ->not->toContain('router')
+        ->not->toContain('Link');
+});
+
+test('task results and pagination compose the shared result frames', function () {
+    expect(File::get(resource_path('js/components/task/TaskResultsBar.vue')))
+        ->toContain("import ResultSummary from '@/components/shared/ResultSummary.vue'")
+        ->toContain('<ResultSummary');
+
+    expect(File::get(resource_path('js/components/task/TaskPagination.vue')))
+        ->toContain("import PaginationBar from '@/components/shared/PaginationBar.vue'")
+        ->toContain('<PaginationBar')
+        ->not->toContain('<nav');
+});

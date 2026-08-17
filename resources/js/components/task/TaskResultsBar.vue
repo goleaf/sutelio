@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { CheckSquare2, X } from '@lucide/vue';
+import { computed } from 'vue';
+import ResultSummary from '@/components/shared/ResultSummary.vue';
 import { taskPluralForm } from '@/components/task/task-focus';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -7,7 +9,7 @@ import { useUi } from '@/composables/useUi';
 import type { PaginatedResponse } from '@/types/api';
 import type { Todo } from '@/types/models';
 
-defineProps<{
+const props = defineProps<{
     activeFilterCount: number;
     allSelected: boolean;
     pagination: PaginatedResponse<Todo>;
@@ -22,6 +24,13 @@ const emit = defineEmits<{
     updateSelectionMode: [enabled: boolean];
 }>();
 const { formatNumber, locale, t } = useUi();
+const rangeSummary = computed(() =>
+    t('tasks.index.result_summary', {
+        from: formatNumber(props.pagination.meta.from ?? 0),
+        to: formatNumber(props.pagination.meta.to ?? 0),
+        total: formatNumber(props.pagination.meta.total),
+    }),
+);
 
 function activeFilterSummary(count: number): string {
     return t(
@@ -35,23 +44,15 @@ function activeFilterSummary(count: number): string {
     <div
         class="mt-5 flex flex-col gap-3 border-b border-border/70 pb-4 sm:flex-row sm:items-center sm:justify-between"
     >
-        <div class="min-w-0">
-            <p class="text-sm font-semibold tabular-nums" aria-live="polite">
-                {{
-                    t('tasks.index.result_summary', {
-                        from: formatNumber(pagination.meta.from ?? 0),
-                        to: formatNumber(pagination.meta.to ?? 0),
-                        total: formatNumber(pagination.meta.total),
-                    })
-                }}
-            </p>
-            <p
-                v-if="activeFilterCount"
-                class="mt-0.5 text-xs text-muted-foreground tabular-nums"
-            >
-                {{ activeFilterSummary(activeFilterCount) }}
-            </p>
-        </div>
+        <ResultSummary
+            :summary="rangeSummary"
+            :detail="
+                activeFilterCount
+                    ? activeFilterSummary(activeFilterCount)
+                    : undefined
+            "
+            :pending="processing"
+        />
 
         <div
             v-if="view === 'list'"
