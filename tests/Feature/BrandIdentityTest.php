@@ -5,6 +5,46 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
+test('the approved Sutelio identity and package metadata are canonical', function () {
+    $composer = json_decode(File::get(base_path('composer.json')), true, flags: JSON_THROW_ON_ERROR);
+    $package = json_decode(File::get(base_path('package.json')), true, flags: JSON_THROW_ON_ERROR);
+    $packageLock = json_decode(File::get(base_path('package-lock.json')), true, flags: JSON_THROW_ON_ERROR);
+    $environment = File::get(base_path('.env.example'));
+
+    expect(config('app.name'))->toBe('Sutelio')
+        ->and(config('nativephp.app_id'))->toBe('com.goleaf.sutelio')
+        ->and(config('nativephp.deeplink_scheme'))->toBe('sutelio')
+        ->and(config('nativephp.server.service_name'))->toBe('Sutelio')
+        ->and(config('nativephp.app_store_connect.app_name'))->toBe('Sutelio')
+        ->and(config('nativephp.android.theme.color_primary'))->toBe('#123C8B')
+        ->and(config('nativephp.android.theme.color_primary_night'))->toBe('#0A285F')
+        ->and(config('nativephp.android.theme.color_on_primary'))->toBe('#FFF8E9')
+        ->and($composer['name'])->toBe('goleaf/sutelio')
+        ->and($composer['description'])->toBe('Sutelio is a local-first, workspace-scoped task and collaboration application for web and NativePHP Mobile.')
+        ->and($composer['keywords'])->toBe([
+            'sutelio',
+            'laravel',
+            'nativephp',
+            'sqlite',
+            'task-management',
+            'collaboration',
+        ])
+        ->and($package['name'])->toBe('sutelio')
+        ->and($packageLock['name'])->toBe('sutelio')
+        ->and($packageLock['packages']['']['name'])->toBe('sutelio')
+        ->and($environment)->toContain(
+            'APP_NAME="Sutelio"',
+            'NATIVEPHP_APP_ID=com.goleaf.sutelio',
+            'NATIVEPHP_DEEPLINK_SCHEME=sutelio',
+            'NATIVEPHP_DEEPLINK_HOST=',
+            'NATIVEPHP_SERVICE_NAME="Sutelio"',
+            'NATIVEPHP_ANDROID_COLOR_PRIMARY="#123C8B"',
+            'NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT="#0A285F"',
+            'NATIVEPHP_ANDROID_COLOR_ON_PRIMARY="#FFF8E9"',
+            'APP_STORE_APP_NAME="Sutelio"',
+        );
+});
+
 test('the remaining user-facing catalogs use Sutelio with locale contract parity', function () {
     $catalogs = ['onboarding', 'ui', 'workspace'];
     $locales = ['en', 'lt', 'ru'];
@@ -171,6 +211,44 @@ test('a handled brand publish failure restores every previous output and removes
             ->filter(static fn (string $filename): bool => str_contains($filename, '.sutelio-stage-') || str_contains($filename, '.sutelio-backup-'));
 
         expect($publishArtifacts)->toBeEmpty();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
+test('the native brand installer rejects a stale generated identity before copying assets', function () {
+    $temporaryRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'sutelio-native-brand-'.Str::uuid();
+    $sourceAsset = 'drawable/sutelio-test.xml';
+
+    try {
+        File::ensureDirectoryExists($temporaryRoot.'/scripts');
+        File::ensureDirectoryExists($temporaryRoot.'/resources/brand/android/drawable');
+        File::ensureDirectoryExists($temporaryRoot.'/nativephp/android/app/src/main/res');
+
+        File::copy(
+            base_path('scripts/apply-native-brand.mjs'),
+            $temporaryRoot.'/scripts/apply-native-brand.mjs',
+        );
+        File::put($temporaryRoot.'/resources/brand/android/'.$sourceAsset, '<resources/>');
+        File::put(
+            $temporaryRoot.'/nativephp/android/app/build.gradle.kts',
+            'applicationId = "com.goleaf.xiaomimimo"',
+        );
+        File::put(
+            $temporaryRoot.'/nativephp/android/app/src/main/AndroidManifest.xml',
+            '<application android:label="Xiaomi Mimo"/>',
+        );
+
+        $process = new Process(['node', 'scripts/apply-native-brand.mjs'], $temporaryRoot);
+        $process->setTimeout(30);
+        $process->run();
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('com.goleaf.sutelio', 'Sutelio')
+            ->and(File::exists($temporaryRoot.'/nativephp/android/app/src/main/res/'.$sourceAsset))
+            ->toBeFalse();
     } finally {
         File::deleteDirectory($temporaryRoot);
     }

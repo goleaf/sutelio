@@ -1,11 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "goleaf/sutelio",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Sutelio is a local-first, workspace-scoped task and collaboration application for web and NativePHP Mobile.",
     "keywords": [
+        "sutelio",
         "laravel",
-        "framework"
+        "nativephp",
+        "sqlite",
+        "task-management",
+        "collaboration"
     ],
     "license": "MIT",
     "require": {

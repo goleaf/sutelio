@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'app_id' => env('NATIVEPHP_APP_ID'),
+    'app_id' => env('NATIVEPHP_APP_ID', 'com.goleaf.sutelio'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'deeplink_scheme' => env('NATIVEPHP_DEEPLINK_SCHEME') ?: null,
+    'deeplink_scheme' => env('NATIVEPHP_DEEPLINK_SCHEME') ?: 'sutelio',
 
     /*
     |--------------------------------------------------------------------------
@@ -279,7 +279,7 @@ return [
         | switch automatically when the device is in dark mode.
         |
         | Values must be hex strings: #RRGGBB or #AARRGGBB. Wrap them in quotes
-        | inside your .env file (e.g. NATIVEPHP_ANDROID_COLOR_PRIMARY="#04ABA6")
+        | inside your .env file (e.g. NATIVEPHP_ANDROID_COLOR_PRIMARY="#123C8B")
         | because '#' starts a comment in .env.
         |
         | Both values/themes.xml and values-night/themes.xml are written from
@@ -287,9 +287,9 @@ return [
         |
         */
         'theme' => [
-            'color_primary' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY', '#04ABA6'),
-            'color_primary_night' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT', '#FFFFFF'),
-            'color_on_primary' => env('NATIVEPHP_ANDROID_COLOR_ON_PRIMARY', '#FFFFFF'),
+            'color_primary' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY', '#123C8B'),
+            'color_primary_night' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT', '#0A285F'),
+            'color_on_primary' => env('NATIVEPHP_ANDROID_COLOR_ON_PRIMARY', '#FFF8E9'),
         ],
 
         /*
@@ -342,7 +342,7 @@ return [
         'ws_port' => (int) env('NATIVEPHP_WS_PORT', 8081),
 
         // Service name advertised on the network
-        'service_name' => env('NATIVEPHP_SERVICE_NAME', 'Xiaomi Mimo'),
+        'service_name' => env('NATIVEPHP_SERVICE_NAME', 'Sutelio'),
 
         // Service type for mDNS advertisement
         'service_type' => '_http._tcp',
@@ -415,7 +415,7 @@ return [
         'api_key_path' => env('APP_STORE_API_KEY_PATH'),
         'api_key_id' => env('APP_STORE_API_KEY_ID'),
         'api_issuer_id' => env('APP_STORE_API_ISSUER_ID'),
-        'app_name' => env('APP_STORE_APP_NAME'),
+        'app_name' => env('APP_STORE_APP_NAME') ?: 'Sutelio',
     ],
 
     /*

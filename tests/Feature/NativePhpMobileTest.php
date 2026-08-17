@@ -20,7 +20,7 @@ use Native\Mobile\Support\BundleFileManager;
 test('the application is configured for the NativePHP on-device runtime', function () {
     $cleanupEnvironmentKeys = config('nativephp.cleanup_env_keys');
 
-    expect(config('nativephp.app_id'))->toBe('com.goleaf.xiaomimimo')
+    expect(config('nativephp.app_id'))->toBe('com.goleaf.sutelio')
         ->and(config('nativephp.start_url'))->toBe('/')
         ->and(config('nativephp.runtime.mode'))->toBe('persistent')
         ->and(config('database.default'))->toBe('sqlite')
@@ -117,7 +117,7 @@ test('the NativePHP v4 mobile configuration contract is complete', function () {
     $environmentExample = file_get_contents(base_path('.env.example'));
     $nativeConfiguration = file_get_contents(config_path('nativephp.php'));
 
-    expect(config('nativephp.deeplink_scheme'))->toBeNull()
+    expect(config('nativephp.deeplink_scheme'))->toBe('sutelio')
         ->and(config('nativephp.deeplink_host'))->toBeNull()
         ->and(config('nativephp.permissions'))->toBe([])
         ->and(config('nativephp.permission_localizations'))->toBe([])
@@ -147,7 +147,7 @@ test('the NativePHP v4 mobile configuration contract is complete', function () {
         ->and(config('nativephp.android.build.incremental_builds'))->toBeTrue()
         ->and(config('nativephp.server.http_port'))->toBe(3000)
         ->and(config('nativephp.server.ws_port'))->toBe(8081)
-        ->and(config('nativephp.server.service_name'))->toBe('Xiaomi Mimo')
+        ->and(config('nativephp.server.service_name'))->toBe('Sutelio')
         ->and(config('nativephp.server.open_browser'))->toBeFalse()
         ->and(config('nativephp.server.watch_paths'))->toContain('database', 'public/build')
         ->and(config('nativephp.ipad'))->toBeFalse()
@@ -176,18 +176,18 @@ test('the NativePHP v4 mobile configuration contract is complete', function () {
             "'api_key_path' => env('APP_STORE_API_KEY_PATH')",
         )
         ->and($environmentExample)->toContain(
-            'NATIVEPHP_DEEPLINK_SCHEME=',
+            'NATIVEPHP_DEEPLINK_SCHEME=sutelio',
             'NATIVEPHP_DEEPLINK_HOST=',
             'NATIVEPHP_DEVELOPMENT_TEAM=',
             'NATIVEPHP_ANDROID_STATUS_BAR_STYLE=auto',
             'NATIVEPHP_HTTP_PORT=3000',
             'NATIVEPHP_WS_PORT=8081',
-            'NATIVEPHP_SERVICE_NAME="Xiaomi Mimo"',
+            'NATIVEPHP_SERVICE_NAME="Sutelio"',
             'NATIVEPHP_OPEN_BROWSER=false',
             'APP_STORE_API_KEY_PATH=',
             'APP_STORE_API_KEY_ID=',
             'APP_STORE_API_ISSUER_ID=',
-            'APP_STORE_APP_NAME=',
+            'APP_STORE_APP_NAME="Sutelio"',
         );
 });
 
@@ -242,7 +242,7 @@ test('the NativePHP v4 deployment contract protects signing credentials', functi
     $gitIgnore = file_get_contents(base_path('.gitignore'));
     $packageDefinition = Artisan::all()['native:package']->getDefinition();
 
-    expect(config('nativephp.app_id'))->toBe('com.goleaf.xiaomimimo')
+    expect(config('nativephp.app_id'))->toBe('com.goleaf.sutelio')
         ->and(config('nativephp.version_code'))->toBeInt()
         ->and($cleanupEnvironmentKeys)->toContain(
             'ANDROID_EMULATOR',
@@ -293,14 +293,14 @@ test('deployment credentials are removed from the bundled environment', function
     expect($environmentPath)->not->toBeFalse();
 
     File::put($environmentPath, implode(PHP_EOL, [
-        'NATIVEPHP_APP_ID=com.goleaf.xiaomimimo',
+        'NATIVEPHP_APP_ID=com.goleaf.sutelio',
         'NATIVEPHP_APP_VERSION=1.0.0',
         'DB_CONNECTION=sqlite',
         'MAIL_MAILER=log',
         'MAIL_URL=smtp://user:password@example.test',
         'ANDROID_KEYSTORE_FILE=credentials/release.jks',
         'ANDROID_KEYSTORE_PASSWORD=keystore-password',
-        'ANDROID_KEY_ALIAS=xiaomi-mimo',
+        'ANDROID_KEY_ALIAS=sutelio',
         'ANDROID_KEY_PASSWORD=key-password',
         'FCM_SERVER_KEY=fcm-secret',
         'GOOGLE_SERVICE_ACCOUNT_KEY=credentials/google-service.json',
@@ -326,7 +326,7 @@ test('deployment credentials are removed from the bundled environment', function
 
         expect(File::get($environmentPath))
             ->toContain(
-                'NATIVEPHP_APP_ID=com.goleaf.xiaomimimo',
+                'NATIVEPHP_APP_ID=com.goleaf.sutelio',
                 'NATIVEPHP_APP_VERSION=1.0.0',
                 'DB_CONNECTION=sqlite',
             )
@@ -361,11 +361,11 @@ test('the NativePHP installer values are configured', function () {
     $environmentExample = file_get_contents(base_path('.env.example'));
 
     expect($composer['require'])->toHaveKey('nativephp/mobile')
-        ->and(config('nativephp.app_id'))->toBe('com.goleaf.xiaomimimo')
+        ->and(config('nativephp.app_id'))->toBe('com.goleaf.sutelio')
         ->and(config('nativephp.version'))->toBe('DEBUG')
         ->and(config('nativephp.version_code'))->toBe(1)
         ->and($environmentExample)->toContain(
-            'NATIVEPHP_APP_ID=com.goleaf.xiaomimimo',
+            'NATIVEPHP_APP_ID=com.goleaf.sutelio',
             'NATIVEPHP_APP_VERSION=DEBUG',
             'NATIVEPHP_APP_VERSION_CODE=1',
         )
@@ -644,12 +644,12 @@ test('the NativePHP Jump command exposes the complete network contract', functio
         ->and($definition->getOption('browser')->getDefault())->toBeFalse()
         ->and(config('nativephp.server.http_port'))->toBe(3000)
         ->and(config('nativephp.server.ws_port'))->toBe(8081)
-        ->and(config('nativephp.server.service_name'))->toBe('Xiaomi Mimo')
+        ->and(config('nativephp.server.service_name'))->toBe('Sutelio')
         ->and(config('nativephp.server.open_browser'))->toBeFalse()
         ->and($exampleEnvironment)->toContain(
             'NATIVEPHP_HTTP_PORT=3000',
             'NATIVEPHP_WS_PORT=8081',
-            'NATIVEPHP_SERVICE_NAME="Xiaomi Mimo"',
+            'NATIVEPHP_SERVICE_NAME="Sutelio"',
             'NATIVEPHP_OPEN_BROWSER=false',
         );
 });

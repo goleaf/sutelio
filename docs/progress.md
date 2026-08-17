@@ -4813,3 +4813,35 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 
 - The phase is prepared as one local semantic commit named `refactor: rename Sutelio user-facing copy`; its observed hash and final ahead/behind state are reported in the task handoff after commit creation.
 - Push is intentionally deferred until Task 6. No history rewrite, force push, dependency change, generated artifact, or email-verification change is included.
+
+## Sutelio Technical Application Identity — 2026-08-17
+
+### Implementation Preflight
+
+- Began from clean `main` at `13e6b6e`; the working tree and index were empty. The checkout initially reported one local commit ahead, but an external repository process advanced `origin/main` to the same `13e6b6e` before this task changed any file. Task 5 is therefore already published; this task did not perform or claim that push.
+- Scope is limited to the Laravel application name, Composer/npm root metadata, NativePHP application/deep-link/theme/service/store defaults, exact committed and local non-secret environment identity, NativePHP fixtures, the source-controlled Android brand installer guard, and focused regression evidence.
+- Package and framework inspection confirms Laravel 13.25.0, NativePHP Mobile 4.2.0, Pest 5.1.1, PHP 8.5, Node 22.23.1, npm 10.9.8, and the already-canonical npm root name `sutelio`. No package or dependency version change is planned.
+- The ignored local `.env` will be changed only for the eight approved non-secret identity keys. `APP_URL` remains unchanged, the file will never be staged or printed in full, and `NATIVEPHP_DEEPLINK_HOST` remains empty.
+- Email verification, routes, migrations, dependencies, databases, generated native trees, and NativePHP regeneration remain outside this task. Laravel Boost `search-docs` is unavailable in this session, so no MCP documentation result is claimed.
+- Exact failing-first brand and NativePHP metadata coverage precedes implementation. Focused GREEN tests, Composer/npm lock verification, scoped formatting, diff inspection, one semantic commit, remote ancestry verification, and a normal push remain pending.
+
+### Implementation Delivered
+
+- Laravel now falls back to `Sutelio`. NativePHP falls back to application ID `com.goleaf.sutelio`, deep-link scheme `sutelio`, service/store name `Sutelio`, and Android theme colors `#123C8B`, `#0A285F`, and `#FFF8E9`; the verified-host setting remains empty and no second iOS identifier was added.
+- Composer root metadata is exactly `goleaf/sutelio` with the approved description and six keywords. The existing private npm root and both npm-lock root records were already `sutelio`, so `npm install --package-lock-only --ignore-scripts` produced no tracked npm diff and changed no dependency.
+- `.env.example` carries the exact committed defaults. The ignored local `.env` was changed only for the eight approved non-secret keys; a before/after SHA-256 of its unchanged `APP_URL` line is `46bfe2d96c9d407b77c06aa4ecd3513949e36089cc914e21c06db6a16c49dd5a`, and Git still ignores the file.
+- NativePHP tests now use only the Sutelio app ID, service name, signing-key alias fixture, and environment fixtures. The Android brand installer verifies the generated `com.goleaf.sutelio` application ID and `Sutelio` manifest label before copying any source-controlled resources, so a stale generated shell fails before writes.
+- The required initial `composer validate --strict` exposed an outdated root lock hash after the Composer metadata change. With explicit scope approval, `composer update --lock --no-install --no-scripts --no-interaction` regenerated only `composer.lock`'s root `content-hash` (one insertion and one deletion); no package, version, source, dependency, or install state changed.
+
+### Verification Evidence
+
+- The required metadata RED gate ran 35 tests with 29 passing, 6 expected failures, and 4,036 assertions. Failures were the old application name, old app ID in three NativePHP contracts, null deep-link scheme, and old service name. A separate installer-safety RED test failed its single assertion because the old script copied resources despite stale generated identity.
+- After implementation and `php artisan config:clear`, the focused BrandIdentity/NativePHP/DatabaseBackup/ApplicationLayer gate passes 57 tests / 4,272 assertions. The same 57 tests / 4,272 assertions pass again after both lock commands.
+- `composer validate --strict` passes after the one-line lock-hash refresh. `npm install --package-lock-only --ignore-scripts` reports 379 audited packages, zero vulnerabilities, and no package or lock diff.
+- `vendor/bin/pint --dirty --format agent`, Node syntax checking, scoped Prettier checking for the supported Composer JSON, installer script, and progress Markdown, and `git diff --check` pass. The initial Prettier command included unsupported `composer.lock` and exited 2 with `No parser could be inferred`; the corrected supported-file command passed without source changes.
+- This slice adds zero Eloquent queries, migrations, routes, authorization changes, email-verification behavior, dependency versions, generated native files, APKs, or database writes. NativePHP regeneration and platform inspection remain Task 7 work and were not performed here.
+
+### Git Delivery
+
+- The complete tracked diff contains only Task 6 identity/configuration/tests/installer/progress files plus the approved derived `composer.lock` content hash; `.env`, generated native trees, package dependency changes, and unrelated files remain unstaged.
+- The semantic commit is prepared as `refactor: rename application to Sutelio`. At the time this append-only entry is committed, its hash and push result cannot yet be embedded in that same commit; exact commit, remote ancestry, push range, and final ahead/behind facts are reported in the task handoff.
