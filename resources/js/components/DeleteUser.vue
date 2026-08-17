@@ -6,15 +6,12 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import DialogActions from '@/components/shared/DialogActions.vue';
+import DialogBody from '@/components/shared/DialogBody.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogFooter,
-    DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -71,26 +68,27 @@ const passwordInput = useTemplateRef('passwordInput');
                             :options="{
                                 preserveScroll: true,
                             }"
-                            class="space-y-6 px-6 py-6 sm:px-8"
                             v-slot="{ errors, processing, reset, clearErrors }"
                         >
-                            <div class="grid gap-2">
-                                <Label for="password" class="sr-only">{{
-                                    labels.password
-                                }}</Label>
-                                <PasswordInput
-                                    id="password"
-                                    name="password"
-                                    ref="passwordInput"
-                                    :placeholder="labels.password_placeholder"
-                                    :aria-invalid="Boolean(errors.password)"
-                                />
-                                <InputError :message="errors.password" />
-                            </div>
+                            <DialogBody>
+                                <div class="grid gap-2">
+                                    <Label for="password" class="sr-only">{{
+                                        labels.password
+                                    }}</Label>
+                                    <PasswordInput
+                                        id="password"
+                                        name="password"
+                                        ref="passwordInput"
+                                        :placeholder="
+                                            labels.password_placeholder
+                                        "
+                                        :aria-invalid="Boolean(errors.password)"
+                                    />
+                                    <InputError :message="errors.password" />
+                                </div>
+                            </DialogBody>
 
-                            <DialogFooter
-                                class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                            >
+                            <DialogActions>
                                 <DialogClose as-child>
                                     <Button
                                         type="button"
@@ -117,7 +115,7 @@ const passwordInput = useTemplateRef('passwordInput');
                                     <Spinner v-if="processing" />
                                     {{ labels.confirm }}
                                 </Button>
-                            </DialogFooter>
+                            </DialogActions>
                         </Form>
                     </WorkspaceDialogContent>
                 </Dialog>

@@ -14,6 +14,8 @@ import {
 } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import DialogActions from '@/components/shared/DialogActions.vue';
+import DialogBody from '@/components/shared/DialogBody.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Badge } from '@/components/ui/badge';
@@ -25,7 +27,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Dialog, DialogFooter } from '@/components/ui/dialog';
+import { Dialog } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -369,39 +371,40 @@ async function switchWorkspace(): Promise<void> {
                 :description="t('workspaces.edit_description')"
                 :close-label="t('common.actions.cancel')"
             >
-                <form
-                    class="space-y-6 px-6 py-6 sm:px-8"
-                    @submit.prevent="editWorkspace"
-                >
-                    <div class="space-y-2">
-                        <Label for="management-workspace-name">
-                            {{ t('workspaces.name') }}
-                        </Label>
-                        <Input
-                            id="management-workspace-name"
-                            v-model="editForm.name"
-                            :disabled="editForm.processing"
-                            :aria-invalid="Boolean(editForm.errors.name)"
-                            @input="editForm.clearErrors('name')"
-                        />
-                        <InputError :message="editForm.errors.name" />
-                    </div>
-                    <div class="space-y-2">
-                        <Label for="management-workspace-description">
-                            {{ t('workspaces.description') }}
-                        </Label>
-                        <Input
-                            id="management-workspace-description"
-                            v-model="editForm.description"
-                            :disabled="editForm.processing"
-                            :aria-invalid="Boolean(editForm.errors.description)"
-                            @input="editForm.clearErrors('description')"
-                        />
-                        <InputError :message="editForm.errors.description" />
-                    </div>
-                    <DialogFooter
-                        class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                    >
+                <form @submit.prevent="editWorkspace">
+                    <DialogBody>
+                        <div class="space-y-2">
+                            <Label for="management-workspace-name">
+                                {{ t('workspaces.name') }}
+                            </Label>
+                            <Input
+                                id="management-workspace-name"
+                                v-model="editForm.name"
+                                :disabled="editForm.processing"
+                                :aria-invalid="Boolean(editForm.errors.name)"
+                                @input="editForm.clearErrors('name')"
+                            />
+                            <InputError :message="editForm.errors.name" />
+                        </div>
+                        <div class="space-y-2">
+                            <Label for="management-workspace-description">
+                                {{ t('workspaces.description') }}
+                            </Label>
+                            <Input
+                                id="management-workspace-description"
+                                v-model="editForm.description"
+                                :disabled="editForm.processing"
+                                :aria-invalid="
+                                    Boolean(editForm.errors.description)
+                                "
+                                @input="editForm.clearErrors('description')"
+                            />
+                            <InputError
+                                :message="editForm.errors.description"
+                            />
+                        </div>
+                    </DialogBody>
+                    <DialogActions>
                         <Button
                             type="button"
                             variant="outline"
@@ -423,7 +426,7 @@ async function switchWorkspace(): Promise<void> {
                                     : t('common.actions.save')
                             }}
                         </Button>
-                    </DialogFooter>
+                    </DialogActions>
                 </form>
             </WorkspaceDialogContent>
         </Dialog>

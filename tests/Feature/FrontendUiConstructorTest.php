@@ -105,11 +105,13 @@ test('workspace dialogs compose shared body and action spacing', function () {
         ->toContain('<slot />');
 });
 
-test('active create dialogs reuse shared body and action composition', function () {
+test('active workspace dialogs reuse shared body and action composition', function () {
     foreach ([
         'project create' => 'project/ProjectCreateDialog.vue',
         'task create' => 'task/TaskCreateDialog.vue',
         'workspace confirmation' => 'shared/WorkspaceConfirmDialog.vue',
+        'workspace edit' => 'workspace/WorkspaceOverviewPanel.vue',
+        'delete user' => 'DeleteUser.vue',
     ] as $name => $file) {
         $source = File::get(resource_path("js/components/{$file}"));
 
