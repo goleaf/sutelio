@@ -51,4 +51,4 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 | View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
 | Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
 
-The latest global-language/signal-orange production build transformed 3,541 modules in 3.41 seconds. Main application CSS is 166.66 kB (24.66 kB gzip), and the application entry is 98.57 kB (24.98 kB gzip).
+The latest global-language/signal-orange production build transformed 3,541 modules. Main application CSS is 166.66 kB (24.66 kB gzip), and the application entry is 98.57 kB (24.97 kB gzip).
