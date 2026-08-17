@@ -5,6 +5,7 @@ import { watchEffect } from 'vue';
 import { restart as restartOnboarding } from '@/actions/App/Http/Controllers/OnboardingController';
 import InputError from '@/components/InputError.vue';
 import LanguageFlag from '@/components/localization/LanguageFlag.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -363,27 +364,28 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
             v-if="canReplayOnboarding"
             class="overflow-hidden border-orange-200/80 bg-gradient-to-br from-orange-50 via-background to-amber-50/60"
         >
-            <CardHeader class="sm:flex-row sm:items-start sm:justify-between">
-                <div class="flex min-w-0 gap-3">
-                    <span
-                        class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
-                    >
-                        <Sparkles class="size-5" aria-hidden="true" />
-                    </span>
-                    <div class="space-y-1">
-                        <p
-                            class="text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase"
+            <CardHeader class="sm:flex-row sm:items-center sm:justify-between">
+                <LeadingIconHeading>
+                    <template #icon>
+                        <span
+                            class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
                         >
-                            {{ t('settings.preferences.replay.eyebrow') }}
-                        </p>
-                        <CardTitle>{{
-                            t('settings.preferences.replay.title')
-                        }}</CardTitle>
-                        <CardDescription class="max-w-2xl leading-6">
-                            {{ t('settings.preferences.replay.description') }}
-                        </CardDescription>
-                    </div>
-                </div>
+                            <Sparkles class="size-5" aria-hidden="true" />
+                        </span>
+                    </template>
+
+                    <p
+                        class="text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase"
+                    >
+                        {{ t('settings.preferences.replay.eyebrow') }}
+                    </p>
+                    <CardTitle>{{
+                        t('settings.preferences.replay.title')
+                    }}</CardTitle>
+                    <CardDescription class="max-w-2xl leading-6">
+                        {{ t('settings.preferences.replay.description') }}
+                    </CardDescription>
+                </LeadingIconHeading>
                 <Button
                     type="button"
                     variant="outline"

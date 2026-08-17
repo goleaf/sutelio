@@ -11,6 +11,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -365,15 +366,20 @@ function removeMember(): void {
 
             <Card v-if="can_manage_members" class="xl:sticky xl:top-6">
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
-                    >
-                        <UserPlus class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>{{ copy.invite_title }}</CardTitle>
-                    <CardDescription>
-                        {{ copy.invite_description }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
+                            >
+                                <UserPlus class="size-5" aria-hidden="true" />
+                            </div>
+                        </template>
+
+                        <CardTitle>{{ copy.invite_title }}</CardTitle>
+                        <CardDescription>
+                            {{ copy.invite_description }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent>
                     <form class="space-y-4" @submit.prevent="invite">
@@ -453,15 +459,23 @@ function removeMember(): void {
 
             <Card v-else class="bg-muted/25 xl:sticky xl:top-6">
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl border bg-background"
-                    >
-                        <LockKeyhole class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>{{ copy.read_only_title }}</CardTitle>
-                    <CardDescription>
-                        {{ copy.read_only_description }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-10 items-center justify-center rounded-xl border bg-background"
+                            >
+                                <LockKeyhole
+                                    class="size-5"
+                                    aria-hidden="true"
+                                />
+                            </div>
+                        </template>
+
+                        <CardTitle>{{ copy.read_only_title }}</CardTitle>
+                        <CardDescription>
+                            {{ copy.read_only_description }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent>
                     <div

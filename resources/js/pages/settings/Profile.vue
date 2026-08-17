@@ -15,6 +15,7 @@ import {
 } from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/DeleteUser.vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -187,19 +188,20 @@ onBeforeUnmount(clearAvatarPreview);
     <div class="max-w-4xl space-y-6">
         <Card>
             <CardHeader>
-                <div class="flex items-start gap-3">
-                    <div
-                        class="flex size-10 items-center justify-center rounded-xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700"
-                    >
-                        <Camera class="size-5" aria-hidden="true" />
-                    </div>
-                    <div class="space-y-1">
-                        <CardTitle>{{ labels.avatar.title }}</CardTitle>
-                        <CardDescription>
-                            {{ labels.avatar.description }}
-                        </CardDescription>
-                    </div>
-                </div>
+                <LeadingIconHeading>
+                    <template #icon>
+                        <div
+                            class="flex size-10 items-center justify-center rounded-xl border border-orange-500/15 bg-orange-500/[0.08] text-orange-700"
+                        >
+                            <Camera class="size-5" aria-hidden="true" />
+                        </div>
+                    </template>
+
+                    <CardTitle>{{ labels.avatar.title }}</CardTitle>
+                    <CardDescription>
+                        {{ labels.avatar.description }}
+                    </CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent>
                 <form

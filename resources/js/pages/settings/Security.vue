@@ -3,6 +3,7 @@ import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
 import { Shield, ShieldCheck } from '@lucide/vue';
 import { ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -163,15 +164,18 @@ function disable2FA(): void {
 
         <Card v-if="canManageTwoFactor">
             <CardHeader>
-                <div class="flex items-center gap-2">
-                    <Shield class="h-5 w-5" />
+                <LeadingIconHeading>
+                    <template #icon>
+                        <Shield class="size-5" aria-hidden="true" />
+                    </template>
+
                     <CardTitle>{{
                         t('settings.security.two_factor_title')
                     }}</CardTitle>
-                </div>
-                <CardDescription>{{
-                    t('settings.security.two_factor_description')
-                }}</CardDescription>
+                    <CardDescription>{{
+                        t('settings.security.two_factor_description')
+                    }}</CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent>
                 <div

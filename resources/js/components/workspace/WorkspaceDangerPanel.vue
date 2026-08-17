@@ -3,6 +3,7 @@ import { router, useHttp } from '@inertiajs/vue3';
 import { Crown, LockKeyhole, ShieldAlert, Trash2 } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -154,21 +155,28 @@ async function deleteWorkspace(): Promise<void> {
                 class="border-amber-500/20"
             >
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700"
-                    >
-                        <Crown class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>
-                        {{ t('workspaces.management.danger.transfer_title') }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{
-                            t(
-                                'workspaces.management.danger.transfer_description',
-                            )
-                        }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700"
+                            >
+                                <Crown class="size-5" aria-hidden="true" />
+                            </div>
+                        </template>
+
+                        <CardTitle>
+                            {{
+                                t('workspaces.management.danger.transfer_title')
+                            }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{
+                                t(
+                                    'workspaces.management.danger.transfer_description',
+                                )
+                            }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent class="space-y-4">
                     <div class="space-y-2">
@@ -236,19 +244,26 @@ async function deleteWorkspace(): Promise<void> {
                 class="border-destructive/20"
             >
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive"
-                    >
-                        <Trash2 class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>
-                        {{ t('workspaces.management.danger.delete_title') }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{
-                            t('workspaces.management.danger.delete_description')
-                        }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-11 items-center justify-center rounded-2xl bg-destructive/10 text-destructive"
+                            >
+                                <Trash2 class="size-5" aria-hidden="true" />
+                            </div>
+                        </template>
+
+                        <CardTitle>
+                            {{ t('workspaces.management.danger.delete_title') }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{
+                                t(
+                                    'workspaces.management.danger.delete_description',
+                                )
+                            }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent class="space-y-4">
                     <div
@@ -296,17 +311,24 @@ async function deleteWorkspace(): Promise<void> {
 
         <Card v-else class="bg-muted/25">
             <CardHeader>
-                <div
-                    class="mb-2 flex size-10 items-center justify-center rounded-xl border bg-background"
-                >
-                    <LockKeyhole class="size-5" aria-hidden="true" />
-                </div>
-                <CardTitle>
-                    {{ t('workspaces.management.danger.owner_title') }}
-                </CardTitle>
-                <CardDescription>
-                    {{ t('workspaces.management.danger.owner_description') }}
-                </CardDescription>
+                <LeadingIconHeading>
+                    <template #icon>
+                        <div
+                            class="flex size-10 items-center justify-center rounded-xl border bg-background"
+                        >
+                            <LockKeyhole class="size-5" aria-hidden="true" />
+                        </div>
+                    </template>
+
+                    <CardTitle>
+                        {{ t('workspaces.management.danger.owner_title') }}
+                    </CardTitle>
+                    <CardDescription>
+                        {{
+                            t('workspaces.management.danger.owner_description')
+                        }}
+                    </CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent>
                 <Badge variant="outline">

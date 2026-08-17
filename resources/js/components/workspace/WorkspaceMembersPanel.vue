@@ -14,6 +14,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -531,17 +532,22 @@ async function cancelInvitation(): Promise<void> {
                 class="xl:sticky xl:top-6"
             >
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
-                    >
-                        <UserPlus class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>
-                        {{ t('workspaces.management.invite.title') }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{ t('workspaces.management.invite.description') }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
+                            >
+                                <UserPlus class="size-5" aria-hidden="true" />
+                            </div>
+                        </template>
+
+                        <CardTitle>
+                            {{ t('workspaces.management.invite.title') }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{ t('workspaces.management.invite.description') }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent>
                     <form class="space-y-4" @submit.prevent="inviteMember">
@@ -637,17 +643,25 @@ async function cancelInvitation(): Promise<void> {
 
             <Card v-else class="bg-muted/25 xl:sticky xl:top-6">
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl border bg-background"
-                    >
-                        <LockKeyhole class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>
-                        {{ t('workspaces.management.members.title') }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{ t('workspaces.management.members.read_only') }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-10 items-center justify-center rounded-xl border bg-background"
+                            >
+                                <LockKeyhole
+                                    class="size-5"
+                                    aria-hidden="true"
+                                />
+                            </div>
+                        </template>
+
+                        <CardTitle>
+                            {{ t('workspaces.management.members.title') }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{ t('workspaces.management.members.read_only') }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
             </Card>
         </div>

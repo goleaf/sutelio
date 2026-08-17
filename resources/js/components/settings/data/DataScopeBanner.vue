@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Building2, Database, ShieldCheck } from '@lucide/vue';
 import { computed } from 'vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 
 type DataScope = 'application' | 'workspace';
 
@@ -35,45 +36,44 @@ const presentation = computed(() =>
             :class="['absolute inset-y-0 left-0 w-1.5', presentation.railClass]"
             aria-hidden="true"
         />
-        <div class="flex items-start gap-3 pl-1 sm:gap-4">
-            <span
-                :class="[
-                    'flex size-11 shrink-0 items-center justify-center rounded-xl ring-1',
-                    presentation.iconClass,
-                ]"
-            >
-                <component
-                    :is="presentation.icon"
-                    class="size-5"
-                    aria-hidden="true"
-                />
-            </span>
-            <div class="min-w-0 flex-1">
-                <div class="flex flex-wrap items-center gap-2">
-                    <p
-                        class="text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase"
-                    >
-                        {{ label }}
-                    </p>
-                    <span
-                        class="inline-flex items-center gap-1 rounded-full bg-background/80 px-2 py-1 text-[11px] font-medium text-foreground ring-1 ring-border/70"
-                    >
-                        <ShieldCheck class="size-3" aria-hidden="true" />
-                        <slot name="status" />
-                    </span>
-                </div>
-                <h2
-                    :id="`${scope}-data-scope-title`"
-                    class="mt-2 text-base font-semibold text-balance sm:text-lg"
+        <LeadingIconHeading class="pl-1 sm:gap-4" content-class="gap-0">
+            <template #icon>
+                <span
+                    :class="[
+                        'flex size-11 items-center justify-center rounded-xl ring-1',
+                        presentation.iconClass,
+                    ]"
                 >
-                    {{ title }}
-                </h2>
+                    <component
+                        :is="presentation.icon"
+                        class="size-5"
+                        aria-hidden="true"
+                    />
+                </span>
+            </template>
+
+            <div class="flex flex-wrap items-center gap-2">
                 <p
-                    class="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground"
+                    class="text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase"
                 >
-                    {{ description }}
+                    {{ label }}
                 </p>
+                <span
+                    class="inline-flex items-center gap-1 rounded-full bg-background/80 px-2 py-1 text-[11px] font-medium text-foreground ring-1 ring-border/70"
+                >
+                    <ShieldCheck class="size-3" aria-hidden="true" />
+                    <slot name="status" />
+                </span>
             </div>
-        </div>
+            <h2
+                :id="`${scope}-data-scope-title`"
+                class="mt-2 text-base font-semibold text-balance sm:text-lg"
+            >
+                {{ title }}
+            </h2>
+            <p class="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">
+                {{ description }}
+            </p>
+        </LeadingIconHeading>
     </section>
 </template>

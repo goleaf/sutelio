@@ -14,6 +14,7 @@ import {
 } from '@lucide/vue';
 import { ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -288,21 +289,30 @@ async function switchWorkspace(): Promise<void> {
 
             <Card class="xl:sticky xl:top-6">
                 <CardHeader>
-                    <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
-                    >
-                        <Pencil class="size-5" aria-hidden="true" />
-                    </div>
-                    <CardTitle>
-                        {{ t('workspaces.management.overview.actions_title') }}
-                    </CardTitle>
-                    <CardDescription>
-                        {{
-                            t(
-                                'workspaces.management.overview.actions_description',
-                            )
-                        }}
-                    </CardDescription>
+                    <LeadingIconHeading>
+                        <template #icon>
+                            <div
+                                class="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-700"
+                            >
+                                <Pencil class="size-5" aria-hidden="true" />
+                            </div>
+                        </template>
+
+                        <CardTitle>
+                            {{
+                                t(
+                                    'workspaces.management.overview.actions_title',
+                                )
+                            }}
+                        </CardTitle>
+                        <CardDescription>
+                            {{
+                                t(
+                                    'workspaces.management.overview.actions_description',
+                                )
+                            }}
+                        </CardDescription>
+                    </LeadingIconHeading>
                 </CardHeader>
                 <CardContent class="space-y-3">
                     <Button

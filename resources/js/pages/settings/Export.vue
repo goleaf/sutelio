@@ -25,6 +25,7 @@ import type {
     ImportFormat,
 } from '@/components/settings/data/data-safety';
 import DataScopeBanner from '@/components/settings/data/DataScopeBanner.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -581,27 +582,25 @@ async function confirmImport(): Promise<void> {
                 </section>
             </CardContent>
             <CardContent v-else>
-                <div
-                    class="flex gap-3 rounded-xl border border-border/80 bg-muted/35 p-4"
+                <LeadingIconHeading
+                    class="rounded-xl border border-border/80 bg-muted/35 p-4"
+                    content-class="gap-0"
                 >
-                    <span
-                        class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-background text-muted-foreground ring-1 ring-border/70"
-                    >
-                        <LockKeyhole class="size-4" aria-hidden="true" />
-                    </span>
-                    <div class="min-w-0">
-                        <h3 class="font-semibold">
-                            {{ t('settings.export.import_restricted_title') }}
-                        </h3>
-                        <p class="mt-1 text-sm leading-6 text-muted-foreground">
-                            {{
-                                t(
-                                    'settings.export.import_restricted_description',
-                                )
-                            }}
-                        </p>
-                    </div>
-                </div>
+                    <template #icon>
+                        <span
+                            class="flex size-10 items-center justify-center rounded-xl bg-background text-muted-foreground ring-1 ring-border/70"
+                        >
+                            <LockKeyhole class="size-4" aria-hidden="true" />
+                        </span>
+                    </template>
+
+                    <h3 class="font-semibold">
+                        {{ t('settings.export.import_restricted_title') }}
+                    </h3>
+                    <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                        {{ t('settings.export.import_restricted_description') }}
+                    </p>
+                </LeadingIconHeading>
             </CardContent>
         </Card>
 

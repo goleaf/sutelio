@@ -15,6 +15,7 @@ import {
 } from '@/components/settings/data/data-safety';
 import DataScopeBanner from '@/components/settings/data/DataScopeBanner.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -283,18 +284,21 @@ function formatDate(timestamp: number): string {
         </Card>
 
         <section
-            class="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-sm text-amber-950"
+            class="rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-sm text-amber-950"
             aria-labelledby="backup-restore-risk-title"
         >
-            <TriangleAlert class="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-            <div>
+            <LeadingIconHeading content-class="gap-0">
+                <template #icon>
+                    <TriangleAlert class="size-5" aria-hidden="true" />
+                </template>
+
                 <h2 id="backup-restore-risk-title" class="font-semibold">
                     {{ t('settings.backup.restore_title') }}
                 </h2>
                 <p class="mt-1 leading-6">
                     {{ t('settings.backup.restore_risk') }}
                 </p>
-            </div>
+            </LeadingIconHeading>
         </section>
 
         <WorkspaceConfirmDialog

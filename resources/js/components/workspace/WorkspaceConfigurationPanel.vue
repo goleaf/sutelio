@@ -12,6 +12,7 @@ import {
 } from '@lucide/vue';
 import { computed, nextTick, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -454,31 +455,36 @@ async function deleteMetadata(): Promise<void> {
 
         <Card v-else-if="activeSection === 'labels'" class="border-sky-500/15">
             <CardHeader>
-                <div
-                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700"
-                >
-                    <Palette class="size-5" aria-hidden="true" />
-                </div>
-                <CardTitle>
-                    <span
-                        id="workspace-labels-title"
-                        tabindex="-1"
-                        class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
-                    >
+                <LeadingIconHeading>
+                    <template #icon>
+                        <div
+                            class="flex size-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-700"
+                        >
+                            <Palette class="size-5" aria-hidden="true" />
+                        </div>
+                    </template>
+
+                    <CardTitle>
+                        <span
+                            id="workspace-labels-title"
+                            tabindex="-1"
+                            class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
+                        >
+                            {{
+                                t(
+                                    'workspaces.management.configuration.labels.title',
+                                )
+                            }}
+                        </span>
+                    </CardTitle>
+                    <CardDescription>
                         {{
                             t(
-                                'workspaces.management.configuration.labels.title',
+                                'workspaces.management.configuration.labels.description',
                             )
                         }}
-                    </span>
-                </CardTitle>
-                <CardDescription>
-                    {{
-                        t(
-                            'workspaces.management.configuration.labels.description',
-                        )
-                    }}
-                </CardDescription>
+                    </CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent class="space-y-5">
                 <form
@@ -709,29 +715,36 @@ async function deleteMetadata(): Promise<void> {
 
         <Card v-else-if="activeSection === 'tags'" class="border-violet-500/15">
             <CardHeader>
-                <div
-                    class="mb-2 flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700"
-                >
-                    <TagIcon class="size-5" aria-hidden="true" />
-                </div>
-                <CardTitle>
-                    <span
-                        id="workspace-tags-title"
-                        tabindex="-1"
-                        class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
-                    >
+                <LeadingIconHeading>
+                    <template #icon>
+                        <div
+                            class="flex size-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-700"
+                        >
+                            <TagIcon class="size-5" aria-hidden="true" />
+                        </div>
+                    </template>
+
+                    <CardTitle>
+                        <span
+                            id="workspace-tags-title"
+                            tabindex="-1"
+                            class="block rounded-sm focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-background focus:outline-none"
+                        >
+                            {{
+                                t(
+                                    'workspaces.management.configuration.tags.title',
+                                )
+                            }}
+                        </span>
+                    </CardTitle>
+                    <CardDescription>
                         {{
-                            t('workspaces.management.configuration.tags.title')
+                            t(
+                                'workspaces.management.configuration.tags.description',
+                            )
                         }}
-                    </span>
-                </CardTitle>
-                <CardDescription>
-                    {{
-                        t(
-                            'workspaces.management.configuration.tags.description',
-                        )
-                    }}
-                </CardDescription>
+                    </CardDescription>
+                </LeadingIconHeading>
             </CardHeader>
             <CardContent class="space-y-5">
                 <form
