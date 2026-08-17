@@ -208,7 +208,7 @@ watch(
                                             type="text"
                                             readonly
                                             :value="manualSetupKey"
-                                            class="h-11 w-full bg-background px-3 text-sm text-foreground outline-none"
+                                            class="h-11 w-full bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3 text-sm text-foreground outline-none"
                                         />
                                         <button
                                             type="button"

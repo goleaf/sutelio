@@ -161,7 +161,7 @@ const description = computed({
                         :placeholder="copy.details_placeholder"
                         :disabled="processing"
                         :aria-invalid="Boolean(errors.description)"
-                        class="min-h-28 w-full resize-y rounded-xl border border-input bg-background px-3.5 py-3 text-sm transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-orange-500 focus-visible:ring-3 focus-visible:ring-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+                        class="min-h-28 w-full resize-y rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-3 text-sm transition-[color,box-shadow] outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-3 focus-visible:ring-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
                     />
                     <InputError :message="errors.description" />
                 </div>

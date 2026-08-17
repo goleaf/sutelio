@@ -48,7 +48,7 @@ Notification read-state and kind filters are named pressed-button groups, not ta
 
 Settings navigation uses a current-section dropdown below `lg` and the established vertical navigation at desktop. Long localized section names wrap, and Data Safety scope banners distinguish the current workspace from the application database with text and icons rather than color alone.
 
-Guided onboarding uses a wide-screen progress rail and a compact sticky mobile progress header. At 390 px, Skip occupies its own row and Back/Continue share equal columns; all journey actions are at least 44 px, safe-area spacing is explicit, localized content wraps without overflow, and one server-backed validation summary receives focus before field-level links.
+Guided onboarding uses a wide-screen progress rail and a compact sticky mobile progress header. Below 480 px, Skip, Back, and Continue stack as three full-width actions so long localized copy and 200% text reflow remain inside the viewport. From 480 px, Skip occupies its own row above equal Back/Continue columns; `sm` and wider layouts return to the compact action row. All journey actions remain at least 44 px, safe-area spacing is explicit, localized content wraps without overflow, and one server-backed validation summary receives focus before field-level links.
 
 ## Tailwind Feature Applicability
 

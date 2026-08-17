@@ -190,7 +190,7 @@ async function deleteComment(): Promise<void> {
                 :placeholder="t('tasks.detail.comment_placeholder')"
                 :disabled="busyKey !== null"
                 :aria-invalid="Boolean(commentRequest.errors.body)"
-                class="flex min-h-20 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:opacity-50 aria-invalid:border-destructive"
+                class="flex min-h-20 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-sm shadow-xs outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:opacity-50 aria-invalid:border-destructive"
                 @input="commentRequest.clearErrors('body')"
             />
             <InputError :message="commentRequest.errors.body" />
@@ -261,7 +261,7 @@ async function deleteComment(): Promise<void> {
                         rows="3"
                         maxlength="5000"
                         :disabled="busyKey !== null"
-                        class="flex min-h-20 w-full rounded-xl border border-input bg-background px-3.5 py-2.5 text-sm outline-none focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20"
+                        class="flex min-h-20 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-sm outline-none hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20"
                     />
                     <div class="flex justify-end gap-2">
                         <Button

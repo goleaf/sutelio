@@ -27,6 +27,8 @@ The complete Tailwind `orange-50` through `orange-950` scale is application-owne
 
 Exact signal-orange semantic surfaces use deep-cobalt `#0A285F` foreground, a pair measuring `4.71:1`. Foreground-bearing primary controls such as the default Button, checked Checkbox, and default Badge use `orange-600` (`#CD431F`) with white at `4.75:1`; white on exact signal orange reaches only `3.01:1` and is prohibited for normal text. Warning, destructive, success, information, chart, and persisted user/domain colors remain separate semantic systems.
 
+Boxed controls use restrained, statically discoverable Tailwind 4 diagonal ramps rather than flat or invisible surfaces. Default, destructive, and secondary buttons stay inside their semantic hue; `ghost` intentionally shares the light orange outlined surface, hover feedback, and focus ring of `outline`, while `link` remains unboxed. Shared Input, Textarea, Select, Checkbox, and OTP primitives use the same very light orange surface ramp. These product-control gradients never apply to the master mark or wordmark.
+
 Static complete class names are required. String interpolation such as `bg-${status}` is prohibited and guarded by `ArchitectureContractTest.php`; controlled maps must contain complete class literals. `@source` covers first-party Vue/Blade/PHP paths that automatic discovery cannot infer.
 
 ## Component Hierarchy

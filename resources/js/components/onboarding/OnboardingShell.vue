@@ -172,13 +172,13 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
             class="sticky bottom-0 z-20 -mx-4 mt-5 border-t border-border/80 bg-background/95 px-4 pt-3 pb-[max(1rem,var(--safe-area-inset-bottom))] backdrop-blur-sm sm:-mx-6 sm:px-6 xl:static xl:mx-0 xl:border-0 xl:bg-transparent xl:px-0 xl:pt-4 xl:pb-0 xl:backdrop-blur-none"
         >
             <div
-                class="mx-auto grid max-w-app grid-cols-2 items-center gap-2 sm:flex xl:justify-end"
+                class="mx-auto grid max-w-app grid-cols-1 items-center gap-2 min-[30rem]:grid-cols-2 sm:flex xl:justify-end"
             >
                 <Button
                     type="button"
-                    variant="ghost"
+                    variant="outline"
                     size="lg"
-                    class="col-span-2 min-h-11 justify-self-start sm:col-auto"
+                    class="min-h-11 w-full min-[30rem]:col-span-2 sm:col-auto sm:w-auto"
                     :disabled="processing"
                     @click="skipOpen = true"
                 >
