@@ -3,6 +3,50 @@
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
+dataset('leading icon heading consumers', [
+    'auth shell' => ['layouts/auth/AuthSimpleLayout.vue', 1],
+    'first-run language dialog' => ['components/localization/FirstRunLanguageDialog.vue', 1],
+    'dashboard task queue' => ['components/dashboard/DashboardTaskQueue.vue', 1],
+    'calendar attention rail' => ['components/calendar/CalendarAttentionRail.vue', 1],
+    'project pulse' => ['components/project/ProjectPulse.vue', 1],
+    'onboarding checklist' => ['components/onboarding/OnboardingChecklist.vue', 1],
+    'onboarding project step' => ['components/onboarding/ProjectStep.vue', 2],
+    'onboarding task step' => ['components/onboarding/TaskStep.vue', 2],
+    'onboarding workspace step' => ['components/onboarding/WorkspaceStep.vue', 2],
+    'data scope banner' => ['components/settings/data/DataScopeBanner.vue', 1],
+    'workspace configuration' => ['components/workspace/WorkspaceConfigurationPanel.vue', 2],
+    'workspace danger panel' => ['components/workspace/WorkspaceDangerPanel.vue', 3],
+    'workspace members panel' => ['components/workspace/WorkspaceMembersPanel.vue', 2],
+    'workspace overview panel' => ['components/workspace/WorkspaceOverviewPanel.vue', 1],
+    'settings members page' => ['pages/settings/Members.vue', 2],
+    'settings profile page' => ['pages/settings/Profile.vue', 1],
+    'settings preferences page' => ['pages/settings/Preferences.vue', 1],
+    'settings backup page' => ['pages/settings/Backup.vue', 1],
+    'settings export page' => ['pages/settings/Export.vue', 1],
+    'settings security page' => ['pages/settings/Security.vue', 1],
+]);
+
+test('leading icon headings keep the icon beside a vertically centered wrapping text stack', function () {
+    expect(File::get(resource_path('js/components/shared/LeadingIconHeading.vue')))
+        ->toContain('data-slot="leading-icon-heading"')
+        ->toContain('flex-nowrap')
+        ->toContain('items-center')
+        ->toContain('data-slot="leading-icon-heading-icon"')
+        ->toContain('shrink-0')
+        ->toContain('data-slot="leading-icon-heading-content"')
+        ->toContain('min-w-0 flex-1')
+        ->not->toContain('whitespace-nowrap');
+});
+
+test('every audited icon title and subtitle cluster uses the shared alignment contract', function (string $file, int $expectedCount) {
+    $source = File::get(resource_path("js/{$file}"));
+
+    expect($source)
+        ->toContain("import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue'")
+        ->and(substr_count($source, '<LeadingIconHeading'))
+        ->toBe($expectedCount);
+})->with('leading icon heading consumers');
+
 test('primary workspace pages use the shared warm precision header', function (string $page) {
     expect(File::get(resource_path("js/pages/{$page}")))
         ->toContain('WorkspacePageHeader')
