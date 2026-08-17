@@ -163,6 +163,6 @@ Requirements: `sys-runtime-001`, `sec-deps-001`, `data-sqlite-001`, `test-featur
 - [x] Add failing-first coverage and repair mobile SQLite containment, NativePHP scalar normalization, and unavailable bundled Blade view hints found by clean-device testing.
 - [x] Build and independently verify the APK manifest, signature, alignment, outer/nested archives, required bundle files, and host-database exclusion.
 - [x] Clean-install on the existing Android 14 emulator and complete cold boot, migrations, login rendering, registration, email-verification navigation, SQLite integrity, process, and log checks.
-- [ ] Run the final complete backend/frontend/static/data/diff gates, synchronize final evidence, commit only phase-owned files, and push `origin/main`.
+- [x] Run the final complete backend/frontend/static/data/diff gates, synchronize final evidence, commit only phase-owned files, and push `origin/main`.
 
 The ignored debug APK remains a local sideload artifact. Production signing and real-hardware release validation remain external release activities.
