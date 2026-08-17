@@ -1,5 +1,31 @@
 # Production Modernization Implementation Plan
 
+## Active System-Wide UI/UX Remediation Program — 2026-08-17
+
+Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-motion-001`, `i18n-001`, `test-feature-001`, `test-static-001`.
+
+- [x] Publish the diagnostic baseline in `docs/ui-ux-audit-2026-08-17.md` and record the audit-first, lowest-shared-correction rule.
+- [x] Record the product owner's selected direction: maximum practical motion coverage with soft, non-aggressive behavior and autonomous evidence-based consolidation.
+- [x] Define the high-coverage, low-amplitude motion contract in `docs/superpowers/specs/2026-08-17-sutelio-soft-motion-master-design.md`.
+- [x] Publish and quality-review the unified program in `docs/superpowers/plans/2026-08-17-sutelio-soft-motion-ui-remediation-master-plan.md`, combining all unfinished UI/UX, motion, browser, build, rename, emulator, and final-device scope while excluding work already delivered by responsive/constructor/database commits.
+- [x] Author the first implementation-ready source packet in `docs/superpowers/plans/2026-08-17-sutelio-soft-motion-foundation.md` with exact RED/GREEN steps, file ownership gates, commands, performance budgets, rollback boundaries, and commit checkpoints; execution remains gated behind Package 1 and active shared-file owners.
+- [ ] Re-baseline the executable packet against committed `main` after responsive, gradient-control, global-operation, localized-timezone, and current motion/icon owners settle; do not implement from stale line numbers or duplicate delivered primitives.
+
+This planning update does not claim application remediation. The optimized program closes P1 truth before P2 polish, treats motion quality as 100% meaningful-state classification rather than moving-element count, removes generic 480 ms page/Card/static-list entrances, and replaces them with measurable 90–260 ms event-driven feedback plus one bounded task-completion signature. Localized timezone, database, global busy feedback, and gradient-control work retain separate owners and explicit integration boundaries.
+
+## Onboarding Choice Coherence — 2026-08-17
+
+Requirements: `sys-onboarding-001`, `ui-system-001`, `ui-coherence-001`, `i18n-001`, `test-feature-001`, `test-static-001`, `git-delivery-001`.
+
+- [x] Reproduce the new-account workspace/project/task dead-choice pattern in isolated Chrome DevTools and Playwright sessions and trace it to three sibling components rather than the authorized option query.
+- [x] Add a failing-first regression for option-cardinality presentation, create-only copy, and the absence of disabled existing-choice placeholders.
+- [x] Make workspace, project, and task steps create-only when their authorized option set is empty while retaining select-or-create for invitations, populated accounts, and replay.
+- [x] Keep EN/LT/RU copy shape-complete and make all three entity-step headings truthful across create-only and select-or-create modes.
+- [x] Record the permanent area rule and synchronize requirement/compliance traceability.
+- [ ] Complete independent Playwright empty-state coverage, full quality/browser gates, disposable-account cleanup, scoped diff review, semantic commit, and normal `origin/main` push.
+
+Detailed analysis, exact files, test order, rollback, and delivery boundaries are recorded in `docs/superpowers/plans/2026-08-17-onboarding-choice-coherence.md`. This slice changes no query, route, policy, authorization, API, schema, migration, dependency, database, Blade, or Filament behavior.
+
 This living plan began from the 2026-08-16 baseline. A pass is complete only after its implementation, focused tests, applicable full gates, documentation/compliance update, diff inspection, and delivery status are recorded.
 
 ## Pass 0 — Repository Protection, Inventory, And Baseline
@@ -181,6 +207,19 @@ Requirements: `sys-user-003`, `sys-user-002`, `sys-onboarding-001`, `i18n-001`, 
 
 Detailed design and execution order are recorded in `docs/superpowers/specs/2026-08-17-global-language-selection-design.md` and `docs/superpowers/plans/2026-08-17-global-language-selection.md`. The change adds no schema or dependency; rollback removes the locale endpoint/cookie/shared controls while preserving the pre-existing account preference column.
 
+## Localized Timezone And Week Defaults — 2026-08-17
+
+Requirements: `sys-user-002`, `sys-user-003`, `sys-onboarding-001`, `data-time-001`, `i18n-001`, `i18n-format-001`, `ui-accessibility-001`, `ui-responsive-001`, `test-feature-001`, `test-static-001`, `git-delivery-001`.
+
+- [x] Add failing-first enum, catalog, persistence, registration, detection, and frontend interaction coverage.
+- [x] Make `UserLanguage` own EN/LT/RU week-start defaults and a `TimeZoneRegion` enum own stable translated IANA region groups.
+- [x] Generate a localized server timezone catalog, retaining canonical identifiers and Laravel validation without an external IP service or package dependency.
+- [x] Replace the onboarding and Settings raw selects with one searchable, grouped, keyboard-accessible Reka UI combobox.
+- [x] Detect the device timezone through the browser/NativePHP `Intl` runtime, preserve UTC fallback, and never overwrite an explicit user choice.
+- [ ] EN/LT/RU phone/tablet/desktop browser verification and the full quality/data-safety gates pass; complete the scoped commit and normal `origin/main` push after Tasks 20-21.
+
+Detailed acceptance criteria, execution order, and rollback are recorded in `docs/superpowers/plans/2026-08-17-localized-timezone-preferences.md`. No schema, route, policy, external API, package, or stored timezone format change is planned.
+
 ## Sutelio Full Brand Rename — 2026-08-17
 
 Requirements: `sys-brand-001`, `ui-accessibility-001`, `i18n-001`, `test-feature-001`, `ops-deployment-001`, `docs-traceability-001`, `git-delivery-001`.
@@ -189,9 +228,9 @@ Requirements: `sys-brand-001`, `ui-accessibility-001`, `i18n-001`, `test-feature
 - [x] Make `npm run brand:native` reproduce canonical Android/iOS identity and assets after a fresh NativePHP install, with complete preflight, containment, idempotence, and handled-failure rollback coverage.
 - [x] Synchronize active repository instructions, contributor/release entry points, requirement traceability, frontend/design/accessibility/localization/testing/deployment ownership, and current evidence while retaining historical audits/plans/progress.
 - [x] Run the complete Task 9 application, static, frontend, data-safety, dependency, build, and delivery gates.
-- [ ] Complete successor Task 18 browser/visual verification in the fixed light mode, including zoom, focus, reduced motion, forced colors, metadata, favicon, and shared logo consumers.
-- [ ] Run successor Task 19 complete application, dependency, build, and isolated data-safety gates after the design work; retain the completed Task 9 result as its own earlier evidence rather than presenting it as a Task 19 execution.
-- [ ] Build, independently inspect, name, clean-install, and exercise the final Sutelio Android APK in the emulator in successor Task 20; record artifact and emulator evidence only after it is observed.
+- [x] Complete successor Task 18 browser/visual verification in the fixed light mode, including zoom, focus, reduced motion, forced colors, metadata, favicon, and shared logo consumers.
+- [x] Run successor Task 19 complete application, dependency, build, and isolated data-safety gates after the design work; retain the completed Task 9 result as its own earlier evidence rather than presenting it as a Task 19 execution.
+- [x] Build, independently inspect, name, clean-install, and exercise the final Sutelio Android APK in the emulator in successor Task 20; record artifact and emulator evidence only after it is observed.
 - [ ] Rename the existing GitHub repository, checkout, and Herd site in place and verify `goleaf/sutelio` plus `sutelio.test` in successor Task 21; do not create a replacement repository or rewrite history.
 - [ ] Install and verify the final Task 20 artifact on the connected Samsung in successor Task 22 only after Tasks 18-21, Git delivery, and the repository/Herd rename are complete; keep this as the last mutating action.
 
@@ -210,3 +249,31 @@ Requirements: `data-integrity-001`, `data-sqlite-001`, `perf-query-001`, `test-f
 - [ ] Add evidence-threshold database growth/maintenance observability, then run the final complete data and delivery gate.
 
 The dependency order, file-level tasks, exact commands, acceptance criteria, and prohibited speculative optimizations are recorded in `docs/superpowers/plans/2026-08-17-sutelio-database-optimization.md`.
+
+## Global Operation Feedback — 2026-08-17
+
+Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-motion-001`, `i18n-001`, `test-feature-001`, `test-static-001`, `git-delivery-001`.
+
+- [x] Inventory Inertia forms, router visits, standalone `useHttp` requests, existing local spinners, and background-request classes; reject per-page duplication and router-only coverage.
+- [x] Add failing-first frontend behavior and Pest source/localization contracts for overlap safety, progress, request classification, cleanup, opacity, blocking, accessibility, and EN/LT/RU parity.
+- [x] Implement one token-safe `globalBusy` controller, Inertia lifecycle binding, configured standalone HTTP wrapper, and root teleported `GlobalBusyOverlay` without a new dependency.
+- [x] Preserve action-specific local feedback while excluding prefetch, polling, deferred/partial background refreshes, infinite scroll, and Precognition validation from the application lock.
+- [x] Record the permanent JavaScript rule and synchronize frontend, design-system, accessibility, localization, testing, NFR, compliance, and progress documentation.
+- [ ] The focused/full/static/dependency/data/build gates and independent Chrome DevTools and Playwright browser matrix pass; complete the semantic commit and normal `origin/main` push after Tasks 20-21.
+
+Detailed design, execution order, rollback, and acceptance criteria are recorded in `docs/superpowers/specs/2026-08-17-global-operation-feedback-design.md` and `docs/superpowers/plans/2026-08-17-global-operation-feedback.md`. No schema, route, policy, API shape, package, lock-file, or database change is planned.
+
+## Soft Motion And Icon Remediation — 2026-08-17
+
+Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-motion-001`, `test-feature-001`, `test-static-001`, `sys-brand-001`, `git-delivery-001`.
+
+- [x] Replace generic route/Card/static-list entrances with shared high-coverage, low-amplitude motion primitives and bounded, non-replaying collection choreography.
+- [x] Establish `IconTile`, `LeadingIconHeading`, and `WorkspacePageHeader` as the icon-surface ownership chain and apply the orange action/completion versus cobalt structure/information role split.
+- [x] Remediate task, calendar, activity, notification, settings, administration, shell, command-palette, empty-state, onboarding, project, and workspace consumers without changing routes, queries, schema, dependencies, or persisted entity colors.
+- [x] Add failing-first and repository-wide source contracts for shared ownership, reduced motion, forced colors, accessible icon controls, bounded stagger, and intentional presentation exclusions.
+- [x] Pass the focused 55-test / 2,879-assertion motion gate, 56 frontend tests, Vue type checking, ESLint, Prettier, and the production Vite build.
+- [x] Complete the independent Task 18 Chrome DevTools and Playwright matrix and Task 19 complete gates.
+- [x] Complete Task 20 APK/emulator verification.
+- [ ] Complete Task 21 in-place repository/Herd rename and final Task 22 Samsung installation.
+
+The implementation follows `docs/superpowers/plans/2026-08-17-sutelio-soft-motion-ui-remediation-master-plan.md`. Physical-device installation remains the final mutation after source delivery, APK inspection/emulator proof, and the canonical repository/Herd rename.

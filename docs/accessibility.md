@@ -15,7 +15,7 @@ Accessibility is a release requirement, not a decorative review. The current int
 - Exact signal-orange surfaces use deep-cobalt text (`4.71:1`); white normal text is reserved for orange-600 or darker because white on `#FF6038` reaches only `3.01:1`.
 - Motion is restrained and critical behavior remains available under `prefers-reduced-motion`; forced-colors mode retains control identity.
 - Forced-colors rendering may simplify or replace brand fills, so the mark is never the sole product label. Logo links retain visible focus, and the fixed light interface keeps semantic text, native control boundaries, and accessible names when author colors are overridden.
-- Loading and filtering expose action-specific `aria-busy`/status feedback; empty and filtered-empty states remain descriptive.
+- Loading and filtering expose action-specific status feedback; empty and filtered-empty states remain descriptive. Deliberate foreground server operations additionally expose one root-level `role="status"`, localized text, `aria-busy`, and an `inert` application tree through `GlobalBusyOverlay`. The overlay never focuses its spinner, blocks pointer and keyboard activation, cannot be dismissed with Escape or a close action, ends only when every tracked operation settles, and restores a still-connected initiating control only when no more specific flow has already claimed focus. Navigation or an unmounted initiator leaves post-request focus ownership to the destination/dialog flow; the existing first-run focus-completion audit gap remains open. Reduced motion suppresses indefinite travel, forced colors preserves a visible status boundary, and background refresh/validation remain non-blocking.
 
 ## Verified Workflows
 
@@ -31,7 +31,7 @@ The authenticated landmark-integrity pass repeated dashboard, task index/detail,
 
 The guided-onboarding pass verified a complete new-user journey, logout/login resume, invited-member adaptation, required skip, replay/exit, and Dashboard continuation. Desktop and 390x844 mobile rendering expose one `main` and one `h1`, connected heading focus after each step, a keyboard-reachable 44-pixel action sequence, focused validation summary and field links, no horizontal overflow, and usable fixed-light, reduced-motion, and forced-colors presentation. The mobile footer now stacks all three actions below 480 px for long-copy and 200% text reflow, then keeps Skip separate above a stable equal-width Back/Continue row from 480 px until the desktop action row takes over.
 
-The Data Safety Center and guided-onboarding statements above preserve browser evidence exactly as observed before the light-only delivery. Sutelio is now light-only; Task 18 must freshly reverify the current fixed-light, reduced-motion, and forced-colors behavior instead of treating the historical dark-mode observations as current evidence.
+The Data Safety Center and guided-onboarding statements above preserve browser evidence exactly as observed before the light-only delivery. Sutelio is now light-only; Task 10 must freshly reverify the current fixed-light, reduced-motion, and forced-colors behavior instead of treating the historical dark-mode observations as current evidence.
 
 The global-language pass verifies the mandatory first-run dialog and persistent shell dropdown at desktop, 390x844 phone, and tablet widths. The dialog retains focus, cannot be dismissed with Escape or outside interaction, translates its title/description/language names/action immediately as the highlighted language changes, exposes a live saving state, fits without horizontal overflow, and clamps decorative motion under `prefers-reduced-motion`. Flags are local decorative assets; native names and localized text carry the meaning.
 
@@ -40,3 +40,15 @@ Automated evidence is provided by `FrontendDesignTest.php`, `FrontendLocalizatio
 ## Manual Release Review
 
 A production release should still repeat keyboard traversal and screen-reader spot checks with the target OS/browser combinations, because automation cannot judge announcement quality, reading cadence, contrast perception, or touch ergonomics completely. This is an ongoing release activity, not an unresolved repository defect.
+
+## Open 2026-08-17 Audit Gaps
+
+Requirement `ui-system-001` and `docs/ui-ux-audit-2026-08-17.md` currently supersede any blanket interpretation of “implemented and verified” for the whole presentation layer. Confirmed open gaps include normal-text contrast below 4.5:1 on several muted/sidebar surfaces, focus falling to `body` after first-run confirmation, non-universal 44×44 coarse-pointer targets, and an inline comment-edit validation error that is neither rendered nor announced.
+
+Fresh isolated Chromium evidence covers the guest first-run/login flow in EN/LT/RU at 390×844, 820×1180, and 1440×1000 with no horizontal overflow, one `main`, one `h1`, and no console/network failure. Authenticated traversal was intentionally not performed with personal local accounts; authenticated pages therefore require a fresh non-personal test fixture during remediation. Physical screen-reader, touch-device, NativePHP, and OS forced-colors checks remain release gates rather than claimed results.
+
+## Soft Motion And Icon Remediation Status
+
+Shared icon surfaces now preserve a visible shape, text label, or accessible name independently of color. Icon-only shell controls have translated labels; decorative glyphs are hidden from assistive technology. The mounted command palette uses the shared Reka dialog primitive so focus trapping, Escape dismissal, labelling, and focus return remain primitive-owned.
+
+Motion communicates appearance, interaction, or one-shot completion only. Initial list staggering is bounded, live/refetched feeds do not replay it, and reduced-motion removes nonessential transform and duration while leaving state changes visible. Forced-colors retains explicit tile/control boundaries and native focus. Source regressions cover shared ownership, icon-only names, allowed non-tile controls, bounded stagger, fixed-light brand roles, and the intentional entity-color exceptions. The final authenticated EN/LT/RU browser matrix, 200% reflow, reduced motion, forced colors, and dark-OS/fixed-light observations remain Task 18 release evidence until executed against the integrated tree.

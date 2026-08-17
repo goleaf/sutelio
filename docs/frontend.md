@@ -25,14 +25,22 @@ Current token domains include background/surface/foreground/muted, border/input/
 ## Interaction Contract
 
 - Every server-backed action has action-specific processing, duplicate prevention, validation/error recovery, and confirmed success behavior.
+- Every deliberate foreground Inertia navigation, form submission, router mutation, and configured standalone HTTP request inherits `globalBusy` from the application bootstrap. `GlobalBusyOverlay` renders one Signal Orange progress line and centered localized status, applies `aria-busy` plus `inert` to the application root, leaves only 30% of the page visible through `bg-background/70`, and has no close, cancel, outside-click, or Escape path. Overlapping requests are token-safe, so the lock ends only after every tracked foreground operation finishes.
+- Prefetching, polling, deferred/partial background refreshes that explicitly set `showProgress: false`, infinite-scroll fetches, and Precognition validation remain non-blocking. They keep local contextual feedback; feature components must not add a second page-blocking overlay or bypass the configured HTTP client.
 - Data interfaces distinguish initial/loading, empty, filtered-empty, error, unauthorized, disabled, pending, and completed states where relevant.
 - Dialogs/sheets/menus use Reka focus trap, Escape, accessible name, return focus, viewport-safe scrolling, and touch targets.
 - Navigation remains functional as normal same-origin links through Inertia and Wayfinder. Custom integrations must initialize/teardown across Inertia navigation; no current long-lived third-party widget requires `@persist`-style behavior.
 - Task/workspace identity changes reset local drafts and pending state. Array indexes are not durable keys for mutable lists.
 - Notification filters are canonical URL state coordinated by the page, while focused filter/feed/row components consume typed immutable props. Partial visits cancel superseded requests, refresh the user-local day boundary, and request only inbox props; row/browser presentation shares one localized content resolver.
 - Data Safety settings keep workspace transfer and application backup on separate authorized routes. Export remains available to workspace members, import controls are rendered only for policy-authorized managers, standalone HTTP validation results never trigger success effects, and destructive restore remains operator/password-confirmation gated.
-- Guided onboarding uses one typed Inertia form coordinator and eight focused step components. Step props remain immutable, drafts resynchronize from server identity, generated Wayfinder actions own every request, superseded visits are cancelled, and the sticky save/status/action regions expose saving, saved, resumed, error, pending, and confirmation states without blocking unrelated controls.
+- Guided onboarding uses one typed Inertia form coordinator and eight focused step components. Step props remain immutable, drafts resynchronize from server identity, generated Wayfinder actions own every request, superseded visits are cancelled, and the sticky save/status/action regions expose saving, saved, resumed, error, pending, and confirmation states. Foreground server transitions also inherit the global non-dismissible operation lock; local status remains the action-specific explanation.
 - The global language control is owned by both primary shells and consumes one server-provided catalog. Its first-run dialog is intentionally non-dismissible until a valid choice is confirmed, previews all dialog copy in the highlighted language before submission, and uses the same Inertia locale mutation as the dropdown, Settings, and onboarding so persistent layout copy reacts without a duplicate client translation source.
+
+## Audit-First Shared Correction Contract
+
+Requirement `ui-system-001` governs every UI/UX change. Before implementation, inventory the exact page, component, locale, viewport, input mode, and loading/empty/error/disabled/offline state affected. Correct an equivalent pattern at the lowest coherent layer—token, interaction primitive, shared presentation component, shell/state contract, then focused feature composition—without building a universal mega-component or touching unrelated consumers.
+
+The 2026-08-17 system audit found open contrast, focus-completion, touch-target, offline recovery, inline validation, motion, status-token, component-vocabulary, and dormant-UI gaps. Until those findings are remediated and reverified, the existing accessibility/responsive statements describe the intended contract and previously covered workflows, not proof that every current presentation path is defect-free. Detailed evidence lives in `docs/ui-ux-audit-2026-08-17.md`.
 
 ## Accessibility And Responsive Requirements
 
@@ -42,13 +50,15 @@ Authenticated routes must expose exactly one shell-owned `main` and one logical 
 
 Mobile-first layouts are verified from 390 px through desktop/wide screens. Sidebars, dialogs, lists, filters, calendars, long names, and translated expansion must not create horizontal page overflow. Hover is never the sole affordance; touch targets and keyboard access coexist.
 
+The shared `WorkspacePageFrame` supplies fluid logical gutters and a shrink-safe bounded container from 320 px upward. It consumes normalized browser/NativePHP safe-area variables without doubling the body padding that NativePHP applies in portrait and landscape. Dialogs and sheets use `dvh` bounds with vertical scrolling, including 200% text reflow; toast, dropdown, and switcher overlays remain inside safe inline viewport edges. `app.css` is the sole Tailwind CSS 4 entrypoint, and no Sass/SCSS pipeline or source CSS duplicate exists.
+
 The language switcher remains a 44-pixel keyboard/touch target at the top of guest and authenticated shells. The mandatory first-run dialog traps focus, blocks Escape/outside dismissal until confirmation, exposes title/description/status semantics, uses local SVG flags only as decorative reinforcement, wraps translated labels, and suppresses nonessential animation under reduced motion.
 
 Notification read-state and kind filters are named pressed-button groups, not tablists. The signal stream uses ordered Today/Earlier headings, explicit non-color read labels, one concise result live region, connected-node focus restoration, and 44-pixel controls at both tested widths.
 
 Settings navigation uses a current-section dropdown below `lg` and the established vertical navigation at desktop. Long localized section names wrap, and Data Safety scope banners distinguish the current workspace from the application database with text and icons rather than color alone.
 
-Guided onboarding uses a wide-screen progress rail and a compact sticky mobile progress header. Below 480 px, Skip, Back, and Continue stack as three full-width actions so long localized copy and 200% text reflow remain inside the viewport. From 480 px, Skip occupies its own row above equal Back/Continue columns; `sm` and wider layouts return to the compact action row. All journey actions remain at least 44 px, safe-area spacing is explicit, localized content wraps without overflow, and one server-backed validation summary receives focus before field-level links.
+Guided onboarding uses a wide-screen progress rail and a compact sticky mobile progress header. Below 480 px, Skip, Back, and Continue stack as equal full-width actions so long translations and 200% text scaling cannot clip; from 480 px Skip occupies its own row and Back/Continue share equal columns, while `sm` and wider screens use the compact action row. All journey actions are at least 44 px, safe-area spacing is explicit, localized content wraps without overflow, and one server-backed validation summary receives focus before field-level links.
 
 ## Tailwind Feature Applicability
 
@@ -65,3 +75,9 @@ Guided onboarding uses a wide-screen progress rail and a compact sticky mobile p
 Localization workflow is in `docs/localization.md`; browser and source verification is in `docs/testing.md` and `docs/compliance-matrix.md`.
 
 Detailed token/component/Tailwind decisions live in `docs/design-system.md`. Accessibility requirements and the final verified workflow matrix live in `docs/accessibility.md`.
+
+## Shared Soft-Motion And Icon Contract
+
+`IconTile` is the only shared owner for structural/status icon tiles. `LeadingIconHeading` composes section headings with that primitive, and `WorkspacePageHeader` applies the cobalt structural role to page headings. Signal Orange remains action/completion emphasis; cobalt remains structure/navigation/information. Persisted project colors are domain data, not design-system replacements.
+
+The CSS-first motion primitives are `ui-reveal`, `ui-lift`, `ui-status-pop`, `ui-icon-response`, and bounded `ui-stagger`. Consumers attach them to meaningful state transitions rather than every render. Infinite/refetched notification and activity streams must not replay initial motion; success animation is edge-triggered; reduced-motion and forced-colors behavior is owned by the shared stylesheet. The shell mounts the shared command palette through the Reka dialog layer, and header/sidebar triggers expose translated accessible names.

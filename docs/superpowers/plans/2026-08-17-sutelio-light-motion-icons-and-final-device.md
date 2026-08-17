@@ -1077,7 +1077,7 @@ Any first-party failure receives a failing regression test, minimal fix, focused
 - Modify: `docs/current-state-audit.md`
 - Modify append-only: `docs/progress.md`
 
-- [ ] **Step 1: Build with the known toolchain**
+- [x] **Step 1: Build with the known toolchain**
 
 ```bash
 export JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home
@@ -1092,7 +1092,7 @@ cd nativephp/android
 
 The second Gradle build is required after deterministic native branding so the inspected APK contains final resources.
 
-- [ ] **Step 2: Copy and inspect the named artifact**
+- [x] **Step 2: Copy and inspect the named artifact**
 
 Copy to `storage/app/native-build/sutelio-android-debug.apk`. Run `aapt dump badging`, `apkanalyzer manifest print`, `apksigner verify --verbose --print-certs`, `zipalign -c -v 4`, and archive/resource inspection. Assert:
 
@@ -1102,14 +1102,14 @@ label Sutelio
 scheme sutelio with no host
 brand resources and splash hashes match sources
 no legacy package/name
-no private SQLite, .env, mail credentials, tokens, keys, or certificates
+no private SQLite, source .env, mail credentials, tokens, private keys, or private certificates; only the cleaned non-sensitive NativePHP runtime .env may remain
 ```
 
-- [ ] **Step 3: Install on the emulator only**
+- [x] **Step 3: Install on the emulator only**
 
 Start the existing approved AVD, resolve its exact emulator serial, uninstall only emulator `com.goleaf.sutelio` when required, install the final APK, launch, relaunch, inspect logcat, screenshots, package/activity state, and core local flows. Never address the physical Samsung serial in this task.
 
-- [ ] **Step 4: Fix and rebuild until clean**
+- [x] **Step 4: Fix and rebuild until clean**
 
 Any APK/emulator failure is fixed in source, followed by relevant focused/full gates and a fresh branded rebuild. Record the final APK SHA-256, size, package, signature, emulator serial/API, screenshots, and logs.
 
