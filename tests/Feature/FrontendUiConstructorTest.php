@@ -124,3 +124,37 @@ test('active workspace dialogs reuse shared body and action composition', functi
             ->not->toContain('gap-2 border-t border-border/70 pt-5 sm:gap-2');
     }
 });
+
+test('the shared button owns pending state without breaking as child composition', function () {
+    $source = File::get(resource_path('js/components/ui/button/Button.vue'));
+
+    expect($source)
+        ->toContain('loading?: boolean;')
+        ->toContain('loadingLabel?: string;')
+        ->toContain('disabled?: boolean;')
+        ->toContain("import { Spinner } from '@/components/ui/spinner'")
+        ->toContain(':data-loading="props.loading ? \'\' : undefined"')
+        ->toContain(':aria-busy="props.loading ? \'true\' : undefined"')
+        ->toContain(':aria-disabled="isDisabled ? \'true\' : undefined"')
+        ->toContain(':disabled="props.asChild ? undefined : isDisabled"')
+        ->toContain('v-if="props.loading && !props.asChild"')
+        ->toContain('<slot v-else />')
+        ->toContain('@click="preventDisabledActivation"');
+
+    expect(File::get(resource_path('js/components/ui/button/index.ts')))
+        ->toContain('aria-disabled:pointer-events-none')
+        ->toContain('data-loading:cursor-wait');
+});
+
+test('active asynchronous actions delegate their visual pending state to the shared button', function () {
+    foreach ([
+        'workspace confirmation' => 'shared/WorkspaceConfirmDialog.vue',
+        'project result pagination' => 'project/ProjectTaskQueue.vue',
+    ] as $name => $file) {
+        $source = File::get(resource_path("js/components/{$file}"));
+
+        expect($source, $name)
+            ->toContain(':loading=')
+            ->not->toMatch('/<(Spinner|LoaderCircle)\s+v-if="(?:form\.)?processing"/');
+    }
+});

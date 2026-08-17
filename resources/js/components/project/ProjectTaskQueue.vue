@@ -119,20 +119,12 @@ function dueLabel(task: ProjectTask): string {
                         type="button"
                         variant="ghost"
                         class="min-h-11 motion-reduce:transition-none"
-                        :disabled="loading"
+                        :loading="loading"
+                        :loading-label="t('projects.show.loading.more')"
                         @click="fetch"
                     >
-                        <LoaderCircle
-                            v-if="loading"
-                            class="size-4 animate-spin motion-reduce:animate-none"
-                            aria-hidden="true"
-                        />
-                        <ArrowUp v-else class="size-4" aria-hidden="true" />
-                        {{
-                            loading
-                                ? t('projects.show.loading.more')
-                                : t('projects.show.pagination.load_previous')
-                        }}
+                        <ArrowUp class="size-4" aria-hidden="true" />
+                        {{ t('projects.show.pagination.load_previous') }}
                     </Button>
                 </div>
             </template>
@@ -334,19 +326,11 @@ function dueLabel(task: ProjectTask): string {
                         type="button"
                         variant="outline"
                         class="min-h-11 min-w-44 motion-reduce:transition-none"
-                        :disabled="loading"
+                        :loading="loading"
+                        :loading-label="t('projects.show.loading.more')"
                         @click="fetch"
                     >
-                        <LoaderCircle
-                            v-if="loading"
-                            class="size-4 animate-spin motion-reduce:animate-none"
-                            aria-hidden="true"
-                        />
-                        {{
-                            loading
-                                ? t('projects.show.loading.more')
-                                : t('projects.show.pagination.load_more')
-                        }}
+                        {{ t('projects.show.pagination.load_more') }}
                     </Button>
                     <p v-else class="text-xs font-medium text-muted-foreground">
                         {{ t('projects.show.pagination.end') }}

@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 
 const props = withDefaults(
     defineProps<{
@@ -104,10 +103,10 @@ function confirm(): void {
                     type="button"
                     :variant="destructive ? 'destructive' : 'default'"
                     size="lg"
-                    :disabled="processing || !confirmationMatches"
+                    :loading="processing"
+                    :disabled="!confirmationMatches"
                     @click="confirm"
                 >
-                    <Spinner v-if="processing" />
                     {{ confirmLabel }}
                 </Button>
             </DialogActions>
