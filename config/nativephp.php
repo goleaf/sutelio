@@ -204,6 +204,7 @@ return [
         '.github',
         '.mimocode',
         'credentials',
+        'database/*.sqlite*',
         'docs',
         'storage/framework/sessions',
         'storage/framework/cache',

@@ -12,6 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Native\Mobile\Concerns\CleansEnvFile;
 use Native\Mobile\NativeServiceProvider as NativePhpPackageServiceProvider;
 use Native\Mobile\Support\BundleExclusions;
@@ -604,6 +605,27 @@ test('the NativePHP shell boot prerequisites remain bundled', function () {
         ->and($bundleExclusions)->not->toContain('/database', '/database/migrations')
         ->and($storageLinks)->toHaveKey(public_path('storage'))
         ->and($storageLinks[public_path('storage')])->toBe(storage_path('app/public'));
+});
+
+test('the NativePHP bundle preserves migrations without local SQLite artifacts', function () {
+    $source = storage_path('framework/testing/nativephp-bundle-source-'.Str::uuid());
+    $destination = storage_path('framework/testing/nativephp-bundle-destination-'.Str::uuid());
+
+    try {
+        File::ensureDirectoryExists($source.'/database/migrations');
+        File::put($source.'/database/migrations/create_users_table.php', '<?php');
+        File::put($source.'/database/database.sqlite', 'host database');
+        File::put($source.'/database/verification.sqlite-wal', 'host journal');
+        File::put($source.'/database/verification.sqlite-shm', 'host shared memory');
+
+        BundleFileManager::copy($source, $destination, config('nativephp.cleanup_exclude_files'));
+
+        expect(File::exists($destination.'/database/migrations/create_users_table.php'))->toBeTrue()
+            ->and(File::glob($destination.'/database/*.sqlite*'))->toBeEmpty();
+    } finally {
+        File::deleteDirectory($source);
+        File::deleteDirectory($destination);
+    }
 });
 
 test('the NativePHP Jump workflow starts with Vite through one manual script', function () {
