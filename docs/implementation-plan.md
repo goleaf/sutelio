@@ -194,3 +194,17 @@ Requirements: `sys-brand-001`, `ui-accessibility-001`, `i18n-001`, `test-feature
 - [ ] Rename the existing GitHub repository, checkout, and Herd site in place and verify `goleaf/sutelio` plus `sutelio.test` in Task 12; do not create a replacement repository or rewrite history.
 
 The external Android `applicationId` and primary iOS bundle identifier are `com.goleaf.sutelio`; Android's internal NativePHP/JNI namespace remains `com.nativephp.mobile` and must not be renamed. This active contract supersedes contrary namespace language in historical brand specifications/plans. The application is also fixed light-only after the delivered appearance-removal phase; older dark/system verification language is historical and does not define a current runtime theme family.
+
+## SQLite Database Optimization — 2026-08-17
+
+Requirements: `data-integrity-001`, `data-sqlite-001`, `perf-query-001`, `test-feature-001`, `docs-traceability-001`, `git-delivery-001`.
+
+- [x] Audit the complete live SQLite schema, data-quality aggregates, migrations, models, request query objects, health state, query budgets, and query plans without mutating the real local database.
+- [x] Add failing-first schema coverage and an additive reversible migration for the proven `workspaces.owner_id` and `workspace_invitations.invited_by` relation-index gaps.
+- [x] Verify fresh migration, rollback, forward reapplication, SQLite health, FK integrity, and both changed plans on an isolated file-backed database.
+- [ ] Enforce projections and bounded collection contracts one request query at a time with payload/query-budget evidence.
+- [ ] Remove application-authored raw request-query expressions subsystem by subsystem, including a first-class indexed notification kind where the domain requires it.
+- [ ] Benchmark the ten strict-prefix index candidates on production-shaped 1k/10k/100k fixtures before approving any removal.
+- [ ] Add evidence-threshold database growth/maintenance observability, then run the final complete data and delivery gate.
+
+The dependency order, file-level tasks, exact commands, acceptance criteria, and prohibited speculative optimizations are recorded in `docs/superpowers/plans/2026-08-17-sutelio-database-optimization.md`.

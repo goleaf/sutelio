@@ -3,8 +3,10 @@
 use App\Models\Todo;
 use App\Models\User;
 use App\Models\Workspace;
+use App\Models\WorkspaceInvitation;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 function sqliteColumnType(string $table, string $column): ?string
@@ -20,6 +22,40 @@ function sqliteForeignKeys(string $table): array
 {
     return DB::select("SELECT * FROM pragma_foreign_key_list('{$table}')");
 }
+
+test('user-owned foreign keys have supporting indexes', function () {
+    $workspaceIndexes = collect(Schema::getIndexes('workspaces'))
+        ->mapWithKeys(fn (array $index): array => [$index['name'] => $index['columns']]);
+    $invitationIndexes = collect(Schema::getIndexes('workspace_invitations'))
+        ->mapWithKeys(fn (array $index): array => [$index['name'] => $index['columns']]);
+
+    expect($workspaceIndexes->get('workspaces_owner_id_index'))->toBe(['owner_id'])
+        ->and($invitationIndexes->get('workspace_invitations_invited_by_index'))->toBe(['invited_by']);
+});
+
+test('user relation indexes roll back and forward without losing populated rows', function () {
+    $owner = User::factory()->create();
+    $workspace = Workspace::factory()->for($owner, 'owner')->create();
+    $invitation = WorkspaceInvitation::factory()
+        ->for($workspace)
+        ->for($owner, 'inviter')
+        ->create();
+    $migration = require database_path('migrations/2026_08_17_164327_add_user_relation_indexes.php');
+
+    $migration->down();
+
+    expect(Workspace::query()->whereKey($workspace->id)->exists())->toBeTrue()
+        ->and(WorkspaceInvitation::query()->whereKey($invitation->id)->exists())->toBeTrue()
+        ->and(collect(Schema::getIndexes('workspaces'))->pluck('name'))->not->toContain('workspaces_owner_id_index')
+        ->and(collect(Schema::getIndexes('workspace_invitations'))->pluck('name'))->not->toContain('workspace_invitations_invited_by_index');
+
+    $migration->up();
+
+    expect(Workspace::query()->whereKey($workspace->id)->exists())->toBeTrue()
+        ->and(WorkspaceInvitation::query()->whereKey($invitation->id)->exists())->toBeTrue()
+        ->and(collect(Schema::getIndexes('workspaces'))->pluck('name'))->toContain('workspaces_owner_id_index')
+        ->and(collect(Schema::getIndexes('workspace_invitations'))->pluck('name'))->toContain('workspace_invitations_invited_by_index');
+});
 
 test('fresh SQLite schema uses UUID relations and protects task parents', function () {
     expect(strtolower((string) sqliteColumnType('passkeys', 'user_id')))->toBe('varchar')
