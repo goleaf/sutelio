@@ -51,7 +51,7 @@ See `docs/testing.md` for focused, parallel, coverage, migration, seeding, and b
 ## Runtime Boundaries
 
 - SQLite is the only relational database. Keep the database and WAL/SHM files on a local SQLite-compatible filesystem.
-- Web authentication uses Fortify; API v1 uses Sanctum abilities and the same policy/action boundaries as web flows.
+- Web authentication uses Fortify without email verification; API v1 uses Sanctum abilities and the same policy/action boundaries as web flows.
 - Recurrence, reminders, backups, and activity cleanup are scheduled operations. Deployment must configure the scheduler and the documented database queue execution model.
 - Attachments, avatars, and backups are private and require application authorization.
 - Livewire, Volt, Flux, Vue Router, Redis, and a second SQL database are not part of this repository's architecture.

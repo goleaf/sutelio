@@ -21,7 +21,7 @@ class EnsureOnboardingIsComplete
     {
         $user = $request->user();
 
-        if (! $user instanceof User || ! $user->hasVerifiedEmail()) {
+        if (! $user instanceof User) {
             return $next($request);
         }
 

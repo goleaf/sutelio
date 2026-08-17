@@ -5,9 +5,10 @@ declare(strict_types=1);
 use App\Enums\OnboardingStep;
 use App\Models\User;
 use App\Models\UserPreference;
+use Illuminate\Support\Facades\Route;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('verified pending users are redirected from application pages and settings to onboarding', function () {
+test('pending users are redirected from application pages and settings to onboarding', function () {
     $user = User::factory()->create();
     UserPreference::factory()->for($user)->pendingOnboarding()->create();
 
@@ -20,13 +21,13 @@ test('verified pending users are redirected from application pages and settings 
         ->assertRedirectToRoute('onboarding.index');
 });
 
-test('unverified pending users still reach the verification notice', function () {
-    $user = User::factory()->unverified()->create();
-    UserPreference::factory()->for($user)->pendingOnboarding()->create();
+test('onboarding and application routes never require email verification', function () {
+    foreach (['onboarding.index', 'dashboard', 'workspace-invitations.accept', 'security.edit'] as $routeName) {
+        $route = Route::getRoutes()->getByName($routeName);
 
-    $this->actingAs($user)
-        ->get(route('dashboard'))
-        ->assertRedirectToRoute('verification.notice');
+        expect($route, $routeName)->not->toBeNull()
+            ->and($route?->gatherMiddleware(), $routeName)->not->toContain('verified');
+    }
 });
 
 test('existing complete users and legacy users without preferences are not redirected', function () {
@@ -38,16 +39,9 @@ test('existing complete users and legacy users without preferences are not redir
     $this->actingAs($legacy)->get(route('dashboard'))->assertOk();
 });
 
-test('onboarding requires authentication and verification', function () {
-    $unverified = User::factory()->unverified()->create();
-    UserPreference::factory()->for($unverified)->pendingOnboarding()->create();
-
+test('onboarding requires authentication', function () {
     $this->get(route('onboarding.index'))
         ->assertRedirectToRoute('login');
-
-    $this->actingAs($unverified)
-        ->get(route('onboarding.index'))
-        ->assertRedirectToRoute('verification.notice');
 });
 
 test('pending users can render their resumable onboarding page', function () {

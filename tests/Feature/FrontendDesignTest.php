@@ -675,7 +675,6 @@ test('authentication submissions share the large projects action rhythm', functi
     'forgot password' => 'ForgotPassword',
     'reset password' => 'ResetPassword',
     'password confirmation' => 'ConfirmPassword',
-    'email verification' => 'VerifyEmail',
     'two factor challenge' => 'TwoFactorChallenge',
 ]);
 
@@ -785,15 +784,16 @@ test('authentication status messages use the shared success surface', function (
 })->with([
     'login' => 'Login',
     'forgot password' => 'ForgotPassword',
-    'verify email' => 'VerifyEmail',
 ]);
 
 test('profile feedback uses semantic alerts and deterministic upload progress', function () {
     expect(File::get(resource_path('js/pages/settings/Profile.vue')))
-        ->toContain('variant="warning"')
+        ->toContain('variant="success"')
         ->toContain('role="progressbar"')
         ->toContain('bg-orange-600')
         ->toContain('motion-reduce:transition-none')
+        ->not->toContain('sendVerification')
+        ->not->toContain('email_verified')
         ->not->toContain('<progress')
         ->not->toContain('bg-amber-50')
         ->and(File::get(resource_path('js/components/DeleteUser.vue')))

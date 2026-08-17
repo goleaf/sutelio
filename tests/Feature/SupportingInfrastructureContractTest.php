@@ -105,7 +105,6 @@ test('meaningful factory states create valid records', function () {
         Todo::factory()->completed()->create(),
         Todo::factory()->overdue()->create(),
         Todo::factory()->archived()->create(),
-        User::factory()->unverified()->create(),
         User::factory()->withTwoFactor()->create(),
         UserPreference::factory()->lithuanian()->create(),
         UserPreference::factory()->russian()->create(),
@@ -163,6 +162,20 @@ test('workspace schema enforces its declared foreign keys', function (string $ta
     'activity logs' => ['activity_logs', 2],
     'user preferences' => ['user_preferences', 1],
 ]);
+
+test('email verification column removal is reversible', function () {
+    $migration = require database_path('migrations/2026_08_17_103526_drop_email_verified_at_from_users_table.php');
+
+    expect(Schema::hasColumn('users', 'email_verified_at'))->toBeFalse();
+
+    $migration->down();
+
+    expect(Schema::hasColumn('users', 'email_verified_at'))->toBeTrue();
+
+    $migration->up();
+
+    expect(Schema::hasColumn('users', 'email_verified_at'))->toBeFalse();
+});
 
 test('database seeders create the complete demo dataset', function () {
     $this->seed();

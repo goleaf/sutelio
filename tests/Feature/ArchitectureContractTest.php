@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Laravel\Fortify\Features;
 
 /** @return array<string, string> */
 function firstPartySourceFiles(array $directories, array $extensions): array
@@ -90,6 +93,36 @@ test('routes do not contain endpoint action closures', function () {
         expect($contents, $path)
             ->not->toMatch('/Route::(?:get|post|put|patch|delete|any|match)\([^;]*(?:function\s*\(|fn\s*\()/s');
     }
+});
+
+test('email verification stays outside the active product', function () {
+    $sources = firstPartySourceFiles(
+        [app_path(), base_path('config'), base_path('routes'), resource_path('js')],
+        ['php', 'ts', 'vue', 'js'],
+    );
+
+    foreach ($sources as $path => $contents) {
+        expect($contents, $path)
+            ->not->toMatch('/\bMustVerifyEmail\b/')
+            ->not->toMatch('/\bemailVerification\s*\(/')
+            ->not->toMatch('/\bverifyEmailView\s*\(/')
+            ->not->toContain('email_verified_at')
+            ->not->toContain('verification-link-sent')
+            ->not->toMatch('/[\'\"]verified[\'\"]/');
+    }
+
+    expect(Features::enabled(Features::emailVerification()))
+        ->toBeFalse()
+        ->and(Route::has('verification.notice'))
+        ->toBeFalse()
+        ->and(Route::has('verification.send'))
+        ->toBeFalse()
+        ->and(Route::has('verification.verify'))
+        ->toBeFalse()
+        ->and(Schema::hasColumn('users', 'email_verified_at'))
+        ->toBeFalse()
+        ->and(File::exists(resource_path('js/pages/auth/VerifyEmail.vue')))
+        ->toBeFalse();
 });
 
 test('tailwind utility names are not assembled from runtime interpolation', function () {

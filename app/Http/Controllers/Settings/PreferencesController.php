@@ -26,7 +26,7 @@ class PreferencesController extends Controller
                 ...($preferences?->only(array_keys(UserPreference::defaults())) ?? []),
             ],
             'timezones' => DateTimeZone::listIdentifiers(),
-            'canReplayOnboarding' => $user->hasVerifiedEmail(),
+            'canReplayOnboarding' => true,
         ]);
     }
 }

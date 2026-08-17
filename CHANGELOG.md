@@ -14,7 +14,8 @@ All notable project changes are documented here.
 
 ### Architecture And Security
 
-- Added a versioned, resumable guided-onboarding state machine with verified-user gating, run-scoped idempotent workspace/project/task composition, authorization-aware invitation discovery, safe replay, and populated-data migration behavior.
+- Added a versioned, resumable guided-onboarding state machine with authenticated-user gating, run-scoped idempotent workspace/project/task composition, authorization-aware invitation discovery, safe replay, and populated-data migration behavior.
+- Removed email verification from Fortify configuration, routes, middleware, notifications, onboarding/profile UI, shared types/props, factories, translations, and the SQLite user schema; registration now proceeds directly to onboarding, with architecture coverage and a durable repository rule preventing reintroduction.
 - Normalized NativePHP environment scalars, allowed the independently derived app-private mobile SQLite directory, removed only unavailable mobile-bundle Blade namespace hints, and disabled token-bearing mail logs on-device so clean Android boot, migration, `view:cache`, and registration complete without runtime/security log errors.
 - Enabled strict Eloquent behavior outside production and corrected partial-model projections, locale/request state, private avatar serialization, route endpoint closures, and service-locator usage exposed by the stricter contract.
 - Added a typed user-scoped notification request/query/resource boundary with semantic filters, deterministic pagination, safe legacy payloads, batched authorization for task destinations, and idempotent read mutations.
@@ -35,12 +36,12 @@ All notable project changes are documented here.
 
 ### Data, Seeding, And Tests
 
-- Completed valid factories for all 17 models with 30 meaningful states/helpers and a 55-case factory/state/seeder contract.
+- Completed valid factories for all 17 models with 29 meaningful states/helpers and a 56-test factory/state/seeder contract.
 - Added a non-destructive, production-guarded `DemoSeeder`; fresh migration and repeated deterministic seeding complete with valid foreign keys.
 - Added six rollback-safe project-operation indexes with production-query-plan coverage for workspace/project filters and position, due-date, updated, and priority-definition sorts.
-- Replaced brittle/example-only checks with semantic architecture and application coverage. The current suite passes 762 tests with 11,359 assertions sequentially and in parallel. All 45 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
+- Replaced brittle/example-only checks with semantic architecture and application coverage. The current suite passes 763 tests with 16,291 assertions sequentially and in parallel. All 45 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
 - Upgraded NativePHP's generated Android project and verified a fresh onboarding-capable debug APK with minSdk 31, targetSdk 36, v2 debug signature, ZIP alignment/integrity, embedded onboarding sources/translations, and no host SQLite database. Production signing remains a release-environment responsibility.
-- Clean-installed the refreshed debug APK on an Android 14 emulator and completed registration through email verification; the device SQLite database passed integrity checks with all 35 migrations applied.
+- Rebuilt and independently inspected the refreshed debug APK with all 36 migrations, no email-verification route/page/source contract, no host SQLite database, and passing signature/alignment/archive checks; current device installation remains pending because no Android device is attached.
 
 ### Documentation
 

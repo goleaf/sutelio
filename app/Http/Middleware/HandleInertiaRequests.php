@@ -85,7 +85,7 @@ class HandleInertiaRequests extends Middleware
             'locale' => $request->getLocale(),
             'auth' => [
                 'user' => $user ? [
-                    ...$user->only(['id', 'name', 'email', 'email_verified_at']),
+                    ...$user->only(['id', 'name', 'email']),
                     'two_factor_enabled' => $user->hasEnabledTwoFactorAuthentication(),
                     'avatar' => is_string($avatarPath)
                         ? route('profile.avatar.show', ['v' => $user->updated_at?->getTimestamp()])

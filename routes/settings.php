@@ -25,7 +25,7 @@ Route::middleware(['auth', 'onboarding.complete'])->group(function () {
     Route::get('settings/members', [MembersController::class, 'edit'])->name('members.edit');
 });
 
-Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {
+Route::middleware(['auth', 'onboarding.complete'])->group(function () {
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/backup', [BackupController::class, 'edit'])

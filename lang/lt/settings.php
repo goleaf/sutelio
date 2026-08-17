@@ -26,9 +26,6 @@ return [
             'save' => 'Išsaugoti pakeitimus',
             'saving' => 'Saugoma…',
             'saved' => 'Profilis atnaujintas.',
-            'email_unverified' => 'Jūsų el. pašto adresas nepatvirtintas.',
-            'resend_verification' => 'Siųsti patvirtinimo laišką dar kartą',
-            'verification_sent' => 'Nauja patvirtinimo nuoroda išsiųsta jūsų el. pašto adresu.',
         ],
         'delete' => [
             'title' => 'Ištrinti paskyrą',

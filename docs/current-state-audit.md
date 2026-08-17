@@ -4,7 +4,7 @@ This is the active modernization baseline. The July audit under `docs/audit` is 
 
 ## Post-Audit Runtime Verification — 2026-08-17
 
-The dated baseline and modernization measurements below remain historical evidence. The current checkout runs Herd PHP 8.5.8 and NativePHP Mobile 4.2 with tracked embedded PHP 8.5.9. A complete compatible dependency refresh upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0 with zero Composer/npm advisories or compatible direct updates. The final suite passes 762 tests / 11,359 assertions sequentially and in parallel plus 45 frontend tests; Larastan, Pint, types, lint, format, build, isolated 35-migration/repeat-seed/health verification, and runtime caches pass. The current debug APK hash, manifest, signature, archive, and Android 14 emulator results are recorded in `docs/deployment.md` and the latest `docs/progress.md` entry and supersede older artifact measurements below.
+The dated baseline and modernization measurements below remain historical evidence. The current checkout runs Herd PHP 8.5.8 and NativePHP Mobile 4.2 with tracked embedded PHP 8.5.9. A complete compatible dependency refresh upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0 with zero Composer/npm advisories or compatible direct updates. The final suite passes 763 tests / 16,291 assertions sequentially and in parallel plus 45 frontend tests; Larastan, Pint, types, lint, format, build, isolated 36-migration seed/health verification, and runtime caches pass. The current debug APK hash, manifest, signature, archive, and device-test limitation are recorded in `docs/deployment.md` and the latest `docs/progress.md` entry and supersede older artifact measurements below.
 
 ## Repository Protection
 

@@ -6,8 +6,8 @@ Laravel owns routing, Fortify/Sanctum authentication, authorization, validation,
 
 ## Module Boundaries
 
-- Identity: registration/login/verification/reset/passkeys/two-factor/profile/preferences.
-- Guided onboarding: verified-user entry gate, resumable lifecycle, scoped domain composition, replay, and Dashboard continuation.
+- Identity: registration/login/reset/passkeys/two-factor/profile/preferences; email verification is intentionally absent.
+- Guided onboarding: authenticated-user entry gate, resumable lifecycle, scoped domain composition, replay, and Dashboard continuation.
 - Workspace administration: workspaces, membership, invitations, ownership, statuses, and priorities.
 - Planning: projects, tasks, hierarchy, bulk operations, list/dashboard/calendar.
 - Collaboration: checklists, comments, labels, tags, attachments, activity, notifications.
@@ -30,7 +30,7 @@ Routes contain no product queries. Controllers do not call controllers or branch
 
 The notification inbox follows the same read boundary: the request normalizes URL state, the query starts from the authenticated user's notification relation and batches task-destination authorization, the resource emits a query-free typed presentation contract, and Vue renders only the resulting semantic fields. Read-one/all remain separate idempotent actions.
 
-Guided onboarding is a browser-only state machine after authentication and verification. A narrow completion middleware gates normal application routes, while onboarding lifecycle routes and signed invitation acceptance remain outside that gate. The onboarding query returns bounded user-authorized options; writes reuse the canonical preference/workspace/project/task actions and record run-scoped request keys in `onboarding_operations` so retries are idempotent. Replay keeps the completion gate open and never deletes existing domain data.
+Guided onboarding is a browser-only state machine immediately after authentication. A narrow completion middleware gates normal application routes, while onboarding lifecycle routes and signed invitation acceptance remain outside that gate. The onboarding query returns bounded user-authorized options; writes reuse the canonical preference/workspace/project/task actions and record run-scoped request keys in `onboarding_operations` so retries are idempotent. Replay keeps the completion gate open and never deletes existing domain data.
 
 ## State And Ownership
 

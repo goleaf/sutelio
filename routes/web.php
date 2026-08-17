@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::middleware(['auth', 'verified'])
+Route::middleware('auth')
     ->controller(OnboardingController::class)
     ->group(function (): void {
         Route::get('onboarding', 'index')->name('onboarding.index');
@@ -49,10 +49,10 @@ Route::middleware(['auth', 'verified'])
     });
 
 Route::get('workspace-invitations/{invitation}/accept', WorkspaceInvitationAcceptanceController::class)
-    ->middleware(['auth', 'verified', 'signed', 'throttle:6,1'])
+    ->middleware(['auth', 'signed', 'throttle:6,1'])
     ->name('workspace-invitations.accept');
 
-Route::middleware(['auth', 'verified', 'onboarding.complete'])->group(function () {
+Route::middleware(['auth', 'onboarding.complete'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('tasks', TodoIndexController::class)->name('todos.index');

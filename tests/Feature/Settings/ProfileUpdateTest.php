@@ -20,7 +20,8 @@ test('profile page is displayed', function () {
             ->component('settings/Profile')
             ->where('user.id', $user->id)
             ->where('user.avatar_url', null)
-            ->where('canVerifyEmail', true)
+            ->missing('user.email_verified_at')
+            ->missing('canVerifyEmail')
             ->where('labels.navigation_label', 'Settings')
             ->where('labels.avatar.title', 'Profile photo')
             ->where('labels.personal.title', 'Personal information')
@@ -64,26 +65,8 @@ test('profile information can be updated', function () {
 
     $user->refresh();
 
-    expect($user->name)->toBe('Test User');
-    expect($user->email)->toBe('test@example.com');
-    expect($user->email_verified_at)->toBeNull();
-});
-
-test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->patch(route('profile.update'), [
-            'name' => 'Test User',
-            'email' => $user->email,
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('profile.edit'));
-
-    expect($user->refresh()->email_verified_at)->not->toBeNull();
+    expect($user->name)->toBe('Test User')
+        ->and($user->email)->toBe('test@example.com');
 });
 
 test('user can upload and view their avatar', function () {

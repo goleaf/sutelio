@@ -144,7 +144,7 @@ Verification: Composer validate/audit/outdated and dependency blockers, npm audi
 
 Requirements: `sys-onboarding-001`, `sys-user-002`, `sys-workspace-002`, `ui-*`, `i18n-*`, `data-integrity-001`, `test-feature-001`, `ops-deployment-001`, `git-delivery-001`.
 
-- [x] Approve and record an eight-step verified-user journey with resume, required skip, role/invitation adaptation, manual replay, and honest Dashboard continuation.
+- [x] Approve and record an eight-step authenticated-user journey with resume, required skip, role/invitation adaptation, manual replay, and honest Dashboard continuation.
 - [x] Add populated-safe versioned preference lifecycle state and a run/request-scoped idempotency ledger; keep existing users complete and new Fortify registrations pending.
 - [x] Implement adjacent lifecycle transitions, completion/skip/restart, bounded authorized option queries, and scoped preference/workspace/project/task selection or creation through canonical actions.
 - [x] Implement the responsive Warm Guided Route, immediate EN/LT/RU preference rendering, accessible validation/focus/status/confirmation states, Dashboard checklist, and Settings replay.
@@ -162,7 +162,7 @@ Requirements: `sys-runtime-001`, `sec-deps-001`, `data-sqlite-001`, `test-featur
 - [x] Update Android SDK tools, regenerate the ignored NativePHP platform project, and refresh the tracked embedded runtime lock.
 - [x] Add failing-first coverage and repair mobile SQLite containment, NativePHP scalar normalization, and unavailable bundled Blade view hints found by clean-device testing.
 - [x] Build and independently verify the APK manifest, signature, alignment, outer/nested archives, required bundle files, and host-database exclusion.
-- [x] Clean-install on the existing Android 14 emulator and complete cold boot, migrations, login rendering, registration, email-verification navigation, SQLite integrity, process, and log checks.
+- [x] Clean-install on the existing Android 14 emulator and complete cold boot, migrations, login rendering, registration, onboarding navigation, SQLite integrity, process, and log checks.
 - [x] Run the final complete backend/frontend/static/data/diff gates, synchronize final evidence, commit only phase-owned files, and push `origin/main`.
 
 The ignored debug APK remains a local sideload artifact. Production signing and real-hardware release validation remain external release activities.

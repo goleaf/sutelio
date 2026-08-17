@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Concerns\HasUuid;
 use Database\Factories\UserFactory;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,7 +23,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $name
  * @property string $email
  */
-class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
+class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasUuid, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
@@ -36,7 +35,6 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];

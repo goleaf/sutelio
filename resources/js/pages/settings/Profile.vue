@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form, Head, setLayoutProps, useForm } from '@inertiajs/vue3';
-import { BadgeCheck, Camera, CircleAlert, ImageUp, Trash2 } from '@lucide/vue';
+import { Head, setLayoutProps, useForm } from '@inertiajs/vue3';
+import { BadgeCheck, Camera, ImageUp, Trash2 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, useTemplateRef } from 'vue';
 import {
     destroyAvatar,
@@ -9,7 +9,7 @@ import {
 } from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/DeleteUser.vue';
 import InputError from '@/components/InputError.vue';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +25,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { useInitials } from '@/composables/useInitials';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
-import { send as sendVerification } from '@/routes/verification';
 import type { SettingsLayoutProps } from '@/types';
 
 type ProfileLabels = {
@@ -53,9 +52,6 @@ type ProfileLabels = {
         save: string;
         saving: string;
         saved: string;
-        email_unverified: string;
-        resend_verification: string;
-        verification_sent: string;
     };
     delete: {
         title: string;
@@ -77,11 +73,8 @@ const props = defineProps<{
         id: string;
         name: string;
         email: string;
-        email_verified_at: string | null;
         avatar_url: string | null;
     };
-    canVerifyEmail: boolean;
-    status?: string;
     labels: ProfileLabels;
 }>();
 
@@ -372,43 +365,6 @@ onBeforeUnmount(clearAvatarPreview);
                         </Alert>
                     </div>
                 </form>
-
-                <Alert
-                    v-if="canVerifyEmail && !user.email_verified_at"
-                    variant="warning"
-                    class="max-w-xl"
-                >
-                    <CircleAlert aria-hidden="true" />
-                    <AlertTitle>
-                        {{ labels.personal.email_unverified }}
-                    </AlertTitle>
-                    <AlertDescription class="space-y-3">
-                        <Form
-                            v-bind="sendVerification.form()"
-                            :options="{ preserveScroll: true }"
-                            v-slot="{ processing }"
-                        >
-                            <Button
-                                type="submit"
-                                size="sm"
-                                variant="outline"
-                                :disabled="processing"
-                            >
-                                <Spinner v-if="processing" />
-                                {{ labels.personal.resend_verification }}
-                            </Button>
-                        </Form>
-                        <p
-                            v-if="status === 'verification-link-sent'"
-                            class="flex items-center gap-1.5 font-medium"
-                            role="status"
-                            aria-live="polite"
-                        >
-                            <BadgeCheck class="size-4" aria-hidden="true" />
-                            {{ labels.personal.verification_sent }}
-                        </p>
-                    </AlertDescription>
-                </Alert>
             </CardContent>
         </Card>
 

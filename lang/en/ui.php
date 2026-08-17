@@ -121,13 +121,6 @@ return [
             'use_authentication_code' => 'login using an authentication code',
             'use_recovery_code' => 'login using a recovery code',
         ],
-        'verify_email' => [
-            'description' => 'Please verify your email address by clicking on the link we just emailed to you.',
-            'logout' => 'Log out',
-            'resend' => 'Resend verification email',
-            'sent' => 'A new verification link has been sent to the email address you provided during registration.',
-            'title' => 'Email verification',
-        ],
     ],
     'account' => [
         'menu' => [

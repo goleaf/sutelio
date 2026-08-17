@@ -4,7 +4,7 @@
 
 All 17 first-party Eloquent models have factories: ActivityLog, Attachment, Checklist, ChecklistItem, Comment, Label, Project, Reminder, Tag, TaskPriority, TaskStatus, Todo, User, UserPreference, Workspace, WorkspaceInvitation, and WorkspaceMember. There are no current factory exemptions.
 
-Factories create valid minimal records by default, use explicit relationship helpers/states for larger graphs, respect UUID/FK/unique/workspace/enum/date rules, remain deterministic when explicit values are provided, and never fetch the public internet. Meaningful states—not every generic adjective—cover roles, workflow status, recurrence/reminder lifecycle, visibility/completion/archive/expiry/verification, optional data, Unicode, and date edges where the model supports them.
+Factories create valid minimal records by default, use explicit relationship helpers/states for larger graphs, respect UUID/FK/unique/workspace/enum/date rules, remain deterministic when explicit values are provided, and never fetch the public internet. Meaningful states—not every generic adjective—cover roles, workflow status, recurrence/reminder lifecycle, visibility/completion/archive/expiry, optional data, Unicode, and date edges where the model supports them.
 
 ## Seeder Structure
 
@@ -37,4 +37,4 @@ The graph covers owner/admin/member permission boundaries, ownership/non-ownersh
 
 Exact tests and final counts are recorded in `docs/compliance-matrix.md` and the final `docs/progress.md` entry.
 
-Final verification covers 17 factory mappings, 17 default factory creates, 30 meaningful states, typed helper state, schema foreign keys, complete demo creation, repeat-run table-count identity, all three locales, owner/admin/member roles, and the production guard. A separate file-backed SQLite run migrated all 34 migrations, seeded twice, produced 3 users/1 workspace/25 tasks, passed `PRAGMA integrity_check`, and returned no foreign-key violations.
+Final verification covers 17 factory mappings, 17 default factory creates, 29 meaningful states, typed helper state, schema foreign keys, complete demo creation, repeat-run table-count identity, all three locales, owner/admin/member roles, and the production guard. A fresh in-memory SQLite run applied all 36 migrations and completed the full demo seed; the complete suite separately proves repeat-run identity, while the migrated local SQLite database passes the application health check.

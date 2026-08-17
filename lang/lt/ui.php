@@ -121,13 +121,6 @@ return [
             'use_authentication_code' => 'prisijungti naudojant autentifikavimo kodą',
             'use_recovery_code' => 'prisijungti naudojant atkūrimo kodą',
         ],
-        'verify_email' => [
-            'description' => 'Patvirtinkite el. pašto adresą paspausdami ką tik išsiųstą nuorodą.',
-            'logout' => 'Atsijungti',
-            'resend' => 'Siųsti patvirtinimo laišką dar kartą',
-            'sent' => 'Nauja patvirtinimo nuoroda išsiųsta registracijos metu nurodytu el. pašto adresu.',
-            'title' => 'El. pašto patvirtinimas',
-        ],
     ],
     'account' => [
         'menu' => [

@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use Laravel\Fortify\Features;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -33,13 +32,11 @@ class ProfileController extends Controller
 
         return Inertia::render('settings/Profile', [
             'user' => [
-                ...$user->only(['id', 'name', 'email', 'email_verified_at']),
+                ...$user->only(['id', 'name', 'email']),
                 'avatar_url' => is_string($user->getRawOriginal('avatar_path'))
                     ? route('profile.avatar.show', ['v' => $user->updated_at?->getTimestamp()])
                     : null,
             ],
-            'canVerifyEmail' => Features::enabled(Features::emailVerification()),
-            'status' => $request->session()->get('status'),
             'labels' => $this->labels(),
         ]);
     }
@@ -48,10 +45,6 @@ class ProfileController extends Controller
     {
         $validated = $request->validated();
         $user = $this->authenticatedUser($request);
-
-        if ($validated['email'] !== $user->email) {
-            $user->forceFill(['email_verified_at' => null])->save();
-        }
 
         $user->update($validated);
 

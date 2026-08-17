@@ -4,7 +4,7 @@ This document describes implemented controls; dated historical findings live und
 
 ## Implemented Boundaries
 
-- Fortify owns browser registration, login, password reset, email verification, passkeys, two-factor challenge/recovery, password confirmation, and session lifecycle. Sensitive endpoints have explicit throttles and safe localized messages.
+- Fortify owns browser registration, login, password reset, passkeys, two-factor challenge/recovery, password confirmation, and session lifecycle. Email verification is intentionally disabled and guarded against reintroduction; sensitive endpoints retain explicit throttles and safe localized messages.
 - Sanctum API tokens are hashed and ability scoped. API login/register are rate limited; every protected API route combines authentication, ability, policy, validation, and workspace scope.
 - Invitation tokens are random, digest-backed, expiring, purpose/owner bound, single-use, cancellable, and replay-safe. Invitations do not create known-password accounts.
 - Policies and aggregate-scoped queries/actions prevent direct-object and cross-workspace access. Exact mixed ID sets fail before writes.
@@ -13,7 +13,7 @@ This document describes implemented controls; dated historical findings live und
 - Avatar/attachment/import inputs validate size, content/MIME pair, dimensions/shape where applicable, and use generated private paths. Downloads authorize at request time.
 - Import is owner/administrator-only, bounded, previewed, and transactional; execution-time validation cannot emit false success. CSV export neutralizes spreadsheet formulas; exports stream. Backups use opaque IDs, consistent SQLite snapshots, private storage, configured-operator policy, recent password confirmation, locking, integrity validation, and rollback safety.
 - Configuration reads environment values only through config files. Application logs must not contain passwords, sessions, authorization headers, full tokens, private keys, backups, or sensitive request/response bodies.
-- NativePHP bundles remove all `MAIL_*` values and force the non-logging `array` mailer on-device, preventing email-verification signed URLs from entering app-private logs. Web deployments continue to use their explicitly configured mail transport.
+- NativePHP bundles remove all `MAIL_*` values and force the non-logging `array` mailer on-device so invitation, password-reset, and reminder mail payloads cannot enter app-private logs. Web deployments continue to use their explicitly configured mail transport.
 - Production must use `APP_DEBUG=false`, a non-placeholder app key, secure cookies/HTTPS, private storage permissions, and the documented scheduler/queue controls.
 
 ## Current Threat Review

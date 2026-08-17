@@ -26,9 +26,6 @@ return [
             'save' => 'Save changes',
             'saving' => 'Saving…',
             'saved' => 'Profile updated.',
-            'email_unverified' => 'Your email address is not verified.',
-            'resend_verification' => 'Resend verification email',
-            'verification_sent' => 'A new verification link has been sent to your email address.',
         ],
         'delete' => [
             'title' => 'Delete account',
