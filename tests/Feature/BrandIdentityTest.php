@@ -10,6 +10,7 @@ test('the approved Sutelio identity and package metadata are canonical', functio
     $package = json_decode(File::get(base_path('package.json')), true, flags: JSON_THROW_ON_ERROR);
     $packageLock = json_decode(File::get(base_path('package-lock.json')), true, flags: JSON_THROW_ON_ERROR);
     $environment = File::get(base_path('.env.example'));
+    $environmentLines = explode("\n", str_replace("\r\n", "\n", $environment));
 
     expect(config('app.name'))->toBe('Sutelio')
         ->and(config('nativephp.app_id'))->toBe('com.goleaf.sutelio')
@@ -31,18 +32,55 @@ test('the approved Sutelio identity and package metadata are canonical', functio
         ])
         ->and($package['name'])->toBe('sutelio')
         ->and($packageLock['name'])->toBe('sutelio')
-        ->and($packageLock['packages']['']['name'])->toBe('sutelio')
-        ->and($environment)->toContain(
-            'APP_NAME="Sutelio"',
-            'NATIVEPHP_APP_ID=com.goleaf.sutelio',
-            'NATIVEPHP_DEEPLINK_SCHEME=sutelio',
-            'NATIVEPHP_DEEPLINK_HOST=',
-            'NATIVEPHP_SERVICE_NAME="Sutelio"',
-            'NATIVEPHP_ANDROID_COLOR_PRIMARY="#123C8B"',
-            'NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT="#0A285F"',
-            'NATIVEPHP_ANDROID_COLOR_ON_PRIMARY="#FFF8E9"',
-            'APP_STORE_APP_NAME="Sutelio"',
-        );
+        ->and($packageLock['packages']['']['name'])->toBe('sutelio');
+
+    $expectedEnvironmentLines = [
+        'APP_NAME' => 'APP_NAME="Sutelio"',
+        'NATIVEPHP_APP_ID' => 'NATIVEPHP_APP_ID=com.goleaf.sutelio',
+        'NATIVEPHP_DEEPLINK_SCHEME' => 'NATIVEPHP_DEEPLINK_SCHEME=sutelio',
+        'NATIVEPHP_DEEPLINK_HOST' => 'NATIVEPHP_DEEPLINK_HOST=',
+        'NATIVEPHP_SERVICE_NAME' => 'NATIVEPHP_SERVICE_NAME="Sutelio"',
+        'NATIVEPHP_ANDROID_COLOR_PRIMARY' => 'NATIVEPHP_ANDROID_COLOR_PRIMARY="#123C8B"',
+        'NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT' => 'NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT="#0A285F"',
+        'NATIVEPHP_ANDROID_COLOR_ON_PRIMARY' => 'NATIVEPHP_ANDROID_COLOR_ON_PRIMARY="#FFF8E9"',
+        'APP_STORE_APP_NAME' => 'APP_STORE_APP_NAME="Sutelio"',
+    ];
+
+    foreach ($expectedEnvironmentLines as $key => $expectedLine) {
+        $matchingLines = array_values(array_filter(
+            $environmentLines,
+            static fn (string $line): bool => str_starts_with($line, "{$key}="),
+        ));
+
+        expect($matchingLines, $key)->toBe([$expectedLine]);
+    }
+});
+
+test('the Sutelio configuration sources declare exact fallbacks independently of local environment', function () {
+    $configContracts = [
+        config_path('app.php') => [
+            "'name' => env('APP_NAME', 'Sutelio'),",
+        ],
+        config_path('nativephp.php') => [
+            "'app_id' => env('NATIVEPHP_APP_ID', 'com.goleaf.sutelio'),",
+            "'deeplink_scheme' => env('NATIVEPHP_DEEPLINK_SCHEME') ?: 'sutelio',",
+            "'deeplink_host' => env('NATIVEPHP_DEEPLINK_HOST') ?: null,",
+            "'color_primary' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY', '#123C8B'),",
+            "'color_primary_night' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT', '#0A285F'),",
+            "'color_on_primary' => env('NATIVEPHP_ANDROID_COLOR_ON_PRIMARY', '#FFF8E9'),",
+            "'service_name' => env('NATIVEPHP_SERVICE_NAME', 'Sutelio'),",
+            "'app_name' => env('APP_STORE_APP_NAME') ?: 'Sutelio',",
+        ],
+    ];
+
+    foreach ($configContracts as $path => $expectedExpressions) {
+        $source = File::get($path);
+
+        foreach ($expectedExpressions as $expectedExpression) {
+            expect(substr_count($source, $expectedExpression), "{$path}: {$expectedExpression}")
+                ->toBe(1);
+        }
+    }
 });
 
 test('the remaining user-facing catalogs use Sutelio with locale contract parity', function () {

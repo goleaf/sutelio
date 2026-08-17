@@ -4845,3 +4845,16 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 
 - The complete tracked diff contains only Task 6 identity/configuration/tests/installer/progress files plus the approved derived `composer.lock` content hash; `.env`, generated native trees, package dependency changes, and unrelated files remain unstaged.
 - The semantic commit is prepared as `refactor: rename application to Sutelio`. At the time this append-only entry is committed, its hash and push result cannot yet be embedded in that same commit; exact commit, remote ancestry, push range, and final ahead/behind facts are reported in the task handoff.
+
+### Final Git Delivery Evidence
+
+- Task 6 was committed as `05fd2fbb209f4b7cf5722bbf9f527734ed425909` with message `refactor: rename application to Sutelio` and nine tracked files. Its parent is `13e6b6ece47bdf603aa74b48378a7ddbbebeef83`.
+- Before Task 6 began, an external repository process had already advanced `origin/main` to the Task 5 commit `13e6b6e`; this task did not perform or claim that external push. The Task 6 pre-push fetch then confirmed `origin/main` was a linear ancestor with ahead/behind `0/1`.
+- `git push --verbose origin main` exited 0 and reported `13e6b6e..05fd2fb main -> main` without force or history rewriting. The post-push `git ls-remote` value and local HEAD both resolved to `05fd2fbb209f4b7cf5722bbf9f527734ed425909`, with final ahead/behind `0/0` and a clean tracked working tree.
+
+### Specification Review Hardening
+
+- Follow-up review identified that runtime `config()` assertions could be satisfied by the ignored local `.env` even if committed fallback expressions regressed, and that substring checks did not prove unique exact `.env.example` assignments.
+- The brand contract now requires each Laravel/NativePHP fallback source expression exactly once, independently of process environment. A temporary mutation from `com.goleaf.sutelio` back to `com.goleaf.xiaomimimo` produced the expected one-test RED (`0 is identical to 1`) while the local environment remained unchanged; the production line was immediately restored and has no tracked diff.
+- Each of the nine relevant `.env.example` assignments is now collected by exact key and compared to a single-element array containing the full expected line. This rejects missing, duplicate, or partially matching values, including the required empty `NATIVEPHP_DEEPLINK_HOST=` assignment.
+- The hardened Brand/NativePHP gate passes 37 tests / 4,181 assertions. The full Task 6 Brand/NativePHP/DatabaseBackup/ApplicationLayer gate passes 58 tests / 4,281 assertions; scoped Pint and `git diff --check` pass. The follow-up changes only this regression test and append-only evidence; production configuration, local `.env`, packages, native trees, routes, schema, and email-verification behavior are unchanged.
