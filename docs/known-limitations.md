@@ -19,8 +19,8 @@ Only external/environmental blockers and explicitly accepted platform data bound
 ## Coverage Driver
 
 - Affected requirement: `test-coverage-001`.
-- Evidence: `herd coverage --ri xdebug` and `herd debug --ri xdebug` report that Xdebug is not present; `herd php artisan test --coverage --min=0 --compact` exits with `Code coverage driver not available. Did you install Xdebug or PCOV?`.
-- Impact: no truthful application coverage percentage can be reported from this workstation. The latest recorded complete sequential behavioral suite passed 808 tests / 21,930 assertions; Task 9 must run a fresh complete suite and repeat the coverage attempt rather than treating that result as current coverage evidence.
+- Evidence: `herd coverage --ri xdebug` and `herd debug --ri xdebug` report that Xdebug is not present. The Task 9 `php artisan test --coverage --compact` attempt exited 1 before running tests with `Code coverage driver not available. Did you install Xdebug or PCOV?`.
+- Impact: no truthful application coverage percentage can be reported from this workstation. The fresh Task 9 complete sequential behavioral suite passed 831 tests / 32,899 assertions, but behavioral results are not substituted for measured coverage.
 - Resolution trigger: install a PHP 8.5-compatible Xdebug or PCOV extension in Herd, rerun the coverage command, review uncovered critical branches, and record the measured result.
 
 ## Store Signing Environment
