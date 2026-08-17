@@ -3,6 +3,7 @@ import { useHttp } from '@inertiajs/vue3';
 import { Plus, X } from '@lucide/vue';
 import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import Field from '@/components/shared/Field.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -96,19 +97,26 @@ async function submit(): Promise<void> {
             max-width-class="sm:max-w-xl"
         >
             <form class="space-y-6 px-6 py-6 sm:px-8" @submit.prevent="submit">
-                <div class="space-y-2">
-                    <Label for="title">{{ t('tasks.create.title') }}</Label>
-                    <Input
-                        id="title"
-                        v-model="form.title"
-                        :placeholder="t('tasks.create.title_placeholder')"
-                        autofocus
-                        :disabled="form.processing"
-                        :aria-invalid="Boolean(form.errors.title)"
-                        @input="form.clearErrors('title')"
-                    />
-                    <InputError :message="form.errors.title" />
-                </div>
+                <Field
+                    id="title"
+                    :label="t('tasks.create.title')"
+                    :error="form.errors.title"
+                    required
+                >
+                    <template #default="{ id, describedBy, invalid, required }">
+                        <Input
+                            :id="id"
+                            v-model="form.title"
+                            :placeholder="t('tasks.create.title_placeholder')"
+                            autofocus
+                            :disabled="form.processing"
+                            :aria-describedby="describedBy"
+                            :aria-invalid="invalid"
+                            :required="required"
+                            @input="form.clearErrors('title')"
+                        />
+                    </template>
+                </Field>
                 <div class="space-y-2">
                     <Label for="description">{{
                         t('tasks.create.description')

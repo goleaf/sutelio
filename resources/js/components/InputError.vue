@@ -9,6 +9,7 @@ defineProps<{
 <template>
     <p
         v-if="message"
+        data-slot="field-error"
         class="flex items-start gap-1.5 text-sm font-medium text-destructive"
         role="alert"
         aria-live="polite"
