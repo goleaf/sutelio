@@ -18,6 +18,7 @@ import {
     isProjectTaskOverdue,
     projectAttentionContinuation,
 } from '@/components/project/project-operations';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
 import { useUi } from '@/composables/useUi';
@@ -75,21 +76,22 @@ function dueLabel(task: ProjectTask): string {
         :aria-label="t('projects.show.pulse.title')"
     >
         <div class="border-b border-border/70 px-5 py-5 sm:px-6">
-            <div class="flex items-start gap-3">
-                <span
-                    class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
-                >
-                    <Gauge class="size-5" aria-hidden="true" />
-                </span>
-                <div>
-                    <h2 class="font-semibold tracking-tight">
-                        {{ t('projects.show.pulse.title') }}
-                    </h2>
-                    <p class="mt-1 text-xs leading-5 text-muted-foreground">
-                        {{ t('projects.show.pulse.description') }}
-                    </p>
-                </div>
-            </div>
+            <LeadingIconHeading content-class="gap-0">
+                <template #icon>
+                    <span
+                        class="flex size-10 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-700"
+                    >
+                        <Gauge class="size-5" aria-hidden="true" />
+                    </span>
+                </template>
+
+                <h2 class="font-semibold tracking-tight">
+                    {{ t('projects.show.pulse.title') }}
+                </h2>
+                <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                    {{ t('projects.show.pulse.description') }}
+                </p>
+            </LeadingIconHeading>
 
             <div class="mt-5">
                 <div class="flex items-center justify-between gap-3 text-xs">

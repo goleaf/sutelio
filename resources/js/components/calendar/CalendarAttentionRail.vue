@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { AlertTriangle, ArrowUpRight, CalendarCheck2 } from '@lucide/vue';
 import type { CalendarTodo } from '@/components/calendar/calendar-types';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
@@ -21,13 +22,16 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
         class="min-w-0 overflow-hidden rounded-2xl border border-orange-500/20 bg-orange-500/[0.035] p-4 xl:sticky xl:top-6 xl:self-start"
         :aria-labelledby="'calendar-attention-heading'"
     >
-        <header class="flex items-start gap-3">
-            <div
-                class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-orange-500/12 text-orange-700"
-            >
-                <AlertTriangle class="size-4.5" aria-hidden="true" />
-            </div>
-            <div class="min-w-0 flex-1">
+        <header>
+            <LeadingIconHeading content-class="gap-0">
+                <template #icon>
+                    <div
+                        class="flex size-10 items-center justify-center rounded-2xl bg-orange-500/12 text-orange-700"
+                    >
+                        <AlertTriangle class="size-4.5" aria-hidden="true" />
+                    </div>
+                </template>
+
                 <div class="flex items-center justify-between gap-3">
                     <h2 id="calendar-attention-heading" class="font-semibold">
                         {{ copy.calendar.attention }}
@@ -39,7 +43,7 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
                 <p class="mt-1 text-xs leading-5 text-muted-foreground">
                     {{ copy.calendar.attention_description }}
                 </p>
-            </div>
+            </LeadingIconHeading>
         </header>
 
         <ul v-if="todos.length" class="mt-4 grid min-w-0 gap-2">

@@ -7,6 +7,7 @@ import type {
     OnboardingMode,
     OnboardingWorkspace,
 } from '@/components/onboarding/onboarding-types';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -112,17 +113,25 @@ const description = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <Building2 class="size-5 text-orange-600" aria-hidden="true" />
-                <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
-                <p class="mt-2 text-sm font-medium break-words">
-                    {{ selected?.name }}
-                </p>
-                <p
-                    v-if="selected?.role"
-                    class="mt-1 text-xs text-muted-foreground"
-                >
-                    {{ copy.role.replace(':role', selected.role) }}
-                </p>
+                <LeadingIconHeading content-class="gap-2">
+                    <template #icon>
+                        <Building2
+                            class="size-5 text-orange-600"
+                            aria-hidden="true"
+                        />
+                    </template>
+
+                    <h2 class="font-semibold">{{ copy.preview_title }}</h2>
+                    <p class="text-sm font-medium break-words">
+                        {{ selected?.name }}
+                    </p>
+                    <p
+                        v-if="selected?.role"
+                        class="text-xs text-muted-foreground"
+                    >
+                        {{ copy.role.replace(':role', selected.role) }}
+                    </p>
+                </LeadingIconHeading>
             </aside>
         </div>
 
@@ -160,16 +169,24 @@ const description = computed({
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
             >
-                <Building2 class="size-5 text-orange-600" aria-hidden="true" />
-                <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
-                <p class="mt-2 text-sm font-medium break-words">
-                    {{ name || copy.name_placeholder }}
-                </p>
-                <p
-                    class="mt-2 text-xs leading-5 break-words text-muted-foreground"
-                >
-                    {{ description || copy.details_placeholder }}
-                </p>
+                <LeadingIconHeading content-class="gap-2">
+                    <template #icon>
+                        <Building2
+                            class="size-5 text-orange-600"
+                            aria-hidden="true"
+                        />
+                    </template>
+
+                    <h2 class="font-semibold">{{ copy.preview_title }}</h2>
+                    <p class="text-sm font-medium break-words">
+                        {{ name || copy.name_placeholder }}
+                    </p>
+                    <p
+                        class="text-xs leading-5 break-words text-muted-foreground"
+                    >
+                        {{ description || copy.details_placeholder }}
+                    </p>
+                </LeadingIconHeading>
             </aside>
         </div>
 

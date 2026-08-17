@@ -7,6 +7,7 @@ import {
     CalendarClock,
 } from '@lucide/vue';
 import { computed } from 'vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { safeDefinitionColor } from '@/composables/useTaskDefinitions';
@@ -72,20 +73,21 @@ function formattedDueDate(todo: Todo): string {
 
 <template>
     <Card class="@container gap-0 overflow-hidden py-0">
-        <header
-            class="flex items-start gap-3 border-b border-border/70 px-5 py-5 sm:px-6"
-        >
-            <span
-                class="flex size-11 shrink-0 items-center justify-center rounded-2xl border"
-                :class="queueDesign.iconClass"
-            >
-                <component
-                    :is="queueDesign.icon"
-                    class="size-5"
-                    aria-hidden="true"
-                />
-            </span>
-            <div class="min-w-0 flex-1">
+        <header class="border-b border-border/70 px-5 py-5 sm:px-6">
+            <LeadingIconHeading content-class="gap-0">
+                <template #icon>
+                    <span
+                        class="flex size-11 items-center justify-center rounded-2xl border"
+                        :class="queueDesign.iconClass"
+                    >
+                        <component
+                            :is="queueDesign.icon"
+                            class="size-5"
+                            aria-hidden="true"
+                        />
+                    </span>
+                </template>
+
                 <div class="flex items-center gap-2">
                     <h3 class="font-semibold tracking-tight">{{ title }}</h3>
                     <Badge :variant="queueDesign.badgeVariant">
@@ -95,7 +97,7 @@ function formattedDueDate(todo: Todo): string {
                 <p class="mt-1 text-sm leading-5 text-muted-foreground">
                     {{ description }}
                 </p>
-            </div>
+            </LeadingIconHeading>
         </header>
 
         <div

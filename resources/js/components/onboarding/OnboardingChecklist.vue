@@ -12,6 +12,7 @@ import {
     X,
 } from '@lucide/vue';
 import { dismissChecklist } from '@/actions/App/Http/Controllers/OnboardingController';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useUi } from '@/composables/useUi';
@@ -54,12 +55,15 @@ function dismiss(): void {
                 aria-hidden="true"
             />
             <CardHeader class="relative gap-3 pr-16 sm:pr-20">
-                <div
-                    class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
-                >
-                    <Sparkles class="size-5" aria-hidden="true" />
-                </div>
-                <div class="max-w-3xl space-y-1.5">
+                <LeadingIconHeading content-class="max-w-3xl">
+                    <template #icon>
+                        <div
+                            class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
+                        >
+                            <Sparkles class="size-5" aria-hidden="true" />
+                        </div>
+                    </template>
+
                     <h2
                         id="onboarding-checklist-title"
                         class="text-xl font-semibold tracking-[-0.025em] sm:text-2xl"
@@ -69,7 +73,7 @@ function dismiss(): void {
                     <p class="text-sm leading-6 text-muted-foreground">
                         {{ t('dashboard.onboarding.description') }}
                     </p>
-                </div>
+                </LeadingIconHeading>
                 <Button
                     type="button"
                     variant="ghost"
