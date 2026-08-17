@@ -6,7 +6,7 @@ The active product identity is Sutelio. Application/package metadata, configurat
 
 Task 7 proved that the unchanged sequence `php artisan native:install --force --no-interaction && npm run brand:native` reproducibly canonicalizes a fresh NativePHP 4.2 tree. The generated Android external application ID is `com.goleaf.sutelio`, while its NativePHP/JNI namespace deliberately remains `com.nativephp.mobile`; active architecture and implementation-plan text supersede contrary historical plan language. The publication and rollback follow-ups were delivered by `66318c0` and `e50f9c1`, with the combined NativePHP/brand gate passing 45 tests / 4,249 assertions.
 
-The successor browser, complete-gate, and Android-artifact phases are now executed through Task 20. Task 21 still owns the verified in-place GitHub repository/checkout/Herd and `sutelio.test` transition, and Task 22 reserves installation on the connected Samsung as the final mutation.
+The successor browser, complete-gate, Android-artifact, and in-place rename phases are now executed through Task 21. GitHub resolves the canonical public repository as `goleaf/sutelio`; local `origin`, the exact checkout `/Users/andrejprus/Herd/sutelio`, and the secure PHP 8.5 Herd site `https://sutelio.test` match that identity. Independent disposable Chrome DevTools and Playwright navigation returned HTTP 200 Sutelio login renders without console, failed dynamic-request, or horizontal-overflow evidence. Task 22 reserves installation on the connected Samsung as the final mutation.
 
 ## Task 20 Android Artifact And Emulator Evidence
 

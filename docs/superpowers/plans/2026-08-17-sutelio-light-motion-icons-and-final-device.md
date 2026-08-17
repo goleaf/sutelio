@@ -1113,7 +1113,7 @@ Start the existing approved AVD, resolve its exact emulator serial, uninstall on
 
 Any APK/emulator failure is fixed in source, followed by relevant focused/full gates and a fresh branded rebuild. Record the final APK SHA-256, size, package, signature, emulator serial/API, screenshots, and logs.
 
-- [ ] **Step 5: Commit current evidence**
+- [x] **Step 5: Commit current evidence**
 
 Commit only current deployment/state/audit/progress documents:
 
@@ -1128,15 +1128,15 @@ docs: record Sutelio Android verification
 - Modify canonical current docs and append-only progress as required
 - External: GitHub repository name, Git remote URL, Herd link, local checkout directory
 
-- [ ] **Step 1: Final source and secret audit**
+- [x] **Step 1: Final source and secret audit**
 
 Run active legacy identity scans, credential/binary/generated-output scans, complete diff review, full test/build evidence review, and confirm the named APK remains ignored.
 
-- [ ] **Step 2: Rename GitHub safely**
+- [x] **Step 2: Rename GitHub safely**
 
 Verify `goleaf/sutelio` does not already exist, then rename `goleaf/xiaomi-mimo` to `goleaf/sutelio` with GitHub CLI. Update `origin` to the canonical new URL and verify fetch/push/`gh repo view` without force.
 
-- [ ] **Step 3: Rename Herd checkout safely**
+- [x] **Step 3: Rename Herd checkout safely**
 
 Verify `/Users/andrejprus/Herd/sutelio` is absent, unlink only the old Herd site, move the exact checkout directory to `/Users/andrejprus/Herd/sutelio`, link it through Herd, update only ignored local `APP_URL`, and verify `https://sutelio.test` boot/browser smoke. Do not recursively delete or overwrite either path.
 
