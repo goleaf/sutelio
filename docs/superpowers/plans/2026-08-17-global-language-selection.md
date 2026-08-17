@@ -161,7 +161,7 @@
 
 - [x] Add a stable requirement or extend `sys-user-002` with first-run/device/account persistence and exact evidence.
 - [x] Document locale precedence, encrypted cookie scope, reusable UI, flags, mobile persistence, accessibility, and query delta.
-- [ ] Append exact focused/full/browser/native verification results, limitations, files, decisions, commit, and push facts; preserve prior progress history. Verification facts are current; commit/push facts are added after delivery.
+- [x] Append exact focused/full/browser/native verification results, limitations, files, decisions, commit, and push facts; preserve prior progress history.
 - [x] Run Prettier/Markdown link review and `git diff --check`.
 
 ### Task 12: Full gates, review, and delivery
@@ -170,12 +170,12 @@
 - [x] Run all frontend tests, Vue types, ESLint, Prettier verification, npm audit, and production Vite build.
 - [x] Run Composer strict validation/audit/platform checks and Laravel config/route/view cache plus HTTP smoke checks.
 - [x] Review the implementation against the design for security, accessibility, localization, mobile behavior, query count, and future-language extensibility.
-- [ ] Inspect complete and staged diffs, secrets, generated artifacts, and preservation of the concurrent light/Signal Orange/native work.
-- [ ] Stage only attributable language-selection files/hunks, validate a semantic commit message, commit on `main`, fetch, prove linear ancestry, push normally, and verify local/remote equality.
+- [x] Inspect complete and staged diffs, secrets, generated artifacts, and preservation of the concurrent light/Signal Orange/native work.
+- [x] Stage only attributable language-selection files/hunks, validate semantic commit messages, commit on `main`, fetch, prove linear ancestry, push normally, and verify local/remote equality.
 
 ## Self-Review
 
 - Every repository-controlled design requirement maps to Tasks 1–12; Android runtime and Apple simulator checks retain explicit environmental blockers.
 - Server and TypeScript names are consistent: `localization.current`, `localization.requires_selection`, `localization.options`, and `language`.
 - The plan adds no database migration or dependency and explicitly covers guest, registration, login, authenticated, browser, phone, and tablet paths.
-- The concurrent dirty worktree is a delivery risk, not permission to include unrelated staged changes; final publication waits for an attributable staged slice.
+- The attributable language and contrast slices were published while concurrent NativePHP and auth-landmark work remained unstaged and preserved.
