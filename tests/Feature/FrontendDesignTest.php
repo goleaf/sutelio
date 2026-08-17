@@ -26,15 +26,16 @@ dataset('leading icon heading consumers', [
     'settings security page' => ['pages/settings/Security.vue', 1],
 ]);
 
-test('leading icon headings keep the icon beside a vertically centered wrapping text stack', function () {
+test('leading icon headings keep the icon top aligned beside a wrapping text stack', function () {
     expect(File::get(resource_path('js/components/shared/LeadingIconHeading.vue')))
         ->toContain('data-slot="leading-icon-heading"')
         ->toContain('flex-nowrap')
-        ->toContain('items-center')
+        ->toContain('items-start')
         ->toContain('data-slot="leading-icon-heading-icon"')
         ->toContain('shrink-0')
         ->toContain('data-slot="leading-icon-heading-content"')
         ->toContain('min-w-0 flex-1')
+        ->not->toContain('items-center')
         ->not->toContain('whitespace-nowrap');
 });
 
