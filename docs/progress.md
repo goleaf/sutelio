@@ -4678,3 +4678,26 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - Commit `a414112` contains only the dependency/runtime locks, NativePHP runtime corrections, focused regressions, and synchronized canonical evidence owned by this phase; generated native projects, the debug APK, local environment, host database, credentials, and unrelated files remain untracked or ignored.
 - `git push --verbose origin main` completed successfully as `b0eea37..a414112`. This status-only documentation commit records the completed delivery and will be pushed normally.
 - The Android 14 emulator remains running with package `com.goleaf.xiaomimimo` installed from the final verified APK and `com.nativephp.mobile.ui.MainActivity` resumed in the foreground.
+
+## Sutelio Full Brand Rename Design — 2026-08-17
+
+### Preflight Status
+
+- Began on clean `main` at `81f2393`, synchronized with `origin/main`, with no staged, unstaged, or untracked user files. The repository has no `.ai/rules` directory.
+- Re-read the repository contract, mandatory canonical documents, and the latest dependency/runtime/emulator delivery evidence before recording the design.
+- Inspected the current Laravel-derived web mark, Xiaomi Mimo wordmark, browser icons, NativePHP mobile icon/splash output, active configuration names, package identity, localization copy, canonical documentation, tests, and generated-native boundary.
+
+### Approved Design
+
+- The canonical product name is `Sutelio` and the user requested a complete rename rather than a display-name-only alias.
+- The selected visual direction is the third clean-S concept: a cobalt `#123C8B` rounded tile, orange `#FF6038` circle, and solid ivory `#FFF8E9` capital `S`. The `S` has no stripe, cut, line, gradient, or internal color change. The `Sutelio` wordmark is always one color and never isolates the final `o` in orange.
+- The full scope includes web/native assets, application/configuration/copy/documentation names, Android application ID `com.goleaf.sutelio`, matching iOS identity, package/build/test/artifact names, and an in-place GitHub/local Herd repository rename after verified source delivery.
+- The Android/iOS package-identity change is explicitly a clean-install boundary. The Sutelio package cannot update or directly read the old Xiaomi Mimo app-private database; no automatic cross-package data migration is claimed.
+- Historical append-only evidence retains the old name where changing it would falsify prior commands, package IDs, artifact hashes, or delivery results.
+
+### Verification And Delivery Status
+
+- Design specification: `docs/plans/2026-08-17-sutelio-full-brand-rename-design.md`.
+- No application source, dependency, migration, local environment, database, generated native project, emulator package, remote repository, or Herd site has been changed in this design-only phase.
+- Specification self-review resolved exact geometry, iOS bundle identity, deep-link scheme, Composer/npm metadata, backup/test prefixes, and APK publication naming. `git diff --check` and focused Prettier verification pass.
+- The design-only diff contains this specification and append-only progress evidence; commit and push status remain to be recorded before implementation planning begins.
