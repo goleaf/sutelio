@@ -93,7 +93,7 @@ function clearFilters(): void {
                         {{ option.label }}
                         <span
                             v-if="option.value === 'unread' && stats.unread > 0"
-                            class="rounded-full bg-orange-500 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white tabular-nums"
+                            class="rounded-full bg-orange-600 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white tabular-nums"
                         >
                             {{ formatNumber(stats.unread) }}
                         </span>

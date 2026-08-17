@@ -33,10 +33,10 @@ const toastOptions = computed<ToastOptions>(() => ({
   },
   classes: {
     ...props.toastOptions?.classes,
-    actionButton: cn("!h-8 !rounded-lg !bg-orange-600 !px-3 !text-white focus-visible:!shadow-[0_0_0_3px_rgba(249,115,22,0.3)]", props.toastOptions?.classes?.actionButton),
-    cancelButton: cn("!h-8 !rounded-lg !px-3 focus-visible:!shadow-[0_0_0_3px_rgba(249,115,22,0.3)]", props.toastOptions?.classes?.cancelButton),
-    closeButton: cn("focus-visible:!shadow-[0_0_0_3px_rgba(249,115,22,0.3)]", props.toastOptions?.classes?.closeButton),
-    toast: cn("focus-visible:!shadow-[0_24px_70px_-36px_rgba(15,23,42,0.65),0_0_0_3px_rgba(249,115,22,0.3)]", props.toastOptions?.classes?.toast),
+    actionButton: cn("!h-8 !rounded-lg !bg-orange-600 !px-3 !text-white focus-visible:!shadow-[0_0_0_3px_rgba(255,96,56,0.3)]", props.toastOptions?.classes?.actionButton),
+    cancelButton: cn("!h-8 !rounded-lg !px-3 focus-visible:!shadow-[0_0_0_3px_rgba(255,96,56,0.3)]", props.toastOptions?.classes?.cancelButton),
+    closeButton: cn("focus-visible:!shadow-[0_0_0_3px_rgba(255,96,56,0.3)]", props.toastOptions?.classes?.closeButton),
+    toast: cn("focus-visible:!shadow-[0_24px_70px_-36px_rgba(15,23,42,0.65),0_0_0_3px_rgba(255,96,56,0.3)]", props.toastOptions?.classes?.toast),
   },
 }))
 </script>

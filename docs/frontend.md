@@ -46,15 +46,15 @@ Guided onboarding uses a wide-screen progress rail and a compact sticky mobile p
 
 ## Tailwind Feature Applicability
 
-| Feature                                        | Candidate / decision                                       | Effect and evidence                                            |
-| ---------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
-| CSS-first `@theme` and `@source`               | Used in main stylesheet                                    | Static discovery and semantic tokens; production build         |
-| Data/ARIA/group/peer variants                  | Used through shared controls                               | State styling without dynamic class construction; design tests |
-| Reduced-motion / forced-colors variants        | Used where critical                                        | Accessibility behavior; source/browser checks                  |
-| Logical properties                             | Used where direction-independent layout helps              | Translation/RTL resilience                                     |
-| Container queries                              | Use only for independently reusable constrained components | No measured candidate currently requires migration             |
-| View transitions, masks, zoom, text shadows    | Not applied decoratively                                   | No navigation/orientation benefit proven                       |
-| Sass/Less or broad `@apply` abstraction        | Not applicable                                             | Components and tokens are the abstraction layer                |
+| Feature                                     | Candidate / decision                                       | Effect and evidence                                            |
+| ------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
+| CSS-first `@theme` and `@source`            | Used in main stylesheet                                    | Static discovery and semantic tokens; production build         |
+| Data/ARIA/group/peer variants               | Used through shared controls                               | State styling without dynamic class construction; design tests |
+| Reduced-motion / forced-colors variants     | Used where critical                                        | Accessibility behavior; source/browser checks                  |
+| Logical properties                          | Used where direction-independent layout helps              | Translation/RTL resilience                                     |
+| Container queries                           | Use only for independently reusable constrained components | No measured candidate currently requires migration             |
+| View transitions, masks, zoom, text shadows | Not applied decoratively                                   | No navigation/orientation benefit proven                       |
+| Sass/Less or broad `@apply` abstraction     | Not applicable                                             | Components and tokens are the abstraction layer                |
 
 Localization workflow is in `docs/localization.md`; browser and source verification is in `docs/testing.md` and `docs/compliance-matrix.md`.
 

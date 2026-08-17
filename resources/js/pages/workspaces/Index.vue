@@ -458,7 +458,7 @@ function manageWorkspace(workspace: Workspace): void {
                         <Card
                             v-for="(workspace, index) in filteredWorkspaces"
                             :key="workspace.id"
-                            class="group relative flex flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(234,88,12,0.5)] motion-reduce:transform-none"
+                            class="group relative flex flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(255,96,56,0.5)] motion-reduce:transform-none"
                             :class="
                                 isCurrentWorkspace(workspace)
                                     ? 'border-emerald-500/30 ring-1 ring-emerald-500/10 lg:col-span-2'

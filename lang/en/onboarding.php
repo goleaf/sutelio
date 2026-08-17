@@ -74,7 +74,6 @@ return [
         'week_start' => 'First day of the week',
         'preview_title' => 'Live preview',
         'preview_description' => 'Your dates and time will look like this.',
-        'languages' => ['en' => 'English', 'lt' => 'Lithuanian', 'ru' => 'Russian'],
         'views' => ['list' => 'List', 'board' => 'Board', 'calendar' => 'Calendar'],
         'start_pages' => ['dashboard' => 'Dashboard', 'tasks' => 'Tasks', 'projects' => 'Projects', 'calendar' => 'Calendar'],
         'week_starts' => ['sunday' => 'Sunday', 'monday' => 'Monday'],

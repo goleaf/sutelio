@@ -75,7 +75,7 @@ function priorityLabel(todo: CalendarTodo): string {
                             :class="[
                                 'flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-semibold tabular-nums',
                                 day.dateKey === calendar.today_date
-                                    ? 'bg-orange-500 text-white shadow-sm'
+                                    ? 'bg-orange-600 text-white shadow-sm'
                                     : 'bg-card text-foreground shadow-sm ring-1 ring-border',
                             ]"
                         >
@@ -203,7 +203,7 @@ function priorityLabel(todo: CalendarTodo): string {
                             :class="[
                                 'flex size-8 items-center justify-center rounded-full text-xs font-semibold tabular-nums',
                                 day.dateKey === calendar.today_date
-                                    ? 'bg-orange-500 text-white shadow-sm'
+                                    ? 'bg-orange-600 text-white shadow-sm'
                                     : '',
                             ]"
                             :aria-current="

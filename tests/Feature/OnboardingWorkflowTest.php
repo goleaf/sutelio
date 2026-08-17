@@ -527,7 +527,7 @@ test('project creation is exactly once per run and a new replay may create anoth
         'mode' => 'create',
         'name' => 'Launch',
         'description' => 'Prepare the first launch.',
-        'color' => '#f97316',
+        'color' => '#ff6038',
         'icon' => 'rocket',
         'request_key' => (string) Str::uuid(),
     ];

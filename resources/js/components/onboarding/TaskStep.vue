@@ -268,7 +268,7 @@ const dueDate = computed({
                 <span
                     class="block size-3 rounded-full ring-4 ring-background"
                     :style="{
-                        backgroundColor: selectedPriority?.color ?? '#f97316',
+                        backgroundColor: selectedPriority?.color ?? '#ff6038',
                     }"
                     aria-hidden="true"
                 />

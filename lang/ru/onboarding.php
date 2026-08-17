@@ -74,7 +74,6 @@ return [
         'week_start' => 'Первый день недели',
         'preview_title' => 'Предпросмотр',
         'preview_description' => 'Так будут выглядеть ваши дата и время.',
-        'languages' => ['en' => 'Английский', 'lt' => 'Литовский', 'ru' => 'Русский'],
         'views' => ['list' => 'Список', 'board' => 'Доска', 'calendar' => 'Календарь'],
         'start_pages' => ['dashboard' => 'Обзор', 'tasks' => 'Задачи', 'projects' => 'Проекты', 'calendar' => 'Календарь'],
         'week_starts' => ['sunday' => 'Воскресенье', 'monday' => 'Понедельник'],

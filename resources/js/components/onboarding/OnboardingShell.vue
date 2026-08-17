@@ -121,7 +121,7 @@ const statusMessage = computed(() => props.copy.status[props.saveStatus]);
                                 index + 1 < progress.position
                                     ? 'border-emerald-600 bg-emerald-600 text-white'
                                     : step === progress.step
-                                      ? 'border-orange-500 bg-orange-500 text-white'
+                                      ? 'border-orange-600 bg-orange-600 text-white'
                                       : 'border-border bg-background'
                             "
                         >

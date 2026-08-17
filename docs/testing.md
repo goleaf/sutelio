@@ -4,7 +4,7 @@ Pest is the sole primary PHP test style. Feature tests cover framework-integrate
 
 ## Test Organization
 
-- `tests/Feature/Auth`, onboarding, and settings security/profile: Fortify, sessions, reset/two-factor/passkeys/preferences, the permanent absence of email verification, entry gating, resume, skip, replay, scoped/idempotent composition, and continuation.
+- `tests/Feature/Auth`, language selection, onboarding, and settings security/profile: Fortify, sessions, reset/two-factor/passkeys/preferences, account/device locale precedence and persistence, live translation contracts, the permanent absence of email verification, entry gating, resume, skip, replay, scoped/idempotent composition, and continuation.
 - Workspace/project/task/child feature files: policies, validation, state transitions, isolation, files, recurrence/reminders, notifications, transfer/backup.
 - `tests/Feature/Api`: API v1 envelope, auth, ability, policy, resource, validation, and domain parity.
 - Schema/runtime/query/architecture files: migrations/FKs/indexes, SQLite health, application boundaries, resource typing, query counts, NativePHP, design/localization contracts.
@@ -44,7 +44,7 @@ The seeding test suite is the preferred proof when configuration needs a file-ba
 
 ## Coverage And Assertions
 
-Critical identity, onboarding, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `herd php artisan test --coverage --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the current behavioral suite passes 763 tests / 16,291 assertions sequentially and in parallel, and the discovered frontend suite passes 45/45.
+Critical identity, onboarding, workspace isolation, policy, token, backup/restore, recurrence/reminder, notification-link, and integrity branches require meaningful positive/negative coverage. When a coverage driver is available, measure application coverage and target at least 90% meaningful application-code coverage; do not add assertion-free tests or broad exclusions to inflate it. The current Herd PHP 8.5 runtime has neither Xdebug nor PCOV: `php artisan test --coverage --min=0 --compact` exits with `Code coverage driver not available`. This is tracked as `test-coverage-001`; the current sequential behavioral suite passes 805 tests / 21,910 assertions, and the discovered frontend suite passes 45/45.
 
 ## Browser Verification
 
@@ -57,3 +57,5 @@ The final Notification Command Center pass repeated the authenticated notificati
 The authenticated landmark-integrity pass added a source-level regression in `FrontendDesignTest.php` and exercised 11 representative routes at both 1440x1000 and 390x844. All 22 composed-DOM checks returned one shell-owned `main`, one page `h1`, zero horizontal overflow, and zero captured console, page, request, or HTTP error; the matrix includes task/project/workspace detail and nested profile settings layouts.
 
 The guided-onboarding smoke registered real disposable users, resumed after logout/login, changed EN/LT/RU preferences, created and preserved real workspace/project/task records, accepted a pre-registration signed invitation before the completion gate, exercised required skip and replay/exit, and verified Dashboard checklist visibility/dismissal. Desktop and 390x844 mobile checks covered heading/validation focus, keyboard submission, 44-pixel actions, one landmark/heading, no overflow, and dark/reduced-motion/forced-colors modes.
+
+The global-language smoke covers the mandatory first-run dialog and shared shell switcher at 390x844, 820x1180, and 1440x1000. It verifies immediate whole-dialog Lithuanian/Russian preview before confirmation, persisted server-authoritative `PUT /locale` updates, document language and page-copy refresh, focus containment, blocked Escape, 44-pixel controls, reduced motion, local flags, no overflow, and zero current runtime/network failures. Account precedence, invalid input, registration inheritance, and login cookie synchronization remain deterministic Pest contracts so browser QA does not mutate the local user database.

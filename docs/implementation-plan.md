@@ -48,10 +48,11 @@ Requirements: `sys-dashboard-001`, `test-feature-001`, `test-architecture-001`, 
 - [x] Repair the user-owned dashboard design test so it asserts semantic structure instead of whitespace/call-argument formatting; do not weaken its intended dashboard contract.
 - [x] Add/expand architecture coverage for no Livewire/Volt, no Blade PHP/data/service calls, no `env()` outside config, no debug calls, no forbidden frontend dependencies, and no unsafe dynamic Tailwind patterns where reliable.
 - [x] Keep the first-party Inertia Blade shell free of ordinary inline script/style and obsolete color-mode bootstrap logic without CSP, locale, or Vite regressions.
+- [x] Replace inherited Tailwind orange values with the exact Sutelio signal-orange scale and accessible deep-cobalt primary foreground, without collapsing status or chart semantics.
 - [x] Remove dead example Pest helpers/tests only when confirmed non-contractual and replace with meaningful smoke/architecture coverage.
 - [x] Enable strict Eloquent behavior in local/testing and fix any missing-load/discarded/missing-attribute defects instead of suppressing them.
 
-Verification: targeted design/architecture/page/query tests, full PHP/frontend gates, browser login/dashboard fixed-light smoke.
+Verification: targeted design/brand-color/architecture/page/query tests, full PHP/frontend gates, browser login/dashboard fixed-light smoke and computed primary-color inspection.
 
 ## Pass 4 — PHP 8.5 And Laravel 13 Applicability
 

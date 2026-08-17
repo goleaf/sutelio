@@ -20,7 +20,7 @@ Provide an obvious language switcher at the top of guest and authenticated pages
 
 `App\Enums\UserLanguage` remains the source of truth for supported codes and exposes the native name and project-owned flag asset. `App\Services\LocalePreference` resolves locale precedence, determines whether first-run selection is required, updates the request session, and creates the encrypted persistence cookie. `SetLocale` delegates resolution to that service before Inertia shared translations are built.
 
-A guest-accessible, throttled, named locale endpoint uses a Form Request, a thin controller, and the existing `UpdateUserPreferences` action for authenticated persistence. The controller returns only a safe back redirect with the locale cookie; it never accepts an arbitrary redirect URL. `HandleInertiaRequests` shares a bounded `localization` contract containing the current code, first-run requirement, endpoint URL, and supported options.
+A guest-accessible, throttled, named locale endpoint uses a Form Request, a thin controller, and the existing `UpdateUserPreferences` action for authenticated persistence. The controller returns only a safe back redirect with the locale cookie; it never accepts an arbitrary redirect URL. `HandleInertiaRequests` shares a bounded `localization` contract containing the current code, first-run requirement, supported options, and first-run preview copy; the frontend reaches the endpoint through generated Wayfinder functions.
 
 The frontend uses one `LanguageSwitcher.vue` component in both shell entry points. It owns the dropdown and composes `FirstRunLanguageDialog.vue`; both consume the same shared contract and `useForm`. `LanguageFlag.vue` renders only the server-provided first-party asset URL. No Pinia store, localStorage catalog, duplicated language array, Axios request, or raw route string is introduced.
 
@@ -51,7 +51,7 @@ The cookie is encrypted by Laravel's existing middleware, `HttpOnly`, `SameSite=
 
 - While a selection request is processing, language controls are disabled and show an action-specific spinner/status.
 - A failed request keeps the dialog/dropdown usable, announces a localized error, and does not optimistically change document language.
-- Superseded selection requests are cancelled before a new submission.
+- Selection requests are serialized: every language control is disabled while its request is active, so concurrent or superseded writes are not emitted.
 - The server remains authoritative; cookies, session values, route payloads, and browser-held locale codes are validated against `UserLanguage`.
 - The feature adds no Eloquent query for guests. Authenticated requests reuse the already required preference relation, so page query budgets remain unchanged.
 

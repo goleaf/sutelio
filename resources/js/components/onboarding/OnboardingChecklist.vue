@@ -55,7 +55,7 @@ function dismiss(): void {
             />
             <CardHeader class="relative gap-3 pr-16 sm:pr-20">
                 <div
-                    class="flex size-11 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-sm"
+                    class="flex size-11 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
                 >
                     <Sparkles class="size-5" aria-hidden="true" />
                 </div>

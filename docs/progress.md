@@ -4922,6 +4922,36 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - The accepted design is recorded in `docs/superpowers/specs/2026-08-17-global-language-selection-design.md`; the dependency-ordered TDD and web/mobile verification plan is `docs/superpowers/plans/2026-08-17-global-language-selection.md`.
 - A large pre-existing staged light-only/motion phase, unstaged Signal Orange work, untracked design artifacts, and a concurrent NativePHP regeneration entry are present. They remain user/concurrent work and will not be reverted, reformatted, staged, or committed as language-selection work. Overlapping files require attributable hunk handling or completion of the concurrent commit before final publication.
 
+## Sutelio Signal Orange Alignment — 2026-08-17
+
+### Implementation Preflight
+
+- Began from clean synchronized `main` at `d5f93f3`. The concurrently delivered fixed-light/motion phase later became local parent `98610b2` while preserving the attributable signal-orange working diff; no concurrent file was reverted or overwritten.
+- The product owner requested that the application's orange match the Sutelio logo and authorized complete implementation plus final re-verification.
+- Audited the exact brand sources, canonical Tailwind configuration, shared controls, active Vue pages, and design tests. Logo/native/progress sources use `#FF6038`, while 487 `orange-*` references across 88 first-party presentation files previously resolved to Tailwind's unrelated default scale.
+- Measured contrast is `3.01:1` for signal orange against white, `2.84:1` against warm ivory, and `4.71:1` against deep cobalt. Exact-orange controls therefore use deep-cobalt normal text; white remains valid on the darker orange-600 step at `4.75:1`.
+- Scope is limited to a Sutelio-owned 50–950 orange scale, primary/ring/sidebar semantics, accessible exact-orange foregrounds, legacy orange RGB/hex presentation literals, and the default offered for newly created projects. Warning, destructive, success, information, chart, persisted domain colors, routes, queries, schema, authorization, dependencies, and the permanent no-email-verification rule remain unchanged.
+- Design specification: `docs/superpowers/specs/2026-08-17-sutelio-signal-orange-design.md`. Executable plan: `docs/superpowers/plans/2026-08-17-sutelio-signal-orange.md`.
+
+### Implementation And Focused Evidence
+
+- Added `BrandColorTest.php`. Its required RED run executed 2 tests with 2 expected failures and 2 assertions: the palette variables did not exist and shared controls still used the old literal pair.
+- The GREEN contract passes 2 tests / 53 assertions. The combined BrandColor, FrontendDesign, WorkspaceManagement, and OnboardingWorkflow gate passes 174 tests / 2,600 assertions.
+- `app.css` now maps every Tailwind orange step to a perceptual Sutelio ramp with exact `#FF6038` at 500. Primary controls use deep cobalt; ring tokens use orange-600; semantic status/chart colors remain unchanged.
+- Updated the default Button, checked Checkbox, six exact-orange/white consumers, old Tailwind-orange shadow/focus RGB literals, and new-project/onboarding presentation defaults. Existing stored project, label, priority, and status colors are not migrated.
+- All 45 frontend tests, Vue type checking, ESLint, Prettier verification, npm audit with zero vulnerabilities, and the production Vite build pass. The build transforms 3,533 modules; application CSS is 165.55 kB / 24.53 kB gzip and the application entry is 88.09 kB / 22.58 kB gzip.
+- Both configured browser MCP profiles were occupied, so an isolated temporary headless Chrome profile performed the live check without touching user browser data. `https://xiaomi-mimo.test/login` rendered Sutelio with `color-scheme: light`; runtime `--brand-orange`, `--color-orange-500`, and `--primary` resolved to `#ff6038`, and the primary action computed to `rgb(255, 96, 56)` over `rgb(10, 40, 95)`. The temporary profile was moved to Trash after capture.
+- Mobile Chrome emulation at 390x844 reported document width 390, no horizontal overflow, one `h1`, fixed light color scheme even with a matching dark OS preference, reduced-motion animation/transition durations of `0.01ms`, exact signal-orange/deep-cobalt primary colors, and zero runtime, console, or failed-network errors.
+
+### Final Quality Evidence
+
+- `vendor/bin/pint --dirty --format agent` passes. Larastan reports zero errors. The complete sequential Pest suite passes 791 tests / 21,531 assertions in 23.119 seconds.
+- The first isolated SQLite attempt used `/tmp` and was correctly rejected by the application containment guard before Laravel boot; it is not counted as a passing migration check and its empty file was moved to Trash. The corrected database lived inside the explicitly allowed repository database directory.
+- The corrected isolated SQLite gate applied all 37 migrations, completed deterministic demo seeding twice, passed `app:database-health`, returned `ok` from `PRAGMA integrity_check`, and returned no foreign-key violations. The ignored temporary database was moved to Trash; the real local database was not refreshed or modified.
+- Composer strict validation, locked audit, direct-dependency currency, and non-development platform requirements pass. Configuration, route, and Blade caches build; 276 first-party routes and four scheduled tasks are present before generated caches are cleared.
+- Laravel Boost live-schema inspection confirms the `users` table still has no `email_verified_at` column. No route, query, authorization, schema, package, dependency, status-color, or chart-color change belongs to this signal-orange phase.
+- Final source/diff review, last focused/frontend/build rerun, semantic commit, normal push, remote equality, and clean-tree verification remain pending.
+
 ### Task 7 Regeneration And Verification Evidence
 
 - `npm run brand:build` completed with `Built deterministic Sutelio web and NativePHP brand assets.` All tracked brand inputs/outputs remained byte-identical with no diff; representative SHA-256 values are `861ff275...afd7bd64` for the master mark, `fa435670...2048fb` for `public/icon.png`, and `e7618624...f532b27` for both canonical splash files.
@@ -4934,6 +4964,16 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - `php artisan native:validate` exited 0 with the expected warning `No NativeComponents found in app/NativeComponents/.`. The final focused `NativePhpMobileTest.php` plus `BrandIdentityTest.php` gate passes 41 tests / 4,170 assertions in 2.369 seconds.
 - `.gitignore` rule `/nativephp` matches representative Android manifest/resource and iOS plist/icon paths. `git ls-files`, scoped status, and scoped diff are empty for both generated trees. `nativephp.lock` remains byte-identical at SHA-256 `4e65b086...e0eb2920`, so Task 7 has no lock diff; tracked brand outputs remain clean and the Task 7 tracked-path `git diff --check` passes.
 - Query delta is exactly zero. No source, configuration, test, dependency, schema, route, Blade, Filament, local database, credential, installed legacy package, APK, or emulator was changed. The concurrent light/theme/preferences section above remains preserved and unowned. Task 7 creates no commit or push; Task 8 will own tracked evidence integration, while Task 11 will repeat official build preparation and perform APK/emulator verification.
+
+## Live Language Translation And Solid-Orange Contrast — 2026-08-17
+
+### Implementation Preflight
+
+- The product owner approved completing the current global-language plan with immediate in-place translation wherever a language is selected, including an instant first-run dialog preview before explicit confirmation and immediate Inertia-driven updates from the global switcher, Settings, and onboarding.
+- The current checkout is `main` at `98610b2` with the pre-existing uncommitted global-language and Signal Orange implementation still present. Those files are preserved as the active shared work; unrelated NativePHP generated output, credentials, databases, and user data remain outside this phase.
+- The contrast audit found solid `orange-500` / `primary` surfaces paired with the dark `primary-foreground` token in shared buttons, badges, checkboxes, selected calendar cells, onboarding markers, notification counts, Settings icons, and the language dialog. White on exact Signal Orange is only `3.01:1`, so solid white-foreground controls will use the existing darker `orange-600` step, recorded at `4.75:1`, while pale orange surfaces retain dark text.
+- Laravel Boost confirms Laravel 13.25.0, Inertia Laravel 3.3.1, Inertia Vue 3.6.1, Tailwind CSS 4.3.3, Pest 5.1.1, PHP 8.5, and SQLite. Versioned documentation confirms reactive shared props after Inertia visits, preserved component state for write visits, request-scoped locale selection, and CSS-first Tailwind styling.
+- The implementation will start with failing Pest/source contracts, then add a bounded EN/LT/RU first-run preview catalog, reuse the existing locale endpoint in Settings and onboarding, remove dark foregrounds from solid orange surfaces, and run focused through full backend/frontend/data/build/browser checks before any delivery claim.
 
 ## Sutelio NativePHP Regeneration Reproducibility Correction — 2026-08-17
 
@@ -4954,6 +4994,23 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - `php artisan native:validate` exits 0 with only `No NativeComponents found in app/NativeComponents/.`. Targeted formatting/syntax checks pass, and `php artisan test --compact tests/Feature/NativePhpMobileTest.php tests/Feature/BrandIdentityTest.php` passes 43 tests / 4,240 assertions. `npm run brand:build` still leaves tracked brand outputs byte-identical.
 - Representative Android manifest/store and iOS plist/icon paths continue to match `.gitignore` rule `/nativephp`; generated trees remain ignored and outside the tracked diff. `nativephp.lock` remains unchanged at SHA-256 `4e65b086...e0eb2920`. Vendor test targets still contain NativePHP's non-secret template `DEVELOPMENT_TEAM = QN45R83U43`; no key, certificate, provisioning profile, keystore, account credential, or application signing team was added. Query, Blade, Filament, schema, route, dependency, and database deltas remain zero.
 - The source correction is prepared for the required semantic commit `fix: make Sutelio native branding reproducible` and normal `origin/main` push after scoped-index review. The concurrent global-language, Signal Orange, theme, preference, documentation, and real-index work remains preserved and excluded from this commit.
+
+## Current-Plan Verification And Native Brand Compatibility Correction — 2026-08-17
+
+### Corrected Runtime Contract
+
+- A direct real-tree `npm run brand:native` verification exposed a case not represented by the synthetic fresh-template fixture: NativePHP-generated Gradle runtime values such as `compileSdk`, `minSdk`, `targetSdk`, version metadata, minification, and debug symbols legitimately differ from the vendor template, while the existing ignored tree can contain the previously canonicalized Android identity and still-template iOS identity. The prior byte-exact whole-file comparison therefore rejected valid generated output before publication.
+- The installer now validates and canonicalizes only the owned identity fields while preserving unrelated generated runtime values. The committed guard continues to accept only a uniform fresh-template identity or a uniform canonical Sutelio identity; the one local mixed generated snapshot was converted during the controlled correction and is not accepted as a reusable state. Arbitrary mixed identity, stale ID/label, active-value comment decoy, unsafe symlink, invalid asset hash/dimensions, or handled publication failure remains rejected before partial output is retained.
+- The older NativePHP source assertion now checks the staged atomic publication and reverse rollback contract instead of the removed recursive `cpSync` implementation. Fresh-template/idempotence, stale identity, comment-decoy, mixed-state, symlink, and injected rollback coverage remain in `BrandIdentityTest.php`.
+
+### Final Verification Evidence
+
+- The real generated tree passes `npm run brand:native` twice consecutively and `php artisan native:validate`; the only validator warning remains the expected absence of `app/NativeComponents/`. Pint passes, Larastan reports zero errors, and the final complete sequential Pest suite passes 805 tests / 21,928 assertions.
+- Vue type checking, ESLint, Prettier verification, all 45 frontend tests, npm audit with zero vulnerabilities, and the production Vite build pass. The final build transforms 3,541 modules; application CSS is 166.85 kB / 24.69 kB gzip and the application entry is 98.57 kB / 24.98 kB gzip.
+- Composer strict validation, locked audit, and non-development platform requirements pass. Configuration, route, and Blade caches build, the four scheduled tasks are registered, generated caches were cleared afterward, and `git diff --check` passes.
+- An isolated repository-contained SQLite database applied all 37 migrations, completed deterministic demo seeding twice, and passed `app:database-health`. Both verification databases were moved to Trash afterward; the real local database was not migrated, refreshed, or modified.
+- Isolated mobile Chrome at 390 by 844 reported document and viewport width 390, no horizontal overflow, fixed `color-scheme: light` under a dark OS preference, a 358-pixel first-run language dialog inside 16-pixel gutters, initial focus on English, and `rgb(205, 67, 31)` with white text on primary solid actions. Reduced-motion animation and transitions resolved to 0.01 ms, with no console, runtime, failed-request, or HTTP error. The temporary browser profiles were moved to Trash without touching the user browser.
+- Query, route, schema, dependency, Blade, and Filament deltas for this compatibility correction are zero. During verification, the NativePHP owner committed and pushed the reproducible installer as `b1dd293` (`fix: make Sutelio native branding reproducible`), leaving `main` synchronized with `origin/main`. The shared worktree still contains concurrent global-language and live-translation/contrast changes plus this verification note/test alignment; no additional commit or push was performed by this pass because the overlapping uncommitted files cannot yet be published as one attributable slice.
 
 ## Global Language Selection Delivery — 2026-08-17
 
@@ -4983,3 +5040,20 @@ Complete. A fresh installable debug APK was generated from current `main`; the i
 - Spec re-review found that exact archive `b1dd293` was not self-contained: `php artisan test --compact tests/Feature/NativePhpMobileTest.php tests/Feature/BrandIdentityTest.php` passed 42 of 43 tests because committed `NativePhpMobileTest.php` still required the removed recursive `cpSync` implementation. The previously reported 43/43 result had unknowingly consumed the unstaged six-line Task 7 assertion update from the shared worktree; this entry corrects that evidence without rewriting it.
 - The follow-up owns only that existing `NativePhpMobileTest.php` assertion delta, replacing the obsolete `cpSync` token with the staged publication-plan, publisher, publication-record, and reverse-rollback tokens already delivered by `b1dd293`. No runtime source, generated native tree, lock file, dependency, query, route, schema, Blade, Filament, database, APK, emulator, or foreign UI/language/theme work changes in this correction.
 - The exact follow-up candidate is verified separately and will be committed as `test: align Sutelio native brand contract`, then pushed normally to `origin/main`; final test count, commit hash, push range, and remote equality are reported after those commands complete.
+
+## Live Language And Contrast Final Review — 2026-08-17
+
+### Review Corrections
+
+- The approved live-translation follow-up keeps the first-run selection local until explicit confirmation while translating its title, description, legend, localized language names, saving state, and action immediately. The global switcher, Settings, onboarding, registration field, document language, shared formatter locale, and persistent auth/settings layout headings all react through the same server-authoritative locale visit.
+- Solid foreground-bearing orange controls now use `#CD431F` (`orange-600`) with white at a measured `4.75:1`; pale signal-orange surfaces keep dark semantic text. The final source audit finds no `orange-500`/`primary` solid surface paired with `text-primary-foreground`, no `bg-orange-500 text-white`, and no legacy Tailwind orange presentation literal.
+- Five-axis code review found and removed one unused `localization.update_url` shared prop because every consumer uses generated Wayfinder, plus the no-longer-consumed onboarding language-name maps because all selectors now consume the single server catalog. No query, schema, migration, dependency, Blade, Filament, or external-service change was introduced.
+
+### Final Verification
+
+- The final focused localization/design/onboarding gate passes 189 tests / 3,382 assertions. Pint passes, Larastan reports zero errors, and the final complete sequential Pest suite passes 805 tests / 21,910 assertions in 31.851 seconds. The earlier parallel Pest/Vite attempt produced one transient missing-manifest failure while Vite atomically replaced `public/build`; the required sequential rerun passed and is the authoritative result.
+- All 45 frontend tests, Vue type checking, ESLint, repository Prettier, scoped Markdown Prettier, SVG XML parsing, and `git diff --check` pass. Web, Android-mode, and iOS-mode Vite builds pass; the web build transforms 3,541 modules in 3.41 seconds with 166.66 kB / 24.66 kB gzip application CSS and a 98.57 kB / 24.98 kB gzip application entry. Android/iOS modes emit only NativePHP's upstream Vite 8 `server.hmr` deprecation warning.
+- Composer strict validation, locked audit, platform requirements, direct-dependency currency, and npm audit pass with zero advisories; npm has no compatible wanted update, while its nonzero `outdated` result lists other-platform optional binaries and newer major-only TypeScript/Node types. Configuration, route, and Blade caches build; 277 first-party routes and four scheduled tasks are registered before caches are cleared.
+- The final isolated SQLite check applies all 37 migrations, seeds deterministically twice, and passes database health without touching the real database. Coverage was attempted and remains externally blocked because neither Xdebug nor PCOV is installed.
+- Live isolated Chrome proves the first-run English-to-Russian preview before submission, `PUT /locale`, dialog dismissal, Russian page/document refresh, named dialog/buttons in the accessibility tree, a captured render, `4.75:1` computed button contrast, and zero runtime/network errors. The broader recorded matrix covers Lithuanian, Russian, 390x844 phone, 820x1180 tablet, and 1440x1000 desktop behavior.
+- The only configured Android AVD failed before boot with `Your device does not have enough disk space to run avd`. No package was installed, no application data was cleared, and no user file was deleted. The current debug APK remains built, v2-signed, aligned, and archive-inspected; on-device restart/logcat/SQLite checks and Apple simulator compilation remain external blockers recorded in `docs/known-limitations.md`.

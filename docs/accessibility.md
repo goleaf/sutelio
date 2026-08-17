@@ -11,6 +11,7 @@ Accessibility is a release requirement, not a decorative review. The current int
 - Dialogs and sheets use Reka focus trapping, Escape dismissal, return focus, accessible title/description, viewport-safe scroll, and at least 44px primary touch targets. The mandatory first-run language dialog is the documented exception: Escape, outside click, and a close control are disabled until a valid language is explicitly confirmed.
 - Destructive actions remain policy-authorized and use localized confirmation; confirmation never replaces server authorization.
 - Focus rings are visible in the fixed light mode. Keyboard order follows the DOM, and mutable lists use stable entity keys.
+- Exact signal-orange surfaces use deep-cobalt text (`4.71:1`); white normal text is reserved for orange-600 or darker because white on `#FF6038` reaches only `3.01:1`.
 - Motion is restrained and critical behavior remains available under `prefers-reduced-motion`; forced-colors mode retains control identity.
 - Loading and filtering expose action-specific `aria-busy`/status feedback; empty and filtered-empty states remain descriptive.
 

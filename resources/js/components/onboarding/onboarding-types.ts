@@ -184,7 +184,6 @@ export type OnboardingCopy = {
         week_start: string;
         preview_title: string;
         preview_description: string;
-        languages: Record<OnboardingPreferences['language'], string>;
         views: Record<OnboardingPreferences['default_view'], string>;
         start_pages: Record<OnboardingPreferences['start_page'], string>;
         week_starts: Record<OnboardingPreferences['week_start'], string>;

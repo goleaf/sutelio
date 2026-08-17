@@ -92,7 +92,7 @@ function deleteFromActions(todo: Todo): void {
         <article
             v-for="todo in todos"
             :key="todo.id"
-            class="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-border/80 bg-background p-3 transition-[border-color,box-shadow] hover:border-orange-500/25 hover:shadow-[0_16px_36px_-30px_rgba(234,88,12,0.55)] motion-reduce:transition-none sm:gap-3 sm:p-4"
+            class="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-border/80 bg-background p-3 transition-[border-color,box-shadow] hover:border-orange-500/25 hover:shadow-[0_16px_36px_-30px_rgba(255,96,56,0.55)] motion-reduce:transition-none sm:gap-3 sm:p-4"
             :class="[
                 selected.has(todo.id)
                     ? 'border-orange-500/30 bg-orange-500/[0.035]'

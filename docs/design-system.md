@@ -6,14 +6,20 @@
 
 The fixed Warm Precision language uses warm neutral canvases, explicit surface/foreground/border/focus semantics, orange editorial accents, non-color status text/icons, restrained depth, and one light color mode. `@theme` maps the application variables into discoverable Tailwind utilities.
 
-| Token domain | Canonical examples                                                                            | Usage rule                                                                       |
-| ------------ | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Color        | background, card, muted, primary, accent, destructive, success, warning, information, sidebar | Use semantic intent; never expose raw state by color alone                       |
-| Radius       | `rounded-panel` (1.5rem), `rounded-feature` (1.75rem), standard sm/md/lg                      | Repeated surface radii use tokens; one-off geometry requires a documented reason |
-| Shadow       | `shadow-panel`, `shadow-dialog`                                                               | Shared depth uses tokens; avoid decorative stacking                              |
-| Container    | `max-w-app`                                                                                   | Main workspaces share the bounded 92.5rem container                              |
-| Typography   | Instrument Sans font variables and Tailwind type scale                                        | Preserve readable line length, hierarchy, and translated expansion               |
+| Token domain | Canonical examples                                                                            | Usage rule                                                                         |
+| ------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Color        | background, card, muted, primary, accent, destructive, success, warning, information, sidebar | Use semantic intent; never expose raw state by color alone                         |
+| Radius       | `rounded-panel` (1.5rem), `rounded-feature` (1.75rem), standard sm/md/lg                      | Repeated surface radii use tokens; one-off geometry requires a documented reason   |
+| Shadow       | `shadow-panel`, `shadow-dialog`                                                               | Shared depth uses tokens; avoid decorative stacking                                |
+| Container    | `max-w-app`                                                                                   | Main workspaces share the bounded 92.5rem container                                |
+| Typography   | Instrument Sans font variables and Tailwind type scale                                        | Preserve readable line length, hierarchy, and translated expansion                 |
 | Motion       | fast/standard/emphasized durations, shared easing, `ui-*` primitives, `motion-reduce:*`       | Orientation and interaction feedback only; reduced-motion remains fully functional |
+
+### Sutelio Signal Orange
+
+The complete Tailwind `orange-50` through `orange-950` scale is application-owned and anchored at the logo's exact signal orange `#FF6038`. `orange-500` maps directly to `--brand-orange`; lighter and darker steps form a perceptual brand ramp rather than inheriting Tailwind's default orange hue.
+
+Primary controls use exact signal orange with deep-cobalt `#0A285F` foreground. That pair measures `4.71:1`; white on exact signal orange measures only `3.01:1` and is prohibited for normal text. White text may use `orange-600` (`#CD431F`) or darker, where the measured ratio is at least `4.5:1`. Warning, destructive, success, information, chart, and persisted user/domain colors remain separate semantic systems.
 
 Static complete class names are required. String interpolation such as `bg-${status}` is prohibited and guarded by `ArchitectureContractTest.php`; controlled maps must contain complete class literals. `@source` covers first-party Vue/Blade/PHP paths that automatic discovery cannot infer.
 
@@ -45,4 +51,4 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 | View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
 | Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
 
-The guided-onboarding production build transformed 3,525 modules in 6.15 seconds. Main application CSS is 160.86 kB (23.64 kB gzip), the application entry is 90.28 kB (23.48 kB gzip), the onboarding page chunk is 39.74 kB (10.09 kB gzip), the Data Safety export chunk is 14.10 kB (4.29 kB gzip), and the backup chunk is 6.53 kB (2.53 kB gzip).
+The latest global-language/signal-orange production build transformed 3,541 modules in 3.41 seconds. Main application CSS is 166.66 kB (24.66 kB gzip), and the application entry is 98.57 kB (24.98 kB gzip).

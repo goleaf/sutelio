@@ -366,7 +366,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
             <CardHeader class="sm:flex-row sm:items-start sm:justify-between">
                 <div class="flex min-w-0 gap-3">
                     <span
-                        class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-500 text-white shadow-sm"
+                        class="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-sm"
                     >
                         <Sparkles class="size-5" aria-hidden="true" />
                     </span>

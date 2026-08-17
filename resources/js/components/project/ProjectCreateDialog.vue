@@ -45,12 +45,12 @@ const { copy } = useWorkspaceUi();
 const form = useHttp<ProjectForm, ProjectResponse>({
     name: '',
     description: '',
-    color: '#f97316',
+    color: '#ff6038',
     icon: 'folder',
 });
 
 const colors = [
-    '#f97316',
+    '#ff6038',
     '#ef4444',
     '#eab308',
     '#14b8a6',
@@ -112,7 +112,7 @@ watch(
         }
 
         form.resetAndClearErrors();
-        form.color = '#f97316';
+        form.color = '#ff6038';
         form.icon = 'folder';
     },
 );

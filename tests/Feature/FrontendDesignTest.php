@@ -813,6 +813,7 @@ test('shared transient surfaces use the warm precision interaction contract', fu
 test('shared controls use warm checked focus and feedback states', function () {
     expect(File::get(resource_path('js/components/ui/checkbox/Checkbox.vue')))
         ->toContain('data-[state=checked]:bg-orange-600')
+        ->toContain('data-[state=checked]:text-white')
         ->toContain('focus-visible:ring-orange-500/25')
         ->toContain('rounded-md')
         ->toContain('motion-reduce:transition-none')
@@ -824,10 +825,12 @@ test('shared controls use warm checked focus and feedback states', function () {
         ->and(File::get(resource_path('js/components/ui/alert/AlertTitle.vue')))
         ->not->toContain('line-clamp-1')
         ->and(File::get(resource_path('js/components/ui/badge/index.ts')))
+        ->toContain('bg-orange-600 text-white')
         ->toContain('focus-visible:ring-orange-500/25')
         ->toContain('hover:border-orange-500/25')
         ->toContain('motion-reduce:transition-none')
         ->and(File::get(resource_path('js/components/ui/button/index.ts')))
+        ->toContain('bg-orange-600 text-white')
         ->toContain('motion-reduce:transition-none');
 });
 
@@ -916,7 +919,7 @@ test('segmented and inline controls respect reduced motion', function (string $c
 test('security feedback surfaces use the shared warm card treatment', function () {
     expect(File::get(resource_path('js/components/TwoFactorSetupModal.vue')))
         ->toContain('rounded-2xl border border-border/80 bg-card')
-        ->toContain('shadow-[0_16px_45px_-32px_rgba(234,88,12,0.5)]')
+        ->toContain('shadow-[0_16px_45px_-32px_rgba(255,96,56,0.5)]')
         ->and(File::get(resource_path('js/components/TwoFactorRecoveryCodes.vue')))
         ->toContain('rounded-xl border border-border/80 bg-muted/50')
         ->and(File::get(resource_path('js/components/PasskeyItem.vue')))

@@ -186,7 +186,7 @@ function openCreateDialog(): void {
                             :key="project.id"
                             :href="projectShow({ workspace, project })"
                             prefetch
-                            class="group relative min-h-64 cursor-pointer overflow-hidden rounded-[1.35rem] border border-border/80 bg-background p-5 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-orange-500/30 hover:shadow-[0_24px_50px_-38px_rgba(234,88,12,0.5)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transform-none sm:p-6"
+                            class="group relative min-h-64 cursor-pointer overflow-hidden rounded-[1.35rem] border border-border/80 bg-background p-5 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-orange-500/30 hover:shadow-[0_24px_50px_-38px_rgba(255,96,56,0.5)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transform-none sm:p-6"
                             :aria-label="`${copy.projects.open_project}: ${project.name}`"
                         >
                             <span

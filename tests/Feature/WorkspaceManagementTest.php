@@ -75,7 +75,7 @@ test('workspace owner can duplicate its structure without operational data', fun
     $label = Label::factory()->create([
         'workspace_id' => $workspace->id,
         'name' => 'Important',
-        'color' => '#f97316',
+        'color' => '#ff6038',
     ]);
     $tag = Tag::factory()->create([
         'workspace_id' => $workspace->id,

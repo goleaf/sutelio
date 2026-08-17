@@ -74,7 +74,6 @@ return [
         'week_start' => 'Pirmoji savaitės diena',
         'preview_title' => 'Tiesioginė peržiūra',
         'preview_description' => 'Taip bus rodomos jūsų datos ir laikas.',
-        'languages' => ['en' => 'Anglų', 'lt' => 'Lietuvių', 'ru' => 'Rusų'],
         'views' => ['list' => 'Sąrašas', 'board' => 'Lenta', 'calendar' => 'Kalendorius'],
         'start_pages' => ['dashboard' => 'Apžvalga', 'tasks' => 'Užduotys', 'projects' => 'Projektai', 'calendar' => 'Kalendorius'],
         'week_starts' => ['sunday' => 'Sekmadienis', 'monday' => 'Pirmadienis'],

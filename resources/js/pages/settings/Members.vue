@@ -366,7 +366,7 @@ function removeMember(): void {
             <Card v-if="can_manage_members" class="xl:sticky xl:top-6">
                 <CardHeader>
                     <div
-                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground"
+                        class="mb-2 flex size-10 items-center justify-center rounded-xl bg-orange-600 text-white"
                     >
                         <UserPlus class="size-5" aria-hidden="true" />
                     </div>

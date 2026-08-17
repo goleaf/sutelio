@@ -61,7 +61,7 @@ const form = useForm({
     task_id: '',
     name: '',
     description: '',
-    color: '#f97316',
+    color: '#ff6038',
     icon: 'folder',
     title: '',
     status_id: '',
@@ -194,7 +194,7 @@ function synchronizeStepDraft(): void {
         form.mode = form.project_id ? 'select' : 'create';
         form.name = '';
         form.description = '';
-        form.color = '#f97316';
+        form.color = '#ff6038';
         form.icon = 'folder';
     }
 

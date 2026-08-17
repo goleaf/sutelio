@@ -30,4 +30,11 @@ Only external or environmental blockers belong here.
 - Impact: the shared responsive language implementation, iOS-mode Vite build, generated iOS project, and packaged runtime contents are verified on this workstation, but an iPhone/iPad simulator binary and runtime launch cannot be claimed here. The Android debug APK and desktop/phone/tablet browser matrix provide executable mobile-layout evidence without substituting for the missing Apple release gate.
 - Resolution trigger: install full Xcode, select its developer directory, create or boot an available iPhone/iPad simulator, rerun the NativePHP simulated/device build, and repeat the first-run plus persisted language workflow before an Apple release.
 
+## Android Emulator Capacity
+
+- Affected requirements: `sys-runtime-001`, `sys-user-003`.
+- Evidence: launching the only configured AVD with `$HOME/Library/Android/sdk/emulator/emulator -avd BTChat_API_34 -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect` stops during emulator preflight with `Your device does not have enough disk space to run avd`. `adb devices -l` therefore exposes no device.
+- Impact: the current debug APK is built, signed, aligned, archive-inspected, and contains the locale service plus owned flag assets, while on-device cold-launch, restart persistence, and Android logcat checks cannot be rerun in this delivery. The failed preflight occurred before package installation or data clearing, so no emulator application data was changed.
+- Resolution trigger: provide sufficient free disk space without deleting unrelated user data, boot an Android 12+ emulator, install the current debug APK, and repeat first-run, restart, account-precedence, responsive, logcat, and device-SQLite checks.
+
 Other entries may be added only with an exact failing command, affected requirement ID, and external dependency or unavailable environment. Difficult unfinished implementation is not a limitation.
