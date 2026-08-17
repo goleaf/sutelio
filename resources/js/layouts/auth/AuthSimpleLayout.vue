@@ -44,7 +44,7 @@ const { t } = useUi();
                         <Link
                             :href="home()"
                             aria-label="Sutelio"
-                            class="flex size-12 shrink-0 items-center justify-center rounded-2xl focus-visible:ring-2 focus-visible:ring-brand-cobalt focus-visible:ring-offset-4 focus-visible:outline-none"
+                            class="flex size-12 shrink-0 items-center justify-center rounded-2xl focus-visible:ring-2 focus-visible:ring-brand-cobalt focus-visible:ring-offset-4 focus-visible:outline-hidden"
                         >
                             <AppLogoIcon class-name="size-12" />
                         </Link>

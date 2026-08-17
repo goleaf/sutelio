@@ -1,10 +1,12 @@
 import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import {
     copyFileSync,
+    existsSync,
     mkdirSync,
     mkdtempSync,
     readFileSync,
+    renameSync,
     rmSync,
     statSync,
     writeFileSync,
@@ -54,6 +56,13 @@ const expectedRasterDimensions = new Map([
     ['public/splash-dark.png', [1080, 1920]],
     ['public/favicon.ico', [32, 32]],
 ]);
+const opaquePngPaths = [
+    'resources/brand/sutelio-android-store-512.png',
+    'public/icon.png',
+    'public/apple-touch-icon.png',
+    'public/splash.png',
+    'public/splash-dark.png',
+];
 
 function ensureDirectory(path) {
     mkdirSync(path, { recursive: true });
@@ -109,6 +118,84 @@ function readRasterDimensions(path) {
     }
 
     return [Number(width), Number(height)];
+}
+
+function hashFile(path) {
+    return createHash('sha256').update(readFileSync(path)).digest('hex');
+}
+
+function readManifestEntry(path) {
+    const metadata = statSync(path);
+
+    if (!metadata.isFile() || metadata.size === 0) {
+        throw new Error(`Manifest file is missing or empty: ${path}`);
+    }
+
+    return {
+        bytes: metadata.size,
+        sha256: hashFile(path),
+    };
+}
+
+function createOutputManifest(outputDirectory) {
+    return new Map(
+        outputPaths.map((relativePath) => [
+            relativePath,
+            readManifestEntry(resolve(outputDirectory, relativePath)),
+        ]),
+    );
+}
+
+function assertFileMatchesManifest(path, expected, label) {
+    const actual = readManifestEntry(path);
+
+    if (actual.bytes !== expected.bytes || actual.sha256 !== expected.sha256) {
+        throw new Error(`Manifest mismatch for ${label}.`);
+    }
+}
+
+function validateOpaquePngs(buildDirectory) {
+    const validationCode = String.raw`
+foreach (array_slice($argv, 1) as $path) {
+    $image = @imagecreatefrompng($path);
+
+    if ($image === false) {
+        fwrite(STDERR, "Unable to read PNG for opacity validation: {$path}\n");
+        exit(1);
+    }
+
+    $isTrueColor = imageistruecolor($image);
+
+    for ($y = 0; $y < imagesy($image); $y++) {
+        for ($x = 0; $x < imagesx($image); $x++) {
+            $colorIndex = imagecolorat($image, $x, $y);
+
+            if ($isTrueColor) {
+                $alpha = ($colorIndex >> 24) & 0x7F;
+            } else {
+                $color = imagecolorsforindex($image, $colorIndex);
+                $alpha = is_array($color) ? $color['alpha'] : 127;
+            }
+
+            if ($alpha !== 0) {
+                imagedestroy($image);
+                fwrite(STDERR, "PNG must be fully opaque: {$path} at {$x},{$y}\n");
+                exit(1);
+            }
+        }
+    }
+
+    imagedestroy($image);
+}
+`;
+    const pngPaths = opaquePngPaths.map((relativePath) =>
+        resolve(buildDirectory, relativePath),
+    );
+
+    execFileSync('php', ['-r', validationCode, ...pngPaths], {
+        cwd: root,
+        stdio: 'pipe',
+    });
 }
 
 function validateBuildOutputs(buildDirectory) {
@@ -170,15 +257,133 @@ function validateBuildOutputs(buildDirectory) {
             );
         }
     }
+
+    validateOpaquePngs(buildDirectory);
+
+    return createOutputManifest(buildDirectory);
 }
 
-function publishBuildOutputs(buildDirectory) {
-    for (const relativePath of outputPaths) {
-        const source = resolve(buildDirectory, relativePath);
+function rollbackPublishedOutputs(publishedEntries) {
+    const rollbackErrors = [];
+
+    for (const entry of [...publishedEntries].reverse()) {
+        try {
+            if (entry.originalManifest === null) {
+                rmSync(entry.destination, { force: true });
+
+                if (existsSync(entry.destination)) {
+                    throw new Error(
+                        `New output still exists after rollback: ${entry.relativePath}`,
+                    );
+                }
+
+                continue;
+            }
+
+            copyFileSync(entry.backupPath, entry.stagedPath);
+            assertFileMatchesManifest(
+                entry.stagedPath,
+                entry.originalManifest,
+                `rollback staging for ${entry.relativePath}`,
+            );
+            renameSync(entry.stagedPath, entry.destination);
+            assertFileMatchesManifest(
+                entry.destination,
+                entry.originalManifest,
+                `restored ${entry.relativePath}`,
+            );
+        } catch (error) {
+            rollbackErrors.push(
+                new Error(`Unable to restore ${entry.relativePath}.`, {
+                    cause: error,
+                }),
+            );
+        }
+    }
+
+    return rollbackErrors;
+}
+
+function publishBuildOutputs(buildDirectory, manifest) {
+    const publishId = randomUUID();
+    const entries = outputPaths.map((relativePath) => {
         const destination = resolve(root, relativePath);
 
-        ensureDirectory(dirname(destination));
-        copyFileSync(source, destination);
+        return {
+            relativePath,
+            source: resolve(buildDirectory, relativePath),
+            destination,
+            stagedPath: `${destination}.sutelio-stage-${publishId}`,
+            backupPath: `${destination}.sutelio-backup-${publishId}`,
+            expectedManifest: manifest.get(relativePath),
+            originalManifest: null,
+        };
+    });
+    const publishedEntries = [];
+
+    try {
+        for (const entry of entries) {
+            ensureDirectory(dirname(entry.destination));
+
+            if (!entry.expectedManifest) {
+                throw new Error(
+                    `Build manifest is missing ${entry.relativePath}.`,
+                );
+            }
+
+            copyFileSync(entry.source, entry.stagedPath);
+            assertFileMatchesManifest(
+                entry.stagedPath,
+                entry.expectedManifest,
+                `publish staging for ${entry.relativePath}`,
+            );
+        }
+
+        for (const entry of entries) {
+            if (!existsSync(entry.destination)) {
+                continue;
+            }
+
+            entry.originalManifest = readManifestEntry(entry.destination);
+            copyFileSync(entry.destination, entry.backupPath);
+            assertFileMatchesManifest(
+                entry.backupPath,
+                entry.originalManifest,
+                `backup for ${entry.relativePath}`,
+            );
+        }
+
+        try {
+            // Sibling renames avoid partial files. The complete set relies on
+            // caught-error rollback and cannot cover a process termination.
+            for (const entry of entries) {
+                const { destination, expectedManifest, relativePath } = entry;
+
+                renameSync(entry.stagedPath, destination);
+                publishedEntries.push(entry);
+                assertFileMatchesManifest(
+                    destination,
+                    expectedManifest,
+                    `published ${relativePath}`,
+                );
+            }
+        } catch (publishError) {
+            const rollbackErrors = rollbackPublishedOutputs(publishedEntries);
+
+            if (rollbackErrors.length > 0) {
+                throw new AggregateError(
+                    [publishError, ...rollbackErrors],
+                    'Brand publication failed and rollback was incomplete.',
+                );
+            }
+
+            throw publishError;
+        }
+    } finally {
+        for (const entry of entries) {
+            rmSync(entry.stagedPath, { force: true });
+            rmSync(entry.backupPath, { force: true });
+        }
     }
 }
 
@@ -374,14 +579,15 @@ function buildBrandAssets(buildDirectory) {
         androidTheme(colors.deepCobalt),
     );
 
-    validateBuildOutputs(buildDirectory);
+    return validateBuildOutputs(buildDirectory);
 }
 
 const buildDirectory = mkdtempSync(join(tmpdir(), 'sutelio-brand-'));
 
 try {
-    buildBrandAssets(buildDirectory);
-    publishBuildOutputs(buildDirectory);
+    const manifest = buildBrandAssets(buildDirectory);
+
+    publishBuildOutputs(buildDirectory, manifest);
     console.log('Built deterministic Sutelio web and NativePHP brand assets.');
 } finally {
     rmSync(buildDirectory, { recursive: true, force: true });

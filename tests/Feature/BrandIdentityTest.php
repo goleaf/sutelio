@@ -1,12 +1,118 @@
 <?php
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 
 test('the pinned Instrument Sans inputs have the approved checksums', function () {
     expect(hash_file('sha256', resource_path('brand/fonts/InstrumentSans.ttf')))
         ->toBe('b24f1812584816958afcf22e22d08e44318c5e51651e25d2438efdde389b33b1')
         ->and(hash_file('sha256', resource_path('brand/fonts/OFL.txt')))
         ->toBe('9e27a72ed30eb49a08678f6a5d6ed98ec7ba5368f541637ee0683ec9134ef966');
+});
+
+test('the authentication logo keeps a visible forced-colors focus outline', function () {
+    $layout = File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue'));
+
+    expect($layout)
+        ->toContain(
+            'aria-label="Sutelio"',
+            'focus-visible:ring-brand-cobalt',
+            'focus-visible:outline-hidden',
+        )
+        ->not->toContain('focus-visible:outline-none');
+});
+
+test('the brand builder validates opaque rasters before failure-safe publication', function () {
+    $builder = File::get(base_path('scripts/build-brand-assets.mjs'));
+
+    expect($builder)
+        ->toContain(
+            'const opaquePngPaths = [',
+            "execFileSync('php'",
+            'function createOutputManifest',
+            'function rollbackPublishedOutputs',
+            'publishedEntries.push(entry);',
+        )
+        ->toMatch('/validateOpaquePngs\(buildDirectory\);[\s\S]*return createOutputManifest\(buildDirectory\);/')
+        ->toMatch('/const manifest = buildBrandAssets\(buildDirectory\);[\s\S]*publishBuildOutputs\(buildDirectory, manifest\);/');
+});
+
+test('a handled brand publish failure restores every previous output and removes new files', function () {
+    $temporaryRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'sutelio-brand-publish-'.Str::uuid();
+    $outputPaths = [
+        'resources/brand/sutelio-mark.svg',
+        'resources/brand/sutelio-wordmark.svg',
+        'resources/brand/sutelio-lockup.svg',
+        'resources/brand/sutelio-splash.svg',
+        'resources/brand/sutelio-android-store-512.png',
+        'resources/brand/android/drawable/ic_launcher_background.xml',
+        'resources/brand/android/drawable/ic_launcher_foreground.xml',
+        'resources/brand/android/drawable/ic_launcher_monochrome.xml',
+        'resources/brand/android/mipmap-anydpi-v26/ic_launcher.xml',
+        'resources/brand/android/mipmap-anydpi-v26/ic_launcher_round.xml',
+        'resources/brand/android/mipmap-anydpi-v33/ic_launcher.xml',
+        'resources/brand/android/mipmap-anydpi-v33/ic_launcher_round.xml',
+        'resources/brand/android/values-v31/themes.xml',
+        'resources/brand/android/values-night-v31/themes.xml',
+        'public/icon.png',
+        'public/apple-touch-icon.png',
+        'public/splash.png',
+        'public/splash-dark.png',
+        'public/favicon.svg',
+        'public/favicon.ico',
+    ];
+    $newOutput = 'resources/brand/sutelio-wordmark.svg';
+
+    try {
+        File::ensureDirectoryExists($temporaryRoot.'/scripts');
+        File::copyDirectory(resource_path('brand'), $temporaryRoot.'/resources/brand');
+
+        foreach (array_filter($outputPaths, static fn (string $path): bool => str_starts_with($path, 'public/')) as $path) {
+            File::ensureDirectoryExists(dirname($temporaryRoot.'/'.$path));
+            File::copy(base_path($path), $temporaryRoot.'/'.$path);
+        }
+
+        File::delete($temporaryRoot.'/'.$newOutput);
+
+        $originalHashes = [];
+
+        foreach (array_diff($outputPaths, [$newOutput]) as $path) {
+            $originalHashes[$path] = hash_file('sha256', $temporaryRoot.'/'.$path);
+        }
+
+        $builder = File::get(base_path('scripts/build-brand-assets.mjs'));
+        $needle = "            publishedEntries.push(entry);\n";
+        $replacement = $needle."            if (relativePath === 'public/icon.png') {\n                throw new Error('Injected publish failure.');\n            }\n";
+        $injectedBuilder = str_replace($needle, $replacement, $builder, $replacementCount);
+
+        expect($replacementCount)->toBe(1);
+
+        File::put($temporaryRoot.'/scripts/build-brand-assets.mjs', $injectedBuilder);
+
+        $process = new Process(['node', 'scripts/build-brand-assets.mjs'], $temporaryRoot);
+        $process->setTimeout(30);
+        $process->run();
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('Injected publish failure.');
+
+        foreach ($originalHashes as $path => $hash) {
+            expect(hash_file('sha256', $temporaryRoot.'/'.$path), $path)->toBe($hash);
+        }
+
+        expect(File::exists($temporaryRoot.'/'.$newOutput))->toBeFalse();
+
+        $publishArtifacts = collect(File::allFiles($temporaryRoot))
+            ->map(static fn (SplFileInfo $file): string => $file->getFilename())
+            ->filter(static fn (string $filename): bool => str_contains($filename, '.sutelio-stage-') || str_contains($filename, '.sutelio-backup-'));
+
+        expect($publishArtifacts)->toBeEmpty();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
 });
 
 test('the npm metadata exposes the approved Sutelio brand commands', function () {
