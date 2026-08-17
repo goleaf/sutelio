@@ -5,6 +5,44 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Process;
 
+$createNativeBrandInstallerFixture = static function (
+    string $buildConfiguration,
+    string $manifest,
+    ?string $destinationSymlinkTarget = null,
+): array {
+    $temporaryRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'sutelio-native-brand-'.Str::uuid();
+    $sourceAsset = 'drawable/sutelio-test.xml';
+    $destination = $temporaryRoot.'/nativephp/android/app/src/main/res';
+
+    File::ensureDirectoryExists($temporaryRoot.'/scripts');
+    File::ensureDirectoryExists($temporaryRoot.'/resources/brand/android/drawable');
+    File::ensureDirectoryExists(dirname($destination));
+
+    if ($destinationSymlinkTarget === null) {
+        File::ensureDirectoryExists($destination);
+    } else {
+        symlink($destinationSymlinkTarget, $destination);
+    }
+
+    File::copy(
+        base_path('scripts/apply-native-brand.mjs'),
+        $temporaryRoot.'/scripts/apply-native-brand.mjs',
+    );
+    File::put($temporaryRoot.'/resources/brand/android/'.$sourceAsset, '<resources/>');
+    File::put($temporaryRoot.'/nativephp/android/app/build.gradle.kts', $buildConfiguration);
+    File::put($temporaryRoot.'/nativephp/android/app/src/main/AndroidManifest.xml', $manifest);
+
+    return [$temporaryRoot, $sourceAsset];
+};
+
+$runNativeBrandInstaller = static function (string $temporaryRoot): Process {
+    $process = new Process(['node', 'scripts/apply-native-brand.mjs'], $temporaryRoot);
+    $process->setTimeout(30);
+    $process->run();
+
+    return $process;
+};
+
 test('the approved Sutelio identity and package metadata are canonical', function () {
     $composer = json_decode(File::get(base_path('composer.json')), true, flags: JSON_THROW_ON_ERROR);
     $package = json_decode(File::get(base_path('package.json')), true, flags: JSON_THROW_ON_ERROR);
@@ -56,31 +94,73 @@ test('the approved Sutelio identity and package metadata are canonical', functio
     }
 });
 
-test('the Sutelio configuration sources declare exact fallbacks independently of local environment', function () {
-    $configContracts = [
-        config_path('app.php') => [
-            "'name' => env('APP_NAME', 'Sutelio'),",
-        ],
-        config_path('nativephp.php') => [
-            "'app_id' => env('NATIVEPHP_APP_ID', 'com.goleaf.sutelio'),",
-            "'deeplink_scheme' => env('NATIVEPHP_DEEPLINK_SCHEME') ?: 'sutelio',",
-            "'deeplink_host' => env('NATIVEPHP_DEEPLINK_HOST') ?: null,",
-            "'color_primary' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY', '#123C8B'),",
-            "'color_primary_night' => env('NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT', '#0A285F'),",
-            "'color_on_primary' => env('NATIVEPHP_ANDROID_COLOR_ON_PRIMARY', '#FFF8E9'),",
-            "'service_name' => env('NATIVEPHP_SERVICE_NAME', 'Sutelio'),",
-            "'app_name' => env('APP_STORE_APP_NAME') ?: 'Sutelio',",
-        ],
+test('the Sutelio configuration fallbacks evaluate independently of local environment', function () {
+    $environmentKeys = [
+        'APP_NAME',
+        'NATIVEPHP_APP_ID',
+        'NATIVEPHP_DEEPLINK_SCHEME',
+        'NATIVEPHP_DEEPLINK_HOST',
+        'NATIVEPHP_SERVICE_NAME',
+        'NATIVEPHP_ANDROID_COLOR_PRIMARY',
+        'NATIVEPHP_ANDROID_COLOR_PRIMARY_NIGHT',
+        'NATIVEPHP_ANDROID_COLOR_ON_PRIMARY',
+        'APP_STORE_APP_NAME',
     ];
+    $script = <<<'PHP'
+require $argv[1];
 
-    foreach ($configContracts as $path => $expectedExpressions) {
-        $source = File::get($path);
+$environmentKeys = array_slice($argv, 4);
 
-        foreach ($expectedExpressions as $expectedExpression) {
-            expect(substr_count($source, $expectedExpression), "{$path}: {$expectedExpression}")
-                ->toBe(1);
-        }
-    }
+foreach ($environmentKeys as $key) {
+    putenv($key);
+    unset($_ENV[$key], $_SERVER[$key]);
+}
+
+$app = require $argv[2];
+$native = require $argv[3];
+
+echo json_encode([
+    'app_name' => $app['name'],
+    'app_id' => $native['app_id'],
+    'deeplink_scheme' => $native['deeplink_scheme'],
+    'deeplink_host' => $native['deeplink_host'],
+    'service_name' => $native['server']['service_name'],
+    'app_store_name' => $native['app_store_connect']['app_name'],
+    'color_primary' => $native['android']['theme']['color_primary'],
+    'color_primary_night' => $native['android']['theme']['color_primary_night'],
+    'color_on_primary' => $native['android']['theme']['color_on_primary'],
+], JSON_THROW_ON_ERROR);
+PHP;
+    $process = new Process(
+        [
+            PHP_BINARY,
+            '-r',
+            $script,
+            base_path('vendor/autoload.php'),
+            config_path('app.php'),
+            config_path('nativephp.php'),
+            ...$environmentKeys,
+        ],
+        base_path(),
+        array_fill_keys($environmentKeys, false),
+    );
+    $process->setTimeout(30);
+    $process->run();
+
+    expect($process->isSuccessful(), $process->getErrorOutput())
+        ->toBeTrue();
+
+    expect(json_decode($process->getOutput(), true, flags: JSON_THROW_ON_ERROR))->toBe([
+        'app_name' => 'Sutelio',
+        'app_id' => 'com.goleaf.sutelio',
+        'deeplink_scheme' => 'sutelio',
+        'deeplink_host' => null,
+        'service_name' => 'Sutelio',
+        'app_store_name' => 'Sutelio',
+        'color_primary' => '#123C8B',
+        'color_primary_night' => '#0A285F',
+        'color_on_primary' => '#FFF8E9',
+    ]);
 });
 
 test('the remaining user-facing catalogs use Sutelio with locale contract parity', function () {
@@ -254,39 +334,105 @@ test('a handled brand publish failure restores every previous output and removes
     }
 });
 
-test('the native brand installer rejects a stale generated identity before copying assets', function () {
-    $temporaryRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'sutelio-native-brand-'.Str::uuid();
-    $sourceAsset = 'drawable/sutelio-test.xml';
+test('the native brand installer rejects a stale application ID with a canonical label', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
+    [$temporaryRoot, $sourceAsset] = $createNativeBrandInstallerFixture(
+        'applicationId = "com.goleaf.xiaomimimo"',
+        '<application android:label="Sutelio"/>',
+    );
 
     try {
-        File::ensureDirectoryExists($temporaryRoot.'/scripts');
-        File::ensureDirectoryExists($temporaryRoot.'/resources/brand/android/drawable');
-        File::ensureDirectoryExists($temporaryRoot.'/nativephp/android/app/src/main/res');
-
-        File::copy(
-            base_path('scripts/apply-native-brand.mjs'),
-            $temporaryRoot.'/scripts/apply-native-brand.mjs',
-        );
-        File::put($temporaryRoot.'/resources/brand/android/'.$sourceAsset, '<resources/>');
-        File::put(
-            $temporaryRoot.'/nativephp/android/app/build.gradle.kts',
-            'applicationId = "com.goleaf.xiaomimimo"',
-        );
-        File::put(
-            $temporaryRoot.'/nativephp/android/app/src/main/AndroidManifest.xml',
-            '<application android:label="Xiaomi Mimo"/>',
-        );
-
-        $process = new Process(['node', 'scripts/apply-native-brand.mjs'], $temporaryRoot);
-        $process->setTimeout(30);
-        $process->run();
+        $process = $runNativeBrandInstaller($temporaryRoot);
 
         expect($process->isSuccessful())
             ->toBeFalse()
             ->and($process->getErrorOutput().$process->getOutput())
-            ->toContain('com.goleaf.sutelio', 'Sutelio')
+            ->toContain('Generated NativePHP application ID must be com.goleaf.sutelio; found com.goleaf.xiaomimimo.')
             ->and(File::exists($temporaryRoot.'/nativephp/android/app/src/main/res/'.$sourceAsset))
             ->toBeFalse();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
+test('the native brand installer rejects a stale label with a canonical application ID', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
+    [$temporaryRoot, $sourceAsset] = $createNativeBrandInstallerFixture(
+        'applicationId = "com.goleaf.sutelio"',
+        '<application android:label="Xiaomi Mimo"/>',
+    );
+
+    try {
+        $process = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('Generated NativePHP manifest label must be Sutelio; found Xiaomi Mimo.')
+            ->and(File::exists($temporaryRoot.'/nativephp/android/app/src/main/res/'.$sourceAsset))
+            ->toBeFalse();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
+test('the native brand installer rejects canonical identity decoys in comments', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
+    [$temporaryRoot, $sourceAsset] = $createNativeBrandInstallerFixture(
+        "/* applicationId = \"com.goleaf.sutelio\" */\n// applicationId = \"com.goleaf.sutelio\"\napplicationId = \"com.goleaf.xiaomimimo\"",
+        "<!-- <application android:label=\"Sutelio\"/> -->\n<application android:label=\"Xiaomi Mimo\"/>",
+    );
+
+    try {
+        $process = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('Generated NativePHP application ID must be com.goleaf.sutelio; found com.goleaf.xiaomimimo.')
+            ->and(File::exists($temporaryRoot.'/nativephp/android/app/src/main/res/'.$sourceAsset))
+            ->toBeFalse();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
+test('the native brand installer rejects a symlink destination without writing outside the workspace', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
+    $externalRoot = sys_get_temp_dir().DIRECTORY_SEPARATOR.'sutelio-native-brand-external-'.Str::uuid();
+    File::ensureDirectoryExists($externalRoot);
+    [$temporaryRoot, $sourceAsset] = $createNativeBrandInstallerFixture(
+        'applicationId = "com.goleaf.sutelio"',
+        '<application android:label="Sutelio"/>',
+        $externalRoot,
+    );
+
+    try {
+        $process = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($process->isSuccessful())
+            ->toBeFalse()
+            ->and($process->getErrorOutput().$process->getOutput())
+            ->toContain('NativePHP resource destination must not contain a symbolic link')
+            ->and(File::exists($externalRoot.'/'.$sourceAsset))
+            ->toBeFalse();
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+        File::deleteDirectory($externalRoot);
+    }
+});
+
+test('the native brand installer copies assets for the active canonical identity', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
+    [$temporaryRoot, $sourceAsset] = $createNativeBrandInstallerFixture(
+        'applicationId = "com.goleaf.sutelio"',
+        '<application android:label="Sutelio"/>',
+    );
+
+    try {
+        $process = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($process->isSuccessful(), $process->getErrorOutput())
+            ->toBeTrue()
+            ->and($process->getOutput())
+            ->toContain('Applied Sutelio adaptive, monochrome, and Android 12+ splash resources.')
+            ->and(File::get($temporaryRoot.'/nativephp/android/app/src/main/res/'.$sourceAsset))
+            ->toBe('<resources/>');
     } finally {
         File::deleteDirectory($temporaryRoot);
     }
