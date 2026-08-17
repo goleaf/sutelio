@@ -222,3 +222,35 @@ test('calendar task links and task taxonomy reuse the shared color swatch', func
             ->toContain('<ColorSwatch');
     }
 });
+
+test('the shared search field owns search affordances and control accessibility', function () {
+    $path = resource_path('js/components/shared/SearchField.vue');
+
+    expect(File::exists($path))->toBeTrue();
+
+    expect(File::get($path))
+        ->toContain('data-slot="search-field"')
+        ->toContain('useId()')
+        ->toContain('useVModel')
+        ->toContain('<Label')
+        ->toContain('type="search"')
+        ->toContain(':aria-describedby="props.describedBy"')
+        ->toContain(':aria-invalid="props.invalid"')
+        ->toContain('v-if="props.pending"')
+        ->toContain('v-if="!props.pending && modelValue && props.clearLabel"')
+        ->toContain("emit('clear')");
+});
+
+test('workspace management search inputs reuse the shared search field', function () {
+    foreach ([
+        'workspace members' => 'WorkspaceMembersPanel.vue',
+        'workspace configuration' => 'WorkspaceConfigurationPanel.vue',
+    ] as $name => $file) {
+        $source = File::get(resource_path("js/components/workspace/{$file}"));
+
+        expect($source, $name)
+            ->toContain("import SearchField from '@/components/shared/SearchField.vue'")
+            ->toContain('<SearchField')
+            ->not->toContain('type="search"');
+    }
+});

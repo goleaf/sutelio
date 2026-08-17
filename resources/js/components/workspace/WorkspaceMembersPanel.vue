@@ -15,6 +15,7 @@ import {
 import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
+import SearchField from '@/components/shared/SearchField.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -333,28 +334,17 @@ async function cancelInvitation(): Promise<void> {
                             }}
                         </CardDescription>
                     </div>
-                    <div class="relative sm:max-w-sm">
-                        <Label for="management-member-search" class="sr-only">
-                            {{
-                                t('workspaces.management.members.search_label')
-                            }}
-                        </Label>
-                        <Search
-                            class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                            aria-hidden="true"
-                        />
-                        <Input
-                            id="management-member-search"
-                            v-model="searchQuery"
-                            type="search"
-                            :placeholder="
-                                t(
-                                    'workspaces.management.members.search_placeholder',
-                                )
-                            "
-                            class="pl-9"
-                        />
-                    </div>
+                    <SearchField
+                        id="management-member-search"
+                        v-model="searchQuery"
+                        class="sm:max-w-sm"
+                        :label="t('workspaces.management.members.search_label')"
+                        :placeholder="
+                            t(
+                                'workspaces.management.members.search_placeholder',
+                            )
+                        "
+                    />
                 </CardHeader>
                 <CardContent class="p-0">
                     <ul

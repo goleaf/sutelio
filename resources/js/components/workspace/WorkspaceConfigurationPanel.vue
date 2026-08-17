@@ -6,13 +6,13 @@ import {
     Palette,
     Pencil,
     Plus,
-    Search,
     Tag as TagIcon,
     Trash2,
 } from '@lucide/vue';
 import { computed, nextTick, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
+import SearchField from '@/components/shared/SearchField.vue';
 import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -404,24 +404,13 @@ async function deleteMetadata(): Promise<void> {
                     </div>
                 </div>
             </div>
-            <div class="w-full sm:max-w-sm">
-                <FormLabel for="metadata-search" class="sr-only">
-                    {{ t('workspaces.management.configuration.search_label') }}
-                </FormLabel>
-                <div class="relative">
-                    <Search
-                        class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                        aria-hidden="true"
-                    />
-                    <Input
-                        id="metadata-search"
-                        v-model="searchQuery"
-                        class="pl-9"
-                        type="search"
-                        :placeholder="searchPlaceholder"
-                    />
-                </div>
-            </div>
+            <SearchField
+                id="metadata-search"
+                v-model="searchQuery"
+                class="w-full sm:max-w-sm"
+                :label="t('workspaces.management.configuration.search_label')"
+                :placeholder="searchPlaceholder"
+            />
         </div>
 
         <Alert v-if="!canManage">
