@@ -26,7 +26,7 @@ The detailed design and execution sources are `docs/plans/2026-08-18-senior-frie
 | 6. Adapt tasks and projects                                  | Completed | Reviewed daily-work implementation pushed in `69f0f6c`                                |
 | 7. Adapt dashboard, calendar, activity, and notifications    | Completed | Reviewed planning/activity implementation pushed in `834ccce`                         |
 | 8. Adapt workspaces and settings                             | Completed | Reviewed workspace/settings implementation pushed in `47fd743`                        |
-| 9. Consolidate semantic statuses and remove proven legacy UI | Completed | Four-channel status system verified; three unreachable components removed             |
+| 9. Consolidate semantic statuses and remove proven legacy UI | Completed | Verified semantic/legacy delivery pushed in `2dc44cf`                                 |
 | 10. Run final quality, NativePHP, emulator, and Samsung gate | Planned   | Physical installation remains the final mutation after every preceding program task   |
 
 ## Active Database Optimization
