@@ -15,6 +15,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
 use Illuminate\Validation\ValidationException;
 use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,12 +38,21 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             SetLocale::class,
+            EnsureOnboardingIsComplete::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         $middleware->statefulApi();
-        $middleware->api(prepend: [SetLocale::class]);
+        $middleware->api(prepend: [
+            SetLocale::class,
+            EnsureOnboardingIsComplete::class,
+        ]);
+
+        $middleware->prependToPriorityList(
+            [ThrottleRequests::class, ThrottleRequestsWithRedis::class, SubstituteBindings::class],
+            EnsureOnboardingIsComplete::class,
+        );
 
         $middleware->alias([
             'abilities' => CheckAbilities::class,

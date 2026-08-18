@@ -22,6 +22,26 @@ test('guided onboarding is composed from one focused component per semantic step
     }
 });
 
+test('onboarding resolves through a dedicated layout without application navigation', function () {
+    $app = File::get(resource_path('js/app.ts'));
+    $layoutPath = resource_path('js/layouts/OnboardingLayout.vue');
+
+    expect(File::exists($layoutPath))->toBeTrue()
+        ->and($app)
+        ->toContain("import OnboardingLayout from '@/layouts/OnboardingLayout.vue'")
+        ->toContain("case name.startsWith('onboarding/'):")
+        ->toContain('return OnboardingLayout');
+
+    $layout = File::get($layoutPath);
+
+    expect($layout)
+        ->toContain('<main')
+        ->not->toContain('AppSidebar')
+        ->not->toContain('AppSidebarHeader')
+        ->not->toContain('NavMain')
+        ->not->toContain('WorkspaceSwitcher');
+});
+
 test('onboarding page coordinates typed Inertia forms Wayfinder and connected focus handoff', function () {
     $page = File::get(resource_path('js/pages/onboarding/Index.vue'));
     $componentSource = collect(File::allFiles(resource_path('js/components/onboarding')))

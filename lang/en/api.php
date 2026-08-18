@@ -10,6 +10,7 @@ return [
         'method_not_allowed' => 'This method is not allowed for the requested resource.',
         'rate_limited' => 'Too many requests. Please try again later.',
         'conflict' => 'The request conflicts with the current resource state.',
+        'onboarding_required' => 'Complete onboarding before using the application.',
         'request_failed' => 'The request could not be completed.',
         'server_error' => 'The server could not complete the request.',
     ],

@@ -6,6 +6,8 @@ The external contract is versioned under `/api/v1`. Web Inertia and API controll
 
 Public registration/login endpoints are explicitly rate limited. Authenticated endpoints use Sanctum and the `ApiTokenAbility` enum to distinguish workspace, task, export, attachment, and related read/write capabilities. A valid token without the route ability receives a safe forbidden response.
 
+A token remains revocable through logout while its user is completing mandatory onboarding, but every other authenticated product endpoint is gated before throttling, route-model binding, controller, or policy execution. Versioned clients receive `409 onboarding_required` with the canonical web onboarding URL in `error.details.onboarding_url`; the legacy compatibility surface keeps its legacy payload and headers while returning the same status and destination.
+
 ## Response Contract
 
 - Item success: `data`, with optional `meta`.

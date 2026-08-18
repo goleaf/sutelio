@@ -26,9 +26,12 @@ $registerApiRoutes = function (bool $versioned): void {
         ->middleware('throttle:api-registration')
         ->name('auth.register');
 
+    Route::post('auth/logout', [AuthController::class, 'logout'])
+        ->middleware('auth:sanctum')
+        ->name('auth.logout');
+
     Route::middleware('auth:sanctum')->group(function () use ($versioned): void {
         Route::get('user', UserController::class)->name('user.show');
-        Route::post('auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
         Route::get('workspaces', [WorkspaceController::class, 'index'])
             ->middleware('abilities:workspaces:read')

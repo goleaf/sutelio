@@ -10,6 +10,7 @@ return [
         'method_not_allowed' => 'Šiam ištekliui toks metodas neleidžiamas.',
         'rate_limited' => 'Per daug užklausų. Bandykite dar kartą vėliau.',
         'conflict' => 'Užklausa nesuderinama su dabartine ištekliaus būsena.',
+        'onboarding_required' => 'Prieš naudodami programą užbaikite įvadinę sąranką.',
         'request_failed' => 'Užklausos įvykdyti nepavyko.',
         'server_error' => 'Serveriui nepavyko įvykdyti užklausos.',
     ],

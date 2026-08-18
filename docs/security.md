@@ -5,7 +5,7 @@ This document describes implemented controls. The superseded July security audit
 ## Implemented Boundaries
 
 - Fortify owns browser registration, login, password reset, passkeys, two-factor challenge/recovery, password confirmation, and session lifecycle. Email verification is intentionally disabled and guarded against reintroduction; sensitive endpoints retain explicit throttles and safe localized messages.
-- Sanctum API tokens are hashed and ability scoped. API login/register are rate limited; every protected API route combines authentication, ability, policy, validation, and workspace scope.
+- Sanctum API tokens are hashed and ability scoped. API login/register are rate limited; every protected API product route combines authentication, mandatory-onboarding completion, ability, policy, validation, and workspace scope. Pending users receive a stable `409 onboarding_required` before product throttling, route-model binding, ability checks, or controller execution while token logout remains available.
 - Invitation tokens are random, digest-backed, expiring, purpose/owner bound, single-use, cancellable, and replay-safe. Invitations do not create known-password accounts.
 - Policies and aggregate-scoped queries/actions prevent direct-object and cross-workspace access. Exact mixed ID sets fail before writes.
 - Notification reads and mutations are anchored to the authenticated user's relation. Optional task destinations are emitted only after one batched query proves current workspace ownership or membership; foreign, deleted, empty, and malformed identifiers produce no actionable URL.
