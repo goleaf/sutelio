@@ -255,7 +255,7 @@ Require one visible primary action, 52 px coarse target, 16 px body copy, 15 px 
 
 Use the existing `StatusNotice`, Button, Field, and page-frame primitives; keep all mutations in the existing Inertia path and preserve mandatory completion middleware. Run focused onboarding Pest, EN/LT/RU source contracts, frontend tests, type checking, lint, and 320/390/768/820 browser flows.
 
-- [ ] **Step 3: Commit the mandatory-onboarding slice**
+- [x] **Step 3: Commit the mandatory-onboarding slice**
 
 After Task 5 passes its full diff/browser gates:
 
