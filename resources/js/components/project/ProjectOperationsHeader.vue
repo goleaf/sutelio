@@ -5,7 +5,6 @@ import {
     CheckCircle2,
     CircleDotDashed,
     Copy,
-    FolderKanban,
     ListChecks,
     MoreHorizontal,
     Plus,
@@ -13,6 +12,7 @@ import {
     TriangleAlert,
 } from '@lucide/vue';
 import type { ProjectMetrics } from '@/components/project/project-operations';
+import ProjectIcon from '@/components/project/ProjectIcon.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +54,7 @@ const { formatNumber, t } = useUi();
         :description="project.description ?? t('projects.show.no_description')"
     >
         <template #icon>
-            <FolderKanban aria-hidden="true" />
+            <ProjectIcon :value="project.icon" />
         </template>
 
         <template #back>

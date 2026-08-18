@@ -1,18 +1,8 @@
 <script setup lang="ts">
 import { router, useHttp } from '@inertiajs/vue3';
-import {
-    BookOpen,
-    BriefcaseBusiness,
-    Code2,
-    Folder,
-    Globe2,
-    Palette,
-    Rocket,
-    Star,
-} from '@lucide/vue';
-import { computed, watch } from 'vue';
-import type { Component } from 'vue';
+import { watch } from 'vue';
 import InputError from '@/components/InputError.vue';
+import ProjectIconPicker from '@/components/project/ProjectIconPicker.vue';
 import DialogActions from '@/components/shared/DialogActions.vue';
 import DialogBody from '@/components/shared/DialogBody.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
@@ -62,51 +52,6 @@ const colors = [
     '#a855f7',
     '#ec4899',
 ];
-const iconOptions = computed<
-    Array<{ value: string; label: string; icon: Component }>
->(() => [
-    {
-        value: 'folder',
-        label: copy.value.projects.icon_folder,
-        icon: Folder,
-    },
-    {
-        value: 'briefcase',
-        label: copy.value.projects.icon_briefcase,
-        icon: BriefcaseBusiness,
-    },
-    {
-        value: 'code',
-        label: copy.value.projects.icon_code,
-        icon: Code2,
-    },
-    {
-        value: 'palette',
-        label: copy.value.projects.icon_palette,
-        icon: Palette,
-    },
-    {
-        value: 'book',
-        label: copy.value.projects.icon_book,
-        icon: BookOpen,
-    },
-    {
-        value: 'star',
-        label: copy.value.projects.icon_star,
-        icon: Star,
-    },
-    {
-        value: 'rocket',
-        label: copy.value.projects.icon_rocket,
-        icon: Rocket,
-    },
-    {
-        value: 'globe',
-        label: copy.value.projects.icon_globe,
-        icon: Globe2,
-    },
-]);
-
 watch(
     () => props.open,
     (open) => {
@@ -210,30 +155,12 @@ async function submit(): Promise<void> {
                         <legend class="text-base font-medium">
                             {{ copy.projects.icon }}
                         </legend>
-                        <div class="grid grid-cols-4 gap-2 sm:grid-cols-8">
-                            <button
-                                v-for="option in iconOptions"
-                                :key="option.value"
-                                type="button"
-                                :class="[
-                                    'flex min-h-12 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,color] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none pointer-coarse:min-h-13',
-                                    form.icon === option.value
-                                        ? 'border-orange-500/50 bg-orange-500/10 text-orange-700 shadow-sm'
-                                        : 'border-border/80 bg-background text-muted-foreground hover:border-orange-500/25 hover:bg-orange-500/[0.04] hover:text-foreground',
-                                ]"
-                                :disabled="form.processing"
-                                :aria-label="option.label"
-                                :aria-pressed="form.icon === option.value"
-                                :title="option.label"
-                                @click="form.icon = option.value"
-                            >
-                                <component
-                                    :is="option.icon"
-                                    class="size-4.5"
-                                    aria-hidden="true"
-                                />
-                            </button>
-                        </div>
+                        <ProjectIconPicker
+                            v-model="form.icon"
+                            :label="copy.projects.icon"
+                            :disabled="form.processing"
+                            :invalid="Boolean(form.errors.icon)"
+                        />
                         <InputError :message="form.errors.icon" />
                     </fieldset>
                 </DialogBody>

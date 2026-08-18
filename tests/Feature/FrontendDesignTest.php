@@ -800,15 +800,20 @@ test('task editing uses shared loading actions and locks mutable fields', functi
 test('project creation selectors expose warm precision interaction states', function () {
     $dialog = File::get(resource_path('js/components/project/ProjectCreateDialog.vue'));
     $colorPicker = File::get(resource_path('js/components/ui/color-picker/ColorPickerField.vue'));
+    $iconPicker = File::get(resource_path('js/components/project/ProjectIconPicker.vue'));
 
     expect($dialog)
         ->toContain(':aria-invalid="Boolean(form.errors.description)"')
         ->toContain('<ColorPickerField')
         ->toContain(':invalid="Boolean(form.errors.color)"')
-        ->toContain('motion-reduce:transition-none')
+        ->toContain('<ProjectIconPicker')
+        ->toContain(':invalid="Boolean(form.errors.icon)"')
         ->toContain(':disabled="form.processing"')
         ->and($colorPicker)
         ->toContain('data-[state=checked]:border-orange-600')
+        ->toContain('motion-reduce:transition-none')
+        ->and($iconPicker)
+        ->toContain(':aria-pressed="icon === option.value"')
         ->toContain('motion-reduce:transition-none');
 });
 

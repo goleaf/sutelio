@@ -1,20 +1,9 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import {
-    Archive,
-    Boxes,
-    FolderKanban,
-    Megaphone,
-    Palette,
-    Plus,
-    Rocket,
-    Server,
-    Smartphone,
-    Sparkles,
-} from '@lucide/vue';
+import { Boxes, FolderKanban, Plus, Sparkles } from '@lucide/vue';
 import { computed, ref } from 'vue';
-import type { Component } from 'vue';
 import ProjectCreateDialog from '@/components/project/ProjectCreateDialog.vue';
+import ProjectIcon from '@/components/project/ProjectIcon.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
 import IconTile from '@/components/shared/IconTile.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
@@ -90,19 +79,6 @@ const filters = computed(() => [
         count: archivedProjects.value.length,
     },
 ]);
-
-function projectIcon(icon: string): Component {
-    return (
-        {
-            rocket: Rocket,
-            palette: Palette,
-            smartphone: Smartphone,
-            megaphone: Megaphone,
-            server: Server,
-            archive: Archive,
-        }[icon] ?? FolderKanban
-    );
-}
 
 function openCreateDialog(): void {
     if (props.workspace.id) {
@@ -222,9 +198,7 @@ function openCreateDialog(): void {
                         <div class="relative flex h-full flex-col">
                             <div class="flex items-start justify-between gap-4">
                                 <IconTile tone="brand" size="lg">
-                                    <component
-                                        :is="projectIcon(project.icon)"
-                                    />
+                                    <ProjectIcon :value="project.icon" />
                                 </IconTile>
                                 <span
                                     :class="[

@@ -8,7 +8,7 @@ dataset('primary Sutelio pages', [
     'projects' => ['pages/projects/Index.vue', 'FolderKanban'],
     'project detail' => [
         'components/project/ProjectOperationsHeader.vue',
-        'FolderKanban',
+        'ProjectIcon',
     ],
     'tasks' => ['pages/tasks/Index.vue', 'ListChecks'],
     'task detail' => ['pages/tasks/Show.vue', 'ListChecks'],

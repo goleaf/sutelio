@@ -97,6 +97,7 @@ test('task detail collaboration and create flows reflow without dense phone rows
     $attachments = File::get(resource_path('js/components/task/TaskAttachmentsPanel.vue'));
     $taskDialog = File::get(resource_path('js/components/task/TaskCreateDialog.vue'));
     $projectDialog = File::get(resource_path('js/components/project/ProjectCreateDialog.vue'));
+    $projectIconPicker = File::get(resource_path('js/components/project/ProjectIconPicker.vue'));
     $dialogSurface = File::get(resource_path('js/components/shared/WorkspaceDialogContent.vue'));
 
     expect($checklists)
@@ -124,6 +125,9 @@ test('task detail collaboration and create flows reflow without dense phone rows
         ->and($projectDialog)
         ->toContain('<DialogActions>')
         ->toContain('size="lg"')
+        ->toContain('<ProjectIconPicker')
+        ->not->toContain('text-sm')
+        ->and($projectIconPicker)
         ->toContain('min-h-12')
         ->toContain('pointer-coarse:min-h-13')
         ->not->toContain('text-sm')

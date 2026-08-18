@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FolderKanban } from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import type {
@@ -7,6 +6,8 @@ import type {
     OnboardingMode,
     OnboardingProject,
 } from '@/components/onboarding/onboarding-types';
+import ProjectIcon from '@/components/project/ProjectIcon.vue';
+import ProjectIconPicker from '@/components/project/ProjectIconPicker.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { ColorPickerField } from '@/components/ui/color-picker';
@@ -134,7 +135,7 @@ const icon = computed({
                     content-class="gap-2"
                 >
                     <template #icon>
-                        <FolderKanban />
+                        <ProjectIcon :value="selected?.icon" />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
@@ -181,28 +182,28 @@ const icon = computed({
                     />
                     <InputError :message="errors.description" />
                 </div>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div class="space-y-2">
-                        <Label for="color">{{ copy.color }}</Label>
-                        <ColorPickerField
-                            id="color"
-                            v-model="color"
-                            :disabled="processing"
-                            :invalid="Boolean(errors.color)"
-                        />
-                        <InputError :message="errors.color" />
-                    </div>
-                    <div class="space-y-2">
-                        <Label for="icon">{{ copy.icon }}</Label>
-                        <Input
-                            id="icon"
-                            v-model="icon"
-                            :disabled="processing"
-                            :aria-invalid="Boolean(errors.icon)"
-                        />
-                        <InputError :message="errors.icon" />
-                    </div>
+                <div class="space-y-2">
+                    <Label for="color">{{ copy.color }}</Label>
+                    <ColorPickerField
+                        id="color"
+                        v-model="color"
+                        :disabled="processing"
+                        :invalid="Boolean(errors.color)"
+                    />
+                    <InputError :message="errors.color" />
                 </div>
+                <fieldset class="space-y-2">
+                    <legend class="text-base font-medium">
+                        {{ copy.icon }}
+                    </legend>
+                    <ProjectIconPicker
+                        v-model="icon"
+                        :label="copy.icon"
+                        :disabled="processing"
+                        :invalid="Boolean(errors.icon)"
+                    />
+                    <InputError :message="errors.icon" />
+                </fieldset>
             </div>
             <aside
                 class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
@@ -213,7 +214,7 @@ const icon = computed({
                     content-class="gap-2"
                 >
                     <template #icon>
-                        <FolderKanban />
+                        <ProjectIcon :value="icon" />
                     </template>
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
