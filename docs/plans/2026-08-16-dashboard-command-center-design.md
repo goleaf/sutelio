@@ -18,9 +18,9 @@ The memorable element is an asymmetric work queue. Overdue work receives the dom
 2. Add a generated-Wayfinder action from the header into the complete task index.
 3. Introduce a short localized section heading that frames the task lists as the user's current focus.
 4. Use a responsive bento layout:
-   - overdue tasks occupy the wider primary card;
-   - today's and upcoming tasks stack in the supporting column;
-   - the layout collapses into a single reading order on narrow screens.
+    - overdue tasks occupy the wider primary card;
+    - today's and upcoming tasks stack in the supporting column;
+    - the layout collapses into a single reading order on narrow screens.
 5. Make each task row an Inertia link to the authorized task detail route, with project context, date/status context, visible focus, hover feedback, and a minimum 44-pixel target.
 6. Keep empty states compact and descriptive instead of stretching them to the height of the longest neighboring queue.
 7. Place the weekly activity surface below the work queue and pair the visual comparison with a real data table.

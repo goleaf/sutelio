@@ -372,7 +372,7 @@ Run the complete frontend/Pest/browser matrix, then commit `refactor(ui): consol
 - Modify: `docs/design-system.md`
 - Modify: `docs/progress.md`
 
-- [ ] **Step 1: Run all source and dependency gates**
+- [x] **Step 1: Run all source and dependency gates**
 
 ```bash
 vendor/bin/pint --dirty --format agent
@@ -391,19 +391,19 @@ git diff --check
 
 Expected: every available gate exits zero; unavailable coverage tooling is reported as unavailable rather than passing.
 
-- [ ] **Step 2: Verify a fresh isolated SQLite lifecycle**
+- [x] **Step 2: Verify a fresh isolated SQLite lifecycle**
 
 Create an allowlisted temporary SQLite file, apply all migrations, seed twice, run application database health, and move only the exact temporary database plus WAL/SHM siblings recoverably to Trash. Never migrate, seed, reset, or replace the configured real database.
 
-- [ ] **Step 3: Run the complete browser matrix**
+- [x] **Step 3: Run the complete browser matrix**
 
 Use disposable isolated Chrome DevTools and Playwright profiles for guest, registration, mandatory onboarding, dashboard, tasks, projects, calendar, activity, notifications, workspaces, and settings. Cover the design viewport matrix, 200% zoom/reflow, keyboard, touch, reduced motion, forced colors, offline/recovery, EN/LT/RU, long content, console/network, Lighthouse accessibility, and representative performance traces.
 
-- [ ] **Step 4: Build and inspect Android before touching hardware**
+- [x] **Step 4: Build and inspect Android before touching hardware**
 
 Prepare the NativePHP bundle, reapply deterministic branding/hardening, clean Gradle output, assemble the ARM64 debug APK, restore the normal web build last, and verify package identity, SDK floor/target, signer, alignment, migrations, asset manifest, archive integrity, forbidden payloads, and sensitive literals.
 
-- [ ] **Step 5: Validate the exact APK on a clean emulator**
+- [x] **Step 5: Validate the exact APK on a clean emulator**
 
 Cold-install, complete first-run/registration/onboarding/task creation in Russian and one alternate locale, test portrait/landscape and large Android font scaling, relaunch, inspect SQLite integrity/migrations and process-scoped fatal/ANR/sensitive logs, then stop the emulator.
 

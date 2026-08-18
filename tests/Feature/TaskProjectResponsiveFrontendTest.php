@@ -21,6 +21,8 @@ test('task queues keep titles statuses and actions readable on phones and tablet
         ->toContain('text-[0.9375rem]')
         ->toContain('min-h-12 min-w-12')
         ->toContain('pointer-coarse:min-h-13')
+        ->not->toContain('color: statusColor(todo)')
+        ->not->toContain('color: priorityColor(todo)')
         ->not->toContain('sm:truncate')
         ->and($board)
         ->toContain('data-slot="task-board"')

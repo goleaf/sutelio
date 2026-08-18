@@ -71,4 +71,3 @@ All new visible copy uses stable semantic keys with English, Lithuanian, and Rus
 
 - No new workspace lifecycle, role, invitation, taxonomy rule, drag-and-drop ordering, bulk taxonomy mutation, schema, dependency, API version, or real-time transport.
 - No change to the owner-only transfer/delete boundary or the existing confirmation requirements.
-

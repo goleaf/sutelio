@@ -223,7 +223,6 @@ function deleteFromActions(todo: Todo): void {
                     variant="outline"
                     :style="{
                         borderColor: statusColor(todo),
-                        color: statusColor(todo),
                     }"
                 >
                     {{ todo.status_definition?.name ?? todo.status }}
@@ -234,7 +233,6 @@ function deleteFromActions(todo: Todo): void {
                     variant="outline"
                     :style="{
                         borderColor: priorityColor(todo),
-                        color: priorityColor(todo),
                     }"
                 >
                     {{ todo.priority_definition?.name ?? todo.priority }}

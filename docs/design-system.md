@@ -46,9 +46,9 @@ The hierarchy is also the required correction order under `ui-system-001`. Fix s
 
 ## Current System Audit Baseline
 
-The 2026-08-17 audit recorded low-contrast muted/sidebar pairs; overly broad 480 ms entrance animation; raw status-color utilities bypassing `success`, `warning`, and `information`; repeated large radii, border-plus-shadow surfaces, uppercase eyebrow labels, decorative accents; incomplete Field/Textarea and action vocabulary; and dense touch layouts. The 2026-08-18 responsive program resolves the selected-language and shared muted-navigation contrast defects, the shared coarse-pointer target baseline, small guest/auth copy, short-landscape first-run composition, the premature desktop-sidebar boundary, and fixed-palette application statuses. Repeated decoration, remaining feature-local microcopy, direct-control escape hatches, and workflow-specific density remain later review findings.
+The 2026-08-17 audit recorded low-contrast muted/sidebar pairs; overly broad 480 ms entrance animation; raw status-color utilities bypassing `success`, `warning`, and `information`; repeated large radii, border-plus-shadow surfaces, uppercase eyebrow labels, decorative accents; incomplete Field/Textarea and action vocabulary; and dense touch layouts. The 2026-08-18 responsive program resolves the selected-language, shared muted/navigation, destructive-navigation, and task-badge text contrast defects; the shared coarse-pointer target baseline; guest/auth and workflow reading size; short-landscape first-run composition; the premature desktop-sidebar boundary; fixed-palette application statuses; and mobile/tablet density across every primary workflow. Repeated decoration, remaining feature-local microcopy, direct-control escape hatches, and non-critical visual simplification remain later review findings.
 
-The later remediation plan must enumerate every matching consumer before changing tokens or primitives, verify the visual effect in EN/LT/RU and supported viewport/input states, and preserve the exact Sutelio identity roles. See `docs/ui-ux-audit-2026-08-17.md`; do not silently weaken the audit by changing this document alone.
+Future remediation must enumerate every matching consumer before changing tokens or primitives, verify the visual effect in EN/LT/RU and supported viewport/input states, and preserve the exact Sutelio identity roles. See `docs/ui-ux-audit-2026-08-17.md`; do not silently weaken the audit by changing this document alone.
 
 ## Responsive And State Contract
 
@@ -77,11 +77,11 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 | View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
 | Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
 
-The integrated responsive build transformed 3,575 modules. Main application CSS is 173.12 kB (25.82 kB gzip), and the application entry is 98.70 kB (25.19 kB gzip). The CSS remains below the 50 kB gzip budget; the delta from the 150.72 kB / 22.43 kB responsive preflight includes the concurrent motion, component-constructor, and timezone work as well as this phase, so it is not attributed to responsive CSS alone.
+The final integrated responsive build transforms 3,597 modules. Main application CSS is 184.85 kB (26.85 kB gzip), and the application entry is 137.73 kB (33.83 kB gzip). The CSS remains below the 50 kB gzip budget; the delta from the 150.72 kB / 22.43 kB responsive preflight includes the concurrent motion, component-constructor, timezone, onboarding, workspace-management, and semantic-status work as well as the responsive program, so it is not attributed to responsive CSS alone.
 
 ## Soft Motion And Icon Ownership
 
-Signal Orange identifies primary action, completion, and the Sutelio mark. Cobalt identifies structure, navigation, information, and neutral product context. Status colors remain semantic and never replace text or icon meaning. The product remains fixed light-only even when the operating system requests dark appearance.
+Signal Orange identifies primary action, completion, and the Sutelio mark. Cobalt identifies structure, navigation, information, and neutral product context. Status colors remain semantic and never replace text or icon meaning. User-configurable task-definition colors may decorate a badge border but never own its text foreground, because arbitrary entity colors cannot guarantee readable contrast. The product remains fixed light-only even when the operating system requests dark appearance.
 
 `IconTile` owns the shared compact icon surface and its semantic tone/size map. `LeadingIconHeading` composes a tile with section copy, while `WorkspacePageHeader` owns the primary page title and its cobalt structural tile. Feature components select a semantic icon and tone; they do not reproduce tile geometry or raw brand colors.
 
