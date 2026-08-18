@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Actions\EnsureUserHasWorkspace;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Enums\UserLanguage;
@@ -16,6 +17,8 @@ use Laravel\Fortify\Contracts\CreatesNewUsers;
 class CreateNewUser implements CreatesNewUsers
 {
     use PasswordValidationRules, ProfileValidationRules;
+
+    public function __construct(private readonly EnsureUserHasWorkspace $ensureUserHasWorkspace) {}
 
     /**
      * Validate and create a newly registered user.
@@ -48,6 +51,9 @@ class CreateNewUser implements CreatesNewUsers
                 'timezone' => $input['timezone'] ?? UserPreference::defaults()['timezone'],
                 'week_start' => $language->defaultWeekStart(),
             ]);
+
+            $workspace = $this->ensureUserHasWorkspace->handle($user, $language);
+            $user->setRelation('workspaces', collect([$workspace]));
 
             return $user;
         });

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'defaults' => [
+        'personal_name' => 'Моё рабочее пространство',
+    ],
     'common' => [
         'workspace_intelligence' => 'Пульс рабочего пространства',
         'all' => 'Все',

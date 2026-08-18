@@ -15,7 +15,7 @@
 
 - Workspace: create -> configure -> invite/manage members -> optionally transfer ownership -> duplicate or delete with policy/confirmation.
 - Invitation: issue/resend -> accept once before expiry, or cancel/expire.
-- Onboarding: pending Welcome -> adjacent guided steps -> Results -> complete, or required skip -> Results. Completed/skipped users may restart a replay without re-enabling the automatic gate or deleting domain data.
+- Onboarding: registration first establishes a selected minimum workspace baseline; pending Welcome -> adjacent guided steps -> Results -> complete, or required skip -> Results. Project/task creation remains explicit. Completed/skipped users may restart a replay without re-enabling the automatic gate or deleting domain data.
 - Project: active -> archived; duplicate and delete are explicit actions.
 - Task: create/update -> complete/uncomplete, archive, favorite/pin, reorder, duplicate, or delete. Parent links cannot self-reference or cycle.
 - Reminder: pending -> claimed -> delivered or failed; pending/failed items may be cancelled under policy. Claim/delivery is idempotent.
@@ -33,5 +33,6 @@
 6. File/database operations define compensation or cleanup for partial failure.
 7. User preferences affect presentation and boundaries, not stored canonical timestamps or authorization.
 8. Onboarding step movement is adjacent and versioned; persisted workspace/project/task identifiers are re-authorized on every read/write, and one run/request key may create at most one domain entity.
+9. Registration and required onboarding exit leave the user with at least one authorized workspace, owner membership when a personal workspace is needed, canonical status/priority definitions, and a current session selection; idempotent retries do not create a second bootstrap workspace.
 
 The table-level realization is in `docs/data-model.md`; permissions are in `docs/authorization.md`; requirement IDs are in `docs/requirements.md`.

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'defaults' => [
+        'personal_name' => 'Mano darbo erdvė',
+    ],
     'common' => [
         'workspace_intelligence' => 'Darbo erdvės apžvalga',
         'all' => 'Visi',

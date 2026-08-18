@@ -6,6 +6,7 @@ namespace App\Http\Responses;
 
 use App\Enums\UserLanguage;
 use App\Models\User;
+use App\Models\Workspace;
 use App\Services\LocalePreference;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,16 @@ class RegisterResponse implements RegisterResponseContract
     {
         /** @var Request $request */
         $user = $request->user();
-        $user?->loadMissing('preferences');
+        $user?->loadMissing(['preferences', 'workspaces']);
+
+        if ($user instanceof User) {
+            $workspace = $user->workspaces->first();
+
+            if ($workspace instanceof Workspace) {
+                $request->session()->put('current_workspace_id', $workspace->id);
+            }
+        }
+
         $language = $user instanceof User
             ? UserLanguage::tryFrom((string) $user->preferences?->language)
             : null;

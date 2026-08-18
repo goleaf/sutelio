@@ -155,9 +155,14 @@ class OnboardingController extends Controller
 
     public function skip(Request $request, SkipOnboarding $skipOnboarding): RedirectResponse
     {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
         $preferences = $this->activePreferences($request);
 
-        $skipOnboarding->handle($preferences, $this->isReplay($request));
+        $workspace = $skipOnboarding->handle($user, $preferences, $this->isReplay($request));
+        $request->session()->put('current_workspace_id', $workspace->id);
         $request->session()->forget('onboarding_replay');
 
         return to_route(UserPreference::startRoute($preferences->start_page));
@@ -165,9 +170,14 @@ class OnboardingController extends Controller
 
     public function complete(Request $request, CompleteOnboarding $completeOnboarding): RedirectResponse
     {
+        $user = $request->user();
+
+        abort_unless($user instanceof User, 403);
+
         $preferences = $this->activePreferences($request);
 
-        $completeOnboarding->handle($preferences);
+        $workspace = $completeOnboarding->handle($user, $preferences);
+        $request->session()->put('current_workspace_id', $workspace->id);
         $request->session()->forget('onboarding_replay');
 
         return to_route(UserPreference::startRoute($preferences->start_page));

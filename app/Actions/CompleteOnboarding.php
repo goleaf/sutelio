@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Enums\OnboardingStep;
+use App\Enums\UserLanguage;
+use App\Models\User;
 use App\Models\UserPreference;
+use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CompleteOnboarding
 {
-    public function handle(UserPreference $preferences): UserPreference
+    public function __construct(private readonly EnsureUserHasWorkspace $ensureUserHasWorkspace) {}
+
+    public function handle(User $user, UserPreference $preferences): Workspace
     {
-        return DB::transaction(function () use ($preferences): UserPreference {
+        return DB::transaction(function () use ($user, $preferences): Workspace {
             $lockedPreferences = UserPreference::query()
                 ->whereKey($preferences->getKey())
                 ->lockForUpdate()
@@ -25,6 +30,10 @@ class CompleteOnboarding
                 ]);
             }
 
+            $language = UserLanguage::tryFrom((string) $lockedPreferences->language)
+                ?? UserLanguage::English;
+            $workspace = $this->ensureUserHasWorkspace->handle($user, $language);
+
             $lockedPreferences->forceFill([
                 'onboarding_step' => OnboardingStep::Results->value,
                 'onboarding_state' => [],
@@ -33,7 +42,7 @@ class CompleteOnboarding
                 'onboarding_skipped_at' => null,
             ])->save();
 
-            return $lockedPreferences;
+            return $workspace;
         }, attempts: 3);
     }
 }

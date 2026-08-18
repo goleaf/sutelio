@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'defaults' => [
+        'personal_name' => 'My workspace',
+    ],
     'common' => [
         'workspace_intelligence' => 'Workspace intelligence',
         'all' => 'All',

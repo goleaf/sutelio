@@ -5,31 +5,38 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Enums\OnboardingStep;
+use App\Enums\UserLanguage;
+use App\Models\User;
 use App\Models\UserPreference;
+use App\Models\Workspace;
 use Illuminate\Support\Facades\DB;
 
 class SkipOnboarding
 {
-    public function handle(UserPreference $preferences, bool $isReplay): UserPreference
-    {
-        if ($isReplay) {
-            return $preferences;
-        }
+    public function __construct(private readonly EnsureUserHasWorkspace $ensureUserHasWorkspace) {}
 
-        return DB::transaction(function () use ($preferences): UserPreference {
+    public function handle(User $user, UserPreference $preferences, bool $isReplay): Workspace
+    {
+        return DB::transaction(function () use ($user, $preferences, $isReplay): Workspace {
             $lockedPreferences = UserPreference::query()
                 ->whereKey($preferences->getKey())
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            $lockedPreferences->forceFill([
-                'onboarding_step' => OnboardingStep::Results->value,
-                'onboarding_state' => [],
-                'onboarding_started_at' => $lockedPreferences->onboarding_started_at ?? now(),
-                'onboarding_skipped_at' => now(),
-            ])->save();
+            $language = UserLanguage::tryFrom((string) $lockedPreferences->language)
+                ?? UserLanguage::English;
+            $workspace = $this->ensureUserHasWorkspace->handle($user, $language);
 
-            return $lockedPreferences;
+            if (! $isReplay) {
+                $lockedPreferences->forceFill([
+                    'onboarding_step' => OnboardingStep::Results->value,
+                    'onboarding_state' => [],
+                    'onboarding_started_at' => $lockedPreferences->onboarding_started_at ?? now(),
+                    'onboarding_skipped_at' => now(),
+                ])->save();
+            }
+
+            return $workspace;
         }, attempts: 3);
     }
 }

@@ -37,6 +37,7 @@ The executable schema is the ordered migration set under `database/migrations`. 
 - Money is not a current domain value; no float/decimal monetary representation exists.
 - Canonical timestamps are stored by Laravel/SQLite and formatted using user locale/timezone.
 - The onboarding migration is populated-safe: existing preference rows are marked complete/dismissed, while real Fortify registrations explicitly start pending. Rollback removes only the added lifecycle columns/table.
+- Fortify registration atomically persists the user, pending preference, personal workspace when no membership exists, owner pivot, and canonical task definitions. Required onboarding skip/completion applies the same idempotent application action; it adds no project/task row and needs no schema migration.
 - The email-verification removal migration drops the unused nullable timestamp after the feature, routes, middleware, UI, and notifications are disabled. Its rollback recreates only an empty compatibility column because discarded verification timestamps are intentionally not recoverable.
 
 ## Migration Verification

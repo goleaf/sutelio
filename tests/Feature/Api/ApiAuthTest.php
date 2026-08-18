@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -17,6 +18,21 @@ test('user can register via API', function () {
     $response->assertCreated()
         ->assertJsonStructure(['token', 'user' => ['id', 'name', 'email']]);
     $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
+
+    $user = User::query()->where('email', 'test@example.com')->firstOrFail();
+    $workspace = $user->workspaces()->sole();
+
+    expect($workspace)->toBeInstanceOf(Workspace::class)
+        ->and($workspace->name)->toBe('My workspace')
+        ->and($workspace->taskStatuses()->count())->toBe(3)
+        ->and($workspace->taskPriorities()->count())->toBe(5)
+        ->and($workspace->projects()->count())->toBe(0)
+        ->and($workspace->todos()->count())->toBe(0);
+    $this->assertDatabaseHas('workspace_members', [
+        'workspace_id' => $workspace->id,
+        'user_id' => $user->id,
+        'role' => 'owner',
+    ]);
 });
 
 test('user can login via API', function () {

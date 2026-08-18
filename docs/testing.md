@@ -4,7 +4,7 @@ Pest is the sole primary PHP test style. Feature tests cover framework-integrate
 
 ## Test Organization
 
-- `tests/Feature/Auth`, language selection, onboarding, and settings security/profile: Fortify, sessions, reset/two-factor/passkeys/preferences, account/device locale precedence and persistence, live translation contracts, the permanent absence of email verification, entry gating, resume, skip, replay, scoped/idempotent composition, and continuation.
+- `tests/Feature/Auth`, API auth, language selection, onboarding, and settings security/profile: Fortify, sessions, reset/two-factor/passkeys/preferences, account/device locale precedence and persistence, the permanent absence of email verification, atomic localized workspace bootstrap, current-session selection, immediate post-skip task creation, entry gating, resume, replay, scoped/idempotent composition, and continuation.
 - Workspace/project/task/child feature files: policies, validation, state transitions, isolation, files, recurrence/reminders, notifications, transfer/backup.
 - `tests/Feature/Api`: API v1 envelope, auth, ability, policy, resource, validation, and domain parity.
 - Schema/runtime/query/architecture files: migrations/FKs/indexes, SQLite health, application boundaries, resource typing, query counts, NativePHP, design/localization contracts.

@@ -40,6 +40,23 @@ test('new users can register', function () {
     ]);
 
     expect(auth()->user()?->preferences()->value('onboarding_run_id'))->not->toBeNull();
+    $workspace = auth()->user()?->workspaces()->sole();
+
+    expect($workspace?->name)->toBe('Mano darbo erdvė')
+        ->and($workspace?->owner_id)->toBe(auth()->id())
+        ->and($workspace?->taskStatuses()->count())->toBe(3)
+        ->and($workspace?->taskStatuses()->where('is_default', true)->count())->toBe(1)
+        ->and($workspace?->taskPriorities()->count())->toBe(5)
+        ->and($workspace?->taskPriorities()->where('is_default', true)->count())->toBe(1)
+        ->and($workspace?->projects()->count())->toBe(0)
+        ->and($workspace?->todos()->count())->toBe(0);
+
+    $this->assertDatabaseHas('workspace_members', [
+        'workspace_id' => $workspace?->id,
+        'user_id' => auth()->id(),
+        'role' => 'owner',
+    ]);
+    $response->assertSessionHas('current_workspace_id', $workspace?->id);
     Notification::assertNotSentTo(auth()->user(), VerifyEmail::class);
 });
 
@@ -54,6 +71,35 @@ test('registration rejects an unsupported language without creating an account',
 
     $this->assertGuest();
     $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+});
+
+test('a registered user can skip onboarding and immediately create a task', function () {
+    $this->post(route('register.store'), [
+        'name' => 'Ready User',
+        'email' => 'ready@example.com',
+        'language' => 'ru',
+        'timezone' => 'Europe/Vilnius',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertRedirect(route('dashboard', absolute: false));
+
+    $workspace = auth()->user()?->workspaces()->sole();
+
+    expect($workspace?->name)->toBe('Моё рабочее пространство');
+
+    $this->post(route('onboarding.skip'))
+        ->assertSessionHasNoErrors()
+        ->assertSessionHas('current_workspace_id', $workspace?->id)
+        ->assertRedirectToRoute('dashboard');
+
+    $this->postJson(route('todos.store', $workspace), [
+        'title' => 'Первая задача',
+    ])->assertCreated();
+
+    $this->assertDatabaseHas('todos', [
+        'workspace_id' => $workspace?->id,
+        'title' => 'Первая задача',
+    ]);
 });
 
 test('registration rejects an invalid detected timezone without creating an account', function () {

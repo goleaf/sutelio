@@ -4,9 +4,9 @@ This is the living plan as of 2026-08-18. Source code, migrations, routes, tests
 
 ## Completed Delivery Baseline
 
-The application modernization, integrated UI/UX program, EN/LT/RU browser matrix, complete repository quality gates, Android APK/emulator delivery, in-place GitHub/Herd rename, Android 10 compatibility correction, and physical Samsung Task 22 verification are complete.
+The application modernization, integrated UI/UX program, EN/LT/RU browser matrix, complete repository quality gates, registration/onboarding minimum-workspace invariant, Android APK/emulator delivery, in-place GitHub/Herd rename, Android 10 compatibility correction, and physical Samsung Task 22 verification are complete.
 
-The final NativePHP 4.2 refresh artifact is `storage/app/native-build/sutelio-android-debug.apk` at SHA-256 `b962f09d8d5a430664891e16e14c07c9864269960b9d7d1aff535738bae81231`. Its package, SDK, signature, alignment, bundle-exclusion, cold-launch, process-log, SQLite integrity, foreign-key, and 38-migration gates pass on the isolated Android 14 emulator. After the tracked upgrade commit reached `origin/main`, the same hash installed with data-preserving replacement on the explicitly resolved Samsung SM-A920F running Android 10 / API 29; two cold launches, resumed activity, database integrity/foreign keys/migrations, and process-scoped fatal/ANR/secret-value checks pass.
+The current NativePHP 4.2 registration-workspace artifact is `storage/app/native-build/sutelio-android-debug.apk` at SHA-256 `95bb68c3296eaffce1014d1f018c4be37e1c13077083b6e626b2dc4a34e43cd4`. Its package, SDK, signature, alignment, bundle-exclusion, exact-action, cold-launch, process-log, SQLite integrity, foreign-key, and 38-migration gates pass on the isolated Android 14 emulator. Data-preserving installation on the explicitly resolved Samsung SM-A920F running Android 10 / API 29 is the final delivery step after commit and push.
 
 Completed execution-plan files are removed after their durable decisions and verification evidence are represented by canonical documentation and the append-only progress journal. Git history remains the recovery source for those deleted plans.
 

@@ -25,6 +25,7 @@ All notable project changes are documented here.
 
 ### Architecture And Security
 
+- Made a usable workspace a registration invariant: web/API sign-up now atomically creates a localized personal workspace, owner membership, and canonical task definitions; required onboarding skip/completion selects the same idempotent baseline so task creation works immediately without fabricated projects or tasks.
 - Added a versioned, resumable guided-onboarding state machine with authenticated-user gating, run-scoped idempotent workspace/project/task composition, authorization-aware invitation discovery, safe replay, and populated-data migration behavior.
 - Removed email verification from Fortify configuration, routes, middleware, notifications, onboarding/profile UI, shared types/props, factories, translations, and the SQLite user schema; registration now proceeds directly to onboarding, with architecture coverage and a durable repository rule preventing reintroduction.
 - Normalized NativePHP environment scalars, allowed the independently derived app-private mobile SQLite directory, removed only unavailable mobile-bundle Blade namespace hints, and disabled token-bearing mail logs on-device so clean Android boot, migration, `view:cache`, and registration complete without runtime/security log errors.

@@ -95,7 +95,22 @@ test('required onboarding can be skipped without deleting its prior facts', func
         ->and($preferences->onboarding_completed_at)->toBeNull()
         ->and($preferences->requiresOnboarding())->toBeFalse();
 
+    $workspace = $user->workspaces()->sole();
+
+    expect($workspace->name)->toBe('My workspace')
+        ->and($workspace->taskStatuses()->count())->toBe(3)
+        ->and($workspace->taskPriorities()->count())->toBe(5)
+        ->and(session('current_workspace_id'))->toBe($workspace->id);
+
     $this->get(route('dashboard'))->assertOk();
+    $this->postJson(route('todos.store', $workspace), [
+        'title' => 'First task after skipping onboarding',
+    ])->assertCreated();
+
+    $this->assertDatabaseHas('todos', [
+        'workspace_id' => $workspace->id,
+        'title' => 'First task after skipping onboarding',
+    ]);
 });
 
 test('completion is accepted only from results and follows the selected start page', function () {
@@ -124,6 +139,11 @@ test('completion is accepted only from results and follows the selected start pa
         ->and($preferences->onboarding_skipped_at)->toBeNull()
         ->and($preferences->onboarding_state)->toBe([])
         ->and($preferences->requiresOnboarding())->toBeFalse();
+
+    $workspace = $user->workspaces()->sole();
+
+    expect(session('current_workspace_id'))->toBe($workspace->id)
+        ->and($workspace->members()->whereKey($user->id)->exists())->toBeTrue();
 });
 
 test('completed users can replay without reopening their required gate', function () {
@@ -185,6 +205,7 @@ test('skipping a replay preserves an earlier skipped lifecycle fact', function (
 
     $this->actingAs($user)->post(route('onboarding.skip'));
     $skippedAt = $preferences->fresh()->onboarding_skipped_at;
+    $workspaceId = $user->workspaces()->sole()->id;
 
     $this->post(route('onboarding.restart'))
         ->assertSessionHas('onboarding_replay', true);
@@ -195,7 +216,9 @@ test('skipping a replay preserves an earlier skipped lifecycle fact', function (
 
     expect($preferences->onboarding_skipped_at?->equalTo($skippedAt))->toBeTrue()
         ->and($preferences->onboarding_completed_at)->toBeNull()
-        ->and($preferences->requiresOnboarding())->toBeFalse();
+        ->and($preferences->requiresOnboarding())->toBeFalse()
+        ->and($user->workspaces()->count())->toBe(1)
+        ->and($user->workspaces()->sole()->id)->toBe($workspaceId);
 });
 
 test('completed users cannot mutate onboarding outside an active replay', function () {
