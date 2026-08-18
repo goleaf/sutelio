@@ -1,51 +1,41 @@
 <script setup lang="ts">
 import { usePasskeyRegister } from '@laravel/passkeys/vue';
 import { KeyRound, Plus, X } from '@lucide/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
+import {
+    getDefaultPasskeyName,
+    localizePasskeyError,
+} from '@/lib/passkeyErrors';
 
 const emit = defineEmits<{
     success: [];
 }>();
 const { t } = useUi();
 
-const getDefaultPasskeyName = () => {
-    const ua = navigator.userAgent;
-
-    const browser = [
-        { pattern: /Edg|Edge/, name: 'Edge' },
-        { pattern: /OPR|Opera|OPiOS/, name: 'Opera' },
-        { pattern: /Firefox|FxiOS/, name: 'Firefox' },
-        { pattern: /Chrome|CriOS/, name: 'Chrome' },
-        { pattern: /Safari/, name: 'Safari' },
-    ].find(({ pattern }) => pattern.test(ua))?.name;
-
-    const os = [
-        { pattern: /iPhone/, name: 'iPhone' },
-        { pattern: /iPad|Macintosh(?=.*Mobile)/, name: 'iPad' },
-        { pattern: /Android/, name: 'Android' },
-        { pattern: /Mac/, name: 'Mac' },
-        { pattern: /Windows/, name: 'Windows' },
-    ].find(({ pattern }) => pattern.test(ua))?.name;
-
-    return [browser, os].filter(Boolean).join(' on ') || '';
-};
-
-const name = ref(getDefaultPasskeyName());
+const name = ref('');
 const showForm = ref(false);
 
-const { register, isLoading, error, isSupported } = usePasskeyRegister({
+const { register, isLoading, errorInstance, isSupported } = usePasskeyRegister({
     onSuccess: () => {
         name.value = '';
         showForm.value = false;
         emit('success');
     },
 });
+const localizedError = computed(() =>
+    localizePasskeyError(errorInstance.value, t),
+);
+
+const handleOpen = () => {
+    name.value = getDefaultPasskeyName(navigator.userAgent, t);
+    showForm.value = true;
+};
 
 const handleSubmit = async (event: Event) => {
     event.preventDefault();
@@ -68,7 +58,7 @@ const handleCancel = () => {
         {{ t('account.passkeys.not_supported') }}
     </div>
 
-    <Button v-else-if="!showForm" variant="outline" @click="showForm = true">
+    <Button v-else-if="!showForm" variant="outline" @click="handleOpen">
         <Plus class="size-4" aria-hidden="true" />
         {{ t('account.passkeys.add') }}
     </Button>
@@ -93,7 +83,7 @@ const handleCancel = () => {
             </p>
         </div>
 
-        <InputError v-if="error" :message="error" />
+        <InputError v-if="localizedError" :message="localizedError" />
 
         <div class="flex gap-2">
             <Button type="submit" :disabled="isLoading || !name.trim()">

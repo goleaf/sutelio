@@ -72,16 +72,44 @@ test('task focus desk copy is complete in every supported locale', function () {
 });
 
 test('every application translation catalog has locale parity', function () {
+    $allowedLocaleNeutralMessages = [
+        'lt.data_transfer.import.invalid_record',
+        'lt.ui.account.passkeys.default_name',
+        'ru.data_transfer.import.invalid_record',
+        'ru.members.email_placeholder',
+        'ru.ui.account.passkeys.default_name',
+    ];
     $catalogs = collect(File::files(lang_path('en')))
         ->map(fn (SplFileInfo $file): string => $file->getBasename('.php'))
         ->reject(fn (string $catalog): bool => in_array($catalog, ['auth', 'passwords', 'validation'], true));
 
     foreach ($catalogs as $catalog) {
-        $englishKeys = collect(Arr::dot(trans($catalog, locale: 'en')))->keys()->all();
+        $english = Arr::dot(trans($catalog, locale: 'en'));
 
         foreach (['lt', 'ru'] as $locale) {
-            expect(collect(Arr::dot(trans($catalog, locale: $locale)))->keys()->all())
-                ->toBe($englishKeys, "The {$locale}/{$catalog}.php catalog is out of sync.");
+            $localized = Arr::dot(trans($catalog, locale: $locale));
+
+            expect(array_keys($localized))
+                ->toBe(array_keys($english), "The {$locale}/{$catalog}.php catalog is out of sync.");
+
+            foreach ($english as $key => $message) {
+                preg_match_all('/:[A-Za-z_]+/', (string) $message, $englishPlaceholders);
+                preg_match_all('/:[A-Za-z_]+/', (string) $localized[$key], $localizedPlaceholders);
+
+                sort($englishPlaceholders[0]);
+                sort($localizedPlaceholders[0]);
+
+                expect($localized[$key], "Empty translation for {$locale}.{$catalog}.{$key}")
+                    ->toBeString()
+                    ->not->toBeEmpty()
+                    ->and($localizedPlaceholders[0], "Placeholder mismatch for {$locale}.{$catalog}.{$key}")
+                    ->toBe($englishPlaceholders[0]);
+
+                if (! in_array("{$locale}.{$catalog}.{$key}", $allowedLocaleNeutralMessages, true)) {
+                    expect($localized[$key], "Possible English leakage for {$locale}.{$catalog}.{$key}")
+                        ->not->toBe($message);
+                }
+            }
         }
     }
 });
@@ -180,13 +208,94 @@ test('guest requests use a supported browser language and English fallback', fun
             ->where('ui.auth.login.title', 'Log in'));
 });
 
-test('localized framework messages fall back to English for uncovered rules', function () {
-    expect(trans('validation.timezone', locale: 'ru'))
-        ->toContain('часовой пояс')
-        ->and(trans('validation.after_or_equal', locale: 'ru'))
-        ->toBe('The :attribute field must be a date after or equal to :date.')
-        ->and(trans('auth.failed', locale: 'lt'))
-        ->toContain('prisijungimo duomenys');
+test('active framework messages are localized without English leakage', function () {
+    $validationKeys = [
+        'after',
+        'after_or_equal',
+        'array',
+        'before_or_equal',
+        'boolean',
+        'confirmed',
+        'current_password',
+        'date',
+        'date_format',
+        'dimensions',
+        'distinct',
+        'email',
+        'enum',
+        'exists',
+        'extensions',
+        'file',
+        'image',
+        'in',
+        'integer',
+        'list',
+        'max.array',
+        'max.file',
+        'max.numeric',
+        'max.string',
+        'mimes',
+        'mimetypes',
+        'min.array',
+        'min.file',
+        'min.numeric',
+        'min.string',
+        'prohibits',
+        'regex',
+        'required',
+        'string',
+        'timezone',
+        'unique',
+        'uploaded',
+        'uuid',
+    ];
+    $englishValidation = Arr::dot(trans('validation', locale: 'en'));
+
+    foreach (['lt', 'ru'] as $locale) {
+        $localizedValidation = Arr::dot(trans('validation', locale: $locale));
+
+        expect($localizedValidation)->toHaveKeys($validationKeys);
+
+        foreach ($validationKeys as $key) {
+            preg_match_all('/:[A-Za-z_]+/', (string) $englishValidation[$key], $englishPlaceholders);
+            preg_match_all('/:[A-Za-z_]+/', (string) $localizedValidation[$key], $localizedPlaceholders);
+
+            sort($englishPlaceholders[0]);
+            sort($localizedPlaceholders[0]);
+
+            expect($localizedValidation[$key], "Untranslated framework message for {$locale}.validation.{$key}")
+                ->not->toBe($englishValidation[$key])
+                ->and($localizedPlaceholders[0], "Placeholder mismatch for {$locale}.validation.{$key}")
+                ->toBe($englishPlaceholders[0]);
+        }
+    }
+
+    foreach (['auth', 'passwords'] as $catalog) {
+        $englishKeys = collect(Arr::dot(trans($catalog, locale: 'en')))->keys()->all();
+
+        foreach (['lt', 'ru'] as $locale) {
+            expect(collect(Arr::dot(trans($catalog, locale: $locale)))->keys()->all())
+                ->toBe($englishKeys, "The {$locale}/{$catalog}.php catalog is out of sync.");
+        }
+    }
+});
+
+test('passkey and login accessibility messages stay inside semantic catalogs', function () {
+    $verify = File::get(resource_path('js/components/PasskeyVerify.vue'));
+    $register = File::get(resource_path('js/components/PasskeyRegister.vue'));
+    $login = File::get(resource_path('js/pages/auth/Login.vue'));
+
+    expect($verify)
+        ->toContain('errorInstance')
+        ->toContain('localizePasskeyError')
+        ->not->toContain(':message="error"')
+        ->and($register)
+        ->toContain('errorInstance')
+        ->toContain('localizePasskeyError')
+        ->not->toContain(':message="error"')
+        ->not->toContain("join(' on ')")
+        ->and($login)
+        ->toContain(':aria-label="t(\'auth.login.remember\')"');
 });
 
 test('frontend formatters and document locale synchronization are centralized', function () {

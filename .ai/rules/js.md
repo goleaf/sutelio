@@ -21,3 +21,7 @@ Do not add a global search button, command palette, command-search overlay, or d
 ## Use the shared package-backed color picker
 
 All user-editable colors must compose resources/js/components/ui/color-picker/ColorPickerField.vue. Do not add native input[type=color] or local picker markup. Keep values opaque six-digit HEX, localize every visible and assistive label in EN/LT/RU, preserve keyboard/touch behavior, and pass presets through the shared component when useful.
+
+## Localize typed client errors and accessible names
+
+Never render third-party or browser error.message strings directly. Map stable typed errors to semantic EN/LT/RU catalog keys and use a localized safe fallback for unknown failures. Bind translated accessible names explicitly when a component library derives aria-label from DOM text, because that derived value may not react to Inertia locale changes.

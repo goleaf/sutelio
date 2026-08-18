@@ -35,6 +35,12 @@ Requirements: `sys-onboarding-001`, `sys-project-001`, `sys-workspace-005`, `sys
 
 The maintained MIT `@zag-js/color-picker` and `@zag-js/vue` integration replaces every native HTML color input through one shared `ColorPickerField`. Onboarding project creation, project creation with presets, workspace label creation/editing, and status/priority creation/editing now share opaque HEX normalization, EN/LT/RU visible and assistive labels, keyboard/touch behavior, viewport-aware positioning, nested-dialog containment, reduced-motion suppression, and forced-colors boundaries. `FrontendColorPickerTest.php`, the related responsive/localization suites, complete quality gates, and disposable Chrome DevTools/Playwright checks are the durable implementation and verification boundary; this presentation-only delivery does not change routes, requests, queries, schema, migrations, configured application data, or NativePHP artifacts.
 
+## Completed Passkey And System Localization Audit
+
+Requirements: `sys-auth-001`, `sys-user-003`, `i18n-001`, `ui-accessibility-001`, and `test-feature-001`.
+
+The shared passkey error adapter maps every official `@laravel/passkeys` error class to semantic EN/LT/RU copy and converts unknown package/server failures to a localized safe fallback instead of exposing raw exception text. Login checkbox accessibility follows the live locale explicitly, generated passkey names contain no English connector, every Laravel validation rule currently used by Sutelio has LT/RU coverage, and the Russian reminder-channel label is no longer an English copy. The strengthened localization suite checks every first-party catalog for key, non-empty value, placeholder, and suspicious English-copy parity; focused Node/Pest coverage and independent Chrome DevTools/Playwright cancellation checks are the durable regression boundary. This source-only audit does not change routes, requests, queries, schema, migrations, configured application data, NativePHP artifacts, or physical-device state.
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.

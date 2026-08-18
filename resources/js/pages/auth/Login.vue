@@ -95,7 +95,11 @@ defineProps<{
                     for="remember"
                     class="flex min-h-12 cursor-pointer items-center space-x-3"
                 >
-                    <Checkbox id="remember" name="remember" />
+                    <Checkbox
+                        id="remember"
+                        name="remember"
+                        :aria-label="t('auth.login.remember')"
+                    />
                     <span>{{ t('auth.login.remember') }}</span>
                 </Label>
             </div>

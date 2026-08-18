@@ -3,11 +3,13 @@ import type { UrlMethodPair } from '@inertiajs/core';
 import { router } from '@inertiajs/vue3';
 import { usePasskeyVerify } from '@laravel/passkeys/vue';
 import { KeyRound } from '@lucide/vue';
+import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
+import { localizePasskeyError } from '@/lib/passkeyErrors';
 import { dashboard } from '@/routes';
 
 type Props = {
@@ -23,7 +25,7 @@ type Props = {
 const props = defineProps<Props>();
 const { t } = useUi();
 
-const { verify, isLoading, error, isSupported } = usePasskeyVerify({
+const { verify, isLoading, errorInstance, isSupported } = usePasskeyVerify({
     ...(props.routes
         ? {
               routes: {
@@ -36,6 +38,9 @@ const { verify, isLoading, error, isSupported } = usePasskeyVerify({
         router.visit(response.redirect ?? dashboard().url);
     },
 });
+const localizedError = computed(() =>
+    localizePasskeyError(errorInstance.value, t),
+);
 </script>
 
 <template>
@@ -59,8 +64,8 @@ const { verify, isLoading, error, isSupported } = usePasskeyVerify({
                 }}
             </Button>
 
-            <div v-if="error" class="text-center">
-                <InputError :message="error" />
+            <div v-if="localizedError" class="text-center">
+                <InputError :message="localizedError" />
             </div>
         </div>
 
