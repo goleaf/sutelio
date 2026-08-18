@@ -42,7 +42,7 @@ class OnboardingController extends Controller
         $preferences = $user->preferences()->first();
 
         if (! $preferences instanceof UserPreference) {
-            return to_route(UserPreference::startRoute($preferences?->start_page));
+            return to_route(UserPreference::startRoute(null));
         }
 
         $requiresOnboarding = $preferences->requiresOnboarding();
