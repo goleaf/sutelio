@@ -242,6 +242,18 @@ async function focusValidationSummary(): Promise<void> {
     }
 }
 
+watch(
+    () => [form.processing, Object.entries(form.errors)] as const,
+    ([processing, errors]) => {
+        if (!processing && errors.length > 0) {
+            requestAnimationFrame(() => {
+                void focusValidationSummary();
+            });
+        }
+    },
+    { flush: 'post' },
+);
+
 const visitOptions = () => ({
     preserveScroll: true,
     onStart: () => {
@@ -252,7 +264,6 @@ const visitOptions = () => ({
     },
     onError: () => {
         saveStatus.value = 'error';
-        void focusValidationSummary();
     },
 });
 

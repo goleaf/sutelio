@@ -118,10 +118,10 @@ function handleOpenChange(value: boolean): void {
                 :display-value="selectedLabel"
                 :aria-invalid="invalid"
                 :placeholder="t('timezones.search_placeholder')"
-                class="h-11 w-full min-w-0 rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 py-2 pr-11 pl-10 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm"
+                class="h-12 w-full min-w-0 rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 py-2 pr-12 pl-10 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 pointer-coarse:min-h-13"
             />
             <ComboboxTrigger
-                class="absolute top-0 right-0 flex size-11 items-center justify-center rounded-r-xl text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                class="absolute top-0 right-0 flex size-12 items-center justify-center rounded-r-xl text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-orange-500/20 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 pointer-coarse:size-13"
                 :aria-label="t('timezones.open')"
             >
                 <ChevronsUpDown class="size-4" aria-hidden="true" />
@@ -139,7 +139,7 @@ function handleOpenChange(value: boolean): void {
                     class="overflow-y-auto overscroll-contain p-1.5"
                 >
                     <ComboboxEmpty
-                        class="px-4 py-8 text-center text-sm text-muted-foreground"
+                        class="px-4 py-8 text-center text-[0.9375rem] leading-6 text-muted-foreground"
                     >
                         {{ t('timezones.empty') }}
                     </ComboboxEmpty>
@@ -150,7 +150,7 @@ function handleOpenChange(value: boolean): void {
                         class="py-1"
                     >
                         <ComboboxLabel
-                            class="sticky top-0 z-10 block bg-popover/95 px-2.5 py-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase backdrop-blur-sm"
+                            class="sticky top-0 z-10 block bg-popover/95 px-2.5 py-2 text-[0.9375rem] leading-5 font-semibold text-muted-foreground backdrop-blur-sm"
                         >
                             {{ group.label }}
                         </ComboboxLabel>
@@ -159,14 +159,14 @@ function handleOpenChange(value: boolean): void {
                             :key="option.value"
                             :value="option.value"
                             :text-value="option.search_terms"
-                            class="relative flex min-h-11 cursor-default scroll-my-1 items-center rounded-lg py-2 pr-9 pl-2.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+                            class="relative flex min-h-12 cursor-default scroll-my-1 items-center rounded-lg py-2 pr-9 pl-2.5 text-base outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground pointer-coarse:min-h-13"
                         >
                             <span class="min-w-0 flex-1">
-                                <span class="block truncate font-medium">
+                                <span class="block font-medium wrap-anywhere">
                                     {{ option.label }}
                                 </span>
                                 <span
-                                    class="block truncate text-xs text-muted-foreground"
+                                    class="block text-[0.9375rem] leading-5 wrap-anywhere text-muted-foreground"
                                 >
                                     {{ optionDescription(option) }}
                                 </span>

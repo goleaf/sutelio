@@ -59,21 +59,24 @@ const progressScale = computed(() =>
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative pb-40 sm:pb-24 lg:pb-0">
         <header
-            class="sticky top-0 z-20 -mx-4 mb-4 border-b border-border/80 bg-background/95 px-4 py-3 backdrop-blur-sm lg:hidden"
+            data-slot="onboarding-mobile-progress"
+            class="sticky top-0 z-20 -mx-4 mb-4 border-b border-border/80 bg-background/95 px-4 py-3 backdrop-blur-sm xl:hidden"
         >
-            <div class="flex items-center justify-between gap-4">
+            <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0">
-                    <p class="text-xs font-semibold text-orange-700">
+                    <p
+                        class="text-[0.9375rem] leading-5 font-semibold text-orange-700"
+                    >
                         {{ stepLabel }}
                     </p>
-                    <p class="truncate text-sm font-semibold">
+                    <p class="text-base leading-6 font-semibold wrap-anywhere">
                         {{ copy.steps[progress.step].title }}
                     </p>
                 </div>
                 <span
-                    class="shrink-0 text-xs font-medium text-muted-foreground tabular-nums"
+                    class="max-w-32 shrink-0 text-right text-[0.9375rem] leading-5 font-medium wrap-anywhere text-muted-foreground tabular-nums"
                 >
                     {{ percentLabel }}
                 </span>
@@ -108,11 +111,11 @@ const progressScale = computed(() =>
                     </IconTile>
                     <div class="min-w-0">
                         <p
-                            class="text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+                            class="text-[0.9375rem] leading-5 font-semibold wrap-anywhere text-muted-foreground"
                         >
                             {{ copy.meta.eyebrow }}
                         </p>
-                        <p class="mt-1 text-sm font-semibold">
+                        <p class="mt-1 text-base font-semibold wrap-anywhere">
                             {{ percentLabel }}
                         </p>
                     </div>
@@ -154,12 +157,14 @@ const progressScale = computed(() =>
                             />
                         </span>
                         <span class="min-w-0">
-                            <span class="block text-sm font-semibold">
+                            <span
+                                class="block text-base font-semibold wrap-anywhere"
+                            >
                                 {{ copy.steps[step].title }}
                             </span>
                             <span
                                 v-if="step === progress.step"
-                                class="mt-0.5 block text-xs leading-5 text-foreground/75"
+                                class="mt-1 block text-[0.9375rem] leading-6 wrap-anywhere text-foreground/75"
                             >
                                 {{ copy.steps[step].description }}
                             </span>
@@ -178,22 +183,24 @@ const progressScale = computed(() =>
                 <StatusNotice
                     :message="statusMessage"
                     :status="saveNoticeStatus"
+                    class="text-[0.9375rem] leading-6"
                 />
             </div>
         </div>
 
         <div
-            class="sticky bottom-0 z-20 -mx-4 mt-5 border-t border-border/80 bg-background/95 px-4 pt-3 pb-[max(1rem,var(--safe-area-inset-bottom))] backdrop-blur-sm sm:-mx-6 sm:px-6 xl:static xl:mx-0 xl:border-0 xl:bg-transparent xl:px-0 xl:pt-4 xl:pb-0 xl:backdrop-blur-none"
+            data-slot="onboarding-actions"
+            class="fixed inset-x-0 bottom-0 z-30 border-t border-border/80 bg-background/95 px-4 pt-3 pb-[max(1rem,var(--safe-area-inset-bottom))] backdrop-blur-sm sm:px-6 lg:static lg:mt-5 lg:border-0 lg:bg-transparent lg:px-0 lg:pt-4 lg:pb-0 lg:backdrop-blur-none"
         >
             <div
-                class="mx-auto grid max-w-app grid-cols-1 items-center gap-2 min-[30rem]:grid-cols-2 sm:flex xl:justify-end"
+                class="mx-auto grid max-w-app grid-cols-1 items-center gap-2 min-[30rem]:grid-cols-2 sm:flex lg:justify-end"
             >
                 <Button
                     v-if="progress.is_replay"
                     type="button"
                     variant="outline"
                     size="lg"
-                    class="min-h-11 w-full min-[30rem]:col-span-2 sm:col-auto sm:w-auto"
+                    class="min-h-12 w-full whitespace-normal min-[30rem]:col-span-2 sm:col-auto sm:w-auto pointer-coarse:min-h-13"
                     :disabled="processing"
                     @click="emit('exitReplay')"
                 >
@@ -207,7 +214,7 @@ const progressScale = computed(() =>
                     type="button"
                     variant="outline"
                     size="lg"
-                    class="min-h-11 w-full sm:w-auto"
+                    class="min-h-12 w-full whitespace-normal sm:w-auto pointer-coarse:min-h-13"
                     :disabled="!canBack || processing"
                     @click="emit('back')"
                 >
@@ -217,7 +224,7 @@ const progressScale = computed(() =>
                     type="submit"
                     form="onboarding-step-form"
                     size="lg"
-                    class="min-h-11 w-full min-w-32 sm:w-auto"
+                    class="min-h-12 w-full min-w-32 whitespace-normal sm:w-auto pointer-coarse:min-h-13"
                     :disabled="processing"
                 >
                     <Spinner v-if="processing" />

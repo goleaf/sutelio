@@ -54,7 +54,7 @@ const destinations = [
                 <h2 class="font-semibold">
                     {{ copy[`${destination.key}_title`] }}
                 </h2>
-                <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                <p class="mt-1 text-base leading-7 text-muted-foreground">
                     {{ copy[`${destination.key}_description`] }}
                 </p>
             </div>

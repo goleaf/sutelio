@@ -69,7 +69,7 @@ const icon = computed({
 
 <template>
     <div class="space-y-5">
-        <p class="text-sm leading-6 text-muted-foreground">
+        <p class="text-base leading-7 text-muted-foreground">
             {{
                 hasExistingOptions ? copy.description : copy.create_description
             }}
@@ -82,7 +82,7 @@ const icon = computed({
             <Button
                 type="button"
                 variant="ghost"
-                class="min-h-11"
+                class="h-auto min-h-12 py-2 whitespace-normal pointer-coarse:min-h-13"
                 :aria-pressed="mode === 'select'"
                 :disabled="processing"
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
@@ -92,7 +92,7 @@ const icon = computed({
             <Button
                 type="button"
                 variant="ghost"
-                class="min-h-11"
+                class="h-auto min-h-12 py-2 whitespace-normal pointer-coarse:min-h-13"
                 :aria-pressed="mode === 'create'"
                 :disabled="processing"
                 :class="mode === 'create' ? 'bg-background shadow-sm' : ''"
@@ -138,7 +138,7 @@ const icon = computed({
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
                     <p
-                        class="flex items-center gap-2 text-sm font-medium break-words"
+                        class="flex items-center gap-2 text-base font-medium break-words"
                     >
                         <span
                             class="size-2 shrink-0 rounded-full"
@@ -176,7 +176,7 @@ const icon = computed({
                         :placeholder="copy.details_placeholder"
                         :disabled="processing"
                         :aria-invalid="Boolean(errors.description)"
-                        class="min-h-28 w-full resize-y rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-3 text-sm transition-[color,box-shadow] outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-3 focus-visible:ring-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+                        class="min-h-28 w-full resize-y rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-3 text-base transition-[color,box-shadow] outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-3 focus-visible:ring-orange-500/20 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
                     />
                     <InputError :message="errors.description" />
                 </div>
@@ -219,7 +219,7 @@ const icon = computed({
 
                     <h2 class="font-semibold">{{ copy.preview_title }}</h2>
                     <p
-                        class="flex items-center gap-2 text-sm font-medium break-words"
+                        class="flex items-center gap-2 text-base font-medium break-words"
                     >
                         <span
                             class="size-2 shrink-0 rounded-full"
@@ -229,7 +229,7 @@ const icon = computed({
                         {{ name || copy.name_placeholder }}
                     </p>
                     <p
-                        class="text-xs leading-5 break-words text-muted-foreground"
+                        class="text-[0.9375rem] leading-6 break-words text-muted-foreground"
                     >
                         {{ description || copy.details_placeholder }}
                     </p>
@@ -242,7 +242,7 @@ const icon = computed({
             class="rounded-2xl border border-dashed border-border p-6 text-center"
         >
             <h2 class="font-semibold">{{ copy.empty_title }}</h2>
-            <p class="mt-2 text-sm leading-6 text-muted-foreground">
+            <p class="mt-2 text-base leading-7 text-muted-foreground">
                 {{ copy.empty_description }}
             </p>
         </div>

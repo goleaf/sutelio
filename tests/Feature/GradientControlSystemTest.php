@@ -62,6 +62,6 @@ test('onboarding replay exit is an outlined full width phone action', function (
         ->toContain('copy.actions.exit_replay')
         ->toContain('grid-cols-1')
         ->toContain('min-[30rem]:grid-cols-2')
-        ->toContain('class="min-h-11 w-full min-[30rem]:col-span-2 sm:col-auto sm:w-auto"')
+        ->toContain('class="min-h-12 w-full whitespace-normal min-[30rem]:col-span-2 sm:col-auto sm:w-auto pointer-coarse:min-h-13"')
         ->toContain('variant="outline"');
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { AlertCircle } from '@lucide/vue';
 import { computed } from 'vue';
+import StatusNotice from '@/components/shared/StatusNotice.vue';
 
 const props = defineProps<{
     eyebrow: string;
@@ -28,13 +28,13 @@ const validationErrors = computed(() =>
         <header class="border-b border-border/70 px-5 py-6 sm:px-7 sm:py-7">
             <div class="flex flex-wrap items-center gap-2">
                 <p
-                    class="text-xs font-semibold tracking-[0.14em] text-orange-700 uppercase"
+                    class="text-[0.9375rem] leading-5 font-semibold wrap-anywhere text-orange-700"
                 >
                     {{ eyebrow }}
                 </p>
                 <span
                     v-if="replayBadge"
-                    class="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-xs font-semibold text-blue-700"
+                    class="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-[0.9375rem] leading-5 font-semibold wrap-anywhere text-blue-700"
                 >
                     {{ replayBadge }}
                 </span>
@@ -42,7 +42,7 @@ const validationErrors = computed(() =>
             <h1
                 id="onboarding-step-heading"
                 tabindex="-1"
-                class="mt-3 max-w-3xl text-3xl font-semibold tracking-tight outline-none sm:text-4xl"
+                class="mt-3 max-w-3xl text-3xl leading-tight font-semibold tracking-tight wrap-anywhere outline-none sm:text-4xl"
             >
                 {{ title }}
             </h1>
@@ -52,16 +52,12 @@ const validationErrors = computed(() =>
         </header>
 
         <div class="space-y-5 p-5 sm:p-7">
-            <div
+            <StatusNotice
                 v-if="recoveryMessage"
-                class="flex gap-3 rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-4 text-sm leading-6 text-blue-950"
-            >
-                <AlertCircle
-                    class="mt-0.5 size-5 shrink-0"
-                    aria-hidden="true"
-                />
-                <p>{{ recoveryMessage }}</p>
-            </div>
+                :message="recoveryMessage"
+                status="information"
+                class="text-base leading-6"
+            />
 
             <div
                 v-if="validationErrors.length"
@@ -73,14 +69,14 @@ const validationErrors = computed(() =>
                 <p class="font-semibold text-destructive">
                     {{ validationTitle }}
                 </p>
-                <p class="mt-1 text-sm text-muted-foreground">
+                <p class="mt-1 text-base leading-6 text-muted-foreground">
                     {{ validationDescription }}
                 </p>
-                <ul class="mt-3 space-y-1.5 text-sm">
+                <ul class="mt-3 space-y-1.5 text-[0.9375rem] leading-6">
                     <li v-for="error in validationErrors" :key="error.field">
                         <a
                             :href="`#${error.field}`"
-                            class="font-medium text-destructive underline decoration-destructive/40 underline-offset-4 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
+                            class="inline-flex min-h-12 items-center font-medium wrap-anywhere text-destructive underline decoration-destructive/40 underline-offset-4 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none pointer-coarse:min-h-13"
                         >
                             {{ error.label }}: {{ error.message }}
                         </a>

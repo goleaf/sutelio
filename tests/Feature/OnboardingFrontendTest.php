@@ -37,6 +37,9 @@ test('onboarding page coordinates typed Inertia forms Wayfinder and connected fo
         ->toContain('nextTick')
         ->toContain('isConnected')
         ->toContain('focusStepHeading')
+        ->toContain('Object.entries(form.errors)')
+        ->toContain('requestAnimationFrame')
+        ->toContain("flush: 'post'")
         ->not->toContain("import AppLayout from '@/layouts/AppLayout.vue'")
         ->not->toContain('<AppLayout')
         ->not->toContain("'/onboarding")
@@ -54,19 +57,31 @@ test('onboarding shell exposes progress status validation and mobile-safe action
         ->implode("\n");
 
     expect($shell)
+        ->toContain('data-slot="onboarding-mobile-progress"')
         ->toContain(':aria-current=')
         ->toContain("? 'step'")
         ->toContain('role="progressbar"')
         ->toContain(':aria-valuenow="progress.percent"')
         ->toContain('<StatusNotice')
-        ->toContain('sticky bottom-0')
+        ->toContain('fixed inset-x-0 bottom-0')
+        ->toContain('pb-40')
+        ->toContain('lg:pb-0')
+        ->toContain('xl:hidden')
+        ->toContain('lg:static')
         ->toContain('var(--safe-area-inset-bottom)')
         ->toContain('grid-cols-2')
         ->toContain('col-span-2')
-        ->toContain('w-full sm:w-auto')
-        ->toContain('min-h-11')
+        ->toContain('w-full')
+        ->toContain('sm:w-auto')
+        ->toContain('min-h-12')
+        ->toContain('pointer-coarse:min-h-13')
         ->toContain('motion-reduce:transition-none')
         ->toContain('forced-colors:')
+        ->toContain('class="text-[0.9375rem] leading-6"')
+        ->not->toContain('truncate')
+        ->not->toContain('lg:hidden')
+        ->not->toContain('xl:static')
+        ->not->toContain('sticky bottom-0')
         ->and($styles)
         ->toContain('env(safe-area-inset-bottom, 0px)')
         ->toContain('var(--inset-bottom, 0px)')
@@ -77,6 +92,59 @@ test('onboarding shell exposes progress status validation and mobile-safe action
         ->toContain('href="`#${error.field}`"')
         ->and($forms)
         ->toContain('aria-invalid');
+});
+
+test('mandatory onboarding keeps every step readable wrap safe and touch comfortable', function () {
+    $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
+    $panel = File::get(resource_path('js/components/onboarding/OnboardingStepPanel.vue'));
+    $page = File::get(resource_path('js/pages/onboarding/Index.vue'));
+    $app = File::get(resource_path('js/app.ts'));
+    $stepComponents = [
+        'WelcomeStep',
+        'PreferencesStep',
+        'WorkspaceStep',
+        'ProjectStep',
+        'TaskStep',
+        'ProductMapStep',
+        'SafetyStep',
+        'ResultsStep',
+    ];
+
+    expect($shell)
+        ->toContain('data-slot="onboarding-actions"')
+        ->toContain('pb-[max(1rem,var(--safe-area-inset-bottom))]')
+        ->toContain('wrap-anywhere')
+        ->toContain('text-[0.9375rem]')
+        ->toContain('text-base')
+        ->and(substr_count($shell, 'type="submit"'))
+        ->toBe(1)
+        ->and($panel)
+        ->toContain('<StatusNotice')
+        ->toContain('text-[0.9375rem]')
+        ->toContain('text-base')
+        ->not->toContain('text-xs')
+        ->not->toContain('text-sm')
+        ->and($page)
+        ->toContain('focusValidationSummary')
+        ->toContain("saveStatus.value = 'error'")
+        ->and($app)
+        ->toContain('NetworkStatusNotifier');
+
+    foreach ($stepComponents as $component) {
+        $source = File::get(resource_path("js/components/onboarding/{$component}.vue"));
+
+        expect($source)
+            ->not->toContain('text-xs')
+            ->not->toContain('text-sm');
+    }
+
+    foreach (['WorkspaceStep', 'ProjectStep', 'TaskStep'] as $component) {
+        $source = File::get(resource_path("js/components/onboarding/{$component}.vue"));
+
+        expect($source)
+            ->toContain('min-h-12')
+            ->toContain('text-base transition-[color,box-shadow]');
+    }
 });
 
 test('required onboarding exposes no skip affordance while replay has a distinct exit', function () {

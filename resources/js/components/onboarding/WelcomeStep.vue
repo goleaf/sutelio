@@ -17,7 +17,7 @@ const features = [
         <p class="max-w-3xl text-base leading-7 text-foreground/85">
             {{ copy.intro }}
         </p>
-        <div class="grid gap-3 md:grid-cols-3">
+        <div class="grid gap-3 lg:grid-cols-3">
             <article
                 v-for="feature in features"
                 :key="feature.key"
@@ -29,13 +29,13 @@ const features = [
                 <h2 class="mt-4 text-base font-semibold">
                     {{ copy[`${feature.key}_title`] }}
                 </h2>
-                <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                <p class="mt-2 text-base leading-7 text-muted-foreground">
                     {{ copy[`${feature.key}_description`] }}
                 </p>
             </article>
         </div>
         <p
-            class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 text-sm leading-6 text-emerald-950"
+            class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 text-base leading-7 text-emerald-950"
         >
             {{ copy.privacy }}
         </p>

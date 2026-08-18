@@ -275,7 +275,7 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
                 <Clock3 />
             </IconTile>
             <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
-            <p class="mt-1 text-sm leading-6 text-muted-foreground">
+            <p class="mt-1 text-base leading-7 text-muted-foreground">
                 {{ copy.preview_description }}
             </p>
             <p
@@ -283,7 +283,9 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
             >
                 {{ preview }}
             </p>
-            <p class="mt-2 text-xs text-muted-foreground">
+            <p
+                class="mt-2 text-[0.9375rem] leading-6 wrap-anywhere text-muted-foreground"
+            >
                 {{ draft.timezone }}
             </p>
         </aside>

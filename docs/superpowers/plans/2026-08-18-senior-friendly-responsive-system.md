@@ -241,14 +241,17 @@ Review the complete shared/auth/navigation diff, run the focused and complete so
 - Modify: `resources/js/pages/onboarding/Index.vue`
 - Modify: `resources/js/components/onboarding/OnboardingShell.vue`
 - Modify: `resources/js/components/onboarding/*Step.vue`
-- Modify: `tests/Feature/OnboardingPageTest.php`
+- Modify: `resources/js/components/preferences/TimezoneCombobox.vue`
+- Modify: `resources/js/components/ui/select/{SelectTrigger,SelectItem}.vue`
+- Modify: `tests/Feature/OnboardingFrontendTest.php`
 - Modify: `tests/Feature/FrontendDesignTest.php`
+- Modify: `tests/Feature/GradientControlSystemTest.php`
 
-- [ ] **Step 1: Add failing flow contracts**
+- [x] **Step 1: Add failing flow contracts**
 
-Require one visible primary action, 52 px coarse target, 16 px body copy, 15 px helper copy, wrap-safe translated labels, a mobile sticky action region with `padding-bottom: var(--safe-area-bottom)`, validation focus movement, complete offline/error notices, and no required-flow skip affordance.
+Require one visible primary action, 52 px coarse target, 16 px body copy, 15 px helper copy, wrap-safe translated labels, a fixed mobile action region with canonical `--safe-area-inset-bottom` padding, validation focus movement after the global busy state releases, complete offline/error notices, and no required-flow skip affordance.
 
-- [ ] **Step 2: Run RED, implement shared onboarding shell behavior, and run GREEN**
+- [x] **Step 2: Run RED, implement shared onboarding shell behavior, and run GREEN**
 
 Use the existing `StatusNotice`, Button, Field, and page-frame primitives; keep all mutations in the existing Inertia path and preserve mandatory completion middleware. Run focused onboarding Pest, EN/LT/RU source contracts, frontend tests, type checking, lint, and 320/390/768/820 browser flows.
 

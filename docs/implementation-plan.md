@@ -16,18 +16,18 @@ Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-
 
 The detailed design and execution sources are `docs/plans/2026-08-18-senior-friendly-responsive-system-design.md` and `docs/superpowers/plans/2026-08-18-senior-friendly-responsive-system.md`. The program keeps one comfortable default for every user and proceeds from shared primitives into complete user workflows.
 
-| Task                                                         | Status    | Evidence / next boundary                                                              |
-| ------------------------------------------------------------ | --------- | ------------------------------------------------------------------------------------- |
-| 1. Freeze audit and design contract                          | Completed | Repository/runtime inventory and selected comfort contract recorded                   |
-| 2. Establish shared reading and touch primitives             | Completed | Failing-first source coverage and shared 48/52 px control baseline                    |
-| 3. Adapt first run and authentication                        | Completed | EN/LT/RU phone/tablet/short-landscape browser matrix and Lighthouse accessibility 100 |
-| 4. Move persistent navigation to the desktop boundary        | Completed | Authenticated 390-1440 px drawer/sidebar matrix; disposable data removed              |
-| 5. Adapt mandatory onboarding                                | Planned   | Next vertical slice                                                                   |
-| 6. Adapt tasks and projects                                  | Planned   | Follows onboarding                                                                    |
-| 7. Adapt dashboard, calendar, activity, and notifications    | Planned   | Follows daily work                                                                    |
-| 8. Adapt workspaces and settings                             | Planned   | Follows planning/activity                                                             |
-| 9. Consolidate semantic statuses and remove proven legacy UI | Planned   | Delete only after zero-consumer proof                                                 |
-| 10. Run final quality, NativePHP, emulator, and Samsung gate | Planned   | Physical installation remains the final mutation after every preceding program task   |
+| Task                                                         | Status      | Evidence / next boundary                                                              |
+| ------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------- |
+| 1. Freeze audit and design contract                          | Completed   | Repository/runtime inventory and selected comfort contract recorded                   |
+| 2. Establish shared reading and touch primitives             | Completed   | Failing-first source coverage and shared 48/52 px control baseline                    |
+| 3. Adapt first run and authentication                        | Completed   | EN/LT/RU phone/tablet/short-landscape browser matrix and Lighthouse accessibility 100 |
+| 4. Move persistent navigation to the desktop boundary        | Completed   | Authenticated 390-1440 px drawer/sidebar matrix; disposable data removed              |
+| 5. Adapt mandatory onboarding                                | In progress | Implementation, browser matrix, and complete gates pass; reviewed commit/push pending |
+| 6. Adapt tasks and projects                                  | Planned     | Next vertical slice after onboarding delivery                                         |
+| 7. Adapt dashboard, calendar, activity, and notifications    | Planned     | Follows daily work                                                                    |
+| 8. Adapt workspaces and settings                             | Planned     | Follows planning/activity                                                             |
+| 9. Consolidate semantic statuses and remove proven legacy UI | Planned     | Delete only after zero-consumer proof                                                 |
+| 10. Run final quality, NativePHP, emulator, and Samsung gate | Planned     | Physical installation remains the final mutation after every preceding program task   |
 
 ## Active Database Optimization
 

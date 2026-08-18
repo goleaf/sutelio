@@ -73,7 +73,7 @@ const countMessage = computed(() => {
                 </IconTile>
                 <div>
                     <h2 class="font-semibold">{{ copy.ready_title }}</h2>
-                    <p class="text-sm text-muted-foreground">
+                    <p class="text-base leading-6 text-muted-foreground">
                         {{ countMessage }}
                     </p>
                 </div>
@@ -89,11 +89,11 @@ const countMessage = computed(() => {
                     </IconTile>
                     <div class="min-w-0">
                         <dt
-                            class="text-xs font-semibold tracking-wide text-muted-foreground uppercase"
+                            class="text-[0.9375rem] leading-5 font-semibold wrap-anywhere text-muted-foreground"
                         >
                             {{ copy[row.key] }}
                         </dt>
-                        <dd class="mt-1 text-sm font-medium break-words">
+                        <dd class="mt-1 text-base font-medium break-words">
                             {{ row.value }}
                         </dd>
                     </div>
@@ -104,7 +104,9 @@ const countMessage = computed(() => {
             class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-5 text-blue-950"
         >
             <h2 class="font-semibold">{{ copy.next_title }}</h2>
-            <p class="mt-2 text-sm leading-6">{{ copy.next_description }}</p>
+            <p class="mt-2 text-base leading-7">
+                {{ copy.next_description }}
+            </p>
         </aside>
     </div>
 </template>
