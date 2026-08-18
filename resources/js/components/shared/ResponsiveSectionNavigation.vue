@@ -52,10 +52,10 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
         'flex min-h-12 shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-base break-words whitespace-normal transition-[color,background-color,border-color,box-shadow,transform] duration-[var(--motion-feedback)] ease-[var(--ease-emphasized)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13',
         item.active
             ? item.tone === 'danger'
-                ? 'bg-card font-medium text-destructive shadow-sm'
+                ? 'bg-card font-medium text-status-destructive-text shadow-sm'
                 : 'bg-card font-medium text-orange-800 shadow-sm'
             : item.tone === 'danger'
-              ? 'text-destructive/80 hover:bg-card/70 hover:text-destructive'
+              ? 'text-status-destructive-text/90 hover:bg-card/70 hover:text-status-destructive-text'
               : 'text-muted-foreground hover:bg-card/70 hover:text-foreground',
     );
 </script>
@@ -135,7 +135,7 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
                             class="flex h-auto min-h-12 w-full items-center gap-3 rounded-lg px-3 py-2 text-base whitespace-normal transition-colors motion-reduce:transition-none pointer-coarse:min-h-13"
                             :class="
                                 item.tone === 'danger'
-                                    ? 'text-destructive focus:text-destructive'
+                                    ? 'text-status-destructive-text focus:text-status-destructive-text'
                                     : ''
                             "
                         >

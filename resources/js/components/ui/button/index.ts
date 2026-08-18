@@ -14,7 +14,7 @@ export const buttonVariants = cva(
         default:
           "bg-linear-to-br from-orange-600 via-orange-600 to-orange-700 text-white shadow-sm hover:from-orange-700 hover:via-orange-700 hover:to-orange-800 hover:shadow-md focus-visible:ring-orange-500/30",
         destructive:
-          "bg-linear-to-br from-destructive via-destructive to-red-700 text-white shadow-sm hover:from-red-700 hover:to-red-800 hover:shadow-md focus-visible:ring-destructive/20",
+          "bg-linear-to-br from-status-destructive-icon via-status-destructive-icon to-status-destructive-text text-white shadow-sm hover:from-status-destructive-text hover:to-status-destructive-text hover:shadow-md focus-visible:ring-status-destructive-icon/25",
         outline: outlinedButtonSurface,
         secondary:
           "bg-linear-to-br from-secondary/70 via-secondary/90 to-secondary text-secondary-foreground shadow-xs hover:from-secondary hover:to-neutral-300 hover:shadow-sm focus-visible:ring-orange-500/20",

@@ -103,7 +103,7 @@ function dueLabel(task: ProjectTask): string {
                 class="flex items-center gap-2 text-[0.9375rem] leading-6 text-muted-foreground"
             >
                 <span
-                    class="size-2 rounded-full bg-emerald-500"
+                    class="size-2 rounded-full bg-status-success-icon"
                     aria-hidden="true"
                 />
                 {{ t('projects.show.results.up_to_date') }}

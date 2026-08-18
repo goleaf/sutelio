@@ -202,7 +202,7 @@ test('settings cards and destructive guidance preserve accessible semantics', fu
         ->toContain('text-[0.9375rem]')
         ->not->toContain('text-sm')
         ->and($alertVariants)
-        ->toContain('text-red-800')
+        ->toContain('text-status-destructive-text')
         ->not->toContain('text-destructive [&>svg]')
         ->and($profile)
         ->toContain(':aria-label="')

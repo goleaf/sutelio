@@ -122,7 +122,7 @@ function dismiss(): void {
                                     }}</span>
                                     <span
                                         v-if="checklist.has_team_member"
-                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+                                        class="rounded-full bg-status-success-surface px-2 py-0.5 text-xs font-medium text-status-success-text"
                                     >
                                         {{
                                             t('dashboard.onboarding.completed')
@@ -204,7 +204,7 @@ function dismiss(): void {
                                     }}</span>
                                     <span
                                         v-if="checklist.has_security_factor"
-                                        class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800"
+                                        class="rounded-full bg-status-success-surface px-2 py-0.5 text-xs font-medium text-status-success-text"
                                     >
                                         {{
                                             t('dashboard.onboarding.completed')

@@ -117,7 +117,7 @@ function dueLabel(task: ProjectTask): string {
                     :aria-valuenow="metrics.completion_rate"
                 >
                     <div
-                        class="h-full w-full origin-left scale-x-[var(--progress)] rounded-full bg-emerald-500 transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
+                        class="h-full w-full origin-left scale-x-[var(--progress)] rounded-full bg-status-success-icon transition-transform duration-[var(--motion-state)] ease-[var(--ease-standard)] motion-reduce:transition-none"
                         :style="{
                             '--progress': percentageScale(
                                 metrics.completion_rate,
@@ -298,7 +298,7 @@ function dueLabel(task: ProjectTask): string {
             </div>
             <div
                 v-else
-                class="mt-4 flex items-start gap-3 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.06] p-3 text-base text-emerald-900"
+                class="mt-4 flex items-start gap-3 rounded-xl border border-status-success-border bg-status-success-surface p-3 text-base text-status-success-text"
             >
                 <CheckCircle2
                     class="mt-0.5 size-4 shrink-0"

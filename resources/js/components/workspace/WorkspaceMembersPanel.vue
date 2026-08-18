@@ -106,8 +106,8 @@ const avatarTones = [
 ];
 
 const roleClasses: Record<WorkspaceRole, string> = {
-    owner: 'border-amber-200 bg-amber-50 text-amber-800',
-    admin: 'border-sky-200 bg-sky-50 text-sky-800',
+    owner: 'border-status-warning-border bg-status-warning-surface text-status-warning-text',
+    admin: 'border-status-information-border bg-status-information-surface text-status-information-text',
     member: 'border-border bg-muted/50 text-muted-foreground',
 };
 
@@ -299,7 +299,9 @@ async function cancelInvitation(): Promise<void> {
                     </CardTitle>
                 </CardHeader>
             </Card>
-            <Card class="border-emerald-500/15 bg-emerald-500/[0.04]">
+            <Card
+                class="border-status-success-border bg-status-success-surface/50"
+            >
                 <CardHeader class="pb-3">
                     <CardDescription>
                         {{ t('workspaces.management.members.managers') }}
@@ -309,7 +311,7 @@ async function cancelInvitation(): Promise<void> {
                         class="flex items-center gap-3 text-3xl tabular-nums"
                     >
                         <ShieldCheck
-                            class="size-6 text-emerald-600"
+                            class="size-6 text-status-success-icon"
                             aria-hidden="true"
                         />
                         {{ formatNumber(managerCount) }}

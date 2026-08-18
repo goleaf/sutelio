@@ -34,7 +34,6 @@ dataset('measured layout transition exceptions', [
 ]);
 
 dataset('accessible icon only controls', [
-    'app header menu and search' => ['components/AppHeader.vue', 'aria-label'],
     'sidebar search' => ['components/AppSidebarHeader.vue', 'aria-label'],
     'timezone selector' => ['components/preferences/TimezoneCombobox.vue', ':aria-label'],
     'workspace dialog close' => ['components/shared/WorkspaceDialogContent.vue', 'sr-only'],
@@ -419,9 +418,7 @@ test('administration surfaces preserve scoped and destructive icon semantics', f
 
 test('navigation shells and empty states expose accessible shared interactions', function () {
     $emptyState = File::get(resource_path('js/components/shared/EmptyState.vue'));
-    $header = File::get(resource_path('js/components/AppHeader.vue'));
     $mainNavigation = File::get(resource_path('js/components/NavMain.vue'));
-    $footerNavigation = File::get(resource_path('js/components/NavFooter.vue'));
     $userNavigation = File::get(resource_path('js/components/NavUser.vue'));
     $userMenu = File::get(resource_path('js/components/UserMenuContent.vue'));
     $breadcrumbs = File::get(resource_path('js/components/Breadcrumbs.vue'));
@@ -432,9 +429,7 @@ test('navigation shells and empty states expose accessible shared interactions',
     expect($emptyState)
         ->toContain('IconTile', 'PackageOpen', 'LoaderCircle', 'AlertTriangle')
         ->not->toContain('<svg');
-    expect($header)->toContain('aria-label', 'openCommandPalette');
     expect($mainNavigation)->toContain('aria-current', 'font-semibold');
-    expect($footerNavigation)->toContain(':tooltip="item.title"');
     expect($userNavigation)->toContain(':tooltip="user.name"', 'aria-hidden="true"');
     expect($userMenu)->toContain('aria-hidden="true"');
     expect($breadcrumbs)->toContain('BreadcrumbSeparator');

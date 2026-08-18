@@ -203,7 +203,7 @@ function formatDate(timestamp: number): string {
                                             <CheckCircle2 />
                                         </IconTile>
                                         <span
-                                            class="text-[0.9375rem] leading-5 font-medium text-emerald-800"
+                                            class="text-[0.9375rem] leading-5 font-medium text-status-success-text"
                                         >
                                             {{ t('settings.backup.verified') }}
                                         </span>
@@ -290,7 +290,7 @@ function formatDate(timestamp: number): string {
         </Card>
 
         <section
-            class="rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-base leading-6 text-amber-950"
+            class="rounded-2xl border border-status-warning-border bg-status-warning-surface p-4 text-base leading-6 text-status-warning-text"
             aria-labelledby="backup-restore-risk-title"
         >
             <LeadingIconHeading tile tile-tone="warning" content-class="gap-0">

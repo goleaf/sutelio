@@ -437,7 +437,10 @@ async function deleteMetadata(): Promise<void> {
             :routes="routes"
         />
 
-        <Card v-else-if="activeSection === 'labels'" class="border-sky-500/15">
+        <Card
+            v-else-if="activeSection === 'labels'"
+            class="border-status-information-border"
+        >
             <CardHeader>
                 <LeadingIconHeading tile tile-tone="information">
                     <template #icon>

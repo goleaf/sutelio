@@ -34,7 +34,7 @@ const validationErrors = computed(() =>
                 </p>
                 <span
                     v-if="replayBadge"
-                    class="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-[0.9375rem] leading-5 font-semibold wrap-anywhere text-blue-700"
+                    class="rounded-full border border-status-information-border bg-status-information-surface px-2.5 py-1 text-[0.9375rem] leading-5 font-semibold wrap-anywhere text-status-information-text"
                 >
                     {{ replayBadge }}
                 </span>

@@ -6,14 +6,14 @@
 
 The fixed Warm Precision language uses warm neutral canvases, explicit surface/foreground/border/focus semantics, orange editorial accents, non-color status text/icons, restrained depth, and one light color mode. `@theme` maps the application variables into discoverable Tailwind utilities.
 
-| Token domain | Canonical examples                                                                            | Usage rule                                                                         |
-| ------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Color        | background, card, muted, primary, accent, destructive, success, warning, information, sidebar | Use semantic intent; never expose raw state by color alone                         |
-| Radius       | `rounded-panel` (1.5rem), `rounded-feature` (1.75rem), standard sm/md/lg                      | Repeated surface radii use tokens; one-off geometry requires a documented reason   |
-| Shadow       | `shadow-panel`, `shadow-dialog`                                                               | Shared depth uses tokens; avoid decorative stacking                                |
-| Container    | `max-w-app`                                                                                   | Main workspaces share the bounded 92.5rem container                                |
-| Typography   | Instrument Sans font variables and Tailwind type scale                                        | Preserve readable line length, hierarchy, and translated expansion                 |
-| Motion       | fast/standard/emphasized durations, shared easing, `ui-*` primitives, `motion-reduce:*`       | Orientation and interaction feedback only; reduced-motion remains fully functional |
+| Token domain | Canonical examples                                                                                                                   | Usage rule                                                                         |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| Color        | background, card, muted, primary, accent, sidebar, and `status-{success,warning,information,destructive}-{surface,border,text,icon}` | Use semantic intent; never expose raw state by color alone                         |
+| Radius       | `rounded-panel` (1.5rem), `rounded-feature` (1.75rem), standard sm/md/lg                                                             | Repeated surface radii use tokens; one-off geometry requires a documented reason   |
+| Shadow       | `shadow-panel`, `shadow-dialog`                                                                                                      | Shared depth uses tokens; avoid decorative stacking                                |
+| Container    | `max-w-app`                                                                                                                          | Main workspaces share the bounded 92.5rem container                                |
+| Typography   | Instrument Sans font variables and Tailwind type scale                                                                               | Preserve readable line length, hierarchy, and translated expansion                 |
+| Motion       | fast/standard/emphasized durations, shared easing, `ui-*` primitives, `motion-reduce:*`                                              | Orientation and interaction feedback only; reduced-motion remains fully functional |
 
 ## Sutelio Brand Geometry
 
@@ -31,6 +31,8 @@ Boxed controls use restrained, statically discoverable Tailwind 4 diagonal ramps
 
 Static complete class names are required. String interpolation such as `bg-${status}` is prohibited and guarded by `ArchitectureContractTest.php`; controlled maps must contain complete class literals. `@source` covers first-party Vue/Blade/PHP paths that automatic discovery cannot infer.
 
+Success, warning, information, and destructive presentation each expose one shared surface, border, text, and icon channel. Normal text and meaningful status icons meet at least `4.5:1` against their paired surface; status remains reinforced by localized copy and icons. Brand orange, user-selected project colors, identity avatar palettes, chart series, and decorative gradients are separate reviewed domains and are not aliases for application state.
+
 ## Component Hierarchy
 
 - Reka/shadcn-style primitives own dialogs, sheets, menus, selects, checkboxes, focus traps, and keyboard semantics.
@@ -44,7 +46,7 @@ The hierarchy is also the required correction order under `ui-system-001`. Fix s
 
 ## Current System Audit Baseline
 
-The 2026-08-17 audit recorded low-contrast muted/sidebar pairs; overly broad 480 ms entrance animation; raw status-color utilities bypassing `success`, `warning`, and `information`; repeated large radii, border-plus-shadow surfaces, uppercase eyebrow labels, decorative accents; incomplete Field/Textarea and action vocabulary; and dense touch layouts. The 2026-08-18 responsive foundation resolves the selected-language contrast defect, the shared coarse-pointer target baseline, small guest/auth copy, short-landscape first-run composition, and the premature desktop-sidebar boundary. Raw status colors, repeated decoration, remaining feature-local microcopy, direct-control escape hatches, and workflow-specific density remain active vertical-slice findings.
+The 2026-08-17 audit recorded low-contrast muted/sidebar pairs; overly broad 480 ms entrance animation; raw status-color utilities bypassing `success`, `warning`, and `information`; repeated large radii, border-plus-shadow surfaces, uppercase eyebrow labels, decorative accents; incomplete Field/Textarea and action vocabulary; and dense touch layouts. The 2026-08-18 responsive program resolves the selected-language and shared muted-navigation contrast defects, the shared coarse-pointer target baseline, small guest/auth copy, short-landscape first-run composition, the premature desktop-sidebar boundary, and fixed-palette application statuses. Repeated decoration, remaining feature-local microcopy, direct-control escape hatches, and workflow-specific density remain later review findings.
 
 The later remediation plan must enumerate every matching consumer before changing tokens or primitives, verify the visual effect in EN/LT/RU and supported viewport/input states, and preserve the exact Sutelio identity roles. See `docs/ui-ux-audit-2026-08-17.md`; do not silently weaken the audit by changing this document alone.
 

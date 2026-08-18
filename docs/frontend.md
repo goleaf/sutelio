@@ -10,7 +10,7 @@ Livewire, Volt, and Flux are not installed and are explicitly non-applicable. Re
 
 ## Sutelio Identity Flow
 
-`AppLogoIcon` consumes the deterministic `/favicon.svg` clean-S mark as a decorative image. `AppLogo` combines that mark with the unchanged Sutelio proper noun; `AppHeader`, `AppSidebar`, and the authentication layout reuse those components instead of embedding divergent artwork. The authentication logo link owns the accessible `Sutelio` name, while adjacent visible text names the product in shared navigation.
+`AppLogoIcon` consumes the deterministic `/favicon.svg` clean-S mark as a decorative image. `AppLogo` combines that mark with the unchanged Sutelio proper noun; `AppSidebar`, `AppSidebarHeader`, and the authentication layout reuse those components instead of embedding divergent artwork. The authentication logo link owns the accessible `Sutelio` name, while adjacent visible text names the product in shared navigation.
 
 The Inertia Blade shell remains query-free and receives the canonical application name from server props for the document title, application metadata, and Apple mobile title. It links the deterministic favicon and touch icon outputs and declares cobalt as the browser theme color. `npm run brand:build` is the only supported way to regenerate these tracked assets.
 
@@ -20,7 +20,7 @@ The fixed product language is a warm neutral canvas, semantic surface layers, or
 
 `resources/css/app.css` is CSS-first Tailwind 4 configuration using `@import "tailwindcss"`, explicit sources, built-in state variants, semantic CSS variables, and theme mappings. The Vite Tailwind plugin is the compiler integration. Complete utility names must be statically discoverable; arbitrary values are one-off only and repeating values become tokens/components.
 
-Current token domains include background/surface/foreground/muted, border/input/ring, primary/accent, destructive and chart colors, sidebar surfaces, radii, typography, spacing, shadows, and motion. Shared page, surface, control, stagger, and step transitions use the same motion tokens and collapse under `prefers-reduced-motion`. Logical start/end properties are preferred where they improve multilingual/RTL resilience.
+Current token domains include background/surface/foreground/muted, border/input/ring, primary/accent, chart colors, sidebar surfaces, four-channel success/warning/information/destructive statuses, radii, typography, spacing, shadows, and motion. Every status tone owns a shared surface, border, normal-text, and icon channel with at least `4.5:1` paired contrast; brand, identity avatars, project colors, chart series, and decorative gradients remain separate reviewed domains. Shared page, surface, control, stagger, and step transitions use the same motion tokens and collapse under `prefers-reduced-motion`. Logical start/end properties are preferred where they improve multilingual/RTL resilience.
 
 ## Interaction Contract
 
@@ -40,7 +40,7 @@ Current token domains include background/surface/foreground/muted, border/input/
 
 Requirement `ui-system-001` governs every UI/UX change. Before implementation, inventory the exact page, component, locale, viewport, input mode, and loading/empty/error/disabled/offline state affected. Correct an equivalent pattern at the lowest coherent layer—token, interaction primitive, shared presentation component, shell/state contract, then focused feature composition—without building a universal mega-component or touching unrelated consumers.
 
-The 2026-08-17 system audit found open contrast, focus-completion, touch-target, offline recovery, inline validation, motion, status-token, component-vocabulary, and dormant-UI gaps. Until those findings are remediated and reverified, the existing accessibility/responsive statements describe the intended contract and previously covered workflows, not proof that every current presentation path is defect-free. Detailed evidence lives in `docs/ui-ux-audit-2026-08-17.md`.
+The 2026-08-17 system audit found contrast, focus-completion, touch-target, offline recovery, inline validation, motion, status-token, component-vocabulary, and dormant-UI gaps. The responsive program has now remediated shared status tokens and removed the three proven-unreachable presentation components; remaining findings still require their own evidence rather than a blanket completion claim. Detailed historical evidence lives in `docs/ui-ux-audit-2026-08-17.md`.
 
 ## Accessibility And Responsive Requirements
 

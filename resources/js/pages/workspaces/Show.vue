@@ -211,7 +211,7 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
                     <Badge
                         v-if="workspace.is_current"
                         variant="outline"
-                        class="min-h-12 border-emerald-500/25 bg-emerald-500/10 px-4 text-[0.9375rem] whitespace-normal text-emerald-700 pointer-coarse:min-h-13"
+                        class="min-h-12 border-status-success-border bg-status-success-surface px-4 text-[0.9375rem] whitespace-normal text-status-success-text pointer-coarse:min-h-13"
                     >
                         <CheckCircle2 aria-hidden="true" />
                         {{ t('workspaces.current') }}

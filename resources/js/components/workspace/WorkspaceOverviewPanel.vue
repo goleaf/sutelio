@@ -132,7 +132,9 @@ async function switchWorkspace(): Promise<void> {
                     </CardTitle>
                 </CardHeader>
             </Card>
-            <Card class="overflow-hidden border-sky-500/15 bg-sky-500/[0.04]">
+            <Card
+                class="overflow-hidden border-status-information-border bg-status-information-surface/50"
+            >
                 <CardHeader class="pb-3">
                     <IconTile tone="information" size="sm">
                         <Folder />
@@ -146,7 +148,7 @@ async function switchWorkspace(): Promise<void> {
                 </CardHeader>
             </Card>
             <Card
-                class="overflow-hidden border-emerald-500/15 bg-emerald-500/[0.04]"
+                class="overflow-hidden border-status-success-border bg-status-success-surface/50"
             >
                 <CardHeader class="pb-3">
                     <IconTile tone="success" size="sm">
@@ -189,7 +191,7 @@ async function switchWorkspace(): Promise<void> {
                         <Badge
                             v-if="workspace.is_current"
                             variant="outline"
-                            class="border-emerald-500/25 bg-emerald-500/10 text-[0.9375rem] whitespace-normal text-emerald-700"
+                            class="border-status-success-border bg-status-success-surface text-[0.9375rem] whitespace-normal text-status-success-text"
                         >
                             <CheckCircle2 aria-hidden="true" />
                             {{ t('workspaces.current') }}

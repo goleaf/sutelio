@@ -35,10 +35,11 @@ const statusClass = computed(
         ({
             empty: 'border-dashed border-border/80 text-muted-foreground',
             loading: 'border-border/80 bg-muted/20 text-muted-foreground',
-            error: 'border-destructive/20 bg-destructive/5 text-destructive',
+            error: 'border-status-destructive-border bg-status-destructive-surface text-status-destructive-text',
             success:
-                'border-emerald-500/20 bg-emerald-500/[0.06] text-emerald-800',
-            information: 'border-blue-500/20 bg-blue-500/[0.06] text-blue-800',
+                'border-status-success-border bg-status-success-surface text-status-success-text',
+            information:
+                'border-status-information-border bg-status-information-surface text-status-information-text',
         })[props.status],
 );
 </script>

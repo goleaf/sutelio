@@ -48,12 +48,12 @@ const statusClass = computed(
     () =>
         ({
             information:
-                'border-blue-500/20 bg-linear-to-br from-blue-50/90 via-background to-blue-100/70 text-blue-950',
+                'border-status-information-border bg-linear-to-br from-status-information-surface via-background to-status-information-border/35 text-status-information-text',
             loading:
                 'border-orange-500/25 bg-linear-to-br from-orange-50/90 via-background to-orange-100/75 text-orange-950',
             success:
-                'motion-safe:ui-status-pop border-emerald-500/20 bg-linear-to-br from-emerald-50/90 via-background to-emerald-100/70 text-emerald-950',
-            error: 'border-destructive/25 bg-linear-to-br from-red-50/90 via-background to-red-100/70 text-destructive',
+                'motion-safe:ui-status-pop border-status-success-border bg-linear-to-br from-status-success-surface via-background to-status-success-border/35 text-status-success-text',
+            error: 'border-status-destructive-border bg-linear-to-br from-status-destructive-surface via-background to-status-destructive-border/35 text-status-destructive-text',
         })[props.status],
 );
 </script>

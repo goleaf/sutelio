@@ -161,8 +161,8 @@ const avatarTones = [
 ];
 
 const roleClasses: Record<WorkspaceRole, string> = {
-    owner: 'border-amber-200 bg-amber-50 text-amber-800',
-    admin: 'border-sky-200 bg-sky-50 text-sky-800',
+    owner: 'border-status-warning-border bg-status-warning-surface text-status-warning-text',
+    admin: 'border-status-information-border bg-status-information-surface text-status-information-text',
     member: 'border-border bg-muted/50 text-muted-foreground',
 };
 

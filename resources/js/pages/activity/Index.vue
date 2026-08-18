@@ -178,7 +178,7 @@ function resultSummary(): string {
                         class="flex items-center gap-2 text-[0.9375rem] text-muted-foreground"
                     >
                         <span
-                            class="size-2 rounded-full bg-emerald-500"
+                            class="size-2 rounded-full bg-status-success-icon"
                             aria-hidden="true"
                         />
                         {{ copy.activity.workspace_ledger }}

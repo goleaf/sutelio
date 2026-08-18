@@ -231,7 +231,7 @@ function openCreateDialog(): void {
                                         'rounded-full px-2.5 py-1 text-[0.9375rem] leading-5 font-semibold',
                                         project.is_archived
                                             ? 'bg-muted text-muted-foreground'
-                                            : 'bg-emerald-500/10 text-emerald-700',
+                                            : 'bg-status-success-surface text-status-success-text',
                                     ]"
                                 >
                                     {{

@@ -343,19 +343,19 @@ Run focused workspace/settings/security tests, query budgets, frontend/browser g
 - Modify: `tests/Feature/FrontendDesignTest.php`
 - Modify: design-system/accessibility/current-state documentation
 
-- [ ] **Step 1: Add failing semantic-color and reachability contracts**
+- [x] **Step 1: Add failing semantic-color and reachability contracts**
 
 Require shared success/warning/information/destructive surface/text/border classes, text/icon status meaning, 4.5:1 normal-text contrast, and zero imports/templates/routes/tests referencing each deletion candidate.
 
-- [ ] **Step 2: Replace raw state colors workflow by workflow**
+- [x] **Step 2: Replace raw state colors workflow by workflow**
 
 Keep brand orange and user-chosen project colors distinct from status tokens. Run the focused page/browser contract after each replacement group to catch accidental semantic changes.
 
-- [ ] **Step 3: Delete only proven unreachable components**
+- [x] **Step 3: Delete only proven unreachable components**
 
 Use exact-path removal after `rg` proves zero consumer outside each file. Keep recoverability through Git history and record the deleted paths in `docs/progress.md`.
 
-- [ ] **Step 4: Verify and deliver**
+- [x] **Step 4: Verify and deliver**
 
 Run the complete frontend/Pest/browser matrix, then commit `refactor(ui): consolidate responsive status system` and push normally.
 

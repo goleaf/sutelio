@@ -47,7 +47,7 @@ const emit = defineEmits<{ action: [] }>();
             class="absolute -right-12 -bottom-20 size-52 rounded-full border-[28px]"
             :class="
                 status === 'error'
-                    ? 'border-red-500/[0.035]'
+                    ? 'border-status-destructive-border/[0.035]'
                     : 'border-orange-500/[0.035]'
             "
             aria-hidden="true"

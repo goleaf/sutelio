@@ -255,7 +255,9 @@ async function deleteDefinition(): Promise<void> {
 <template>
     <Card
         :class="
-            kind === 'status' ? 'border-emerald-500/15' : 'border-amber-500/15'
+            kind === 'status'
+                ? 'border-status-success-border'
+                : 'border-status-warning-border'
         "
     >
         <CardHeader>

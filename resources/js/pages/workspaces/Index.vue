@@ -462,7 +462,7 @@ function manageWorkspace(workspace: Workspace): void {
                         class="group relative flex flex-col overflow-hidden bg-background transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-orange-500/25 hover:shadow-[0_24px_50px_-38px_rgba(255,96,56,0.5)] motion-reduce:transform-none"
                         :class="
                             isCurrentWorkspace(workspace)
-                                ? 'border-emerald-500/30 ring-1 ring-emerald-500/10 lg:col-span-2'
+                                ? 'border-status-success-border ring-1 ring-status-success-border/40 lg:col-span-2'
                                 : ''
                         "
                     >
@@ -470,7 +470,7 @@ function manageWorkspace(workspace: Workspace): void {
                             class="absolute inset-y-0 left-0 w-1.5"
                             :class="
                                 isCurrentWorkspace(workspace)
-                                    ? 'bg-emerald-500'
+                                    ? 'bg-status-success-icon'
                                     : 'bg-orange-500'
                             "
                             aria-hidden="true"
@@ -489,7 +489,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 <Badge
                                     v-if="isCurrentWorkspace(workspace)"
                                     variant="outline"
-                                    class="border-emerald-500/25 bg-emerald-500/10 text-[0.9375rem] whitespace-normal text-emerald-700"
+                                    class="border-status-success-border bg-status-success-surface text-[0.9375rem] whitespace-normal text-status-success-text"
                                 >
                                     <CheckCircle2 aria-hidden="true" />
                                     {{ t('workspaces.current') }}

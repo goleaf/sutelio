@@ -436,10 +436,6 @@ test('shared overlays use dynamic viewport bounds and mobile first spacing', fun
             ->not->toContain('92vh');
     }
 
-    expect(File::get(resource_path('js/components/AppHeader.vue')))
-        ->toContain('class="w-full max-w-xs p-4 sm:p-6"')
-        ->not->toContain('class="w-[300px] p-6"');
-
     expect(File::get(resource_path('js/components/localization/FirstRunLanguageDialog.vue')))
         ->toContain('class="gap-0 p-0 sm:max-w-xl"')
         ->not->toContain('class="overflow-hidden p-0 sm:max-w-xl"');
@@ -1132,9 +1128,9 @@ test('shared controls use warm checked focus and feedback states', function () {
         ->and(File::get(resource_path('js/components/ui/alert/index.ts')))
         ->toContain('rounded-xl')
         ->toContain('border-border/80')
-        ->toContain('border-destructive/25')
-        ->toContain('bg-destructive/[0.06]')
-        ->toContain('text-red-800')
+        ->toContain('border-status-destructive-border')
+        ->toContain('bg-status-destructive-surface')
+        ->toContain('text-status-destructive-text')
         ->and(File::get(resource_path('js/components/ui/alert/AlertTitle.vue')))
         ->not->toContain('line-clamp-1')
         ->and(File::get(resource_path('js/components/ui/badge/index.ts')))
@@ -1149,10 +1145,10 @@ test('shared controls use warm checked focus and feedback states', function () {
 
 test('shared form feedback uses semantic warm precision states', function () {
     expect(File::get(resource_path('js/components/ui/alert/index.ts')))
-        ->toContain('border-emerald-500/20')
-        ->toContain('bg-emerald-500/[0.07]')
-        ->toContain('border-amber-500/25')
-        ->toContain('bg-amber-500/[0.08]')
+        ->toContain('border-status-success-border')
+        ->toContain('bg-status-success-surface')
+        ->toContain('border-status-warning-border')
+        ->toContain('bg-status-warning-surface')
         ->and(File::get(resource_path('js/components/ui/alert/Alert.vue')))
         ->toContain('props.variant === "success" ? "status" : "alert"')
         ->and(File::get(resource_path('js/components/InputError.vue')))

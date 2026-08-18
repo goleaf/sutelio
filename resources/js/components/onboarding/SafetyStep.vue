@@ -35,7 +35,7 @@ const topics = [
             </article>
         </div>
         <p
-            class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-4 text-base leading-7 text-blue-950"
+            class="rounded-2xl border border-status-information-border bg-status-information-surface p-4 text-base leading-7 text-status-information-text"
         >
             {{ canManageWorkspace ? copy.manager_note : copy.member_note }}
         </p>

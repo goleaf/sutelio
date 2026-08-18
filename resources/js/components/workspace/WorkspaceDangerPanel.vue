@@ -152,7 +152,7 @@ async function deleteWorkspace(): Promise<void> {
         >
             <Card
                 v-if="workspace.permissions?.transfer_ownership"
-                class="border-amber-500/20"
+                class="border-status-warning-border"
             >
                 <CardHeader>
                     <LeadingIconHeading tile tile-tone="warning">
@@ -225,7 +225,7 @@ async function deleteWorkspace(): Promise<void> {
                     <Button
                         variant="outline"
                         size="lg"
-                        class="w-full border-amber-500/25 text-amber-800 hover:bg-amber-500/10"
+                        class="w-full border-status-warning-border text-status-warning-text hover:bg-status-warning-surface"
                         :disabled="transferForm.processing"
                         @click="requestOwnershipTransfer"
                     >

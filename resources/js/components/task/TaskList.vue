@@ -98,7 +98,9 @@ function deleteFromActions(todo: Todo): void {
                 selected.has(todo.id)
                     ? 'border-orange-500/30 bg-orange-500/[0.035]'
                     : '',
-                isOverdue(todo) ? 'border-red-500/40 bg-red-500/[0.025]' : '',
+                isOverdue(todo)
+                    ? 'border-status-destructive-border bg-status-destructive-surface/35'
+                    : '',
             ]"
             :aria-busy="busyTodoId === todo.id"
         >
@@ -141,7 +143,7 @@ function deleteFromActions(todo: Todo): void {
                 >
                     <Check
                         v-if="todo.is_completed"
-                        class="size-4 text-emerald-600"
+                        class="size-4 text-status-success-icon"
                         aria-hidden="true"
                     />
                     <Circle
@@ -241,7 +243,9 @@ function deleteFromActions(todo: Todo): void {
                     v-if="todo.due_date"
                     class="inline-flex w-auto max-w-full shrink overflow-visible text-left text-[0.9375rem] leading-6 break-all whitespace-normal"
                     :class="
-                        isOverdue(todo) ? 'border-red-500/50 text-red-700' : ''
+                        isOverdue(todo)
+                            ? 'border-status-destructive-border text-status-destructive-text'
+                            : ''
                     "
                     variant="outline"
                 >

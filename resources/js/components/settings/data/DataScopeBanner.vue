@@ -22,7 +22,7 @@ const presentation = computed(() =>
         : {
               icon: Database,
               tileTone: 'information' as const,
-              railClass: 'bg-amber-500',
+              railClass: 'bg-status-warning-icon',
           },
 );
 </script>

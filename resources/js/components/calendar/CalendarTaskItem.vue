@@ -82,8 +82,8 @@ const swatchSize = computed<'sm' | 'md'>(() =>
             v-if="props.todo.is_completed"
             :class="
                 props.density === 'comfortable'
-                    ? 'size-4 shrink-0 text-emerald-600'
-                    : 'size-3.5 shrink-0 text-emerald-600'
+                    ? 'size-4 shrink-0 text-status-success-icon'
+                    : 'size-3.5 shrink-0 text-status-success-icon'
             "
             aria-hidden="true"
         />

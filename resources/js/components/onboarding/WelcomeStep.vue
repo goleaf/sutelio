@@ -35,7 +35,7 @@ const features = [
             </article>
         </div>
         <p
-            class="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.07] p-4 text-base leading-7 text-emerald-950"
+            class="rounded-2xl border border-status-success-border bg-status-success-surface p-4 text-base leading-7 text-status-success-text"
         >
             {{ copy.privacy }}
         </p>

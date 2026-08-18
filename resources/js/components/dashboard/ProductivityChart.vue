@@ -87,10 +87,10 @@ function formatFullDate(date: string): string {
                         </p>
                     </div>
                     <div
-                        class="rounded-2xl border border-sky-500/15 bg-sky-500/[0.06] px-4 py-3"
+                        class="rounded-2xl border border-status-information-border bg-status-information-surface px-4 py-3"
                     >
                         <p
-                            class="flex items-center gap-1.5 text-[0.9375rem] leading-5 text-sky-800"
+                            class="flex items-center gap-1.5 text-[0.9375rem] leading-5 text-status-information-text"
                         >
                             <PlusCircle class="size-3.5" aria-hidden="true" />
                             {{ t('dashboard.created') }}

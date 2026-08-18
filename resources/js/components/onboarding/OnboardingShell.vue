@@ -139,7 +139,7 @@ const progressScale = computed(() =>
                             class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border forced-colors:border-[CanvasText]"
                             :class="
                                 index + 1 < progress.position
-                                    ? 'border-emerald-600 bg-emerald-600 text-white'
+                                    ? 'border-status-success-icon bg-status-success-icon text-white'
                                     : step === progress.step
                                       ? 'border-orange-600 bg-orange-600 text-white'
                                       : 'border-border bg-background'

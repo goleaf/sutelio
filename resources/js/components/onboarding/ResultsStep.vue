@@ -101,7 +101,7 @@ const countMessage = computed(() => {
             </dl>
         </section>
         <aside
-            class="rounded-2xl border border-blue-500/20 bg-blue-500/[0.07] p-5 text-blue-950"
+            class="rounded-2xl border border-status-information-border bg-status-information-surface p-5 text-status-information-text"
         >
             <h2 class="font-semibold">{{ copy.next_title }}</h2>
             <p class="mt-2 text-base leading-7">

@@ -29,11 +29,14 @@ const toneClass = computed(
             brand: 'border-orange-500/15 bg-orange-500/10 text-orange-800',
             cobalt: 'border-brand-cobalt/15 bg-brand-cobalt text-brand-ivory',
             muted: 'border-border/80 bg-muted text-muted-foreground',
-            success: 'border-emerald-500/15 bg-emerald-500/10 text-emerald-700',
-            warning: 'border-amber-500/20 bg-amber-500/10 text-amber-800',
+            success:
+                'border-status-success-border bg-status-success-surface text-status-success-icon',
+            warning:
+                'border-status-warning-border bg-status-warning-surface text-status-warning-icon',
             destructive:
-                'border-destructive/15 bg-destructive/10 text-destructive',
-            information: 'border-blue-500/15 bg-blue-500/10 text-blue-700',
+                'border-status-destructive-border bg-status-destructive-surface text-status-destructive-icon',
+            information:
+                'border-status-information-border bg-status-information-surface text-status-information-icon',
         })[props.tone],
 );
 

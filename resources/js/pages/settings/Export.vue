@@ -346,7 +346,7 @@ async function confirmImport(): Promise<void> {
                                 importStepState(index) === 'current'
                                     ? 'border-orange-500/30 bg-orange-500/[0.07] text-orange-900'
                                     : importStepState(index) === 'complete'
-                                      ? 'border-emerald-500/25 bg-emerald-500/[0.06] text-emerald-900'
+                                      ? 'border-status-success-border bg-status-success-surface text-status-success-text'
                                       : 'border-border/70 bg-muted/30 text-muted-foreground',
                             ]"
                             :aria-current="
