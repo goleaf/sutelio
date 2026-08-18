@@ -20,8 +20,7 @@ class OnboardingChecklistQuery
         $preferences = $user->preferences;
         $show = $preferences instanceof UserPreference
             && $preferences->onboarding_checklist_dismissed_at === null
-            && ($preferences->onboarding_completed_at !== null
-                || $preferences->onboarding_skipped_at !== null);
+            && $preferences->onboarding_completed_at !== null;
 
         if (! $show) {
             return $this->hidden();

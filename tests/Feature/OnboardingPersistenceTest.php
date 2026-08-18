@@ -57,6 +57,37 @@ test('pending onboarding state is explicit and resumable', function () {
         ->and($preferences->week_start)->toBe('sunday');
 });
 
+test('previously skipped onboarding is reopened as a mandatory fresh run', function () {
+    $previousRunId = (string) Str::uuid();
+    $skippedAt = now()->subDay()->startOfSecond();
+    $preferences = UserPreference::factory()->pendingOnboarding()->create([
+        'onboarding_step' => OnboardingStep::Results->value,
+        'onboarding_run_id' => $previousRunId,
+        'onboarding_started_at' => $skippedAt,
+        'onboarding_skipped_at' => $skippedAt,
+    ]);
+
+    $migrationFiles = glob(database_path(
+        'migrations/*_require_completion_for_previously_skipped_onboarding.php',
+    ));
+
+    expect($migrationFiles)->toBeArray()->toHaveCount(1);
+
+    $migration = require $migrationFiles[0];
+    $migration->up();
+    $preferences->refresh();
+
+    expect($preferences->requiresOnboarding())->toBeTrue()
+        ->and($preferences->onboardingStep())->toBe(OnboardingStep::Welcome)
+        ->and($preferences->onboarding_run_id)->not->toBe($previousRunId)
+        ->and($preferences->onboarding_state)->toBe([])
+        ->and($preferences->onboarding_skipped_at?->equalTo($skippedAt))->toBeTrue();
+
+    $this->actingAs($preferences->user)
+        ->get(route('dashboard'))
+        ->assertRedirectToRoute('onboarding.index');
+});
+
 test('legacy preference rows without an onboarding run are not forced into onboarding', function () {
     $user = User::factory()->create();
     $preferences = UserPreference::create([

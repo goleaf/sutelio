@@ -48,9 +48,9 @@ Route::middleware('auth')
         Route::post('onboarding/workspace', 'workspace')->name('onboarding.workspace');
         Route::post('onboarding/project', 'project')->name('onboarding.project');
         Route::post('onboarding/task', 'task')->name('onboarding.task');
-        Route::post('onboarding/skip', 'skip')->name('onboarding.skip');
         Route::post('onboarding/complete', 'complete')->name('onboarding.complete');
         Route::post('onboarding/restart', 'restart')->name('onboarding.restart');
+        Route::post('onboarding/replay/exit', 'exitReplay')->name('onboarding.replay.exit');
         Route::delete('onboarding/checklist', 'dismissChecklist')
             ->middleware('onboarding.complete')
             ->name('onboarding.checklist.dismiss');

@@ -8,14 +8,14 @@
 - `Todo` belongs to one workspace, optional project/assignee/parent, one status definition, and one priority definition. It owns checklists, comments, reminders, attachments, recurrence configuration/occurrences, and subtasks; it has workspace labels/tags through pivots.
 - `TaskStatus` and `TaskPriority` are ordered workspace definitions used by tasks.
 - `WorkspaceInvitation` is an expiring, digest-backed, single-use membership offer.
-- `UserPreference` owns onboarding version, run, step, resumable draft, start/completion/skip, and checklist-dismissal facts; `OnboardingOperation` owns one run-scoped idempotency key and resulting entity identity.
+- `UserPreference` owns onboarding version, run, step, resumable draft, start/completion, legacy skip-audit, and checklist-dismissal facts; `OnboardingOperation` owns one run-scoped idempotency key and resulting entity identity.
 - `ActivityLog` records normalized facts for a workspace. Database notifications are private to their user.
 
 ## Primary Workflows And State Transitions
 
 - Workspace: create -> configure -> invite/manage members -> optionally transfer ownership -> duplicate or delete with policy/confirmation.
 - Invitation: issue/resend -> accept once before expiry, or cancel/expire.
-- Onboarding: registration first establishes a selected minimum workspace baseline; pending Welcome -> adjacent guided steps -> Results -> complete, or required skip -> Results. Project/task creation remains explicit. Completed/skipped users may restart a replay without re-enabling the automatic gate or deleting domain data.
+- Onboarding: registration first establishes a selected minimum workspace baseline; pending Welcome -> adjacent guided steps -> Results -> complete is the only required-flow path. Previously skipped incomplete users receive a fresh mandatory run. Completed users may restart and separately exit an optional replay without re-enabling the automatic gate or deleting domain data. Project/task creation remains explicit.
 - Project: active -> archived; duplicate and delete are explicit actions.
 - Task: create/update -> complete/uncomplete, archive, favorite/pin, reorder, duplicate, or delete. Parent links cannot self-reference or cycle.
 - Reminder: pending -> claimed -> delivered or failed; pending/failed items may be cancelled under policy. Claim/delivery is idempotent.
@@ -33,6 +33,6 @@
 6. File/database operations define compensation or cleanup for partial failure.
 7. User preferences affect presentation and boundaries, not stored canonical timestamps or authorization.
 8. Onboarding step movement is adjacent and versioned; persisted workspace/project/task identifiers are re-authorized on every read/write, and one run/request key may create at most one domain entity.
-9. Registration and required onboarding exit leave the user with at least one authorized workspace, owner membership when a personal workspace is needed, canonical status/priority definitions, and a current session selection; idempotent retries do not create a second bootstrap workspace.
+9. Registration and mandatory onboarding completion leave the user with at least one authorized workspace, owner membership when a personal workspace is needed, canonical status/priority definitions, and a current session selection; idempotent retries do not create a second bootstrap workspace.
 
 The table-level realization is in `docs/data-model.md`; permissions are in `docs/authorization.md`; requirement IDs are in `docs/requirements.md`.

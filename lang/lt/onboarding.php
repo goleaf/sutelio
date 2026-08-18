@@ -21,13 +21,8 @@ return [
     ],
     'actions' => [
         'back' => 'Atgal',
-        'cancel' => 'Atšaukti',
         'continue' => 'Tęsti',
         'finish' => 'Baigti sąranką',
-        'skip' => 'Praleisti pristatymą',
-        'skip_confirm' => 'Kol kas praleisti',
-        'skip_title' => 'Praleisti vedamą sąranką?',
-        'skip_description' => 'Išsaugotos nuostatos ir sukurti įrašai liks. Šį pristatymą galėsite paleisti iš naujo nuostatose.',
         'exit_replay' => 'Baigti mokymąsi',
         'retry' => 'Bandyti dar kartą',
     ],

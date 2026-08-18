@@ -52,11 +52,14 @@ test('active native text entry exceptions use the shared diagonal surface ramp',
     }
 });
 
-test('onboarding skip is an outlined full width phone action', function () {
+test('onboarding replay exit is an outlined full width phone action', function () {
     $source = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
 
     expect($source)
         ->not->toContain('variant="ghost"')
+        ->not->toContain('copy.actions.skip')
+        ->toContain('v-if="progress.is_replay"')
+        ->toContain('copy.actions.exit_replay')
         ->toContain('grid-cols-1')
         ->toContain('min-[30rem]:grid-cols-2')
         ->toContain('class="min-h-11 w-full min-[30rem]:col-span-2 sm:col-auto sm:w-auto"')

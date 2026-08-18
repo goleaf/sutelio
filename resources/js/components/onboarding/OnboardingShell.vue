@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, Circle, Route } from '@lucide/vue';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import type {
     OnboardingCopy,
     OnboardingProgress,
@@ -9,7 +9,6 @@ import { orderedOnboardingSteps } from '@/components/onboarding/onboarding-types
 import IconTile from '@/components/shared/IconTile.vue';
 import StatusNotice from '@/components/shared/StatusNotice.vue';
 import type { StatusNoticeStatus } from '@/components/shared/StatusNotice.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -24,10 +23,9 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     back: [];
-    skip: [];
+    exitReplay: [];
 }>();
 
-const skipOpen = ref(false);
 const stepLabel = computed(() =>
     props.copy.status.step_count
         .replace(':current', String(props.progress.position))
@@ -191,18 +189,15 @@ const progressScale = computed(() =>
                 class="mx-auto grid max-w-app grid-cols-1 items-center gap-2 min-[30rem]:grid-cols-2 sm:flex xl:justify-end"
             >
                 <Button
+                    v-if="progress.is_replay"
                     type="button"
                     variant="outline"
                     size="lg"
                     class="min-h-11 w-full min-[30rem]:col-span-2 sm:col-auto sm:w-auto"
                     :disabled="processing"
-                    @click="skipOpen = true"
+                    @click="emit('exitReplay')"
                 >
-                    {{
-                        progress.is_replay
-                            ? copy.actions.exit_replay
-                            : copy.actions.skip
-                    }}
+                    {{ copy.actions.exit_replay }}
                 </Button>
                 <span
                     class="hidden min-w-0 flex-1 sm:block"
@@ -230,16 +225,5 @@ const progressScale = computed(() =>
                 </Button>
             </div>
         </div>
-
-        <WorkspaceConfirmDialog
-            v-model:open="skipOpen"
-            :title="copy.actions.skip_title"
-            :description="copy.actions.skip_description"
-            :confirm-label="copy.actions.skip_confirm"
-            :cancel-label="copy.actions.cancel"
-            :processing="processing"
-            :destructive="false"
-            @confirm="emit('skip')"
-        />
     </div>
 </template>

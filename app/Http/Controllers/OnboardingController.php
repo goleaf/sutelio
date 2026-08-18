@@ -12,7 +12,6 @@ use App\Actions\CompleteOnboarding;
 use App\Actions\DismissOnboardingChecklist;
 use App\Actions\RestartOnboarding;
 use App\Actions\SaveOnboardingPreferences;
-use App\Actions\SkipOnboarding;
 use App\Enums\UserLanguage;
 use App\Http\Requests\AdvanceOnboardingRequest;
 use App\Http\Requests\StoreOnboardingProjectRequest;
@@ -41,11 +40,18 @@ class OnboardingController extends Controller
         abort_unless($user instanceof User, 403);
 
         $preferences = $user->preferences()->first();
-        $isReplay = $this->isReplay($request);
 
-        if (! $preferences instanceof UserPreference
-            || (! $preferences->requiresOnboarding() && ! $isReplay)) {
+        if (! $preferences instanceof UserPreference) {
             return to_route(UserPreference::startRoute($preferences?->start_page));
+        }
+
+        $requiresOnboarding = $preferences->requiresOnboarding();
+        $isReplay = ! $requiresOnboarding && $this->isReplay($request);
+
+        if ($requiresOnboarding) {
+            $request->session()->forget('onboarding_replay');
+        } elseif (! $isReplay) {
+            return to_route(UserPreference::startRoute($preferences->start_page));
         }
 
         $copy = __('onboarding');
@@ -153,16 +159,12 @@ class OnboardingController extends Controller
         return to_route('onboarding.index');
     }
 
-    public function skip(Request $request, SkipOnboarding $skipOnboarding): RedirectResponse
+    public function exitReplay(Request $request): RedirectResponse
     {
-        $user = $request->user();
-
-        abort_unless($user instanceof User, 403);
-
         $preferences = $this->activePreferences($request);
 
-        $workspace = $skipOnboarding->handle($user, $preferences, $this->isReplay($request));
-        $request->session()->put('current_workspace_id', $workspace->id);
+        abort_unless($this->isReplay($request) && ! $preferences->requiresOnboarding(), 403);
+
         $request->session()->forget('onboarding_replay');
 
         return to_route(UserPreference::startRoute($preferences->start_page));

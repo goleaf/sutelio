@@ -79,6 +79,30 @@ test('onboarding shell exposes progress status validation and mobile-safe action
         ->toContain('aria-invalid');
 });
 
+test('required onboarding exposes no skip affordance while replay has a distinct exit', function () {
+    $page = File::get(resource_path('js/pages/onboarding/Index.vue'));
+    $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
+    $types = File::get(resource_path('js/components/onboarding/onboarding-types.ts'));
+
+    expect($page)
+        ->toContain('exitReplay')
+        ->not->toContain('skipOnboarding')
+        ->not->toContain('@skip=')
+        ->and($shell)
+        ->toContain('v-if="progress.is_replay"')
+        ->toContain('copy.actions.exit_replay')
+        ->toContain('exitReplay: []')
+        ->not->toContain('copy.actions.skip')
+        ->not->toContain('skipOpen')
+        ->not->toContain('WorkspaceConfirmDialog')
+        ->and($types)
+        ->toContain('exit_replay: string')
+        ->not->toContain('skip: string')
+        ->not->toContain('skip_confirm: string')
+        ->not->toContain('skip_title: string')
+        ->not->toContain('skip_description: string');
+});
+
 test('onboarding visible actions and assistive messages come from semantic copy', function () {
     $source = File::get(resource_path('js/pages/onboarding/Index.vue'))
         .collect(File::allFiles(resource_path('js/components/onboarding')))

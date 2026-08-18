@@ -11,6 +11,7 @@ use App\Models\UserPreference;
 use App\Models\Workspace;
 use App\Models\WorkspaceMember;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -75,42 +76,28 @@ test('progress rejects jumps and unknown step values without moving the cursor',
     expect($preferences->fresh()->onboardingStep())->toBe(OnboardingStep::Welcome);
 });
 
-test('required onboarding can be skipped without deleting its prior facts', function () {
+test('required onboarding cannot be skipped through the retired endpoint', function () {
+    $workspaceId = (string) Str::uuid();
     [$user, $preferences] = createPendingOnboardingUser([
         'start_page' => 'calendar',
         'onboarding_step' => OnboardingStep::Project->value,
-        'onboarding_state' => ['workspace_id' => (string) Str::uuid()],
+        'onboarding_state' => ['workspace_id' => $workspaceId],
     ]);
 
     $this->actingAs($user)
-        ->post(route('onboarding.skip'))
-        ->assertRedirectToRoute('calendar')
-        ->assertSessionMissing('onboarding_replay');
+        ->post('/onboarding/skip')
+        ->assertNotFound();
 
     $preferences->refresh();
 
-    expect($preferences->onboardingStep())->toBe(OnboardingStep::Results)
-        ->and($preferences->onboarding_state)->toBe([])
-        ->and($preferences->onboarding_skipped_at)->not->toBeNull()
+    expect(Route::has('onboarding.skip'))->toBeFalse()
+        ->and($preferences->onboardingStep())->toBe(OnboardingStep::Project)
+        ->and($preferences->onboarding_state)->toBe(['workspace_id' => $workspaceId])
+        ->and($preferences->onboarding_skipped_at)->toBeNull()
         ->and($preferences->onboarding_completed_at)->toBeNull()
-        ->and($preferences->requiresOnboarding())->toBeFalse();
+        ->and($preferences->requiresOnboarding())->toBeTrue();
 
-    $workspace = $user->workspaces()->sole();
-
-    expect($workspace->name)->toBe('My workspace')
-        ->and($workspace->taskStatuses()->count())->toBe(3)
-        ->and($workspace->taskPriorities()->count())->toBe(5)
-        ->and(session('current_workspace_id'))->toBe($workspace->id);
-
-    $this->get(route('dashboard'))->assertOk();
-    $this->postJson(route('todos.store', $workspace), [
-        'title' => 'First task after skipping onboarding',
-    ])->assertCreated();
-
-    $this->assertDatabaseHas('todos', [
-        'workspace_id' => $workspace->id,
-        'title' => 'First task after skipping onboarding',
-    ]);
+    $this->get(route('calendar'))->assertRedirectToRoute('onboarding.index');
 });
 
 test('completion is accepted only from results and follows the selected start page', function () {
@@ -177,7 +164,7 @@ test('completed users can replay without reopening their required gate', functio
             ->where('progress.step', OnboardingStep::Welcome->value));
 });
 
-test('skipping a replay ends only the replay session and preserves completion facts', function () {
+test('exiting a replay ends only the replay session and preserves completion facts', function () {
     $user = User::factory()->create();
     $preferences = UserPreference::factory()->for($user)->create([
         'start_page' => 'projects',
@@ -186,7 +173,7 @@ test('skipping a replay ends only the replay session and preserves completion fa
 
     $this->actingAs($user)->post(route('onboarding.restart'));
 
-    $this->post(route('onboarding.skip'))
+    $this->post(route('onboarding.replay.exit'))
         ->assertRedirectToRoute('projects')
         ->assertSessionMissing('onboarding_replay');
 
@@ -200,25 +187,30 @@ test('skipping a replay ends only the replay session and preserves completion fa
     $this->get(route('onboarding.index'))->assertRedirectToRoute('projects');
 });
 
-test('skipping a replay preserves an earlier skipped lifecycle fact', function () {
+test('replay exit is forbidden unless a completed lifecycle is actively replaying', function () {
     [$user, $preferences] = createPendingOnboardingUser();
 
-    $this->actingAs($user)->post(route('onboarding.skip'));
-    $skippedAt = $preferences->fresh()->onboarding_skipped_at;
-    $workspaceId = $user->workspaces()->sole()->id;
+    $this->actingAs($user)
+        ->post(route('onboarding.replay.exit'))
+        ->assertForbidden();
 
-    $this->post(route('onboarding.restart'))
+    $this->withSession(['onboarding_replay' => true])
+        ->post(route('onboarding.replay.exit'))
+        ->assertForbidden()
         ->assertSessionHas('onboarding_replay', true);
-    $this->post(route('onboarding.skip'))
-        ->assertSessionMissing('onboarding_replay');
+
+    $this->get(route('onboarding.index'))
+        ->assertOk()
+        ->assertSessionMissing('onboarding_replay')
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('onboarding/Index')
+            ->where('progress.is_replay', false));
 
     $preferences->refresh();
 
-    expect($preferences->onboarding_skipped_at?->equalTo($skippedAt))->toBeTrue()
+    expect($preferences->onboarding_skipped_at)->toBeNull()
         ->and($preferences->onboarding_completed_at)->toBeNull()
-        ->and($preferences->requiresOnboarding())->toBeFalse()
-        ->and($user->workspaces()->count())->toBe(1)
-        ->and($user->workspaces()->sole()->id)->toBe($workspaceId);
+        ->and($preferences->requiresOnboarding())->toBeTrue();
 });
 
 test('completed users cannot mutate onboarding outside an active replay', function () {
@@ -302,8 +294,8 @@ test('the continuation checklist is hidden for legacy users and shown after a ne
 test('the continuation checklist uses only current workspace capabilities and real completion facts', function () {
     $user = User::factory()->withTwoFactor()->create();
     UserPreference::factory()->for($user)->create([
-        'onboarding_completed_at' => null,
-        'onboarding_skipped_at' => now(),
+        'onboarding_completed_at' => now(),
+        'onboarding_skipped_at' => null,
         'onboarding_checklist_dismissed_at' => null,
     ]);
     $currentWorkspace = Workspace::factory()->for($user, 'owner')->withOwnerMembership()->create();

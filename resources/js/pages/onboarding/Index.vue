@@ -3,10 +3,10 @@ import { Head, router, useForm } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 import {
     complete as completeOnboarding,
+    exitReplay as exitOnboardingReplay,
     preferences as savePreferences,
     progress as saveProgress,
     project as saveProject,
-    skip as skipOnboarding,
     task as saveTask,
     workspace as saveWorkspace,
 } from '@/actions/App/Http/Controllers/OnboardingController';
@@ -340,10 +340,10 @@ function advanceTo(direction: -1 | 1): void {
     void form.submit(saveProgress(), visitOptions());
 }
 
-function skip(): void {
+function exitReplay(): void {
     router.cancelAll();
     form.transform(() => ({}));
-    void form.submit(skipOnboarding(), visitOptions());
+    void form.submit(exitOnboardingReplay(), visitOptions());
 }
 </script>
 
@@ -362,7 +362,7 @@ function skip(): void {
                 :primary-label="primaryLabel"
                 :processing="form.processing"
                 @back="advanceTo(-1)"
-                @skip="skip"
+                @exit-replay="exitReplay"
             >
                 <OnboardingStepPanel
                     :eyebrow="copy.meta.eyebrow"

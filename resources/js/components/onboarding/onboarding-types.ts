@@ -140,13 +140,8 @@ export type OnboardingCopy = {
     steps: Record<OnboardingStep, OnboardingStepCopy>;
     actions: {
         back: string;
-        cancel: string;
         continue: string;
         finish: string;
-        skip: string;
-        skip_confirm: string;
-        skip_title: string;
-        skip_description: string;
         exit_replay: string;
         retry: string;
     };

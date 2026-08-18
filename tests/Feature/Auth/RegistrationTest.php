@@ -73,7 +73,7 @@ test('registration rejects an unsupported language without creating an account',
     $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
 });
 
-test('a registered user can skip onboarding and immediately create a task', function () {
+test('a registered user remains gated until onboarding is completed', function () {
     $this->post(route('register.store'), [
         'name' => 'Ready User',
         'email' => 'ready@example.com',
@@ -87,19 +87,9 @@ test('a registered user can skip onboarding and immediately create a task', func
 
     expect($workspace?->name)->toBe('Моё рабочее пространство');
 
-    $this->post(route('onboarding.skip'))
-        ->assertSessionHasNoErrors()
-        ->assertSessionHas('current_workspace_id', $workspace?->id)
-        ->assertRedirectToRoute('dashboard');
-
-    $this->postJson(route('todos.store', $workspace), [
-        'title' => 'Первая задача',
-    ])->assertCreated();
-
-    $this->assertDatabaseHas('todos', [
-        'workspace_id' => $workspace?->id,
-        'title' => 'Первая задача',
-    ]);
+    $this->get(route('dashboard'))->assertRedirectToRoute('onboarding.index');
+    $this->post('/onboarding/skip')->assertNotFound();
+    $this->assertDatabaseMissing('todos', ['workspace_id' => $workspace?->id]);
 });
 
 test('registration rejects an invalid detected timezone without creating an account', function () {

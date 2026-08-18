@@ -21,13 +21,8 @@ return [
     ],
     'actions' => [
         'back' => 'Back',
-        'cancel' => 'Cancel',
         'continue' => 'Continue',
         'finish' => 'Finish setup',
-        'skip' => 'Skip introduction',
-        'skip_confirm' => 'Skip for now',
-        'skip_title' => 'Skip the guided setup?',
-        'skip_description' => 'Your saved preferences and anything you created will stay. You can restart this introduction later from Settings.',
         'exit_replay' => 'Exit practice',
         'retry' => 'Try again',
     ],
