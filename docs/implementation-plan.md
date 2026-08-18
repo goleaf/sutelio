@@ -288,5 +288,5 @@ Requirements: `sys-runtime-001`, `sys-brand-001`, `test-feature-001`, `ops-deplo
 - [x] Regenerate and harden the ignored native project, rebuild the exact APK, and independently verify manifest, v2 signature, alignment, archive, bundle exclusions, sensitive-log exclusions, and the 38 migrations.
 - [x] Clean-install on the Android 14 ARM64 emulator, complete Russian first run, cold-relaunch with locale persistence, and verify package/process, SQLite integrity, foreign keys, migrations, and process-scoped logs.
 - [x] Pass the complete quality gate and synchronize final evidence.
-- [ ] Commit the correction on `main`, push normally, and verify local/remote equality.
+- [x] Commit the correction on `main`, push normally, and verify local/remote equality.
 - [ ] Install the exact verified hash with `adb install -r` on the explicitly resolved API 29 Samsung, launch it, and report package/activity/screenshot/log evidence without deleting another package or mutating Git afterward.
