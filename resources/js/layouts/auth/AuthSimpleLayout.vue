@@ -61,7 +61,7 @@ const { t } = useUi();
                         </template>
 
                         <p
-                            class="text-[0.7rem] font-semibold tracking-[0.16em] text-orange-700 uppercase"
+                            class="text-[0.9375rem] font-semibold tracking-[0.08em] text-orange-700"
                         >
                             {{ t('auth.common.eyebrow') }}
                         </p>
@@ -69,7 +69,7 @@ const { t } = useUi();
                             {{ title }}
                         </h1>
                         <p
-                            class="max-w-sm text-sm leading-6 text-muted-foreground"
+                            class="max-w-sm text-base leading-7 text-muted-foreground"
                         >
                             {{ description }}
                         </p>

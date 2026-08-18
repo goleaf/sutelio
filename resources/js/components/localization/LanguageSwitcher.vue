@@ -40,7 +40,7 @@ function handleLanguageChange(value: unknown): void {
             <Button
                 variant="outline"
                 size="sm"
-                class="min-h-11 gap-2 bg-background/90 px-3 shadow-sm"
+                class="min-h-11 gap-2 bg-background/90 px-3 text-[0.9375rem] shadow-sm pointer-coarse:min-h-12"
                 :aria-labelledby="`${labelId} ${codeId}`"
                 :disabled="form.processing"
             >
@@ -67,7 +67,7 @@ function handleLanguageChange(value: unknown): void {
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-64 max-w-[calc(100dvw-1rem)]">
-            <DropdownMenuLabel>
+            <DropdownMenuLabel class="text-base">
                 {{ t('localization.choose') }}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -79,7 +79,7 @@ function handleLanguageChange(value: unknown): void {
                     v-for="option in localization.options"
                     :key="option.code"
                     :value="option.code"
-                    class="min-h-11 gap-3 rounded-lg py-2.5 pl-9"
+                    class="min-h-11 gap-3 rounded-lg py-2.5 pl-9 text-base pointer-coarse:min-h-12"
                 >
                     <template #indicator-icon>
                         <Check class="size-4" />
@@ -89,7 +89,9 @@ function handleLanguageChange(value: unknown): void {
                         <span class="block font-medium">{{
                             option.native_name
                         }}</span>
-                        <span class="block text-xs text-muted-foreground">
+                        <span
+                            class="block text-[0.9375rem] text-muted-foreground"
+                        >
                             {{ option.localized_name }}
                         </span>
                     </span>

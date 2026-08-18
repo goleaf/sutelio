@@ -74,7 +74,7 @@ defineProps<{
                     <TextLink
                         v-if="canResetPassword"
                         :href="request()"
-                        class="text-sm"
+                        class="text-base"
                     >
                         {{ t('auth.login.forgot_password') }}
                     </TextLink>
@@ -91,7 +91,10 @@ defineProps<{
             </div>
 
             <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3">
+                <Label
+                    for="remember"
+                    class="flex min-h-12 cursor-pointer items-center space-x-3"
+                >
                     <Checkbox id="remember" name="remember" />
                     <span>{{ t('auth.login.remember') }}</span>
                 </Label>
@@ -110,7 +113,7 @@ defineProps<{
             </Button>
         </div>
 
-        <div class="text-center text-sm text-muted-foreground">
+        <div class="text-center text-base text-muted-foreground">
             {{ t('auth.login.no_account') }}
             <TextLink :href="register()">{{
                 t('auth.login.sign_up')

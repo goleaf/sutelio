@@ -10,11 +10,30 @@ The current NativePHP 4.2 mandatory-onboarding artifact is `storage/app/native-b
 
 Completed execution-plan files are removed after their durable decisions and verification evidence are represented by canonical documentation and the append-only progress journal. Git history remains the recovery source for those deleted plans.
 
+## Active Senior-Friendly Responsive Program
+
+Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-coherence-001`, `i18n-001`, and `test-architecture-001`.
+
+The detailed design and execution sources are `docs/plans/2026-08-18-senior-friendly-responsive-system-design.md` and `docs/superpowers/plans/2026-08-18-senior-friendly-responsive-system.md`. The program keeps one comfortable default for every user and proceeds from shared primitives into complete user workflows.
+
+| Task                                                         | Status    | Evidence / next boundary                                                              |
+| ------------------------------------------------------------ | --------- | ------------------------------------------------------------------------------------- |
+| 1. Freeze audit and design contract                          | Completed | Repository/runtime inventory and selected comfort contract recorded                   |
+| 2. Establish shared reading and touch primitives             | Completed | Failing-first source coverage and shared 48/52 px control baseline                    |
+| 3. Adapt first run and authentication                        | Completed | EN/LT/RU phone/tablet/short-landscape browser matrix and Lighthouse accessibility 100 |
+| 4. Move persistent navigation to the desktop boundary        | Completed | Authenticated 390-1440 px drawer/sidebar matrix; disposable data removed              |
+| 5. Adapt mandatory onboarding                                | Planned   | Next vertical slice                                                                   |
+| 6. Adapt tasks and projects                                  | Planned   | Follows onboarding                                                                    |
+| 7. Adapt dashboard, calendar, activity, and notifications    | Planned   | Follows daily work                                                                    |
+| 8. Adapt workspaces and settings                             | Planned   | Follows planning/activity                                                             |
+| 9. Consolidate semantic statuses and remove proven legacy UI | Planned   | Delete only after zero-consumer proof                                                 |
+| 10. Run final quality, NativePHP, emulator, and Samsung gate | Planned   | Physical installation remains the final mutation after every preceding program task   |
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.
 
-The detailed execution source is `docs/superpowers/plans/2026-08-17-sutelio-database-optimization.md`. It is the only retained implementation plan with unfinished product work.
+The detailed execution source is `docs/superpowers/plans/2026-08-17-sutelio-database-optimization.md`. Database optimization remains independent from the responsive program and must continue in reviewable slices without mixing ownership.
 
 | Task                                                    | Status               | Evidence / next boundary                                                                     |
 | ------------------------------------------------------- | -------------------- | -------------------------------------------------------------------------------------------- |
@@ -35,4 +54,4 @@ No unfinished repository implementation is hidden in this section. The remaining
 
 ## Delivery Rule
 
-Each active database task updates focused tests, canonical traceability, and `docs/progress.md`; runs the smallest relevant gates after each slice and the complete required gates before delivery; preserves unrelated work; commits only attributable files on `main`; and pushes `origin/main` without history rewrite or force push.
+Each active task updates focused tests, canonical traceability, and `docs/progress.md`; runs the smallest relevant gates after each slice and the complete required gates before delivery; preserves unrelated work; commits only attributable files on `main`; and pushes `origin/main` without history rewrite or force push. Responsive work additionally runs the applicable EN/LT/RU viewport/input/state matrix and leaves physical Samsung installation as the final mutation of the complete program.

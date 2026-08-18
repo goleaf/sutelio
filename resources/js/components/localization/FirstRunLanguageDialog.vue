@@ -39,12 +39,14 @@ function confirmLanguage(): void {
     <Dialog :open="localization.requires_selection">
         <DialogContent
             :show-close-button="false"
-            class="p-0 sm:max-w-xl"
+            data-slot="first-run-language-dialog"
+            class="gap-0 p-0 sm:max-w-xl"
             @escape-key-down.prevent
             @pointer-down-outside.prevent
             @interact-outside.prevent
         >
             <div
+                data-slot="first-run-language-header"
                 class="relative overflow-hidden border-b border-border/70 bg-orange-500/[0.06] px-6 py-7 sm:px-8"
             >
                 <span
@@ -65,7 +67,7 @@ function confirmLanguage(): void {
                         <DialogTitle class="text-2xl tracking-[-0.035em]">
                             {{ previewCopy.first_run.title }}
                         </DialogTitle>
-                        <DialogDescription class="max-w-md leading-6">
+                        <DialogDescription class="max-w-md text-base leading-7">
                             {{ previewCopy.first_run.description }}
                         </DialogDescription>
                     </LeadingIconHeading>
@@ -73,6 +75,7 @@ function confirmLanguage(): void {
             </div>
 
             <form
+                data-slot="first-run-language-form"
                 class="grid gap-5 px-6 pb-6 sm:px-8 sm:pb-8"
                 @submit.prevent="confirmLanguage"
             >
@@ -84,6 +87,7 @@ function confirmLanguage(): void {
                         v-for="option in localization.options"
                         :key="option.code"
                         type="button"
+                        data-slot="first-run-language-option"
                         class="group flex min-h-16 w-full items-center gap-4 rounded-2xl border px-4 py-3 text-left transition-[color,background-color,border-color,box-shadow,transform] duration-[var(--motion-feedback)] ease-[var(--ease-emphasized)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transition-none"
                         :class="
                             selectedLanguage === option.code
@@ -99,7 +103,14 @@ function confirmLanguage(): void {
                             <span class="block font-semibold">{{
                                 option.native_name
                             }}</span>
-                            <span class="block text-sm text-muted-foreground">
+                            <span
+                                class="block text-[0.9375rem]"
+                                :class="
+                                    selectedLanguage === option.code
+                                        ? 'text-neutral-700'
+                                        : 'text-muted-foreground'
+                                "
+                            >
                                 {{
                                     selectedPreview.language_names[option.code]
                                 }}
@@ -131,7 +142,7 @@ function confirmLanguage(): void {
                 <Button
                     type="submit"
                     size="lg"
-                    class="min-h-11 w-full"
+                    class="min-h-13 w-full"
                     :loading="form.processing"
                     :loading-label="previewCopy.saving"
                 >

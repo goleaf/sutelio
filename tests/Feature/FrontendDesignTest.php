@@ -315,8 +315,8 @@ test('the canonical stylesheet owns viewport safe responsive interaction primiti
         ->toContain('.ui-page-container')
         ->toContain('@media (hover: hover) and (pointer: fine)')
         ->toContain('@media (pointer: coarse)')
-        ->toContain('min-block-size: 2.75rem')
-        ->toContain('min-inline-size: 2.75rem')
+        ->toContain('min-height: 3rem')
+        ->toContain('min-width: 3rem')
         ->toContain('@media (forced-colors: active)')
         ->toContain('@media (prefers-reduced-motion: reduce)');
 });
@@ -440,7 +440,7 @@ test('shared overlays use dynamic viewport bounds and mobile first spacing', fun
         ->not->toContain('class="w-[300px] p-6"');
 
     expect(File::get(resource_path('js/components/localization/FirstRunLanguageDialog.vue')))
-        ->toContain('class="p-0 sm:max-w-xl"')
+        ->toContain('class="gap-0 p-0 sm:max-w-xl"')
         ->not->toContain('class="overflow-hidden p-0 sm:max-w-xl"');
 });
 
@@ -487,7 +487,7 @@ test('shared compact actions expand to touch targets on coarse pointers', functi
     expect(File::get(resource_path('js/components/shared/WorkspaceSegmentedButton.vue')))
         ->toContain('pointer-coarse:min-h-11')
         ->and(File::get(resource_path('js/components/ui/sidebar/index.ts')))
-        ->toContain('pointer-coarse:min-h-11')
+        ->toContain('pointer-coarse:min-h-12')
         ->and(File::get(resource_path('js/components/ui/sidebar/SidebarRail.vue')))
         ->toContain('pointer-coarse:hidden')
         ->and(File::get(resource_path('js/components/ui/dropdown-menu/DropdownMenuItem.vue')))
@@ -1262,6 +1262,59 @@ test('shared transient accessibility copy uses semantic translations', function 
         ->toContain('t("common.toast.close")');
 });
 
+test('shared controls provide the comfort touch and reading baseline', function () {
+    expect(File::get(resource_path('css/app.css')))
+        ->toContain('min-height: 3rem')
+        ->toContain('min-width: 3rem')
+        ->toContain('.ui-control.ui-control-lg')
+        ->toContain('min-height: 3.25rem')
+        ->and(File::get(resource_path('js/components/ui/button/index.ts')))
+        ->toContain('ui-control-lg')
+        ->toContain('h-12 px-6 text-base pointer-coarse:min-h-13')
+        ->and(File::get(resource_path('js/components/ui/input/Input.vue')))
+        ->toContain('h-12')
+        ->toContain('pointer-coarse:min-h-13')
+        ->not->toContain('md:text-sm')
+        ->and(File::get(resource_path('js/components/ui/label/Label.vue')))
+        ->toContain('text-base')
+        ->and(File::get(resource_path('js/components/ui/checkbox/Checkbox.vue')))
+        ->toContain('size-5')
+        ->toContain('pointer-coarse:size-6')
+        ->and(File::get(resource_path('js/components/PasswordInput.vue')))
+        ->toContain('min-w-12')
+        ->toContain('pointer-coarse:min-w-13');
+});
+
+test('authentication surfaces use readable copy and a full checkbox target', function () {
+    expect(File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue')))
+        ->toContain('text-[0.9375rem]')
+        ->toContain('max-w-sm text-base leading-7')
+        ->not->toContain('tracking-[0.16em]')
+        ->and(File::get(resource_path('js/pages/auth/Login.vue')))
+        ->toContain('class="text-base"')
+        ->toContain('class="flex min-h-12 cursor-pointer items-center space-x-3"')
+        ->toContain('text-center text-base text-muted-foreground')
+        ->and(File::get(resource_path('js/components/PasskeyVerify.vue')))
+        ->toContain('text-[0.9375rem]')
+        ->not->toContain('text-xs uppercase')
+        ->and(File::get(resource_path('js/components/TextLink.vue')))
+        ->toContain('inline-flex min-h-12 items-center')
+        ->toContain('align-middle');
+});
+
+test('tablet navigation keeps the drawer through portrait tablet widths', function () {
+    expect(File::get(resource_path('js/components/ui/sidebar/SidebarProvider.vue')))
+        ->toContain('useMediaQuery("(max-width: 1023px)")')
+        ->and(File::get(resource_path('js/components/ui/sidebar/utils.ts')))
+        ->toContain('SIDEBAR_WIDTH_MOBILE = "min(22rem, calc(100dvi - 2rem))"')
+        ->and(File::get(resource_path('js/components/ui/sidebar/SidebarMenuAction.vue')))
+        ->toContain('pointer-coarse:min-h-12 pointer-coarse:min-w-12')
+        ->and(File::get(resource_path('js/components/ui/sidebar/SidebarGroupAction.vue')))
+        ->toContain('pointer-coarse:min-h-12 pointer-coarse:min-w-12')
+        ->and(File::get(resource_path('js/components/ui/sidebar/SidebarMenuSubButton.vue')))
+        ->toContain('pointer-coarse:h-12 pointer-coarse:text-base');
+});
+
 test('mobile sidebar closes when an Inertia navigation starts', function () {
     $provider = File::get(resource_path('js/components/ui/sidebar/SidebarProvider.vue'));
 
@@ -1330,6 +1383,6 @@ test('project operations queue owns the warm precision empty states', function (
 test('guest authentication uses the same left rail hierarchy as projects', function () {
     expect(File::get(resource_path('js/layouts/auth/AuthSimpleLayout.vue')))
         ->toContain('inset-y-0 left-0 w-1.5 bg-orange-500')
-        ->toContain('tracking-[0.16em]')
+        ->toContain('tracking-[0.08em]')
         ->not->toContain('inset-x-0 top-0 h-1.5');
 });

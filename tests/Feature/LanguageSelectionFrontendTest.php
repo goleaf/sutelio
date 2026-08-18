@@ -14,8 +14,9 @@ test('language controls are shared by guest and authenticated layouts', function
         ->and($header)->toContain('<LanguageSwitcher');
 });
 
-test('first run dialog is mandatory accessible animated and reduced motion safe', function () {
+test('first run dialog is mandatory accessible responsive and reduced motion safe', function () {
     $dialog = File::get(resource_path('js/components/localization/FirstRunLanguageDialog.vue'));
+    $css = File::get(resource_path('css/app.css'));
 
     expect($dialog)
         ->toContain('localization.requires_selection')
@@ -32,7 +33,18 @@ test('first run dialog is mandatory accessible animated and reduced motion safe'
         ->toContain('<DialogDescription')
         ->toContain('aria-live="polite"')
         ->toContain('motion-reduce:')
-        ->toContain('min-h-11');
+        ->toContain('data-slot="first-run-language-dialog"')
+        ->toContain('data-slot="first-run-language-header"')
+        ->toContain('data-slot="first-run-language-form"')
+        ->toContain('data-slot="first-run-language-option"')
+        ->toContain('text-base leading-7')
+        ->toContain('text-[0.9375rem]')
+        ->toContain('min-h-13')
+        ->and($css)
+        ->toContain('@media (orientation: landscape) and (max-height: 32rem) and (min-width: 40rem)')
+        ->toContain("[data-slot='first-run-language-dialog']")
+        ->toContain('grid-template-columns: minmax(14rem, 0.8fr) minmax(22rem, 1.2fr)')
+        ->toContain("[data-slot='first-run-language-form']");
 });
 
 test('language switcher uses owned flag assets and the shared locale endpoint', function () {
@@ -48,6 +60,8 @@ test('language switcher uses owned flag assets and the shared locale endpoint', 
         ->and($switcher)
         ->toContain('localization.options')
         ->toContain('DropdownMenuRadioGroup')
+        ->toContain('text-[0.9375rem]')
+        ->toContain('pointer-coarse:min-h-12')
         ->toContain('aria-label')
         ->not->toMatch('/[🇬🇧🇱🇹🇷🇺]/u');
 });

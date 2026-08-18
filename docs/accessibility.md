@@ -9,7 +9,7 @@ Accessibility is a release requirement, not a decorative review. The current int
 - Native elements provide semantics before ARIA is added. Inputs have labels, descriptions/errors, autocomplete, and `aria-invalid` where needed.
 - Icon-only controls have translated accessible names. Status is communicated by text/icon as well as color.
 - The clean-S image used by `AppLogoIcon` is decorative (`alt=""` and `aria-hidden="true"`); product links and surrounding navigation expose the visible or explicit `Sutelio` accessible name. Standalone meaningful logo use must receive an equivalent accessible name from its context rather than relying on SVG paths or color.
-- Dialogs and sheets use Reka focus trapping, Escape dismissal, return focus, accessible title/description, viewport-safe scroll, and at least 44px primary touch targets. The mandatory first-run language dialog is the documented exception: Escape, outside click, and a close control are disabled until a valid language is explicitly confirmed.
+- Dialogs and sheets use Reka focus trapping, Escape dismissal, return focus, accessible title/description, and viewport-safe scroll. Coarse-pointer controls expose at least 48×48 px shared targets and primary large actions expose at least 52 px height. The mandatory first-run language dialog is the documented exception to dismissal: Escape, outside click, and a close control are disabled until a valid language is explicitly confirmed.
 - Destructive actions remain policy-authorized and use localized confirmation; confirmation never replaces server authorization.
 - Focus rings are visible in the fixed light mode. Keyboard order follows the DOM, and mutable lists use stable entity keys.
 - Exact signal-orange surfaces use deep-cobalt text (`4.71:1`); white normal text is reserved for orange-600 or darker because white on `#FF6038` reaches only `3.01:1`.
@@ -43,9 +43,11 @@ A production release should still repeat keyboard traversal and screen-reader sp
 
 ## Open 2026-08-17 Audit Gaps
 
-Requirement `ui-system-001` and `docs/ui-ux-audit-2026-08-17.md` currently supersede any blanket interpretation of “implemented and verified” for the whole presentation layer. Confirmed open gaps include normal-text contrast below 4.5:1 on several muted/sidebar surfaces, focus falling to `body` after first-run confirmation, non-universal 44×44 coarse-pointer targets, and an inline comment-edit validation error that is neither rendered nor announced.
+Requirement `ui-system-001` and `docs/ui-ux-audit-2026-08-17.md` currently supersede any blanket interpretation of “implemented and verified” for the whole presentation layer. The 2026-08-18 foundation fixes the selected-language 4.39:1 contrast failure, shared control sizing, guest/auth microcopy, and tablet navigation boundary. Confirmed open gaps still include normal-text contrast below 4.5:1 on other muted/sidebar surfaces, focus falling to `body` after first-run confirmation, direct-control escape hatches that do not yet inherit the coarse-pointer baseline, and an inline comment-edit validation error that is neither rendered nor announced.
 
 Fresh isolated Chromium evidence covers the guest first-run/login flow in EN/LT/RU at 390×844, 820×1180, and 1440×1000 with no horizontal overflow, one `main`, one `h1`, and no console/network failure. Authenticated traversal was intentionally not performed with personal local accounts; authenticated pages therefore require a fresh non-personal test fixture during remediation. Physical screen-reader, touch-device, NativePHP, and OS forced-colors checks remain release gates rather than claimed results.
+
+The 2026-08-18 responsive-foundation pass adds guest checks at 320×568, 430×932, 768×1024, 1024×768, and 844×390; the short-landscape dialog exposes every language and its primary action without initial scrolling. A disposable product-created account completed mandatory onboarding and verified drawer open/dismiss/navigation/focus at 390, 768, 820, and 1023 px plus persistent/collapsible sidebar behavior at 1024 and 1440 px. The account and its project/task data were deleted through product UI and read-only database checks found zero residue. Lighthouse accessibility increased from 96 to 100 for the checked guest state.
 
 ## Soft Motion And Icon Remediation Status
 

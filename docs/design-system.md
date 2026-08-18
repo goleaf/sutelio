@@ -44,13 +44,15 @@ The hierarchy is also the required correction order under `ui-system-001`. Fix s
 
 ## Current System Audit Baseline
 
-The 2026-08-17 audit records unresolved system drift: low-contrast muted/sidebar pairs; overly broad 480 ms entrance animation; raw status-color utilities bypassing `success`, `warning`, and `information`; repeated large radii, border-plus-shadow surfaces, uppercase eyebrow labels, and decorative accents; incomplete Field/Textarea and action vocabulary; and dense touch layouts. These are open findings, not approved extensions of Warm Precision.
+The 2026-08-17 audit recorded low-contrast muted/sidebar pairs; overly broad 480 ms entrance animation; raw status-color utilities bypassing `success`, `warning`, and `information`; repeated large radii, border-plus-shadow surfaces, uppercase eyebrow labels, decorative accents; incomplete Field/Textarea and action vocabulary; and dense touch layouts. The 2026-08-18 responsive foundation resolves the selected-language contrast defect, the shared coarse-pointer target baseline, small guest/auth copy, short-landscape first-run composition, and the premature desktop-sidebar boundary. Raw status colors, repeated decoration, remaining feature-local microcopy, direct-control escape hatches, and workflow-specific density remain active vertical-slice findings.
 
 The later remediation plan must enumerate every matching consumer before changing tokens or primitives, verify the visual effect in EN/LT/RU and supported viewport/input states, and preserve the exact Sutelio identity roles. See `docs/ui-ux-audit-2026-08-17.md`; do not silently weaken the audit by changing this document alone.
 
 ## Responsive And State Contract
 
 Base utilities target the smallest viewport. Layout expands progressively for large mobile, tablet, laptop, desktop, and wide desktop. Horizontal page overflow is prohibited. Filters switch to sheets where a sidebar cannot remain usable; dialogs use dynamic viewport bounds; long and localized content can wrap; touch targets coexist with keyboard focus.
+
+The comfort baseline uses 16 px reading text and 15 px secondary/helper text in primary workflows. Coarse-pointer controls expose at least 48×48 px targets, while primary large actions expose at least 52 px height. Drawer navigation remains active through 1023 px and the persistent sidebar begins at 1024 px. The mandatory first-run dialog uses a two-column composition only on short landscape screens wide enough to preserve readable columns; smaller viewports retain bounded internal scrolling.
 
 `WorkspacePageFrame` is the shared page-shell owner. Its CSS-first `ui-page-frame` and `ui-page-container` utilities combine fluid logical gutters, the bounded application container, and shrink-safe content across the primary workspace, onboarding, and settings surfaces. Intentional horizontal regions such as boards, category rails, and segmented controls own their own `touch-pan-x` plus overscroll containment; they never transfer overflow to the document.
 
