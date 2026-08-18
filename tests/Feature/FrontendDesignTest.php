@@ -1262,6 +1262,18 @@ test('shared transient accessibility copy uses semantic translations', function 
         ->toContain('t("common.toast.close")');
 });
 
+test('mobile sidebar closes when an Inertia navigation starts', function () {
+    $provider = File::get(resource_path('js/components/ui/sidebar/SidebarProvider.vue'));
+
+    expect($provider)
+        ->toContain('import { router } from "@inertiajs/vue3"')
+        ->toContain('onUnmounted(')
+        ->toContain('router.on("start"')
+        ->toContain('isMobile.value && openMobile.value')
+        ->toContain('setOpenMobile(false)')
+        ->not->toContain('router.on("prefetching"');
+});
+
 test('shared interaction accessibility copy exists in every supported language', function (string $locale) {
     $copy = require lang_path("{$locale}/ui.php");
 

@@ -35,6 +35,7 @@ All notable project changes are documented here.
 
 ### Interface, Accessibility, And Localization
 
+- Closed the mobile left navigation automatically when an Inertia page visit starts, while preserving the persistent desktop sidebar state and ignoring prefetch-only activity.
 - Added a complete eight-step Warm Guided Route for new users, an honest dismissible Dashboard continuation checklist, Settings replay, role-aware safety guidance, and immediate English/Lithuanian/Russian preference rendering across desktop and mobile.
 - Verified onboarding heading/validation focus, 44-pixel mobile actions, stable Back/Continue layout, safe-area handling, reduced motion, dark and forced-colors modes, and zero 390-pixel horizontal overflow.
 - Centralized authenticated document semantics in the persistent application shell: ten nested page/settings `main` landmarks were removed, reusable task detail now begins at `h2`, and automated plus 22-route desktop/mobile checks enforce one `main` and one `h1` per page.

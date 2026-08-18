@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { HTMLAttributes, Ref } from "vue"
+import { router } from "@inertiajs/vue3"
 import { defaultDocument, useEventListener, useMediaQuery, useVModel } from "@vueuse/core"
 import { TooltipProvider } from "reka-ui"
-import { computed, ref } from "vue"
+import { computed, onUnmounted, ref } from "vue"
 import { cn } from "@/lib/utils"
 import { provideSidebarContext, SIDEBAR_COOKIE_MAX_AGE, SIDEBAR_COOKIE_NAME, SIDEBAR_KEYBOARD_SHORTCUT, SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON } from "./utils"
 
@@ -42,6 +43,14 @@ function setOpenMobile(value: boolean) {
 function toggleSidebar() {
   return isMobile.value ? setOpenMobile(!openMobile.value) : setOpen(!open.value)
 }
+
+onUnmounted(
+  router.on("start", () => {
+    if (isMobile.value && openMobile.value) {
+      setOpenMobile(false)
+    }
+  }),
+)
 
 useEventListener("keydown", (event: KeyboardEvent) => {
   if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
