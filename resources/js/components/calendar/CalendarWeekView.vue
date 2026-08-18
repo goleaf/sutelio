@@ -41,7 +41,7 @@ const days = computed(() =>
             <header class="flex items-center justify-between gap-2">
                 <div>
                     <p
-                        class="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                        class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                     >
                         {{ formatDate(day.date, { weekday: 'short' }) }}
                     </p>
@@ -50,7 +50,7 @@ const days = computed(() =>
                     </h3>
                 </div>
                 <span
-                    class="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground tabular-nums"
+                    class="rounded-full bg-muted px-2.5 py-1 text-[0.9375rem] font-semibold text-muted-foreground tabular-nums"
                 >
                     {{ formatNumber(day.todos.length) }}
                 </span>
@@ -73,7 +73,9 @@ const days = computed(() =>
                 <IconTile tone="muted" size="sm">
                     <CalendarCheck2 />
                 </IconTile>
-                <p class="mt-2 text-xs leading-5 text-muted-foreground">
+                <p
+                    class="mt-2 text-[0.9375rem] leading-5 text-muted-foreground"
+                >
                     {{ copy.calendar.no_tasks }}
                 </p>
             </div>

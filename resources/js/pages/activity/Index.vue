@@ -35,6 +35,12 @@ const props = defineProps<{
 const { copy, formatNumber, locale } = useWorkspaceUi();
 const filtering = ref(false);
 
+function focusActivityResults(): void {
+    document
+        .querySelector<HTMLElement>('[data-activity-results-heading]')
+        ?.focus();
+}
+
 function filterUrl(filters: ActivityFilters): string {
     const options = { query: buildActivityQuery(filters) };
 
@@ -60,6 +66,7 @@ function updateFilters(filters: ActivityFilters): void {
         },
         onFinish: () => {
             filtering.value = false;
+            requestAnimationFrame(focusActivityResults);
         },
     });
 }
@@ -140,20 +147,24 @@ function resultSummary(): string {
                 :aria-busy="filtering"
             >
                 <div
-                    class="flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-4 sm:px-6"
+                    data-activity-results-heading
+                    tabindex="-1"
+                    class="flex min-h-18 flex-wrap items-center justify-between gap-3 border-b border-border/70 px-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 sm:px-6"
                     aria-live="polite"
                 >
                     <div>
-                        <p class="text-sm font-semibold">
+                        <p class="text-base font-semibold">
                             {{ copy.activity.result_count }}
                         </p>
-                        <p class="mt-0.5 text-xs text-muted-foreground">
+                        <p
+                            class="mt-0.5 text-[0.9375rem] leading-5 text-muted-foreground"
+                        >
                             {{ resultSummary() }}
                         </p>
                     </div>
                     <div
                         v-if="filtering"
-                        class="flex items-center gap-2 text-xs font-medium text-muted-foreground"
+                        class="flex items-center gap-2 text-[0.9375rem] font-medium text-muted-foreground"
                         role="status"
                     >
                         <LoaderCircle
@@ -164,7 +175,7 @@ function resultSummary(): string {
                     </div>
                     <div
                         v-else
-                        class="flex items-center gap-2 text-xs text-muted-foreground"
+                        class="flex items-center gap-2 text-[0.9375rem] text-muted-foreground"
                     >
                         <span
                             class="size-2 rounded-full bg-emerald-500"
@@ -191,7 +202,7 @@ function resultSummary(): string {
                                 v-if="hasMore"
                                 type="button"
                                 variant="outline"
-                                class="min-w-40 motion-reduce:transition-none"
+                                class="min-h-12 min-w-40 motion-reduce:transition-none pointer-coarse:min-h-13"
                                 :disabled="loading"
                                 @click="fetch"
                             >
@@ -208,7 +219,7 @@ function resultSummary(): string {
                             </Button>
                             <p
                                 v-else
-                                class="text-xs font-medium text-muted-foreground"
+                                class="text-[0.9375rem] font-medium text-muted-foreground"
                             >
                                 {{ copy.activity.end_of_activity }}
                             </p>

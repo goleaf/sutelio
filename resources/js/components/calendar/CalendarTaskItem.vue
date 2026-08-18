@@ -35,9 +35,9 @@ const containerClass = computed(
 const titleClass = computed(
     () =>
         ({
-            comfortable: 'text-sm font-semibold',
-            compact: 'text-xs leading-5 font-semibold',
-            dense: 'text-[0.7rem] font-medium',
+            comfortable: 'text-base leading-6 font-semibold',
+            compact: 'text-[0.9375rem] leading-5 font-semibold',
+            dense: 'text-[0.9375rem] leading-5 font-medium',
         })[props.density],
 );
 
@@ -54,7 +54,7 @@ const swatchSize = computed<'sm' | 'md'>(() =>
         :aria-label="props.todo.title"
         :class="
             cn(
-                'group flex min-h-11 max-w-full min-w-0 cursor-pointer items-center overflow-hidden border border-border/80 bg-card transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.035] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none',
+                'group flex min-h-12 max-w-full min-w-0 cursor-pointer items-center border border-border/80 bg-card transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.035] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13',
                 containerClass,
                 props.class,
             )
@@ -67,12 +67,12 @@ const swatchSize = computed<'sm' | 'md'>(() =>
         />
 
         <span class="min-w-0 flex-1">
-            <span :class="cn('block truncate', titleClass)">
+            <span :class="cn('line-clamp-2 break-words', titleClass)">
                 {{ props.todo.title }}
             </span>
             <span
                 v-if="props.secondary"
-                class="mt-0.5 block truncate text-xs text-muted-foreground"
+                class="mt-0.5 line-clamp-2 text-[0.9375rem] leading-5 break-words text-muted-foreground"
             >
                 {{ props.secondary }}
             </span>

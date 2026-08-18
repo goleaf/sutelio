@@ -38,7 +38,7 @@ const { copy } = useWorkspaceUi();
     >
         <div
             :class="[
-                'grid gap-2 text-sm font-medium',
+                'grid gap-2 text-base font-medium',
                 props.mode === 'desktop' ? 'px-1' : '',
             ]"
         >
@@ -50,7 +50,7 @@ const { copy } = useWorkspaceUi();
             </span>
             <Select v-model="actor" :disabled="props.disabled">
                 <SelectTrigger
-                    class="w-full"
+                    class="min-h-12 w-full pointer-coarse:min-h-13"
                     :aria-label="copy.activity.contributor_label"
                 >
                     <SelectValue />
@@ -72,7 +72,7 @@ const { copy } = useWorkspaceUi();
 
         <div
             :class="[
-                'grid gap-2 text-sm font-medium',
+                'grid gap-2 text-base font-medium',
                 props.mode === 'desktop' ? 'px-1' : '',
             ]"
         >
@@ -84,7 +84,7 @@ const { copy } = useWorkspaceUi();
             </span>
             <Select v-model="period" :disabled="props.disabled">
                 <SelectTrigger
-                    class="w-full"
+                    class="min-h-12 w-full pointer-coarse:min-h-13"
                     :aria-label="copy.activity.period_label"
                 >
                     <SelectValue />

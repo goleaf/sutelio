@@ -104,7 +104,7 @@ const { formatNumber, t } = useUi();
                     >
                         {{ t('dashboard.focus_title') }}
                     </h2>
-                    <p class="mt-1.5 text-sm leading-6 text-muted-foreground">
+                    <p class="mt-1.5 text-base leading-7 text-muted-foreground">
                         {{ t('dashboard.focus_description') }}
                     </p>
                 </div>

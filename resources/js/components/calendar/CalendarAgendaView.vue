@@ -37,11 +37,11 @@ const groups = computed(() =>
                     </IconTile>
                     <div>
                         <p
-                            class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                            class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                         >
                             {{ formatDate(group.date, { weekday: 'long' }) }}
                         </p>
-                        <h3 class="mt-1 text-sm font-semibold capitalize">
+                        <h3 class="mt-1 text-base font-semibold capitalize">
                             {{
                                 formatDate(group.date, {
                                     month: 'long',
@@ -53,7 +53,7 @@ const groups = computed(() =>
                     </div>
                 </div>
                 <span
-                    class="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground tabular-nums md:mt-3 md:inline-flex"
+                    class="rounded-full bg-muted px-2.5 py-1 text-[0.9375rem] font-semibold text-muted-foreground tabular-nums md:mt-3 md:inline-flex"
                 >
                     {{ formatNumber(group.todos.length) }}
                 </span>
@@ -80,7 +80,7 @@ const groups = computed(() =>
             <IconTile tone="muted" size="lg">
                 <CalendarCheck2 />
             </IconTile>
-            <p class="mt-4 text-sm text-muted-foreground">
+            <p class="mt-4 text-base text-muted-foreground">
                 {{ copy.calendar.no_tasks }}
             </p>
         </div>

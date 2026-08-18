@@ -81,7 +81,7 @@ function clearFilters(): void {
                     type="button"
                     :aria-pressed="filters.category === category.value"
                     :disabled="processing"
-                    class="min-h-11 shrink-0 rounded-xl border px-3.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 disabled:opacity-50 motion-reduce:transition-none"
+                    class="min-h-12 shrink-0 rounded-xl border px-3.5 text-base font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 disabled:opacity-50 motion-reduce:transition-none pointer-coarse:min-h-13"
                     :class="
                         filters.category === category.value
                             ? 'border-orange-500/30 bg-orange-500/10 text-orange-800'
@@ -106,7 +106,7 @@ function clearFilters(): void {
                     <Button
                         type="button"
                         variant="outline"
-                        class="h-11 w-full justify-between rounded-xl motion-reduce:transition-none"
+                        class="min-h-12 w-full justify-between rounded-xl text-base motion-reduce:transition-none pointer-coarse:min-h-13"
                         aria-describedby="activity-mobile-filter-status"
                     >
                         <span class="flex items-center gap-2">
@@ -159,10 +159,10 @@ function clearFilters(): void {
                         <Filter />
                     </template>
 
-                    <p class="text-sm font-semibold">
+                    <p class="text-base font-semibold">
                         {{ copy.activity.filters_title }}
                     </p>
-                    <p class="text-xs leading-5 text-muted-foreground">
+                    <p class="text-[0.9375rem] leading-5 text-muted-foreground">
                         {{ copy.activity.filters_description }}
                     </p>
                 </LeadingIconHeading>
@@ -171,7 +171,7 @@ function clearFilters(): void {
             <div class="space-y-6 pt-5">
                 <div class="space-y-2">
                     <p
-                        class="px-1 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                        class="px-1 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                     >
                         {{ copy.activity.category_label }}
                     </p>
@@ -186,7 +186,7 @@ function clearFilters(): void {
                             type="button"
                             :aria-pressed="filters.category === category.value"
                             :disabled="processing"
-                            class="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 disabled:opacity-50 motion-reduce:transition-none"
+                            class="flex min-h-12 w-full items-center rounded-xl px-3 text-left text-base font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-orange-500/45 disabled:opacity-50 motion-reduce:transition-none pointer-coarse:min-h-13"
                             :class="
                                 filters.category === category.value
                                     ? 'bg-orange-500/10 text-orange-800'
@@ -210,7 +210,7 @@ function clearFilters(): void {
                 <Button
                     type="button"
                     variant="ghost"
-                    class="w-full justify-start motion-reduce:transition-none"
+                    class="min-h-12 w-full justify-start motion-reduce:transition-none pointer-coarse:min-h-13"
                     :disabled="processing || !hasActivityFilters(filters)"
                     @click="clearFilters"
                 >

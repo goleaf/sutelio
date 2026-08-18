@@ -90,7 +90,7 @@ const emit = defineEmits<{ action: [] }>();
         </div>
         <p
             v-if="description"
-            class="relative max-w-md text-sm leading-6 text-muted-foreground"
+            class="relative max-w-md text-[0.9375rem] leading-6 text-muted-foreground"
             :class="status === 'loading' ? 'sr-only' : 'mt-2'"
         >
             {{ description }}

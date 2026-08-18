@@ -51,7 +51,7 @@ function formatFullDate(date: string): string {
             >
                 <div class="max-w-2xl">
                     <p
-                        class="flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.2em] text-orange-700 uppercase"
+                        class="flex items-center gap-2 text-[0.9375rem] font-semibold tracking-[0.12em] text-orange-700 uppercase"
                     >
                         <Activity class="size-3.5" aria-hidden="true" />
                         {{ t('dashboard.weekly_productivity') }}
@@ -62,7 +62,7 @@ function formatFullDate(date: string): string {
                     >
                         {{ t('dashboard.weekly_overview') }}
                     </h2>
-                    <p class="mt-1.5 text-sm text-muted-foreground">
+                    <p class="mt-1.5 text-base leading-6 text-muted-foreground">
                         {{
                             t('dashboard.weekly_totals', {
                                 completed: formatNumber(completedTotal),
@@ -77,7 +77,7 @@ function formatFullDate(date: string): string {
                         class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.06] px-4 py-3"
                     >
                         <p
-                            class="flex items-center gap-1.5 text-xs text-orange-800"
+                            class="flex items-center gap-1.5 text-[0.9375rem] leading-5 text-orange-800"
                         >
                             <CheckCircle2 class="size-3.5" aria-hidden="true" />
                             {{ t('tasks.stats.completed') }}
@@ -90,7 +90,7 @@ function formatFullDate(date: string): string {
                         class="rounded-2xl border border-sky-500/15 bg-sky-500/[0.06] px-4 py-3"
                     >
                         <p
-                            class="flex items-center gap-1.5 text-xs text-sky-800"
+                            class="flex items-center gap-1.5 text-[0.9375rem] leading-5 text-sky-800"
                         >
                             <PlusCircle class="size-3.5" aria-hidden="true" />
                             {{ t('dashboard.created') }}
@@ -119,7 +119,9 @@ function formatFullDate(date: string): string {
                         <IconTile tone="brand" size="lg">
                             <Activity />
                         </IconTile>
-                        <p class="max-w-xs text-sm text-muted-foreground">
+                        <p
+                            class="max-w-xs text-base leading-6 text-muted-foreground"
+                        >
                             {{ t('dashboard.no_weekly_activity') }}
                         </p>
                     </div>
@@ -154,7 +156,7 @@ function formatFullDate(date: string): string {
                                         class="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1"
                                     >
                                         <div
-                                            class="text-[0.65rem] font-medium text-muted-foreground tabular-nums"
+                                            class="text-[0.9375rem] font-medium text-muted-foreground tabular-nums"
                                         >
                                             {{ formatNumber(day.completed) }}
                                         </div>
@@ -175,7 +177,7 @@ function formatFullDate(date: string): string {
                                         class="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1"
                                     >
                                         <span
-                                            class="text-[0.65rem] font-medium text-muted-foreground tabular-nums"
+                                            class="text-[0.9375rem] font-medium text-muted-foreground tabular-nums"
                                         >
                                             {{ formatNumber(day.created) }}
                                         </span>
@@ -194,7 +196,7 @@ function formatFullDate(date: string): string {
                                     </div>
                                 </div>
                                 <span
-                                    class="truncate text-[0.7rem] text-muted-foreground"
+                                    class="text-center text-[0.9375rem] leading-5 text-muted-foreground"
                                     aria-hidden="true"
                                 >
                                     {{ formatWeekday(day.date) }}
@@ -203,7 +205,7 @@ function formatFullDate(date: string): string {
                         </div>
 
                         <div
-                            class="mt-5 flex flex-wrap items-center gap-4 text-xs text-muted-foreground"
+                            class="mt-5 flex flex-wrap items-center gap-4 text-[0.9375rem] text-muted-foreground"
                         >
                             <span class="flex items-center gap-1.5">
                                 <span
@@ -226,14 +228,14 @@ function formatFullDate(date: string): string {
                 <div
                     class="overflow-hidden rounded-2xl border border-border/70"
                 >
-                    <table class="w-full table-fixed text-left text-sm">
+                    <table class="w-full table-fixed text-left text-base">
                         <caption class="sr-only">
                             {{
                                 t('dashboard.weekly_table_caption')
                             }}
                         </caption>
                         <thead
-                            class="bg-muted/55 text-xs text-muted-foreground"
+                            class="bg-muted/55 text-[0.9375rem] leading-5 text-muted-foreground"
                         >
                             <tr>
                                 <th
@@ -260,7 +262,7 @@ function formatFullDate(date: string): string {
                             <tr v-for="day in data" :key="day.date">
                                 <th
                                     scope="row"
-                                    class="truncate px-3 py-3 font-medium"
+                                    class="px-3 py-3 font-medium break-words"
                                     :title="formatFullDate(day.date)"
                                 >
                                     {{ formatWeekday(day.date) }}

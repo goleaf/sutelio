@@ -31,7 +31,7 @@ const props = withDefaults(
                 active
                     ? 'bg-card text-foreground shadow-sm'
                     : cn(
-                          'text-muted-foreground hover:text-foreground',
+                          'text-neutral-700 hover:text-foreground',
                           wide && 'hover:bg-muted',
                       ),
                 props.class,

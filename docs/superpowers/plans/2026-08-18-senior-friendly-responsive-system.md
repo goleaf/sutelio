@@ -299,11 +299,11 @@ Run task/project focused Pest, query budgets, frontend tests, type checking, lin
 - Modify: `resources/js/pages/notifications/Index.vue`
 - Modify: related feature components and focused tests
 
-- [ ] **Step 1: Write failing readable-summary and interaction contracts**
+- [x] **Step 1: Write failing readable-summary and interaction contracts**
 
 Require 16/15 px text, 48 px filters/actions, wrap-safe metric labels, phone single-column priority order, tablet two-column composition, readable calendar event access without hover, explicit unread/status text, and complete empty/loading/error/offline states.
 
-- [ ] **Step 2: Implement with existing page/header/metric/filter primitives**
+- [x] **Step 2: Implement with existing page/header/metric/filter primitives**
 
 Do not add queries or change API/Inertia payloads. Reduce nested panels, repeated shadows, and decorative rings where they do not convey hierarchy.
 

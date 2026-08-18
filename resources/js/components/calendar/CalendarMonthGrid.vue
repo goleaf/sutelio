@@ -58,7 +58,7 @@ function priorityLabel(todo: CalendarTodo): string {
 
 <template>
     <div>
-        <div class="space-y-3 md:hidden">
+        <div class="space-y-3 xl:hidden">
             <section
                 v-for="day in mobileDays"
                 :key="day.dateKey"
@@ -71,7 +71,7 @@ function priorityLabel(todo: CalendarTodo): string {
                     <div class="flex items-center gap-3">
                         <span
                             :class="[
-                                'flex size-10 shrink-0 items-center justify-center rounded-xl text-sm font-semibold tabular-nums',
+                                'flex size-12 shrink-0 items-center justify-center rounded-xl text-base font-semibold tabular-nums',
                                 day.dateKey === calendar.today_date
                                     ? 'bg-orange-600 text-white shadow-sm'
                                     : 'bg-card text-foreground shadow-sm ring-1 ring-border',
@@ -80,7 +80,9 @@ function priorityLabel(todo: CalendarTodo): string {
                             {{ day.date.getDate() }}
                         </span>
                         <div>
-                            <h3 class="text-sm font-semibold capitalize">
+                            <h3
+                                class="text-base leading-6 font-semibold capitalize"
+                            >
                                 {{
                                     formatDate(day.date, {
                                         weekday: 'long',
@@ -91,14 +93,14 @@ function priorityLabel(todo: CalendarTodo): string {
                             </h3>
                             <p
                                 v-if="!day.isCurrentMonth"
-                                class="mt-0.5 text-xs text-muted-foreground"
+                                class="mt-0.5 text-[0.9375rem] leading-5 text-muted-foreground"
                             >
                                 {{ copy.calendar.outside_month }}
                             </p>
                         </div>
                     </div>
                     <span
-                        class="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground tabular-nums"
+                        class="rounded-full bg-muted px-2.5 py-1 text-[0.9375rem] font-semibold text-muted-foreground tabular-nums"
                     >
                         {{ formatNumber(day.todos.length) }}
                     </span>
@@ -115,7 +117,7 @@ function priorityLabel(todo: CalendarTodo): string {
                     </li>
                 </ul>
 
-                <p v-else class="px-4 py-5 text-sm text-muted-foreground">
+                <p v-else class="px-4 py-5 text-base text-muted-foreground">
                     {{ copy.calendar.no_tasks }}
                 </p>
             </section>
@@ -128,14 +130,14 @@ function priorityLabel(todo: CalendarTodo): string {
                     class="size-8 text-muted-foreground"
                     aria-hidden="true"
                 />
-                <p class="mt-4 text-sm text-muted-foreground">
+                <p class="mt-4 text-base text-muted-foreground">
                     {{ copy.calendar.no_tasks }}
                 </p>
             </div>
         </div>
 
         <div
-            class="hidden overflow-hidden rounded-2xl border border-border/80 md:block"
+            class="hidden overflow-hidden rounded-2xl border border-border/80 xl:block"
             role="grid"
             :aria-label="copy.calendar.planning_period"
         >
@@ -146,14 +148,14 @@ function priorityLabel(todo: CalendarTodo): string {
                 <div
                     v-for="weekday in weekdays"
                     :key="weekday"
-                    class="px-1 py-3 text-center text-[0.68rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
+                    class="px-1 py-3 text-center text-[0.9375rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase"
                     role="columnheader"
                 >
                     {{ weekday }}
                 </div>
             </div>
 
-            <div class="hidden grid-cols-7 gap-px bg-border/80 md:grid">
+            <div class="hidden grid-cols-7 gap-px bg-border/80 xl:grid">
                 <section
                     v-for="day in days"
                     :key="day.dateKey"
@@ -169,7 +171,7 @@ function priorityLabel(todo: CalendarTodo): string {
                     <div class="flex items-center justify-between gap-2">
                         <span
                             :class="[
-                                'flex size-8 items-center justify-center rounded-full text-xs font-semibold tabular-nums',
+                                'flex size-10 items-center justify-center rounded-full text-[0.9375rem] font-semibold tabular-nums',
                                 day.dateKey === calendar.today_date
                                     ? 'bg-orange-600 text-white shadow-sm'
                                     : '',
@@ -184,7 +186,7 @@ function priorityLabel(todo: CalendarTodo): string {
                         </span>
                         <span
                             v-if="day.todos.length"
-                            class="text-[0.65rem] font-semibold text-muted-foreground tabular-nums"
+                            class="text-[0.9375rem] font-semibold text-muted-foreground tabular-nums"
                         >
                             {{ formatNumber(day.todos.length) }}
                         </span>
@@ -206,7 +208,7 @@ function priorityLabel(todo: CalendarTodo): string {
 
                     <p
                         v-if="day.todos.length > 2"
-                        class="mt-1.5 px-1 text-[0.68rem] font-medium text-muted-foreground"
+                        class="mt-1.5 px-1 text-[0.9375rem] font-medium text-muted-foreground"
                     >
                         +{{ formatNumber(day.todos.length - 2) }}
                         {{ copy.calendar.more }}

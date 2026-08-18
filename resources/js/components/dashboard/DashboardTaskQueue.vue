@@ -86,11 +86,14 @@ function formattedDueDate(todo: Todo): string {
 
                 <div class="flex items-center gap-2">
                     <h3 class="font-semibold tracking-tight">{{ title }}</h3>
-                    <Badge :variant="queueDesign.badgeVariant">
+                    <Badge
+                        :variant="queueDesign.badgeVariant"
+                        class="text-[0.9375rem]"
+                    >
                         {{ formatNumber(count) }}
                     </Badge>
                 </div>
-                <p class="mt-1 text-sm leading-5 text-muted-foreground">
+                <p class="mt-1 text-base leading-6 text-muted-foreground">
                     {{ description }}
                 </p>
             </LeadingIconHeading>
@@ -98,7 +101,7 @@ function formattedDueDate(todo: Todo): string {
 
         <div
             v-if="todos.length === 0"
-            class="flex min-h-36 items-center gap-3 px-5 py-6 text-sm text-muted-foreground sm:px-6"
+            class="flex min-h-36 items-center gap-3 px-5 py-6 text-base text-muted-foreground sm:px-6"
         >
             <IconTile tone="muted" size="sm">
                 <CalendarCheck2 />
@@ -115,13 +118,13 @@ function formattedDueDate(todo: Todo): string {
                 <Link
                     :href="showTodo(todo)"
                     prefetch
-                    class="ui-lift group flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border border-border/80 bg-background px-3 py-3 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.045] focus-visible:ring-2 focus-visible:ring-orange-500/35 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift group flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-border/80 bg-background px-3 py-3 transition-colors hover:border-orange-500/30 hover:bg-orange-500/[0.045] focus-visible:ring-2 focus-visible:ring-orange-500/35 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13"
                     :aria-label="
                         t('dashboard.open_task', { title: todo.title })
                     "
                 >
                     <span
-                        class="size-2.5 shrink-0 rounded-full ring-4 ring-muted"
+                        class="mt-1.5 size-2.5 shrink-0 rounded-full ring-4 ring-muted"
                         :style="{
                             backgroundColor: safeDefinitionColor(
                                 todo.priority_definition?.color,
@@ -130,20 +133,22 @@ function formattedDueDate(todo: Todo): string {
                         aria-hidden="true"
                     />
                     <span class="min-w-0 flex-1">
-                        <span class="block truncate text-sm font-medium">
+                        <span
+                            class="line-clamp-2 text-base leading-6 font-medium break-words"
+                        >
                             {{ todo.title }}
                         </span>
                         <span
-                            class="mt-0.5 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"
+                            class="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[0.9375rem] leading-5 text-muted-foreground"
                         >
-                            <span class="truncate">
+                            <span class="min-w-0 break-words">
                                 {{
                                     todo.project?.name ??
                                     t('common.states.unassigned')
                                 }}
                             </span>
                             <span aria-hidden="true">·</span>
-                            <span class="shrink-0 tabular-nums">
+                            <span class="break-words tabular-nums">
                                 {{ formattedDueDate(todo) }}
                             </span>
                         </span>
@@ -151,7 +156,7 @@ function formattedDueDate(todo: Todo): string {
                     <Badge
                         v-if="tone === 'overdue'"
                         variant="destructive"
-                        class="hidden sm:inline-flex"
+                        class="inline-flex text-[0.9375rem]"
                     >
                         {{ t('dashboard.overdue') }}
                     </Badge>

@@ -79,6 +79,12 @@ function filterUrl(filters: NotificationFilterState): string {
     return notificationsIndex.url({ query: buildNotificationQuery(filters) });
 }
 
+function focusNotificationFeed(): void {
+    document
+        .querySelector<HTMLElement>('[data-notification-feed-heading]')
+        ?.focus();
+}
+
 function visitResults(url: string): void {
     const request = filterRequest.value + 1;
     filterRequest.value = request;
@@ -94,6 +100,7 @@ function visitResults(url: string): void {
         onFinish: () => {
             if (filterRequest.value === request) {
                 filtering.value = false;
+                requestAnimationFrame(focusNotificationFeed);
             }
         },
     });

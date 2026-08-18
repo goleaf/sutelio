@@ -241,7 +241,7 @@ function eventTone(event: ActivityLog['event']): IconTileTone {
                 </template>
 
                 <h2
-                    class="pt-2 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+                    class="pt-2 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                 >
                     {{ group.label }}
                 </h2>
@@ -265,11 +265,13 @@ function eventTone(event: ActivityLog['event']): IconTileTone {
 
                     <div class="min-w-0 py-0.5">
                         <p
-                            class="text-sm leading-6 break-words text-foreground/90"
+                            class="text-base leading-6 break-words text-foreground/90"
                         >
                             {{ activitySentence(activity) }}
                         </p>
-                        <p class="mt-0.5 text-xs text-muted-foreground">
+                        <p
+                            class="mt-0.5 text-[0.9375rem] leading-5 text-muted-foreground"
+                        >
                             {{
                                 formatDate(activity.created_at, {
                                     hour: '2-digit',
@@ -283,12 +285,12 @@ function eventTone(event: ActivityLog['event']): IconTileTone {
                         class="col-start-2 flex items-center gap-2 sm:col-start-auto"
                     >
                         <span
-                            class="rounded-full border border-border/80 bg-background px-2.5 py-1 text-[0.68rem] font-semibold tracking-wide text-muted-foreground uppercase"
+                            class="rounded-full border border-border/80 bg-background px-2.5 py-1 text-[0.9375rem] font-semibold tracking-wide text-muted-foreground uppercase"
                         >
                             {{ eventLabel(activity.event) }}
                         </span>
                         <span
-                            class="hidden size-7 items-center justify-center rounded-full bg-muted text-[0.65rem] font-semibold text-muted-foreground sm:flex"
+                            class="hidden size-8 items-center justify-center rounded-full bg-muted text-[0.9375rem] font-semibold text-muted-foreground sm:flex"
                             :title="activity.user?.name ?? copy.common.system"
                         >
                             {{

@@ -49,7 +49,7 @@ function changeView(view: CalendarView): void {
                     role="tab"
                     :aria-selected="calendar.view === option"
                     :active="calendar.view === option"
-                    class="min-h-11"
+                    class="min-h-12 text-base pointer-coarse:min-h-13"
                     :disabled="processing"
                     @click="changeView(option)"
                 >
@@ -60,7 +60,7 @@ function changeView(view: CalendarView): void {
             <Button
                 variant="outline"
                 size="lg"
-                class="min-h-11 cursor-pointer rounded-xl focus-visible:ring-orange-500 motion-reduce:transition-none"
+                class="min-h-12 cursor-pointer rounded-xl focus-visible:ring-orange-500 motion-reduce:transition-none pointer-coarse:min-h-13"
                 :disabled="processing"
                 @click="emit('navigate', calendar.view, calendar.today_date)"
             >
@@ -72,7 +72,7 @@ function changeView(view: CalendarView): void {
             <Button
                 variant="ghost"
                 size="icon-lg"
-                class="min-h-11 min-w-11 cursor-pointer rounded-xl focus-visible:ring-orange-500 motion-reduce:transition-none"
+                class="min-h-12 min-w-12 cursor-pointer rounded-xl focus-visible:ring-orange-500 motion-reduce:transition-none pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                 :aria-label="copy.calendar.previous_period"
                 :disabled="processing"
                 @click="emit('navigate', calendar.view, previousAnchor)"
@@ -82,13 +82,13 @@ function changeView(view: CalendarView): void {
 
             <div class="min-w-0 flex-1 text-center sm:min-w-64 sm:flex-none">
                 <p
-                    class="text-[0.65rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                    class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                 >
                     {{ copy.calendar.planning_period }}
                 </p>
                 <h2
                     id="calendar-period-heading"
-                    class="mt-1 text-sm font-semibold wrap-anywhere capitalize sm:text-base"
+                    class="mt-1 text-base font-semibold wrap-anywhere capitalize"
                 >
                     {{ periodLabel }}
                 </h2>
@@ -97,7 +97,7 @@ function changeView(view: CalendarView): void {
             <Button
                 variant="ghost"
                 size="icon-lg"
-                class="min-h-11 min-w-11 cursor-pointer rounded-xl focus-visible:ring-orange-500 motion-reduce:transition-none"
+                class="min-h-12 min-w-12 cursor-pointer rounded-xl focus-visible:ring-orange-500 motion-reduce:transition-none pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                 :aria-label="copy.calendar.next_period"
                 :disabled="processing"
                 @click="emit('navigate', calendar.view, nextAnchor)"

@@ -69,7 +69,7 @@ function clearFilters(): void {
         >
             <div class="min-w-0 space-y-2">
                 <p
-                    class="flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                    class="flex items-center gap-2 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                 >
                     <ListFilter class="size-4" aria-hidden="true" />
                     {{ copy.notifications.status_label }}
@@ -85,13 +85,13 @@ function clearFilters(): void {
                         :active="filters.status === option.value"
                         :aria-pressed="filters.status === option.value"
                         :disabled="processing"
-                        class="min-h-11 flex-1 justify-center px-3 motion-reduce:transition-none"
+                        class="min-h-12 flex-1 justify-center px-3 text-base motion-reduce:transition-none pointer-coarse:min-h-13"
                         @click="updateFilters({ status: option.value })"
                     >
                         {{ option.label }}
                         <span
                             v-if="option.value === 'unread' && stats.unread > 0"
-                            class="rounded-full bg-orange-600 px-1.5 py-0.5 text-[0.65rem] font-semibold text-white tabular-nums"
+                            class="rounded-full bg-orange-600 px-1.5 py-0.5 text-[0.9375rem] font-semibold text-white tabular-nums"
                         >
                             {{ formatNumber(stats.unread) }}
                         </span>
@@ -101,7 +101,7 @@ function clearFilters(): void {
 
             <div class="min-w-0 space-y-2">
                 <p
-                    class="flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                    class="flex items-center gap-2 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                 >
                     <Layers3 class="size-4" aria-hidden="true" />
                     {{ copy.notifications.kind_label }}
@@ -117,7 +117,7 @@ function clearFilters(): void {
                         :active="filters.kind === option.value"
                         :aria-pressed="filters.kind === option.value"
                         :disabled="processing"
-                        class="min-h-11 flex-1 justify-center px-3 motion-reduce:transition-none"
+                        class="min-h-12 flex-1 justify-center px-3 text-base motion-reduce:transition-none pointer-coarse:min-h-13"
                         @click="updateFilters({ kind: option.value })"
                     >
                         {{ option.label }}
@@ -130,7 +130,7 @@ function clearFilters(): void {
             >
                 <Select v-model="perPageModel" :disabled="processing">
                     <SelectTrigger
-                        class="min-h-11 w-full min-w-36"
+                        class="min-h-12 w-full min-w-36 pointer-coarse:min-h-13"
                         :aria-label="copy.notifications.page_size_label"
                     >
                         <SelectValue />
@@ -159,7 +159,7 @@ function clearFilters(): void {
                     type="button"
                     variant="outline"
                     size="icon"
-                    class="size-11 cursor-pointer rounded-xl motion-reduce:transition-none"
+                    class="size-12 cursor-pointer rounded-xl motion-reduce:transition-none pointer-coarse:size-13"
                     :aria-label="copy.notifications.clear_filters"
                     :disabled="processing || !hasNotificationFilters(filters)"
                     @click="clearFilters"
@@ -170,7 +170,7 @@ function clearFilters(): void {
         </div>
 
         <div
-            class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-xs text-muted-foreground sm:px-6"
+            class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-[0.9375rem] leading-5 text-muted-foreground sm:px-6"
         >
             <p aria-live="polite" aria-atomic="true">
                 {{

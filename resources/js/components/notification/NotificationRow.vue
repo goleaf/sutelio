@@ -119,14 +119,14 @@ const iconTone = computed<IconTileTone>(() => {
             <div class="flex flex-wrap items-center gap-2">
                 <h4
                     :class="[
-                        'text-sm leading-6 break-words',
+                        'text-base leading-6 break-words',
                         notification.is_read ? 'font-medium' : 'font-semibold',
                     ]"
                 >
                     {{ content.title }}
                 </h4>
                 <span
-                    class="rounded-full border px-2 py-0.5 text-[0.65rem] font-semibold tracking-wide uppercase"
+                    class="rounded-full border px-2 py-0.5 text-[0.9375rem] font-semibold tracking-wide uppercase"
                     :class="
                         notification.is_read
                             ? 'border-border bg-muted text-muted-foreground'
@@ -140,17 +140,17 @@ const iconTone = computed<IconTileTone>(() => {
                     }}
                 </span>
                 <span
-                    class="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-medium text-muted-foreground"
+                    class="rounded-full bg-muted px-2 py-0.5 text-[0.9375rem] font-medium text-muted-foreground"
                 >
                     {{ kindLabel }}
                 </span>
             </div>
             <p
-                class="mt-1 max-w-3xl text-sm leading-6 break-words text-muted-foreground"
+                class="mt-1 max-w-3xl text-base leading-6 break-words text-muted-foreground"
             >
                 {{ content.body }}
             </p>
-            <p class="mt-2 text-xs text-muted-foreground/85">
+            <p class="mt-2 text-[0.9375rem] leading-5 text-muted-foreground/85">
                 {{
                     formatDate(notification.created_at, {
                         month: 'short',
@@ -170,7 +170,7 @@ const iconTone = computed<IconTileTone>(() => {
                 type="button"
                 variant="ghost"
                 size="sm"
-                class="min-h-11 cursor-pointer rounded-xl focus-visible:ring-2 focus-visible:ring-orange-500/45 motion-reduce:transition-none"
+                class="min-h-12 cursor-pointer rounded-xl focus-visible:ring-2 focus-visible:ring-orange-500/45 motion-reduce:transition-none pointer-coarse:min-h-13"
                 :disabled="processing"
                 @click="emit('open', notification)"
             >
@@ -182,7 +182,7 @@ const iconTone = computed<IconTileTone>(() => {
                 type="button"
                 variant="outline"
                 size="sm"
-                class="min-h-11 cursor-pointer rounded-xl border-orange-500/25 text-orange-800 hover:bg-orange-500/10 hover:text-orange-900 focus-visible:ring-2 focus-visible:ring-orange-500/45 motion-reduce:transition-none"
+                class="min-h-12 cursor-pointer rounded-xl border-orange-500/25 text-orange-800 hover:bg-orange-500/10 hover:text-orange-900 focus-visible:ring-2 focus-visible:ring-orange-500/45 motion-reduce:transition-none pointer-coarse:min-h-13"
                 :disabled="processing"
                 @click="emit('markRead', notification)"
             >

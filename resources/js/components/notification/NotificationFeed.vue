@@ -94,12 +94,14 @@ function groupLabel(key: 'earlier' | 'today'): string {
             <section v-for="group in groups" :key="group.key">
                 <div class="flex items-center gap-3 px-2 py-2">
                     <h3
-                        class="text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+                        class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                     >
                         {{ groupLabel(group.key) }}
                     </h3>
                     <span class="h-px flex-1 bg-border/70" aria-hidden="true" />
-                    <span class="text-xs text-muted-foreground tabular-nums">
+                    <span
+                        class="text-[0.9375rem] text-muted-foreground tabular-nums"
+                    >
                         {{ formatNumber(group.items.length) }}
                     </span>
                 </div>
@@ -133,7 +135,7 @@ function groupLabel(key: 'earlier' | 'today'): string {
             class="flex flex-col gap-3 border-t border-border/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
             :aria-label="copy.notifications.pagination_label"
         >
-            <p class="text-sm text-muted-foreground">
+            <p class="text-base leading-6 text-muted-foreground">
                 {{
                     copy.notifications.pagination_range
                         .replace(
@@ -155,7 +157,7 @@ function groupLabel(key: 'earlier' | 'today'): string {
                     type="button"
                     variant="outline"
                     size="sm"
-                    class="min-h-11 rounded-xl"
+                    class="min-h-12 rounded-xl pointer-coarse:min-h-13"
                     :disabled="!notifications.links.prev || filtering"
                     @click="
                         notifications.links.prev &&
@@ -169,7 +171,7 @@ function groupLabel(key: 'earlier' | 'today'): string {
                     type="button"
                     variant="outline"
                     size="sm"
-                    class="min-h-11 rounded-xl"
+                    class="min-h-12 rounded-xl pointer-coarse:min-h-13"
                     :disabled="!notifications.links.next || filtering"
                     @click="
                         notifications.links.next &&

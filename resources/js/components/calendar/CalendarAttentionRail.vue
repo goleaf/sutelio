@@ -37,7 +37,9 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
                         {{ formatNumber(count) }}
                     </Badge>
                 </div>
-                <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <p
+                    class="mt-1 text-[0.9375rem] leading-5 text-muted-foreground"
+                >
                     {{ copy.calendar.attention_description }}
                 </p>
             </LeadingIconHeading>
@@ -71,7 +73,7 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
             <IconTile tone="success" size="lg">
                 <CalendarCheck2 />
             </IconTile>
-            <p class="mt-3 text-sm leading-5 text-muted-foreground">
+            <p class="mt-3 text-base leading-6 text-muted-foreground">
                 {{ copy.calendar.no_overdue }}
             </p>
         </div>
@@ -80,7 +82,7 @@ const { copy, formatDate, formatNumber } = useWorkspaceUi();
             v-if="count > 0"
             as-child
             variant="outline"
-            class="mt-4 min-h-11 w-full cursor-pointer rounded-xl bg-card focus-visible:ring-orange-500 motion-reduce:transition-none"
+            class="mt-4 min-h-12 w-full cursor-pointer rounded-xl bg-card focus-visible:ring-orange-500 motion-reduce:transition-none pointer-coarse:min-h-13"
         >
             <Link :href="todoIndex({ query: { overdue: true } })" prefetch>
                 {{ copy.calendar.view_all_overdue }}
