@@ -200,6 +200,8 @@ Verify local `HEAD`, `origin/main`, and `git ls-remote origin refs/heads/main` a
 
 Acceptance: no `SELECT *` in the changed request path, no missing-attribute exception, stable behavior, bounded rows, and no higher endpoint query count.
 
+Progress on 2026-08-18: the first endpoint-sized ProjectIndex projection slice is GREEN. It replaces `projects.*` with the eight page-consumed scalar/foreign-key columns, preserves `todos_count`, keeps strict resource serialization and full-model API fields green, holds the page at five queries, and reduces the deterministic 24-project prop from 9,394 to 8,026 bytes. The Task 2 checkboxes remain open until bounded project/member/invitation reads and the Todo/TodoDetail/WorkspaceManagement projection slices are complete.
+
 ### Task 3: Remove Raw Activity Query Hints
 
 **Files:**

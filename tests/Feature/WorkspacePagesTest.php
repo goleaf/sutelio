@@ -249,6 +249,59 @@ test('project collection includes workspace scoped task totals', function () {
             ->where('projects.data.0.todos_count', 2));
 });
 
+test('project collection selects and exposes only its page contract', function () {
+    [$user, $workspace] = createWarmPrecisionContext();
+
+    $this->actingAs($user)
+        ->withSession(['current_workspace_id' => $workspace->id]);
+
+    $emptyResponse = $this->get(route('projects'))->assertOk();
+
+    Project::factory()->count(24)->for($workspace)->create([
+        'name' => 'Measured project',
+        'description' => 'Deterministic project payload for the production-shaped projection regression.',
+        'color' => '#ff6038',
+        'icon' => 'folder',
+        'is_archived' => false,
+        'position' => 10,
+        'created_at' => Carbon::parse('2026-08-18 12:00:00'),
+        'updated_at' => Carbon::parse('2026-08-18 12:00:00'),
+    ]);
+
+    $connection = DB::connection();
+    $connection->flushQueryLog();
+    $connection->enableQueryLog();
+
+    try {
+        $populatedResponse = $this->get(route('projects'))->assertOk();
+        $queries = collect($connection->getQueryLog());
+    } finally {
+        $connection->disableQueryLog();
+    }
+
+    $projectQuery = $queries
+        ->pluck('query')
+        ->first(fn (string $query): bool => str_contains($query, 'as "todos_count"')
+            && str_contains($query, 'where "projects"."workspace_id" = ?')
+            && ! str_contains($query, '"projects"."is_archived" = ?'));
+
+    $emptyPayloadBytes = strlen(json_encode($emptyResponse->inertiaProps('projects'), JSON_THROW_ON_ERROR));
+    $productionPayloadBytes = strlen(json_encode($populatedResponse->inertiaProps('projects'), JSON_THROW_ON_ERROR));
+
+    expect($projectQuery)->toBeString()
+        ->and($projectQuery)->toContain('select "projects"."id", "projects"."workspace_id", "projects"."name", "projects"."description", "projects"."color", "projects"."icon", "projects"."is_archived", "projects"."updated_at"')
+        ->not->toContain('"projects".*')
+        ->and($queries)->toHaveCount(5)
+        ->and($emptyPayloadBytes)->toBe(11)
+        ->and($productionPayloadBytes)->toBeLessThanOrEqual(8_050);
+
+    $populatedResponse->assertInertia(fn (Assert $page) => $page
+        ->component('projects/Index')
+        ->has('projects.data', 24)
+        ->missing('projects.data.0.position')
+        ->missing('projects.data.0.created_at'));
+});
+
 test('activity timeline excludes events from other workspaces', function () {
     [$user, $workspace] = createWarmPrecisionContext();
     $ownActivity = ActivityLog::create([

@@ -16,16 +16,16 @@ Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payl
 
 The detailed execution source is `docs/superpowers/plans/2026-08-17-sutelio-database-optimization.md`. It is the only retained implementation plan with unfinished product work.
 
-| Task                                                    | Status               | Evidence / next boundary                                                           |
-| ------------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------- |
-| 1. Add missing user-relation index coverage             | Completed and pushed | Commit `4357ff5` (`perf(database): index user-owned relations`)                    |
-| 2. Enforce explicit projections and bounded collections | Planned              | Work one request/query object at a time with payload and query-budget evidence     |
-| 3. Remove raw activity query hints                      | Planned              | Replace application-authored hints only after production-shaped plan comparison    |
-| 4. Normalize notification kind                          | Planned              | Add first-class indexed data with populated-data-safe backfill and legacy fallback |
-| 5. Remove remaining raw ordering and aggregates         | Planned              | Select bounded Eloquent/framework alternatives from measured evidence              |
-| 6. Benchmark strict-prefix indexes                      | Planned              | Compare 1k/10k/100k fixtures before any index removal                              |
-| 7. Add data-growth and maintenance observability        | Planned              | Add non-sensitive metrics and evidence thresholds before maintenance automation    |
-| 8. Run final data gate and delivery                     | Planned              | Complete quality, migration, SQLite, performance, diff, commit, and push gates     |
+| Task                                                    | Status               | Evidence / next boundary                                                                |
+| ------------------------------------------------------- | -------------------- | --------------------------------------------------------------------------------------- |
+| 1. Add missing user-relation index coverage             | Completed and pushed | Commit `4357ff5` (`perf(database): index user-owned relations`)                         |
+| 2. Enforce explicit projections and bounded collections | In progress          | Project index projection is GREEN; bounded collection and remaining query slices follow |
+| 3. Remove raw activity query hints                      | Planned              | Replace application-authored hints only after production-shaped plan comparison         |
+| 4. Normalize notification kind                          | Planned              | Add first-class indexed data with populated-data-safe backfill and legacy fallback      |
+| 5. Remove remaining raw ordering and aggregates         | Planned              | Select bounded Eloquent/framework alternatives from measured evidence                   |
+| 6. Benchmark strict-prefix indexes                      | Planned              | Compare 1k/10k/100k fixtures before any index removal                                   |
+| 7. Add data-growth and maintenance observability        | Planned              | Add non-sensitive metrics and evidence thresholds before maintenance automation         |
+| 8. Run final data gate and delivery                     | Planned              | Complete quality, migration, SQLite, performance, diff, commit, and push gates          |
 
 Tasks 2-8 must be delivered incrementally. They may not weaken workspace isolation, SQLite-only support, query budgets, migration reversibility, private-path boundaries, or existing behavior to satisfy a static rule.
 

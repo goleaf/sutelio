@@ -28,9 +28,21 @@ import { show as projectShow } from '@/routes/projects';
 import type { Project, Workspace } from '@/types/models';
 
 type ProjectFilter = 'all' | 'active' | 'archived';
+type ProjectIndexItem = Pick<
+    Project,
+    | 'id'
+    | 'workspace_id'
+    | 'name'
+    | 'description'
+    | 'color'
+    | 'icon'
+    | 'is_archived'
+    | 'todos_count'
+    | 'updated_at'
+>;
 
 const props = defineProps<{
-    projects: { data: Project[] };
+    projects: { data: ProjectIndexItem[] };
     workspace: Workspace;
 }>();
 

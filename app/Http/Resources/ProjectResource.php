@@ -20,13 +20,13 @@ class ProjectResource extends JsonResource
             'color' => $this->color,
             'icon' => $this->icon,
             'is_archived' => $this->is_archived,
-            'position' => $this->position,
+            'position' => $this->whenHas('position'),
             'todos_count' => $this->whenCounted('todos'),
             'completed_count' => $this->when(
                 $this->relationLoaded('todos'),
                 fn () => $this->todos->where('status', 'completed')->count()
             ),
-            'created_at' => $this->created_at,
+            'created_at' => $this->whenHas('created_at'),
             'updated_at' => $this->updated_at,
         ];
     }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -55,4 +57,38 @@ test('user resource supports intentional relationship projections', function () 
     expect($payload)
         ->toHaveKeys(['id', 'name', 'email', 'avatar'])
         ->not->toHaveKey('created_at');
+});
+
+test('project resource supports the project index projection', function () {
+    $persistedProject = Project::factory()->create();
+    $projectIndexItem = Project::query()
+        ->select([
+            'id',
+            'workspace_id',
+            'name',
+            'description',
+            'color',
+            'icon',
+            'is_archived',
+            'updated_at',
+        ])
+        ->withCount('todos')
+        ->findOrFail($persistedProject->id);
+
+    $payload = (new ProjectResource($projectIndexItem))
+        ->resolve(Request::create('/projects'));
+
+    expect($payload)
+        ->toHaveKeys([
+            'id',
+            'workspace_id',
+            'name',
+            'description',
+            'color',
+            'icon',
+            'is_archived',
+            'todos_count',
+            'updated_at',
+        ])
+        ->not->toHaveKeys(['position', 'created_at']);
 });
