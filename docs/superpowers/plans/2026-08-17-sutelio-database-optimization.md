@@ -168,9 +168,9 @@ git diff --check
 
 Inspect the complete diff and an attributable temporary-index staged diff before committing.
 
-- [ ] **Step 8: Commit and push**
+- [x] **Step 8: Commit and push**
 
-Commit only this slice:
+Completed and pushed as commit `4357ff5` (`perf(database): index user-owned relations`). The original delivery commands were:
 
 ```bash
 git commit -m "perf(database): index user-owned relations"

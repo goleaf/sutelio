@@ -6,7 +6,7 @@ Only external/environmental blockers and explicitly accepted platform data bound
 
 - Affected requirement: `sys-brand-001`.
 - Evidence: Android and iOS isolate private application storage by package/bundle identity; Sutelio uses `com.goleaf.sutelio`, which is intentionally a different sandbox from the preceding installed product identity.
-- Impact: a clean Sutelio installation cannot automatically read the preceding package's private SQLite database, and this repository currently claims no automatic cross-package migration. Task 11 validates the new sandbox only; deleting the preceding installed package before an explicit export/migration would make its private data unavailable.
+- Impact: a clean Sutelio installation cannot automatically read the preceding package's private SQLite database, and this repository currently claims no automatic cross-package migration. The completed emulator and physical Samsung gates validate only the new Sutelio sandbox; deleting the preceding installed package before an explicit export/migration would make its private data unavailable.
 - Resolution trigger: retain the preceding installation/data unless the user deliberately accepts a clean start, or approve and implement a separately specified, authenticated export/import or platform migration workflow before removal.
 
 ## NativePHP Runtime Documentation Drift
@@ -20,14 +20,14 @@ Only external/environmental blockers and explicitly accepted platform data bound
 
 - Affected requirement: `test-coverage-001`.
 - Evidence: `herd coverage --ri xdebug` and `herd debug --ri xdebug` report that Xdebug is not present. The Task 9 `php artisan test --coverage --compact` attempt exited 1 before running tests with `Code coverage driver not available. Did you install Xdebug or PCOV?`.
-- Impact: no truthful application coverage percentage can be reported from this workstation. The fresh Task 9 complete sequential behavioral suite passed 831 tests / 32,899 assertions, but behavioral results are not substituted for measured coverage.
+- Impact: no truthful application coverage percentage can be reported from this workstation. The fresh documentation-cleanup sequential and supported parallel behavioral suites each passed 967 tests / 40,446 assertions, but behavioral results are not substituted for measured coverage.
 - Resolution trigger: install a PHP 8.5-compatible Xdebug or PCOV extension in Herd, rerun the coverage command, review uncovered critical branches, and record the measured result.
 
 ## Store Signing Environment
 
 - Affected requirement: `ops-deployment-001`.
 - Evidence: Herd runs PHP 8.5.8 and Android verification produced a debug-signed APK; production signing credentials and an Apple team are intentionally absent.
-- Impact: repository/runtime compatibility and emulator installation are verified, but this workstation cannot claim signed Android/iOS store artifacts or real-device release coverage.
+- Impact: repository/runtime compatibility, emulator installation, and physical Android 10 debug installation are verified, but this workstation cannot claim production-signed Android/iOS store artifacts or signed release-device coverage.
 - Resolution trigger: provide protected signing/provisioning credentials through the release environment and perform signed real-device/store builds without committing secrets.
 
 ## Apple Native Build Toolchain

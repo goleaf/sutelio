@@ -1,6 +1,7 @@
 /.phpunit.cache
 /bootstrap/ssr
 /credentials
+/graphify-out/
 /nativephp
 /node_modules
 /public/build
@@ -27,7 +28,9 @@ npm-debug.log
 yarn-error.log
 /auth.json
 /.fleet
+/.evoskill/task.md
 /.idea
+/.mimocode/plans/
 /.nova
 /.vscode
 /.zed

@@ -10,11 +10,12 @@ All notable project changes are documented here.
 - Locked the stripe-free clean-S mark to cobalt `#123C8B`, deep cobalt `#0A285F`, Signal Orange `#FF6038`, and ivory `#FFF8E9`; the one-color wordmark, including its final `o`, remains deep cobalt.
 - Established `com.goleaf.sutelio` as the external Android application ID and iOS bundle ID, `sutelio` as the deep-link scheme, and `com.nativephp.mobile` as the unchanged NativePHP/JNI Android namespace. The new mobile package is an intentional clean-install sandbox with no automatic migration of private data from the previous package.
 - Preserved the delivered fixed light-only Warm Precision presentation; earlier dark/system verification entries below describe superseded historical behavior rather than a current runtime theme family.
-- Kept final Sutelio APK/emulator evidence and the in-place GitHub/Herd rename pending for Tasks 11 and 12; this documentation pass does not represent either external gate as complete.
+- Completed the Sutelio APK/emulator, in-place GitHub/Herd rename, Android 10 compatibility, and physical Samsung delivery gates without changing the legacy package sandbox or its private data.
 
 ### Runtime And Dependencies
 
 - Lowered the supported Android floor from API 31 to NativePHP's API 29 baseline so the debug application can run on Android 10 while retaining compile/target SDK 36, ARM64 packaging, and the existing Sutelio package identity.
+- Installed and launched the exact verified API 29 debug APK on a Samsung SM-A920F running Android 10; Russian locale persistence, resumed activity state, SQLite integrity/foreign keys/38 migrations, and process-scoped fatal/ANR/sensitive-log checks passed.
 - Moved the Herd web/development runtime and CI to PHP 8.5 while retaining `>=8.4 <8.6` compatibility for NativePHP Mobile 4.2's embedded PHP 8.4 runtime.
 - Updated Laravel to 13.25, Inertia Laravel to 3.3.1, Fortify to 1.38, Sanctum to 4.3.3, Wayfinder to 0.1.21, Boost to 2.5.3, Pest to 5.1.1/PHPUnit 13.3, NativePHP Mobile to 4.2, Vite to 8.2.1, Laravel Vite plugin to 3.2, Vue to 3.5.41, and compatible frontend tooling.
 - Re-ran complete stable dependency resolution on 2026-08-16 and upgraded PHPStan from 2.2.5 to 2.2.8. Every direct Composer and npm package remains at its latest mutually compatible release; newer Guzzle, Workerman, Brick Math, PHPUnit, TypeScript, and Node-type majors remain behind explicit upstream framework/runtime peer constraints rather than unsafe overrides.
@@ -50,9 +51,9 @@ All notable project changes are documented here.
 - Added six rollback-safe project-operation indexes with production-query-plan coverage for workspace/project filters and position, due-date, updated, and priority-definition sorts.
 - Replaced brittle/example-only checks with semantic architecture and application coverage. The current suite passes 763 tests with 16,291 assertions sequentially and in parallel. All 45 frontend tests, types, lint, format, Larastan level 7, Pint, and the production build pass.
 - Upgraded NativePHP's generated Android project and verified a fresh onboarding-capable debug APK with minSdk 31, targetSdk 36, v2 debug signature, ZIP alignment/integrity, embedded onboarding sources/translations, and no host SQLite database. Production signing remains a release-environment responsibility.
-- Rebuilt and independently inspected the refreshed debug APK with all 36 migrations, no email-verification route/page/source contract, no host SQLite database, and passing signature/alignment/archive checks; current device installation remains pending because no Android device is attached.
+- At the earlier 36-migration artifact stage, rebuilt and independently inspected the debug APK without a host SQLite database and with passing signature/alignment/archive checks; later entries and canonical deployment evidence supersede that artifact and its then-pending device status.
 
 ### Documentation
 
 - Established the permanent repository engineering contract, stable functional/non-functional requirement IDs, compliance matrix, architecture decisions, current-state/final evidence, data/security/frontend/design/accessibility/localization/testing/seeding/performance/operations/deployment contracts, and genuine external limitations.
-- Preserved the July audits, completed plans, and historical progress rather than rewriting release history.
+- Removed superseded July audit files, completed execution plans, obsolete tool plans, and tracked generated graph output after retaining durable decisions/evidence in canonical documentation, the append-only progress journal, and recoverable Git history.

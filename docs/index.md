@@ -1,6 +1,6 @@
 # Documentation Index
 
-This index defines the first-party documentation system reviewed on 2026-08-17. Source code, migrations, routes, tests, and the live SQLite schema remain executable evidence. Generated dependency documentation, copied agent-skill bundles, build output, and `graphify-out` are not product requirements.
+This index defines the first-party documentation system reviewed on 2026-08-18. Source code, migrations, routes, tests, the live SQLite schema, and current canonical documents are executable evidence. Generated analysis output, copied agent-skill bundles, build output, and completed execution plans are not product requirements.
 
 ## Mandatory Reading Order
 
@@ -17,69 +17,60 @@ This index defines the first-party documentation system reviewed on 2026-08-17. 
 
 ## Canonical Documents
 
-| Path                                  | Purpose / owner                                                                       | State                         | Conflicts or duplication                                                                          | Intended action                                |
-| ------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `AGENTS.md`                           | Repository-wide engineering contract                                                  | Canonical, current            | Laravel Boost's generated version inventory can lag the lock file                                 | Preserve; synchronize after dependency changes |
-| `CLAUDE.md`                           | Generated Laravel Boost instructions for compatible agents                            | Governing generated reference | Duplicates Boost section of `AGENTS.md`                                                           | Preserve; do not use as product requirements   |
-| `README.md`                           | Contributor entry point                                                               | Canonical                     | Previously understated setup and production constraints                                           | Rewrite                                        |
-| `CHANGELOG.md`                        | Release history                                                                       | Canonical                     | Previously contained only the 2026-07 audit entry                                                 | Preserve history; append modernization results |
-| `PRODUCT.md`                          | Product register, users, purpose, personality, anti-references, and design principles | Canonical product context     | Summarizes product direction without replacing stable requirements                                | Maintain with product direction                |
-| `docs/index.md`                       | Documentation ownership and inventory                                                 | Canonical                     | New                                                                                               | Maintain                                       |
-| `docs/requirements.md`                | Stable functional and system requirements                                             | Canonical                     | Replaces vague requirements spread across older docs                                              | Maintain stable IDs                            |
-| `docs/product-requirements.md`        | Product outcomes and scope                                                            | Canonical summary             | Detailed rules live in `docs/requirements.md`                                                     | Rewrite and link                               |
-| `docs/non-functional-requirements.md` | Security, integrity, quality, performance, accessibility, i18n, operations            | Canonical                     | Consolidates repeated quality statements                                                          | Maintain stable IDs                            |
-| `docs/architecture.md`                | Runtime boundaries and applicability decisions                                        | Canonical                     | Prior “target” delta is historical                                                                | Rewrite to current implementation              |
-| `docs/domain-model.md`                | Domain concepts, roles, workflows, invariants                                         | Canonical                     | Prior inventory omitted current entities                                                          | Rewrite                                        |
-| `docs/data-model.md`                  | Tables, ownership, constraints, indexes, lifecycle                                    | Canonical                     | New                                                                                               | Maintain with migrations                       |
-| `docs/authorization.md`               | Owner/admin/member permission model                                                   | Canonical                     | Prior document described work as future                                                           | Rewrite                                        |
-| `docs/security.md`                    | Implemented controls and threat boundaries                                            | Canonical                     | Prior findings were remediated later                                                              | Rewrite                                        |
-| `docs/api.md`                         | Versioned API and error contract                                                      | Canonical                     | Prior document described `/api/v1` as a target                                                    | Rewrite                                        |
-| `docs/frontend.md`                    | Inertia/Vue, Tailwind, design-system, accessibility conventions                       | Canonical                     | Consolidates separate Livewire/Tailwind/design-system requests that are not architectural matches | Rewrite                                        |
-| `docs/design-system.md`               | Tailwind 4 tokens, component hierarchy, responsive/state and applicability matrix     | Canonical                     | Splits detailed design evidence from frontend architecture                                        | Create and maintain with CSS/components        |
-| `docs/accessibility.md`               | Accessibility implementation and verified workflow evidence                           | Canonical                     | Splits detailed accessibility evidence from frontend architecture                                 | Create and maintain per release                |
-| `docs/localization.md`                | Locale catalog and contribution workflow                                              | Canonical                     | Supersedes stale `docs/i18n.md`                                                                   | Create                                         |
-| `docs/testing.md`                     | Test taxonomy and quality commands                                                    | Canonical                     | Prior inventory and gaps were stale                                                               | Rewrite                                        |
-| `docs/seeding.md`                     | Factory/seeder contract and coverage                                                  | Canonical                     | New                                                                                               | Create                                         |
-| `docs/sqlite.md`                      | SQLite runtime and migration constraints                                              | Canonical                     | Prior runtime values and backup risks were stale                                                  | Rewrite                                        |
-| `docs/performance.md`                 | Query budgets, pagination, assets, cache policy                                       | Canonical                     | New                                                                                               | Create                                         |
-| `docs/caching.md`                     | Cache ownership and invalidation rules                                                | Canonical                     | New                                                                                               | Create                                         |
-| `docs/integrations.md`                | NativePHP, mail, notifications, HTTP boundaries                                       | Canonical                     | New                                                                                               | Create                                         |
-| `docs/operations.md`                  | Scheduler, database health, backup/restore, incident checks                           | Canonical                     | New                                                                                               | Create                                         |
-| `docs/deployment.md`                  | Web/mobile build and release requirements                                             | Canonical                     | Prior deployment guide was incomplete                                                             | Rewrite                                        |
-| `docs/current-state.md`               | Short current-state snapshot                                                          | Canonical summary             | Prior snapshot was dated 2026-07-19                                                               | Rewrite                                        |
-| `docs/current-state-audit.md`         | Evidence, baseline, risks, and resolution status for this modernization               | Canonical dated evidence      | Supersedes old audit as active status                                                             | Create                                         |
-| `docs/ui-ux-audit-2026-08-17.md`      | System-wide UI/UX findings, severity, evidence, and shared correction seams           | Canonical dated evidence      | Establishes the current remediation baseline                                                      | Maintain until findings close                  |
-| `docs/implementation-plan.md`         | Living dependency-ordered execution plan                                              | Canonical                     | Supersedes completed `docs/implementation-roadmap.md`                                             | Create                                         |
-| `docs/compliance-matrix.md`           | Requirement-to-code/test verification mapping                                         | Canonical                     | New                                                                                               | Maintain after every pass                      |
-| `docs/code-review.md`                 | Final review checklist and recorded findings                                          | Canonical                     | New                                                                                               | Maintain for release passes                    |
-| `docs/known-limitations.md`           | External/environmental blockers only                                                  | Canonical                     | New                                                                                               | Do not hide unfinished implementation here     |
-| `docs/progress.md`                    | Append-only phase evidence and delivery history                                       | Canonical history             | Contains older snapshots that are intentionally historical                                        | Preserve and append only                       |
+| Path                                  | Purpose                                                                                        |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `AGENTS.md`                           | Repository-wide engineering contract                                                           |
+| `CLAUDE.md`                           | Generated Laravel Boost reference; not a replacement for product requirements                  |
+| `README.md`                           | Contributor entry point                                                                        |
+| `CHANGELOG.md`                        | Release history                                                                                |
+| `PRODUCT.md`                          | Product purpose and design direction                                                           |
+| `docs/index.md`                       | Documentation ownership and retention policy                                                   |
+| `docs/requirements.md`                | Stable functional and system requirement IDs                                                   |
+| `docs/product-requirements.md`        | Product outcomes and scope summary                                                             |
+| `docs/non-functional-requirements.md` | Security, data, performance, accessibility, localization, quality, and operations requirements |
+| `docs/architecture.md`                | Runtime and architectural boundaries                                                           |
+| `docs/domain-model.md`                | Domain concepts, roles, workflows, and invariants                                              |
+| `docs/data-model.md`                  | Tables, ownership, constraints, indexes, and lifecycle                                         |
+| `docs/authorization.md`               | Owner/admin/member permission model                                                            |
+| `docs/security.md`                    | Implemented controls and threat boundaries                                                     |
+| `docs/api.md`                         | Versioned API and error contract                                                               |
+| `docs/frontend.md`                    | Inertia/Vue/Tailwind architecture                                                              |
+| `docs/design-system.md`               | Presentation tokens, components, states, and responsive matrix                                 |
+| `docs/accessibility.md`               | Accessibility contract and verification evidence                                               |
+| `docs/localization.md`                | EN/LT/RU catalog and locale/timezone workflow                                                  |
+| `docs/i18n.md`                        | Compatibility pointer to `docs/localization.md`                                                |
+| `docs/testing.md`                     | Test taxonomy, commands, and quality evidence                                                  |
+| `docs/seeding.md`                     | Factory and deterministic seeder contract                                                      |
+| `docs/sqlite.md`                      | SQLite runtime and migration constraints                                                       |
+| `docs/performance.md`                 | Query, payload, pagination, and asset budgets                                                  |
+| `docs/caching.md`                     | Cache ownership and invalidation rules                                                         |
+| `docs/integrations.md`                | NativePHP and external integration boundaries                                                  |
+| `docs/operations.md`                  | Scheduler, health, backup/restore, and incident checks                                         |
+| `docs/deployment.md`                  | Web and mobile build/release procedure                                                         |
+| `docs/current-state.md`               | Concise current snapshot                                                                       |
+| `docs/current-state-audit.md`         | Retained dated modernization evidence synchronized with current status                         |
+| `docs/ui-ux-audit-2026-08-17.md`      | Retained dated UI/UX diagnostic evidence                                                       |
+| `docs/compliance-matrix.md`           | Requirement-to-code/test mapping                                                               |
+| `docs/implementation-plan.md`         | Compact living status and pointer to the only unfinished execution plan                        |
+| `docs/code-review.md`                 | Release review checklist and findings                                                          |
+| `docs/known-limitations.md`           | Genuine external and environment limitations only                                              |
+| `docs/progress.md`                    | Append-only execution and delivery evidence                                                    |
 
 ## Historical Evidence
 
-| Path                                                          | Purpose / owner                  | State                               | Conflicts or duplication                                                       | Intended action                                            |
-| ------------------------------------------------------------- | -------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| `docs/audit/backend.md`                                       | 2026-07 backend audit            | Historical, substantially resolved  | Superseded by current code and compliance matrix                               | Preserve with historical banner                            |
-| `docs/audit/database.md`                                      | 2026-07 database audit           | Historical, substantially resolved  | Superseded by corrective migrations and SQLite tests                           | Preserve with historical banner                            |
-| `docs/audit/frontend.md`                                      | 2026-07 frontend audit           | Historical, substantially resolved  | Superseded by current Inertia/Wayfinder/localization implementation            | Preserve with historical banner                            |
-| `docs/audit/security.md`                                      | 2026-07 threat findings          | Historical, substantially resolved  | Superseded by security tests and current audit                                 | Preserve with historical banner                            |
-| `docs/audit/testing.md`                                       | 2026-07 quality baseline         | Historical                          | Test count and failures are obsolete                                           | Preserve with historical banner                            |
-| `docs/implementation-roadmap.md`                              | Original phases 2-11             | Historical roadmap                  | Phases were delivered in `docs/progress.md`                                    | Replace active status with pointer; preserve phase history |
-| `docs/plans/2026-07-20-workspace-management-center-design.md` | Workspace center design decision | Historical implemented design       | No active conflict                                                             | Preserve                                                   |
-| `docs/plans/2026-08-16-dashboard-command-center-design.md`    | Dashboard command-center design  | Current implemented design evidence | One user-owned test update was unfinished at baseline                          | Preserve and complete verification                         |
-| `.mimocode/plans/1784406598615-kind-circuit.md`               | Early home redirect plan         | Historical implemented plan         | Names/line references are stale                                                | Preserve as tool history                                   |
-| `.mimocode/plans/1784461544423-kind-comet.md`                 | EvoSkill installation plan       | Tooling history, not product scope  | Mentions branch creation that conflicts with current main-only delivery if run | Preserve; do not treat as app requirement                  |
-| `.mimocode/plans/1784461861035-kind-garden.md`                | Early sidebar/route plan         | Historical implemented plan         | Uses removed custom route-helper assumptions                                   | Preserve as tool history                                   |
-| `.mimocode/plans/1784461904074-quick-cabin.md`                | Early seeding plan               | Historical implemented plan         | Model counts and destructive verification instructions are stale               | Preserve as tool history                                   |
-| `.mimocode/plans/1784461995084-lucky-canyon.md`               | Early notification response plan | Historical implemented plan         | No active conflict                                                             | Preserve as tool history                                   |
-| `.evoskill/task.md`                                           | EvoSkill Laravel-answer task     | Tool-specific instruction           | Its fixed PHP 8.4 syntax rule conflicted with the runtime contract             | Rewrite to defer to `AGENTS.md`                            |
+- `docs/plans/*-design.md` retains unique implemented product/design rationale.
+- `docs/superpowers/specs/*.md` retains unique system/design contracts.
+- `docs/superpowers/plans/2026-08-17-sutelio-database-optimization.md` is the only detailed execution plan with unfinished product work; Task 1 is complete and Tasks 2-8 remain planned.
+- Agent skills under `.agents/skills` and generated compatible copies under `.claude`, `.cursor`, `.factory`, and `.grok` remain development-tool instructions. Read the applicable primary skill when its domain changes.
+- Completed execution plans, superseded July audits, obsolete tool plans, and generated graph output were removed from the working tree on 2026-08-18 after their durable decisions/evidence were retained here, in other canonical documents, or in `docs/progress.md`. Git history remains the recovery source.
 
-`docs/i18n.md` is retained as a compatibility pointer to `docs/localization.md`. Agent skills under `.agents/skills` and their generated copies under `.claude`, `.cursor`, `.factory`, and `.grok` are development-tool instructions rather than product requirements; the applicable primary skill files are read when their domain is changed. Markdown inside `vendor`, `node_modules`, `.mimocode/node_modules`, generated coverage/build output, and `graphify-out` is third-party or generated and excluded.
+## Retention And Cleanup Rules
 
-## Documentation Rules
-
+- Delete generated analysis/build output from Git and ignore it when it is reproducible and has no runtime or test consumer.
+- Delete a completed execution plan after its durable decisions and verification evidence exist in canonical documentation and `docs/progress.md`; Git history remains the recovery source.
+- Preserve unique design/spec decisions while they still explain current behavior or constraints.
+- Keep `docs/progress.md` append-only. Historical entries may name files later removed from the working tree; those paths remain resolvable through Git history.
 - Do not duplicate an active requirement in another canonical file; link to its stable ID.
-- Preserve dated audit and plan history, but label it historical when current code has moved on.
-- A requirement is “implemented and verified” only when its listed command has passed against the current implementation.
+- A requirement is implemented and verified only when its listed command or runtime gate has passed against the applicable implementation.
 - Update paths, counts, commands, dependency versions, and limitations from observed results rather than intention.
-- Before UI/UX implementation, apply `ui-system-001`: audit every affected location and state, then prefer the lowest coherent shared correction with the fewest practical consumer edits.
+- Before UI/UX implementation, apply `ui-system-001`: inventory every affected location and state, then prefer the lowest coherent shared correction with the fewest practical consumer edits.

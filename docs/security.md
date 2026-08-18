@@ -1,6 +1,6 @@
 # Security
 
-This document describes implemented controls; dated historical findings live under `docs/audit/security.md`.
+This document describes implemented controls. The superseded July security audit was removed from the working tree after remediation; its original content remains recoverable from Git history, while current evidence lives here, in the compliance matrix, tests, and `docs/progress.md`.
 
 ## Implemented Boundaries
 
