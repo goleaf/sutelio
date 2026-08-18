@@ -307,7 +307,7 @@ Require 16/15 px text, 48 px filters/actions, wrap-safe metric labels, phone sin
 
 Do not add queries or change API/Inertia payloads. Reduce nested panels, repeated shadows, and decorative rings where they do not convey hierarchy.
 
-- [ ] **Step 3: Verify and deliver**
+- [x] **Step 3: Verify and deliver**
 
 Run focused endpoint/query-budget tests, frontend gates, the authenticated viewport/input/locale matrix, then commit `feat(ui): adapt planning and activity surfaces` and push normally.
 
