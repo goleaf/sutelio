@@ -285,7 +285,7 @@ Cover list, board, search, filters, pagination, creation, editing, detail, comme
 
 Use one-column phone rows with two-line titles, visible status text/icon, 48 px completion and menu targets, a labeled mobile filter Sheet, visible active-filter summary, tablet two-column layouts only above a readable container width, scroll-safe dialogs, and sticky mobile form actions. Keep every request, Wayfinder route, policy, workspace scope, and query count unchanged.
 
-- [ ] **Step 3: Verify and deliver the daily-work slice**
+- [x] **Step 3: Verify and deliver the daily-work slice**
 
 Run task/project focused Pest, query budgets, frontend tests, type checking, lint, Prettier, Vite build, authenticated browser matrix, diff review, then commit `feat(ui): adapt task and project workflows` and push normally.
 
