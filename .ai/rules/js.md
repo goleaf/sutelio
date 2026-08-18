@@ -1,6 +1,7 @@
 ---
 paths:
     - 'resources/js/**'
+    - 'resources/js/**/*.vue'
 ---
 
 # Js
@@ -16,3 +17,7 @@ Use the shared StatusNotice component for visible compact information, loading, 
 ## Keep the authenticated header free of global search
 
 Do not add a global search button, command palette, command-search overlay, or dedicated global-search state to the authenticated header or application shell. Domain-scoped search and filters inside task, project, workspace, member, and preference workflows remain allowed.
+
+## Use the shared package-backed color picker
+
+All user-editable colors must compose resources/js/components/ui/color-picker/ColorPickerField.vue. Do not add native input[type=color] or local picker markup. Keep values opaque six-digit HEX, localize every visible and assistive label in EN/LT/RU, preserve keyboard/touch behavior, and pass presets through the shared component when useful.

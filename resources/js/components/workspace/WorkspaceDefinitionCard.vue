@@ -25,6 +25,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ColorPickerField } from '@/components/ui/color-picker';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -289,7 +290,7 @@ async function deleteDefinition(): Promise<void> {
         <CardContent class="space-y-5">
             <form
                 v-if="canManage"
-                class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-end"
+                class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(11rem,0.7fr)_auto] sm:items-end"
                 @submit.prevent="createDefinition"
             >
                 <div class="space-y-2">
@@ -331,12 +332,13 @@ async function deleteDefinition(): Promise<void> {
                     <Label :for="'new-' + kind + '-color'">
                         {{ t('workspaces.management.configuration.color') }}
                     </Label>
-                    <Input
+                    <ColorPickerField
                         :id="'new-' + kind + '-color'"
                         v-model="createForm.color"
-                        type="color"
-                        class="h-10 w-full cursor-pointer p-1"
+                        :disabled="createForm.processing"
+                        :invalid="Boolean(createForm.errors.color)"
                     />
+                    <InputError :message="createForm.errors.color" />
                 </div>
                 <Button
                     type="submit"
@@ -359,7 +361,7 @@ async function deleteDefinition(): Promise<void> {
                 >
                     <form
                         v-if="editing?.id === definition.id"
-                        class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_4rem_auto]"
+                        class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(11rem,0.7fr)_auto]"
                         @submit.prevent="saveDefinition"
                     >
                         <div class="space-y-2">
@@ -382,10 +384,11 @@ async function deleteDefinition(): Promise<void> {
                                 }}
                             </label>
                         </div>
-                        <Input
+                        <ColorPickerField
+                            :id="'edit-' + kind + '-color'"
                             v-model="editForm.color"
-                            type="color"
-                            class="h-10 w-full cursor-pointer p-1"
+                            :disabled="editForm.processing"
+                            :invalid="Boolean(editForm.errors.color)"
                         />
                         <div class="flex gap-2">
                             <Button

@@ -11,6 +11,7 @@ Pest is the sole primary PHP test style. Feature tests cover framework-integrate
 - `BrandIdentityTest.php`: canonical metadata, active-file legacy identity exclusion, deterministic clean-S geometry/raster outputs, browser/logo semantics, and safe NativePHP publication/rollback. `NativePhpMobileTest.php` separately protects runtime/package integration, including the external Sutelio IDs and unchanged internal Android namespace.
 - `resources/js/**/*.test.ts`: typed frontend state, onboarding progress/draft/plural contracts, CRUD and task/workspace interaction behavior. `resources/js/lib/globalBusy.test.ts` proves overlap safety, router/background classification, progress normalization, upload forwarding, and cleanup after success or failure.
 - `GlobalOperationFeedbackTest.php`: bootstrap, visual opacity, non-dismissible blocking, accessibility modes, and EN/LT/RU translation parity for the universal foreground-operation contract.
+- `FrontendColorPickerTest.php`: maintained Zag package ownership, complete native-color-input removal, one shared picker consumer contract across onboarding/projects/workspace definitions, localized assistive copy, responsive positioning, touch, reduced-motion, and forced-colors source guarantees.
 
 ## Per-Pass Workflow
 
@@ -79,6 +80,8 @@ Those dated smoke statements preserve pre-light-only evidence. The current produ
 Task 10 repeated fresh integrated evidence with independent disposable Chrome DevTools and Playwright profiles. Guest and disposable authenticated EN/LT/RU checks covered 320 px through 1440 px, effective 200% reflow, keyboard focus, coarse touch targets, fixed-light behavior, reduced motion, forced colors, offline/reconnect feedback, drawer dismissal/navigation, mandatory onboarding, default-workspace continuity, long task/project content, and representative settings. No checked page overflowed horizontally, final consoles and requests were clean, all disposable browser data was deleted through product UI, Lighthouse scored 100 for accessibility/best-practices/SEO/agentic with zero failed audits, and the representative task trace measured 400 ms LCP and 0.00 CLS.
 
 The global-language smoke covers the mandatory first-run dialog and shared shell switcher at 390x844, 820x1180, and 1440x1000. It verifies immediate whole-dialog Lithuanian/Russian preview before confirmation, persisted server-authoritative `PUT /locale` updates, document language and page-copy refresh, focus containment, blocked Escape, 44-pixel controls, reduced motion, local flags, no overflow, and zero current runtime/network failures. Account precedence, invalid input, registration inheritance, and login cookie synchronization remain deterministic Pest contracts so browser QA does not mutate the local user database.
+
+The shared color-picker smoke must cover an arbitrary HEX change during onboarding, project presets inside a nested dialog, workspace status/priority and label creation/edit controls, EN/LT/RU accessible names, 320/390 phone, 820 tablet, and 1440 desktop geometry, keyboard arrows and Escape focus return, coarse targets, reduced motion, forced colors, and final console/network cleanliness. The disposable account and all generated project/task/workspace data must be deleted through the product UI after verification.
 
 ## Soft Motion And Icon Gate
 

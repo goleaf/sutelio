@@ -24,6 +24,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { ColorPickerField } from '@/components/ui/color-picker';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -472,7 +473,7 @@ async function deleteMetadata(): Promise<void> {
             <CardContent class="space-y-5">
                 <form
                     v-if="canManage"
-                    class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-end"
+                    class="grid gap-3 rounded-xl border bg-muted/20 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(11rem,0.7fr)_auto] sm:items-end"
                     @submit.prevent="createLabel"
                 >
                     <div class="space-y-2">
@@ -505,13 +506,13 @@ async function deleteMetadata(): Promise<void> {
                                 )
                             }}
                         </FormLabel>
-                        <Input
+                        <ColorPickerField
                             id="new-label-color"
                             v-model="labelForm.color"
-                            type="color"
-                            class="h-10 w-full cursor-pointer p-1"
                             :disabled="labelForm.processing"
+                            :invalid="Boolean(labelForm.errors.color)"
                         />
+                        <InputError :message="labelForm.errors.color" />
                     </div>
                     <Button
                         type="submit"
@@ -540,7 +541,7 @@ async function deleteMetadata(): Promise<void> {
                     >
                         <form
                             v-if="editingLabel?.id === label.id"
-                            class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_4rem_auto] sm:items-start"
+                            class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(11rem,0.7fr)_auto] sm:items-start"
                             @submit.prevent="updateLabel"
                         >
                             <div class="space-y-2">
@@ -574,12 +575,16 @@ async function deleteMetadata(): Promise<void> {
                                         )
                                     }}
                                 </FormLabel>
-                                <Input
+                                <ColorPickerField
                                     :id="`edit-label-color-${label.id}`"
                                     v-model="editLabelForm.color"
-                                    type="color"
-                                    class="h-10 w-full cursor-pointer p-1"
                                     :disabled="editLabelForm.processing"
+                                    :invalid="
+                                        Boolean(editLabelForm.errors.color)
+                                    "
+                                />
+                                <InputError
+                                    :message="editLabelForm.errors.color"
                                 />
                             </div>
                             <div class="flex gap-2 sm:pt-7">

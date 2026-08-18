@@ -9,6 +9,7 @@ import type {
 } from '@/components/onboarding/onboarding-types';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
+import { ColorPickerField } from '@/components/ui/color-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -183,13 +184,11 @@ const icon = computed({
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="space-y-2">
                         <Label for="color">{{ copy.color }}</Label>
-                        <Input
+                        <ColorPickerField
                             id="color"
                             v-model="color"
-                            type="color"
                             :disabled="processing"
-                            :aria-invalid="Boolean(errors.color)"
-                            class="p-1.5"
+                            :invalid="Boolean(errors.color)"
                         />
                         <InputError :message="errors.color" />
                     </div>

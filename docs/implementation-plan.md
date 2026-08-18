@@ -29,6 +29,12 @@ The durable design source is `docs/plans/2026-08-18-senior-friendly-responsive-s
 | 9. Consolidate semantic statuses and remove proven legacy UI | Completed | Verified semantic/legacy delivery pushed in `2dc44cf`                                                                 |
 | 10. Run final quality, NativePHP, emulator, and Samsung gate | Completed | Exact artifact verified on Android 14 emulator and installed/running after a scoped clean reset on Android 10 Samsung |
 
+## Completed Package-Based Color Picker
+
+Requirements: `sys-onboarding-001`, `sys-project-001`, `sys-workspace-005`, `sys-task-007`, `ui-accessibility-001`, `ui-responsive-001`, `ui-system-001`, and `i18n-001`.
+
+The maintained MIT `@zag-js/color-picker` and `@zag-js/vue` integration replaces every native HTML color input through one shared `ColorPickerField`. Onboarding project creation, project creation with presets, workspace label creation/editing, and status/priority creation/editing now share opaque HEX normalization, EN/LT/RU visible and assistive labels, keyboard/touch behavior, viewport-aware positioning, nested-dialog containment, reduced-motion suppression, and forced-colors boundaries. `FrontendColorPickerTest.php`, the related responsive/localization suites, complete quality gates, and disposable Chrome DevTools/Playwright checks are the durable implementation and verification boundary; this presentation-only delivery does not change routes, requests, queries, schema, migrations, configured application data, or NativePHP artifacts.
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.

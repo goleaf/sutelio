@@ -39,7 +39,10 @@ dataset('accessible icon only controls', [
     'dialog close' => ['components/ui/dialog/DialogContent.vue', 'sr-only'],
     'sheet close' => ['components/ui/sheet/SheetContent.vue', 'sr-only'],
     'onboarding dismiss' => ['components/onboarding/OnboardingChecklist.vue', ':aria-label'],
-    'project color selection' => ['components/project/ProjectCreateDialog.vue', ':aria-label="color"'],
+    'shared color selection' => [
+        'components/ui/color-picker/ColorPickerField.vue',
+        ':aria-label="triggerLabel"',
+    ],
 ]);
 
 dataset('intentional non tile presentation', [
@@ -53,10 +56,10 @@ dataset('intentional non tile presentation', [
         'tabular-nums',
         'calendar numerals are data labels rather than icon introductions',
     ],
-    'project color controls' => [
-        'components/project/ProjectCreateDialog.vue',
-        ':aria-pressed="form.color === color"',
-        'the swatches are native color choices with visible selected state',
+    'package color controls' => [
+        'components/ui/color-picker/ColorPickerField.vue',
+        'api.getSwatchTriggerState',
+        'the package-backed swatches are color choices with visible selected state',
     ],
     'one time password slots' => [
         'components/ui/input-otp/InputOTPSlot.vue',

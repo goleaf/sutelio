@@ -17,6 +17,7 @@ import DialogActions from '@/components/shared/DialogActions.vue';
 import DialogBody from '@/components/shared/DialogBody.vue';
 import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Button } from '@/components/ui/button';
+import { ColorPickerField } from '@/components/ui/color-picker';
 import { Dialog } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -195,29 +196,13 @@ async function submit(): Promise<void> {
                         <legend class="text-base font-medium">
                             {{ copy.projects.color }}
                         </legend>
-                        <div class="flex flex-wrap gap-2.5">
-                            <button
-                                v-for="color in colors"
-                                :key="color"
-                                type="button"
-                                class="flex size-12 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transform-none motion-reduce:transition-none pointer-coarse:size-13"
-                                :class="
-                                    form.color === color
-                                        ? 'border-orange-500/50 bg-orange-500/[0.08] shadow-sm'
-                                        : 'border-border/80 bg-background hover:border-orange-500/25 hover:bg-orange-500/[0.04]'
-                                "
-                                :disabled="form.processing"
-                                :aria-label="color"
-                                :aria-pressed="form.color === color"
-                                @click="form.color = color"
-                            >
-                                <span
-                                    class="size-6 rounded-lg shadow-sm"
-                                    :style="{ backgroundColor: color }"
-                                    aria-hidden="true"
-                                />
-                            </button>
-                        </div>
+                        <ColorPickerField
+                            id="project-color"
+                            v-model="form.color"
+                            :presets="colors"
+                            :disabled="form.processing"
+                            :invalid="Boolean(form.errors.color)"
+                        />
                         <InputError :message="form.errors.color" />
                     </fieldset>
 

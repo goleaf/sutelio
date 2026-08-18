@@ -36,6 +36,7 @@ Success, warning, information, and destructive presentation each expose one shar
 ## Component Hierarchy
 
 - Reka/shadcn-style primitives own dialogs, sheets, menus, selects, checkboxes, focus traps, and keyboard semantics.
+- `ColorPickerField` is the sole user-editable color primitive. It composes `@zag-js/color-picker` and `@zag-js/vue` for non-native color-area, hue, HEX, preset, positioning, touch, and keyboard behavior while Sutelio owns fixed-light styling and EN/LT/RU visible/assistive labels. Consumers pass opaque six-digit HEX values and optional presets rather than rendering `input[type=color]` or local swatches.
 - Shared workspace components own page headers, metrics, segmented controls, empty states, dialog surfaces, and confirmations.
 - Feature components own task, project, calendar, dashboard, activity, and workspace composition.
 - Onboarding components own the Warm Guided Route shell plus one semantic component per step; they reuse shared buttons, controls, previews, confirmation dialogs, and application layout ownership rather than creating a parallel design system.
