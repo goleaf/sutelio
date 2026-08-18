@@ -53,6 +53,12 @@ Requirements: `sys-task-002`, `sys-task-008`, `ui-accessibility-001`, `ui-respon
 
 One shared `DatePickerField` built from Reka UI and the direct `@internationalized/date` dependency replaces every native browser date and date/time input across onboarding task creation, ordinary task creation, task overview editing, and reminder scheduling. It preserves `YYYY-MM-DD` and minute-precision `YYYY-MM-DDTHH:mm` contracts, EN/LT/RU field/calendar formatting, user week-start and time-cycle preferences, keyboard/touch behavior, 44/48 px targets, nested-dialog portal containment, reduced-motion/forced-colors styling, and bounded phone/tablet popovers. `FrontendDatePickerTest.php`, frontend value-adapter tests, and independent Chrome DevTools/Playwright checks are the durable regression boundary; the existing month/week/agenda planning page remains its own complete calendar and no route, request, query, schema, migration, configured application data, or mobile artifact changes.
 
+## Completed Onboarding Icon Language
+
+Requirements: `sys-onboarding-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-system-001`, and `i18n-001`.
+
+One typed eight-step Lucide registry plus shared `OnboardingIcon` and `OnboardingFieldLabel` primitives give the complete onboarding journey one consistent icon language. Step headings and progress, field labels, mode choices, select triggers and every select/timezone option, notices, validation feedback, previews, and footer actions retain their localized text while receiving meaningful visual reinforcement. Decorative icon instances are hidden from assistive technology, selected/check state remains explicit, and the established keyboard, touch, focus, reduced-motion, forced-colors, and no-overflow contracts are preserved. `OnboardingIconLanguageTest.php`, related onboarding/design tests, and isolated Chrome DevTools/Playwright phone/tablet/desktop verification form the durable regression boundary; this presentation-only slice adds no dependency, route, request, query, schema, migration, configured database write, or mobile artifact.
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.

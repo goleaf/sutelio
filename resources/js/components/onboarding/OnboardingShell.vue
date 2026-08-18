@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { Check, Circle, Route } from '@lucide/vue';
+import {
+    ArrowLeft,
+    ArrowRight,
+    Check,
+    LogOut,
+    PartyPopper,
+    Route,
+} from '@lucide/vue';
 import { computed } from 'vue';
+import { resolveOnboardingStepIcon } from '@/components/onboarding/onboarding-icons';
 import type {
     OnboardingCopy,
     OnboardingProgress,
 } from '@/components/onboarding/onboarding-types';
 import { orderedOnboardingSteps } from '@/components/onboarding/onboarding-types';
+import OnboardingIcon from '@/components/onboarding/OnboardingIcon.vue';
 import IconTile from '@/components/shared/IconTile.vue';
 import StatusNotice from '@/components/shared/StatusNotice.vue';
 import type { StatusNoticeStatus } from '@/components/shared/StatusNotice.vue';
@@ -56,6 +65,9 @@ const saveNoticeStatus = computed<StatusNoticeStatus>(() => {
 const progressScale = computed(() =>
     Math.min(1, Math.max(0, props.progress.percent / 100)),
 );
+const activeStepIcon = computed(() =>
+    resolveOnboardingStepIcon(props.progress.step),
+);
 </script>
 
 <template>
@@ -65,15 +77,22 @@ const progressScale = computed(() =>
             class="sticky top-0 z-20 -mx-4 mb-4 border-b border-border/80 bg-background/95 px-4 py-3 backdrop-blur-sm xl:hidden"
         >
             <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                    <p
-                        class="text-[0.9375rem] leading-5 font-semibold text-orange-700"
-                    >
-                        {{ stepLabel }}
-                    </p>
-                    <p class="text-base leading-6 font-semibold wrap-anywhere">
-                        {{ copy.steps[progress.step].title }}
-                    </p>
+                <div class="flex min-w-0 items-center gap-3">
+                    <IconTile size="sm" tone="brand">
+                        <component :is="activeStepIcon" />
+                    </IconTile>
+                    <div class="min-w-0">
+                        <p
+                            class="text-[0.9375rem] leading-5 font-semibold text-orange-700"
+                        >
+                            {{ stepLabel }}
+                        </p>
+                        <p
+                            class="text-base leading-6 font-semibold wrap-anywhere"
+                        >
+                            {{ copy.steps[progress.step].title }}
+                        </p>
+                    </div>
                 </div>
                 <span
                     class="max-w-32 shrink-0 text-right text-[0.9375rem] leading-5 font-medium wrap-anywhere text-muted-foreground tabular-nums"
@@ -150,9 +169,10 @@ const progressScale = computed(() =>
                                 class="size-3.5"
                                 aria-hidden="true"
                             />
-                            <Circle
+                            <component
+                                :is="resolveOnboardingStepIcon(step)"
                                 v-else
-                                class="size-2.5 fill-current"
+                                class="size-3.5"
                                 aria-hidden="true"
                             />
                         </span>
@@ -204,6 +224,10 @@ const progressScale = computed(() =>
                     :disabled="processing"
                     @click="emit('exitReplay')"
                 >
+                    <OnboardingIcon
+                        :icon="LogOut"
+                        class="text-current forced-colors:text-[ButtonText]"
+                    />
                     {{ copy.actions.exit_replay }}
                 </Button>
                 <span
@@ -219,6 +243,10 @@ const progressScale = computed(() =>
                     :disabled="processing"
                     @click="emit('back')"
                 >
+                    <OnboardingIcon
+                        :icon="ArrowLeft"
+                        class="text-current forced-colors:text-[ButtonText]"
+                    />
                     {{ copy.actions.back }}
                 </Button>
                 <Button
@@ -230,6 +258,15 @@ const progressScale = computed(() =>
                     :disabled="processing"
                 >
                     <Spinner v-if="processing" />
+                    <OnboardingIcon
+                        v-else
+                        :icon="
+                            progress.step === 'results'
+                                ? PartyPopper
+                                : ArrowRight
+                        "
+                        class="text-current forced-colors:text-[ButtonText]"
+                    />
                     {{ primaryLabel }}
                 </Button>
             </div>

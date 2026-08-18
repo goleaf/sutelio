@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { Building2 } from '@lucide/vue';
+import {
+    AlignLeft,
+    Building2,
+    Info,
+    MousePointerClick,
+    PackageOpen,
+    Plus,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import type {
@@ -7,10 +14,11 @@ import type {
     OnboardingMode,
     OnboardingWorkspace,
 } from '@/components/onboarding/onboarding-types';
+import OnboardingFieldLabel from '@/components/onboarding/OnboardingFieldLabel.vue';
+import OnboardingIcon from '@/components/onboarding/OnboardingIcon.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -57,10 +65,18 @@ const description = computed({
 
 <template>
     <div class="space-y-5">
-        <p class="text-base leading-7 text-muted-foreground">
-            {{
-                hasExistingOptions ? copy.description : copy.create_description
-            }}
+        <p
+            data-slot="onboarding-guidance"
+            class="flex items-start gap-2 text-base leading-7 text-muted-foreground"
+        >
+            <OnboardingIcon :icon="Info" class="mt-1.5" />
+            <span>
+                {{
+                    hasExistingOptions
+                        ? copy.description
+                        : copy.create_description
+                }}
+            </span>
         </p>
         <div
             v-if="hasExistingOptions"
@@ -76,6 +92,7 @@ const description = computed({
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'select')"
             >
+                <OnboardingIcon :icon="MousePointerClick" />
                 {{ copy.choose_existing }}
             </Button>
             <Button
@@ -87,6 +104,7 @@ const description = computed({
                 :class="mode === 'create' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'create')"
             >
+                <OnboardingIcon :icon="Plus" />
                 {{ copy.create_new }}
             </Button>
         </div>
@@ -96,20 +114,26 @@ const description = computed({
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-2">
-                <Label for="workspace_id">{{ copy.existing_label }}</Label>
+                <OnboardingFieldLabel html-for="workspace_id" :icon="Building2">
+                    {{ copy.existing_label }}
+                </OnboardingFieldLabel>
                 <Select v-model="selectedId" :disabled="processing">
                     <SelectTrigger
                         id="workspace_id"
                         :aria-invalid="Boolean(errors.workspace_id)"
-                        ><SelectValue
-                    /></SelectTrigger>
+                    >
+                        <OnboardingIcon :icon="Building2" />
+                        <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                         <SelectItem
                             v-for="workspace in workspaces"
                             :key="workspace.id"
                             :value="workspace.id"
-                            >{{ workspace.name }}</SelectItem
                         >
+                            <OnboardingIcon :icon="Building2" />
+                            {{ workspace.name }}
+                        </SelectItem>
                     </SelectContent>
                 </Select>
                 <InputError :message="errors.workspace_id" />
@@ -146,7 +170,9 @@ const description = computed({
         >
             <div class="space-y-4">
                 <div class="space-y-2">
-                    <Label for="name">{{ copy.name }}</Label>
+                    <OnboardingFieldLabel html-for="name" :icon="Building2">
+                        {{ copy.name }}
+                    </OnboardingFieldLabel>
                     <Input
                         id="name"
                         v-model="name"
@@ -158,7 +184,12 @@ const description = computed({
                     <InputError :message="errors.name" />
                 </div>
                 <div class="space-y-2">
-                    <Label for="description">{{ copy.details }}</Label>
+                    <OnboardingFieldLabel
+                        html-for="description"
+                        :icon="AlignLeft"
+                    >
+                        {{ copy.details }}
+                    </OnboardingFieldLabel>
                     <textarea
                         id="description"
                         v-model="description"
@@ -200,10 +231,19 @@ const description = computed({
             v-else
             class="rounded-2xl border border-dashed border-border p-6 text-center"
         >
-            <h2 class="font-semibold">{{ copy.empty_title }}</h2>
-            <p class="mt-2 text-base leading-7 text-muted-foreground">
-                {{ copy.empty_description }}
-            </p>
+            <LeadingIconHeading
+                tile
+                tile-tone="muted"
+                class="mx-auto max-w-md text-left"
+            >
+                <template #icon>
+                    <PackageOpen />
+                </template>
+                <h2 class="font-semibold">{{ copy.empty_title }}</h2>
+                <p class="text-base leading-7 text-muted-foreground">
+                    {{ copy.empty_description }}
+                </p>
+            </LeadingIconHeading>
         </div>
     </div>
 </template>

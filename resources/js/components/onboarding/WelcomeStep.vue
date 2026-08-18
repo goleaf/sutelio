@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListChecks, Sparkles, UsersRound } from '@lucide/vue';
+import { ListChecks, ShieldCheck, Sparkles, UsersRound } from '@lucide/vue';
 import type { OnboardingCopy } from '@/components/onboarding/onboarding-types';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 
@@ -41,10 +41,16 @@ const features = [
                 </LeadingIconHeading>
             </article>
         </div>
-        <p
-            class="rounded-2xl border border-status-success-border bg-status-success-surface p-4 text-base leading-7 text-status-success-text"
+        <LeadingIconHeading
+            tile
+            tile-tone="success"
+            tile-size="sm"
+            class="rounded-2xl border border-status-success-border bg-status-success-surface p-4 text-status-success-text"
         >
-            {{ copy.privacy }}
-        </p>
+            <template #icon>
+                <ShieldCheck />
+            </template>
+            <p class="text-base leading-7">{{ copy.privacy }}</p>
+        </LeadingIconHeading>
     </div>
 </template>

@@ -10,9 +10,9 @@ dataset('leading icon heading consumers', [
     'calendar attention rail' => ['components/calendar/CalendarAttentionRail.vue', 1],
     'project pulse' => ['components/project/ProjectPulse.vue', 1],
     'onboarding checklist' => ['components/onboarding/OnboardingChecklist.vue', 1],
-    'onboarding project step' => ['components/onboarding/ProjectStep.vue', 2],
-    'onboarding task step' => ['components/onboarding/TaskStep.vue', 2],
-    'onboarding workspace step' => ['components/onboarding/WorkspaceStep.vue', 2],
+    'onboarding project step' => ['components/onboarding/ProjectStep.vue', 3],
+    'onboarding task step' => ['components/onboarding/TaskStep.vue', 3],
+    'onboarding workspace step' => ['components/onboarding/WorkspaceStep.vue', 3],
     'data scope banner' => ['components/settings/data/DataScopeBanner.vue', 1],
     'workspace configuration' => ['components/workspace/WorkspaceConfigurationPanel.vue', 3],
     'workspace danger panel' => ['components/workspace/WorkspaceDangerPanel.vue', 3],
@@ -63,9 +63,9 @@ test('onboarding narrative icon and text cards compose the shared centered align
         ->and(substr_count($source, '<LeadingIconHeading'))
         ->toBe($expectedCount);
 })->with([
-    'welcome benefits' => ['WelcomeStep.vue', 1],
+    'welcome benefits' => ['WelcomeStep.vue', 2],
     'product map destinations' => ['ProductMapStep.vue', 1],
-    'safety topics' => ['SafetyStep.vue', 1],
+    'safety topics' => ['SafetyStep.vue', 2],
     'preference preview' => ['PreferencesStep.vue', 1],
 ]);
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, ChevronsUpDown, Search } from '@lucide/vue';
+import { Check, ChevronsUpDown, Clock3, MapPin, Search } from '@lucide/vue';
 import {
     ComboboxAnchor,
     ComboboxContent,
@@ -150,8 +150,9 @@ function handleOpenChange(value: boolean): void {
                         class="py-1"
                     >
                         <ComboboxLabel
-                            class="sticky top-0 z-10 block bg-popover/95 px-2.5 py-2 text-[0.9375rem] leading-5 font-semibold text-muted-foreground backdrop-blur-sm"
+                            class="sticky top-0 z-10 flex items-center gap-2 bg-popover/95 px-2.5 py-2 text-[0.9375rem] leading-5 font-semibold text-muted-foreground backdrop-blur-sm"
                         >
+                            <MapPin class="size-3.5" aria-hidden="true" />
                             {{ group.label }}
                         </ComboboxLabel>
                         <ComboboxItem
@@ -161,6 +162,13 @@ function handleOpenChange(value: boolean): void {
                             :text-value="option.search_terms"
                             class="relative flex min-h-12 cursor-default scroll-my-1 items-center rounded-lg py-2 pr-9 pl-2.5 text-base outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground pointer-coarse:min-h-13"
                         >
+                            <span
+                                data-slot="timezone-option-icon"
+                                class="mr-2 flex shrink-0 self-start pt-1 text-orange-700 forced-colors:text-[CanvasText]"
+                                aria-hidden="true"
+                            >
+                                <Clock3 class="size-4" />
+                            </span>
                             <span class="min-w-0 flex-1">
                                 <span class="block font-medium wrap-anywhere">
                                     {{ option.label }}

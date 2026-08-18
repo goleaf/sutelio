@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import { CalendarClock, ListChecks } from '@lucide/vue';
+import {
+    AlignLeft,
+    CalendarClock,
+    CalendarDays,
+    CircleDot,
+    Flag,
+    Info,
+    ListChecks,
+    MousePointerClick,
+    PackageOpen,
+    Plus,
+    UserRound,
+    UserX,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import type {
@@ -9,11 +22,12 @@ import type {
     OnboardingMode,
     OnboardingTask,
 } from '@/components/onboarding/onboarding-types';
+import OnboardingFieldLabel from '@/components/onboarding/OnboardingFieldLabel.vue';
+import OnboardingIcon from '@/components/onboarding/OnboardingIcon.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { DatePickerField } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -58,6 +72,9 @@ const hasExistingOptions = computed(() => props.tasks.length > 0);
 const selectedPriority = computed(() =>
     props.priorities.find((item) => item.id === props.priorityId),
 );
+const selectedStatus = computed(() =>
+    props.statuses.find((item) => item.id === props.statusId),
+);
 const selectedId = computed({
     get: () => props.selectedId,
     set: (value: string) => emit('update:selectedId', value),
@@ -90,10 +107,18 @@ const dueDate = computed({
 
 <template>
     <div class="space-y-5">
-        <p class="text-base leading-7 text-muted-foreground">
-            {{
-                hasExistingOptions ? copy.description : copy.create_description
-            }}
+        <p
+            data-slot="onboarding-guidance"
+            class="flex items-start gap-2 text-base leading-7 text-muted-foreground"
+        >
+            <OnboardingIcon :icon="Info" class="mt-1.5" />
+            <span>
+                {{
+                    hasExistingOptions
+                        ? copy.description
+                        : copy.create_description
+                }}
+            </span>
         </p>
         <div
             v-if="hasExistingOptions"
@@ -108,8 +133,10 @@ const dueDate = computed({
                 :disabled="processing"
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'select')"
-                >{{ copy.choose_existing }}</Button
             >
+                <OnboardingIcon :icon="MousePointerClick" />
+                {{ copy.choose_existing }}
+            </Button>
             <Button
                 type="button"
                 variant="ghost"
@@ -118,8 +145,10 @@ const dueDate = computed({
                 :disabled="processing"
                 :class="mode === 'create' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'create')"
-                >{{ copy.create_new }}</Button
             >
+                <OnboardingIcon :icon="Plus" />
+                {{ copy.create_new }}
+            </Button>
         </div>
 
         <div
@@ -127,21 +156,27 @@ const dueDate = computed({
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-2">
-                <Label for="task_id">{{ copy.existing_label }}</Label>
+                <OnboardingFieldLabel html-for="task_id" :icon="ListChecks">
+                    {{ copy.existing_label }}
+                </OnboardingFieldLabel>
                 <Select v-model="selectedId" :disabled="processing">
                     <SelectTrigger
                         id="task_id"
                         :aria-invalid="Boolean(errors.task_id)"
-                        ><SelectValue
-                    /></SelectTrigger>
-                    <SelectContent
-                        ><SelectItem
+                    >
+                        <OnboardingIcon :icon="ListChecks" />
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
                             v-for="task in tasks"
                             :key="task.id"
                             :value="task.id"
-                            >{{ task.title }}</SelectItem
-                        ></SelectContent
-                    >
+                        >
+                            <OnboardingIcon :icon="ListChecks" />
+                            {{ task.title }}
+                        </SelectItem>
+                    </SelectContent>
                 </Select>
                 <InputError :message="errors.task_id" />
             </div>
@@ -179,7 +214,9 @@ const dueDate = computed({
         >
             <div class="space-y-4">
                 <div class="space-y-2">
-                    <Label for="title">{{ copy.title }}</Label>
+                    <OnboardingFieldLabel html-for="title" :icon="ListChecks">
+                        {{ copy.title }}
+                    </OnboardingFieldLabel>
                     <Input
                         id="title"
                         v-model="title"
@@ -191,7 +228,12 @@ const dueDate = computed({
                     <InputError :message="errors.title" />
                 </div>
                 <div class="space-y-2">
-                    <Label for="description">{{ copy.details }}</Label>
+                    <OnboardingFieldLabel
+                        html-for="description"
+                        :icon="AlignLeft"
+                    >
+                        {{ copy.details }}
+                    </OnboardingFieldLabel>
                     <textarea
                         id="description"
                         v-model="description"
@@ -205,67 +247,118 @@ const dueDate = computed({
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="space-y-2">
-                        <Label for="status_id">{{ copy.status }}</Label>
+                        <OnboardingFieldLabel
+                            html-for="status_id"
+                            :icon="CircleDot"
+                        >
+                            {{ copy.status }}
+                        </OnboardingFieldLabel>
                         <Select v-model="statusId" :disabled="processing">
                             <SelectTrigger
                                 id="status_id"
                                 :aria-invalid="Boolean(errors.status_id)"
-                                ><SelectValue
-                            /></SelectTrigger>
-                            <SelectContent
-                                ><SelectItem
+                            >
+                                <OnboardingIcon
+                                    :icon="CircleDot"
+                                    :style="{ color: selectedStatus?.color }"
+                                />
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
                                     v-for="status in statuses"
                                     :key="status.id"
                                     :value="status.id"
-                                    >{{ status.name }}</SelectItem
-                                ></SelectContent
-                            >
+                                >
+                                    <OnboardingIcon
+                                        :icon="CircleDot"
+                                        :style="{ color: status.color }"
+                                    />
+                                    {{ status.name }}
+                                </SelectItem>
+                            </SelectContent>
                         </Select>
                         <InputError :message="errors.status_id" />
                     </div>
                     <div class="space-y-2">
-                        <Label for="priority_id">{{ copy.priority }}</Label>
+                        <OnboardingFieldLabel
+                            html-for="priority_id"
+                            :icon="Flag"
+                        >
+                            {{ copy.priority }}
+                        </OnboardingFieldLabel>
                         <Select v-model="priorityId" :disabled="processing">
                             <SelectTrigger
                                 id="priority_id"
                                 :aria-invalid="Boolean(errors.priority_id)"
-                                ><SelectValue
-                            /></SelectTrigger>
-                            <SelectContent
-                                ><SelectItem
+                            >
+                                <OnboardingIcon
+                                    :icon="Flag"
+                                    :style="{ color: selectedPriority?.color }"
+                                />
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
                                     v-for="priority in priorities"
                                     :key="priority.id"
                                     :value="priority.id"
-                                    >{{ priority.name }}</SelectItem
-                                ></SelectContent
-                            >
+                                >
+                                    <OnboardingIcon
+                                        :icon="Flag"
+                                        :style="{ color: priority.color }"
+                                    />
+                                    {{ priority.name }}
+                                </SelectItem>
+                            </SelectContent>
                         </Select>
                         <InputError :message="errors.priority_id" />
                     </div>
                     <div class="space-y-2">
-                        <Label for="assigned_to">{{ copy.assignee }}</Label>
+                        <OnboardingFieldLabel
+                            html-for="assigned_to"
+                            :icon="UserRound"
+                        >
+                            {{ copy.assignee }}
+                        </OnboardingFieldLabel>
                         <Select v-model="assigneeId" :disabled="processing">
                             <SelectTrigger
                                 id="assigned_to"
                                 :aria-invalid="Boolean(errors.assigned_to)"
-                                ><SelectValue
-                            /></SelectTrigger>
+                            >
+                                <OnboardingIcon
+                                    :icon="
+                                        assigneeId === 'unassigned'
+                                            ? UserX
+                                            : UserRound
+                                    "
+                                />
+                                <SelectValue />
+                            </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="unassigned">{{
-                                    copy.unassigned
-                                }}</SelectItem>
+                                <SelectItem value="unassigned">
+                                    <OnboardingIcon :icon="UserX" />
+                                    {{ copy.unassigned }}
+                                </SelectItem>
                                 <SelectItem
                                     v-for="member in members"
                                     :key="member.id"
                                     :value="member.id"
-                                    >{{ member.name }}</SelectItem
                                 >
+                                    <OnboardingIcon :icon="UserRound" />
+                                    {{ member.name }}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                         <InputError :message="errors.assigned_to" />
                     </div>
                     <div class="space-y-2">
-                        <Label for="due_date">{{ copy.due_date }}</Label>
+                        <OnboardingFieldLabel
+                            html-for="due_date"
+                            :icon="CalendarDays"
+                        >
+                            {{ copy.due_date }}
+                        </OnboardingFieldLabel>
                         <DatePickerField
                             id="due_date"
                             v-model="dueDate"
@@ -325,10 +418,19 @@ const dueDate = computed({
             v-else
             class="rounded-2xl border border-dashed border-border p-6 text-center"
         >
-            <h2 class="font-semibold">{{ copy.empty_title }}</h2>
-            <p class="mt-2 text-base leading-7 text-muted-foreground">
-                {{ copy.empty_description }}
-            </p>
+            <LeadingIconHeading
+                tile
+                tile-tone="muted"
+                class="mx-auto max-w-md text-left"
+            >
+                <template #icon>
+                    <PackageOpen />
+                </template>
+                <h2 class="font-semibold">{{ copy.empty_title }}</h2>
+                <p class="text-base leading-7 text-muted-foreground">
+                    {{ copy.empty_description }}
+                </p>
+            </LeadingIconHeading>
         </div>
     </div>
 </template>

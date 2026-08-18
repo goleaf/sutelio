@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import {
+    AlignLeft,
+    FolderKanban,
+    Info,
+    MousePointerClick,
+    PackageOpen,
+    Palette,
+    Plus,
+    Shapes,
+} from '@lucide/vue';
 import { computed } from 'vue';
 import InputError from '@/components/InputError.vue';
 import type {
@@ -6,13 +16,14 @@ import type {
     OnboardingMode,
     OnboardingProject,
 } from '@/components/onboarding/onboarding-types';
+import OnboardingFieldLabel from '@/components/onboarding/OnboardingFieldLabel.vue';
+import OnboardingIcon from '@/components/onboarding/OnboardingIcon.vue';
 import ProjectIcon from '@/components/project/ProjectIcon.vue';
 import ProjectIconPicker from '@/components/project/ProjectIconPicker.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
 import { ColorPickerField } from '@/components/ui/color-picker';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -71,10 +82,18 @@ const icon = computed({
 
 <template>
     <div class="space-y-5">
-        <p class="text-base leading-7 text-muted-foreground">
-            {{
-                hasExistingOptions ? copy.description : copy.create_description
-            }}
+        <p
+            data-slot="onboarding-guidance"
+            class="flex items-start gap-2 text-base leading-7 text-muted-foreground"
+        >
+            <OnboardingIcon :icon="Info" class="mt-1.5" />
+            <span>
+                {{
+                    hasExistingOptions
+                        ? copy.description
+                        : copy.create_description
+                }}
+            </span>
         </p>
         <div
             v-if="hasExistingOptions"
@@ -89,8 +108,10 @@ const icon = computed({
                 :disabled="processing"
                 :class="mode === 'select' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'select')"
-                >{{ copy.choose_existing }}</Button
             >
+                <OnboardingIcon :icon="MousePointerClick" />
+                {{ copy.choose_existing }}
+            </Button>
             <Button
                 type="button"
                 variant="ghost"
@@ -99,8 +120,10 @@ const icon = computed({
                 :disabled="processing"
                 :class="mode === 'create' ? 'bg-background shadow-sm' : ''"
                 @click="emit('update:mode', 'create')"
-                >{{ copy.create_new }}</Button
             >
+                <OnboardingIcon :icon="Plus" />
+                {{ copy.create_new }}
+            </Button>
         </div>
 
         <div
@@ -108,21 +131,34 @@ const icon = computed({
             class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.45fr)]"
         >
             <div class="space-y-2">
-                <Label for="project_id">{{ copy.existing_label }}</Label>
+                <OnboardingFieldLabel
+                    html-for="project_id"
+                    :icon="FolderKanban"
+                >
+                    {{ copy.existing_label }}
+                </OnboardingFieldLabel>
                 <Select v-model="selectedId" :disabled="processing">
                     <SelectTrigger
                         id="project_id"
                         :aria-invalid="Boolean(errors.project_id)"
-                        ><SelectValue
-                    /></SelectTrigger>
-                    <SelectContent
-                        ><SelectItem
+                    >
+                        <OnboardingIcon>
+                            <ProjectIcon :value="selected?.icon" />
+                        </OnboardingIcon>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
                             v-for="project in projects"
                             :key="project.id"
                             :value="project.id"
-                            >{{ project.name }}</SelectItem
-                        ></SelectContent
-                    >
+                        >
+                            <OnboardingIcon>
+                                <ProjectIcon :value="project.icon" />
+                            </OnboardingIcon>
+                            {{ project.name }}
+                        </SelectItem>
+                    </SelectContent>
                 </Select>
                 <InputError :message="errors.project_id" />
             </div>
@@ -159,7 +195,9 @@ const icon = computed({
         >
             <div class="space-y-4">
                 <div class="space-y-2">
-                    <Label for="name">{{ copy.name }}</Label>
+                    <OnboardingFieldLabel html-for="name" :icon="FolderKanban">
+                        {{ copy.name }}
+                    </OnboardingFieldLabel>
                     <Input
                         id="name"
                         v-model="name"
@@ -170,7 +208,12 @@ const icon = computed({
                     <InputError :message="errors.name" />
                 </div>
                 <div class="space-y-2">
-                    <Label for="description">{{ copy.details }}</Label>
+                    <OnboardingFieldLabel
+                        html-for="description"
+                        :icon="AlignLeft"
+                    >
+                        {{ copy.details }}
+                    </OnboardingFieldLabel>
                     <textarea
                         id="description"
                         v-model="description"
@@ -183,7 +226,9 @@ const icon = computed({
                     <InputError :message="errors.description" />
                 </div>
                 <div class="space-y-2">
-                    <Label for="color">{{ copy.color }}</Label>
+                    <OnboardingFieldLabel html-for="color" :icon="Palette">
+                        {{ copy.color }}
+                    </OnboardingFieldLabel>
                     <ColorPickerField
                         id="color"
                         v-model="color"
@@ -193,9 +238,9 @@ const icon = computed({
                     <InputError :message="errors.color" />
                 </div>
                 <fieldset class="space-y-2">
-                    <legend class="text-base font-medium">
+                    <OnboardingFieldLabel as="legend" :icon="Shapes">
                         {{ copy.icon }}
-                    </legend>
+                    </OnboardingFieldLabel>
                     <ProjectIconPicker
                         v-model="icon"
                         :label="copy.icon"
@@ -241,10 +286,19 @@ const icon = computed({
             v-else
             class="rounded-2xl border border-dashed border-border p-6 text-center"
         >
-            <h2 class="font-semibold">{{ copy.empty_title }}</h2>
-            <p class="mt-2 text-base leading-7 text-muted-foreground">
-                {{ copy.empty_description }}
-            </p>
+            <LeadingIconHeading
+                tile
+                tile-tone="muted"
+                class="mx-auto max-w-md text-left"
+            >
+                <template #icon>
+                    <PackageOpen />
+                </template>
+                <h2 class="font-semibold">{{ copy.empty_title }}</h2>
+                <p class="text-base leading-7 text-muted-foreground">
+                    {{ copy.empty_description }}
+                </p>
+            </LeadingIconHeading>
         </div>
     </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+    ArrowRight,
     Check,
     FolderKanban,
     ListChecks,
@@ -16,6 +17,7 @@ import type {
 } from '@/components/onboarding/onboarding-types';
 import { onboardingPluralForm } from '@/components/onboarding/onboarding-types';
 import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { resolveIntlLocale } from '@/lib/formatters';
 
 const props = defineProps<{
@@ -103,10 +105,19 @@ const countMessage = computed(() => {
         <aside
             class="rounded-2xl border border-status-information-border bg-status-information-surface p-5 text-status-information-text"
         >
-            <h2 class="font-semibold">{{ copy.next_title }}</h2>
-            <p class="mt-2 text-base leading-7">
-                {{ copy.next_description }}
-            </p>
+            <LeadingIconHeading
+                tile
+                tile-tone="information"
+                content-class="gap-2"
+            >
+                <template #icon>
+                    <ArrowRight />
+                </template>
+                <h2 class="font-semibold">{{ copy.next_title }}</h2>
+                <p class="text-base leading-7">
+                    {{ copy.next_description }}
+                </p>
+            </LeadingIconHeading>
         </aside>
     </div>
 </template>

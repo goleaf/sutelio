@@ -80,10 +80,14 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 
 The final integrated responsive build transforms 3,597 modules. Main application CSS is 184.85 kB (26.85 kB gzip), and the application entry is 137.73 kB (33.83 kB gzip). The CSS remains below the 50 kB gzip budget; the delta from the 150.72 kB / 22.43 kB responsive preflight includes the concurrent motion, component-constructor, timezone, onboarding, workspace-management, and semantic-status work as well as the responsive program, so it is not attributed to responsive CSS alone.
 
+The current onboarding-icon build transforms 3,714 modules. Main application CSS is 191.68 kB (27.54 kB gzip), and the application entry is 131.70 kB (31.62 kB gzip); the CSS remains below the 50 kB gzip budget.
+
 ## Soft Motion And Icon Ownership
 
 Signal Orange identifies primary action, completion, and the Sutelio mark. Cobalt identifies structure, navigation, information, and neutral product context. Status colors remain semantic and never replace text or icon meaning. User-configurable task-definition colors may decorate a badge border but never own its text foreground, because arbitrary entity colors cannot guarantee readable contrast. The product remains fixed light-only even when the operating system requests dark appearance.
 
 `IconTile` owns the shared compact icon surface and its semantic tone/size map. `LeadingIconHeading` composes a tile with section copy, while `WorkspacePageHeader` owns the primary page title and its cobalt structural tile. Feature components select a semantic icon and tone; they do not reproduce tile geometry or raw brand colors.
+
+Mandatory onboarding additionally owns a typed step-icon registry and the compact `OnboardingIcon`/`OnboardingFieldLabel` pair. Every step identity, field label, selector trigger and option, action, validation state, and standalone notice carries a meaningful Lucide or established domain icon beside complete localized text. Icons reinforce rather than replace names, selected/check state, validation copy, or color-independent meaning; decorative instances remain `aria-hidden`.
 
 Motion is high-coverage and low-amplitude. `ui-reveal` is reserved for newly presented content, `ui-lift` for fine-pointer interactive surfaces, `ui-status-pop` for one-shot success/status feedback, `ui-icon-response` for local control response, and `ui-stagger` only for bounded initial collections. Static route content and infinite/refetched feeds do not replay entrance animation. No first-party motion loops indefinitely. Reduced-motion collapses these effects without removing state, and forced-colors keeps borders, focus, and non-color meaning available.

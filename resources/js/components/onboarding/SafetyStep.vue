@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DatabaseBackup, ShieldCheck, UsersRound } from '@lucide/vue';
+import { DatabaseBackup, Info, ShieldCheck, UsersRound } from '@lucide/vue';
 import type { OnboardingCopy } from '@/components/onboarding/onboarding-types';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 
@@ -41,10 +41,18 @@ const topics = [
                 </LeadingIconHeading>
             </article>
         </div>
-        <p
-            class="rounded-2xl border border-status-information-border bg-status-information-surface p-4 text-base leading-7 text-status-information-text"
+        <LeadingIconHeading
+            tile
+            tile-tone="information"
+            tile-size="sm"
+            class="rounded-2xl border border-status-information-border bg-status-information-surface p-4 text-status-information-text"
         >
-            {{ canManageWorkspace ? copy.manager_note : copy.member_note }}
-        </p>
+            <template #icon>
+                <Info />
+            </template>
+            <p class="text-base leading-7">
+                {{ canManageWorkspace ? copy.manager_note : copy.member_note }}
+            </p>
+        </LeadingIconHeading>
     </div>
 </template>

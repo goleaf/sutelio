@@ -10,6 +10,7 @@ import {
     task as saveTask,
     workspace as saveWorkspace,
 } from '@/actions/App/Http/Controllers/OnboardingController';
+import { resolveOnboardingStepIcon } from '@/components/onboarding/onboarding-icons';
 import type {
     OnboardingCopy,
     OnboardingMode,
@@ -74,6 +75,9 @@ const form = useForm({
 
 const activeStep = computed(() => props.progress.step);
 const activeCopy = computed(() => props.copy.steps[activeStep.value]);
+const activeStepIcon = computed(() =>
+    resolveOnboardingStepIcon(activeStep.value),
+);
 const primaryLabel = computed(() =>
     activeStep.value === 'results'
         ? props.copy.actions.finish
@@ -376,6 +380,7 @@ function exitReplay(): void {
                 @exit-replay="exitReplay"
             >
                 <OnboardingStepPanel
+                    :icon="activeStepIcon"
                     :eyebrow="copy.meta.eyebrow"
                     :title="activeCopy.title"
                     :description="activeCopy.description"
