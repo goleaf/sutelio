@@ -47,6 +47,12 @@ Requirements: `sys-onboarding-001`, `sys-project-001`, `ui-accessibility-001`, `
 
 One typed eight-option Lucide registry and `ProjectIconPicker` replace onboarding's free-text project-symbol input and the former local project-creation option array. The selected EN/LT/RU-labelled icon is visible beside each option and follows the project through onboarding previews, project collection cards, and the project detail header; unknown legacy/API/import strings resolve to a safe folder without changing the persisted or external contract. Focused Pest/frontend coverage and isolated Chrome DevTools/Playwright phone/tablet/desktop interaction checks form the regression boundary; this UI-only slice adds no dependency, query, route, request, schema, migration, configured database write, or mobile artifact.
 
+## Completed Shared Package-Based Date Picker
+
+Requirements: `sys-task-002`, `sys-task-008`, `ui-accessibility-001`, `ui-responsive-001`, `ui-system-001`, `i18n-001`, and `i18n-format-001`.
+
+One shared `DatePickerField` built from Reka UI and the direct `@internationalized/date` dependency replaces every native browser date and date/time input across onboarding task creation, ordinary task creation, task overview editing, and reminder scheduling. It preserves `YYYY-MM-DD` and minute-precision `YYYY-MM-DDTHH:mm` contracts, EN/LT/RU field/calendar formatting, user week-start and time-cycle preferences, keyboard/touch behavior, 44/48 px targets, nested-dialog portal containment, reduced-motion/forced-colors styling, and bounded phone/tablet popovers. `FrontendDatePickerTest.php`, frontend value-adapter tests, and independent Chrome DevTools/Playwright checks are the durable regression boundary; the existing month/week/agenda planning page remains its own complete calendar and no route, request, query, schema, migration, configured application data, or mobile artifact changes.
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.

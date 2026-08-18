@@ -10,8 +10,8 @@ import TaskDescriptionField from '@/components/task/TaskDescriptionField.vue';
 import TaskTitleField from '@/components/task/TaskTitleField.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DatePickerField } from '@/components/ui/date-picker';
 import { Dialog } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
     Select,
@@ -177,13 +177,13 @@ async function submit(): Promise<void> {
                             <Label for="due_date">{{
                                 t('tasks.create.due_date')
                             }}</Label>
-                            <Input
+                            <DatePickerField
                                 id="due_date"
                                 v-model="form.due_date"
-                                type="date"
+                                :label="t('tasks.create.due_date')"
                                 :disabled="form.processing"
-                                :aria-invalid="Boolean(form.errors.due_date)"
-                                :aria-describedby="
+                                :invalid="Boolean(form.errors.due_date)"
+                                :described-by="
                                     form.errors.due_date
                                         ? 'due-date-error'
                                         : undefined

@@ -25,3 +25,7 @@ All user-editable colors must compose resources/js/components/ui/color-picker/Co
 ## Localize typed client errors and accessible names
 
 Never render third-party or browser error.message strings directly. Map stable typed errors to semantic EN/LT/RU catalog keys and use a localized safe fallback for unknown failures. Bind translated accessible names explicitly when a component library derives aria-label from DOM text, because that derived value may not react to Inertia locale changes.
+
+## Use the shared localized date picker
+
+Every first-party date or date-time entry must compose ui/date-picker/DatePickerField; do not add native date, datetime-local, month, or week inputs. Preserve YYYY-MM-DD for day values and YYYY-MM-DDTHH:mm for minute values, honor locale/week start, portal inside the nearest dialog, and give every calendar control type="button" so it cannot submit a surrounding form.

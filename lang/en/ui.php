@@ -85,6 +85,15 @@ return [
         'preset' => 'Choose preset color :color',
         'presets' => 'Suggested colors',
     ],
+    'date_picker' => [
+        'calendar_label' => 'Choose a date',
+        'clear' => 'Clear date',
+        'done' => 'Done',
+        'next_month' => 'Next month',
+        'open' => 'Open calendar',
+        'previous_month' => 'Previous month',
+        'today' => 'Today',
+    ],
     'timezones' => [
         'detected' => 'Detected from this device: :timezone',
         'empty' => 'No timezone matches your search.',
@@ -634,9 +643,11 @@ return [
             'page_description' => 'Review the task, collaboration, schedule, and files.',
             'recurrence' => 'Recurrence',
             'recurring' => 'Recurring',
+            'remind_at' => 'Reminder date and time',
             'reminder_created' => 'Reminder scheduled',
             'reminder_delivery_note' => 'Pending reminders can be cancelled. Delivery retries are bounded and failed attempts remain visible.',
             'reminder_sent' => 'Sent',
+            'reminder_type' => 'Delivery channel',
             'reminder_statuses' => [
                 'cancelled' => 'Cancelled',
                 'delivered' => 'Delivered',

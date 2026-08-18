@@ -819,6 +819,7 @@ test('project creation selectors expose warm precision interaction states', func
 
 test('task creation fields expose complete invalid and disabled states', function () {
     $dialog = File::get(resource_path('js/components/task/TaskCreateDialog.vue'));
+    $datePicker = File::get(resource_path('js/components/ui/date-picker/DatePickerField.vue'));
     $descriptionField = File::get(resource_path('js/components/task/TaskDescriptionField.vue'));
 
     expect($dialog)
@@ -826,13 +827,16 @@ test('task creation fields expose complete invalid and disabled states', functio
         ->toContain(':error="form.errors.description"')
         ->toContain(':disabled="form.processing"')
         ->toContain('Boolean(form.errors.priority)')
-        ->toContain(':aria-invalid="Boolean(form.errors.due_date)"')
+        ->toContain(':invalid="Boolean(form.errors.due_date)"')
         ->toContain('form.errors.recurring_rule')
         ->toContain(':disabled="!form.is_recurring || form.processing"')
         ->toContain('<InputError :message="form.errors.priority" />')
         ->toContain('id="due-date-error"')
         ->toContain(':message="form.errors.due_date"')
         ->toContain('<InputError :message="form.errors.recurring_rule" />')
+        ->and($datePicker)
+        ->toContain(':aria-invalid="invalid"')
+        ->toContain(':disabled="disabled"')
         ->and($descriptionField)
         ->toContain(':aria-describedby="describedBy"')
         ->toContain(':aria-invalid="invalid"')

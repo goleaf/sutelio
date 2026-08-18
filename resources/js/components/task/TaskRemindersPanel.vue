@@ -7,7 +7,8 @@ import InlineState from '@/components/shared/InlineState.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { DatePickerField } from '@/components/ui/date-picker';
+import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -98,35 +99,55 @@ async function deleteReminder(reminder: Reminder): Promise<void> {
         </LeadingIconHeading>
 
         <form
-            class="mt-4 grid gap-2 sm:grid-cols-[minmax(0,1fr)_10rem_auto]"
+            class="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,0.55fr)_auto] sm:items-end"
             @submit.prevent="createReminder"
         >
-            <Input
-                v-model="reminderRequest.reminded_at"
-                type="datetime-local"
-                :disabled="reminderRequest.processing"
-                :aria-invalid="Boolean(reminderRequest.errors.reminded_at)"
-            />
-            <Select
-                v-model="reminderRequest.type"
-                :disabled="reminderRequest.processing"
-            >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="in_app">{{
-                        t('tasks.detail.reminder_types.in_app')
-                    }}</SelectItem>
-                    <SelectItem value="email">{{
-                        t('tasks.detail.reminder_types.email')
-                    }}</SelectItem>
-                    <SelectItem value="browser">{{
-                        t('tasks.detail.reminder_types.browser')
-                    }}</SelectItem>
-                </SelectContent>
-            </Select>
+            <div class="space-y-2">
+                <Label for="task-reminder-date-time">{{
+                    t('tasks.detail.remind_at')
+                }}</Label>
+                <DatePickerField
+                    id="task-reminder-date-time"
+                    v-model="reminderRequest.reminded_at"
+                    :label="t('tasks.detail.remind_at')"
+                    granularity="minute"
+                    :disabled="reminderRequest.processing"
+                    :invalid="Boolean(reminderRequest.errors.reminded_at)"
+                    :described-by="
+                        reminderRequest.errors.reminded_at
+                            ? 'task-reminder-error'
+                            : undefined
+                    "
+                />
+            </div>
+            <div class="space-y-2">
+                <Label for="task-reminder-type">{{
+                    t('tasks.detail.reminder_type')
+                }}</Label>
+                <Select
+                    v-model="reminderRequest.type"
+                    :disabled="reminderRequest.processing"
+                >
+                    <SelectTrigger id="task-reminder-type" class="w-full">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="in_app">{{
+                            t('tasks.detail.reminder_types.in_app')
+                        }}</SelectItem>
+                        <SelectItem value="email">{{
+                            t('tasks.detail.reminder_types.email')
+                        }}</SelectItem>
+                        <SelectItem value="browser">{{
+                            t('tasks.detail.reminder_types.browser')
+                        }}</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
             <Button
                 type="submit"
                 variant="outline"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :disabled="
                     reminderRequest.processing || !reminderRequest.reminded_at
                 "
@@ -136,6 +157,7 @@ async function deleteReminder(reminder: Reminder): Promise<void> {
             </Button>
         </form>
         <InputError
+            id="task-reminder-error"
             class="mt-2"
             :message="
                 reminderRequest.errors.reminded_at ??

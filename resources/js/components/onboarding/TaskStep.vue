@@ -11,6 +11,7 @@ import type {
 } from '@/components/onboarding/onboarding-types';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import { Button } from '@/components/ui/button';
+import { DatePickerField } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -265,12 +266,12 @@ const dueDate = computed({
                     </div>
                     <div class="space-y-2">
                         <Label for="due_date">{{ copy.due_date }}</Label>
-                        <Input
+                        <DatePickerField
                             id="due_date"
                             v-model="dueDate"
-                            type="date"
+                            :label="copy.due_date"
                             :disabled="processing"
-                            :aria-invalid="Boolean(errors.due_date)"
+                            :invalid="Boolean(errors.due_date)"
                         />
                         <InputError :message="errors.due_date" />
                     </div>

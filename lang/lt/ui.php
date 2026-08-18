@@ -85,6 +85,15 @@ return [
         'preset' => 'Pasirinkti siūlomą spalvą :color',
         'presets' => 'Siūlomos spalvos',
     ],
+    'date_picker' => [
+        'calendar_label' => 'Pasirinkite datą',
+        'clear' => 'Išvalyti datą',
+        'done' => 'Atlikta',
+        'next_month' => 'Kitas mėnuo',
+        'open' => 'Atverti kalendorių',
+        'previous_month' => 'Ankstesnis mėnuo',
+        'today' => 'Šiandien',
+    ],
     'timezones' => [
         'detected' => 'Aptikta šiame įrenginyje: :timezone',
         'empty' => 'Pagal paiešką laiko juostų nerasta.',
@@ -634,9 +643,11 @@ return [
             'page_description' => 'Peržiūrėkite užduotį, bendradarbiavimą, tvarkaraštį ir failus.',
             'recurrence' => 'Kartojimas',
             'recurring' => 'Pasikartojanti',
+            'remind_at' => 'Priminimo data ir laikas',
             'reminder_created' => 'Priminimas suplanuotas',
             'reminder_delivery_note' => 'Laukiančius priminimus galima atšaukti. Pakartojimų skaičius ribotas, o nesėkmingi bandymai lieka matomi.',
             'reminder_sent' => 'Išsiųstas',
+            'reminder_type' => 'Pristatymo kanalas',
             'reminder_statuses' => [
                 'cancelled' => 'Atšauktas',
                 'delivered' => 'Pristatytas',
