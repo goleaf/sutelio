@@ -17,7 +17,7 @@ const props = defineProps<{
 <template>
     <div
         data-slot="leading-icon-heading"
-        :class="cn('flex min-w-0 flex-nowrap items-start gap-3', props.class)"
+        :class="cn('flex min-w-0 flex-nowrap items-center gap-3', props.class)"
     >
         <IconTile
             v-if="props.tile"

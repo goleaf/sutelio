@@ -9,7 +9,7 @@ import type {
     OnboardingPreferences,
 } from '@/components/onboarding/onboarding-types';
 import TimezoneCombobox from '@/components/preferences/TimezoneCombobox.vue';
-import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 import StatusNotice from '@/components/shared/StatusNotice.vue';
 import { Label } from '@/components/ui/label';
 import {
@@ -271,13 +271,15 @@ const timeFormats: OnboardingPreferences['time_format'][] = ['H:i', 'h:i A'];
         <aside
             class="rounded-2xl border border-orange-500/15 bg-orange-500/[0.055] p-5"
         >
-            <IconTile tone="brand">
-                <Clock3 />
-            </IconTile>
-            <h2 class="mt-4 font-semibold">{{ copy.preview_title }}</h2>
-            <p class="mt-1 text-base leading-7 text-muted-foreground">
-                {{ copy.preview_description }}
-            </p>
+            <LeadingIconHeading tile tile-tone="brand" content-class="gap-1">
+                <template #icon>
+                    <Clock3 />
+                </template>
+                <h2 class="font-semibold">{{ copy.preview_title }}</h2>
+                <p class="text-base leading-7 text-muted-foreground">
+                    {{ copy.preview_description }}
+                </p>
+            </LeadingIconHeading>
             <p
                 class="mt-5 text-xl font-semibold tracking-tight break-words tabular-nums"
             >

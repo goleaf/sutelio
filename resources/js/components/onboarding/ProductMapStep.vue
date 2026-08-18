@@ -8,7 +8,7 @@ import {
     ListChecks,
 } from '@lucide/vue';
 import type { OnboardingCopy } from '@/components/onboarding/onboarding-types';
-import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 
 defineProps<{ copy: OnboardingCopy['product_map'] }>();
 
@@ -45,19 +45,19 @@ const destinations = [
         <article
             v-for="destination in destinations"
             :key="destination.key"
-            class="flex gap-4 rounded-2xl border border-border/80 bg-muted/20 p-4"
+            class="rounded-2xl border border-border/80 bg-muted/20 p-4"
         >
-            <IconTile tone="cobalt" size="sm">
-                <component :is="destination.icon" />
-            </IconTile>
-            <div class="min-w-0">
+            <LeadingIconHeading tile tile-tone="cobalt" tile-size="sm">
+                <template #icon>
+                    <component :is="destination.icon" />
+                </template>
                 <h2 class="font-semibold">
                     {{ copy[`${destination.key}_title`] }}
                 </h2>
-                <p class="mt-1 text-base leading-7 text-muted-foreground">
+                <p class="text-base leading-7 text-muted-foreground">
                     {{ copy[`${destination.key}_description`] }}
                 </p>
-            </div>
+            </LeadingIconHeading>
         </article>
     </div>
 </template>

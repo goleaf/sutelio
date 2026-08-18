@@ -41,18 +41,33 @@ dataset('workspace page frame consumers', [
     'settings layout' => 'layouts/settings/Layout.vue',
 ]);
 
-test('leading icon headings keep the icon top aligned beside a wrapping text stack', function () {
+test('leading icon headings vertically center the icon beside the complete wrapping text stack', function () {
     expect(File::get(resource_path('js/components/shared/LeadingIconHeading.vue')))
         ->toContain('data-slot="leading-icon-heading"')
         ->toContain('flex-nowrap')
-        ->toContain('items-start')
+        ->toContain('items-center')
         ->toContain('data-slot="leading-icon-heading-icon"')
         ->toContain('shrink-0')
         ->toContain('data-slot="leading-icon-heading-content"')
         ->toContain('min-w-0 flex-1')
-        ->not->toContain('items-center')
+        ->not->toContain('items-start')
         ->not->toContain('whitespace-nowrap');
 });
+
+test('onboarding narrative icon and text cards compose the shared centered alignment contract', function (string $file, int $expectedCount) {
+    $source = File::get(resource_path("js/components/onboarding/{$file}"));
+
+    expect($source)
+        ->toContain("import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue'")
+        ->not->toContain("import IconTile from '@/components/shared/IconTile.vue'")
+        ->and(substr_count($source, '<LeadingIconHeading'))
+        ->toBe($expectedCount);
+})->with([
+    'welcome benefits' => ['WelcomeStep.vue', 1],
+    'product map destinations' => ['ProductMapStep.vue', 1],
+    'safety topics' => ['SafetyStep.vue', 1],
+    'preference preview' => ['PreferencesStep.vue', 1],
+]);
 
 test('every audited icon title and subtitle cluster uses the shared alignment contract', function (string $file, int $expectedCount) {
     $source = File::get(resource_path("js/{$file}"));

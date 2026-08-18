@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DatabaseBackup, ShieldCheck, UsersRound } from '@lucide/vue';
 import type { OnboardingCopy } from '@/components/onboarding/onboarding-types';
-import IconTile from '@/components/shared/IconTile.vue';
+import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
 
 defineProps<{
     copy: OnboardingCopy['safety'];
@@ -23,15 +23,22 @@ const topics = [
                 :key="topic.key"
                 class="rounded-2xl border border-border/80 bg-muted/20 p-4"
             >
-                <IconTile :tone="topic.tone" size="sm">
-                    <component :is="topic.icon" />
-                </IconTile>
-                <h2 class="mt-4 font-semibold">
-                    {{ copy[`${topic.key}_title`] }}
-                </h2>
-                <p class="mt-2 text-base leading-7 text-muted-foreground">
-                    {{ copy[`${topic.key}_description`] }}
-                </p>
+                <LeadingIconHeading
+                    tile
+                    :tile-tone="topic.tone"
+                    tile-size="sm"
+                    content-class="gap-2"
+                >
+                    <template #icon>
+                        <component :is="topic.icon" />
+                    </template>
+                    <h2 class="font-semibold">
+                        {{ copy[`${topic.key}_title`] }}
+                    </h2>
+                    <p class="text-base leading-7 text-muted-foreground">
+                        {{ copy[`${topic.key}_description`] }}
+                    </p>
+                </LeadingIconHeading>
             </article>
         </div>
         <p

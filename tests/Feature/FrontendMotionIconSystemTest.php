@@ -288,7 +288,7 @@ test('authentication and language entry use bounded shared icon motion', functio
     expect($languageDialog)->not->toContain('motion-safe:animate-pulse');
 });
 
-test('onboarding composes shared icon tiles and bounded step motion', function () {
+test('onboarding composes shared centered icon headings and bounded step motion', function () {
     $onboarding = File::get(resource_path('js/pages/onboarding/Index.vue'));
     $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
     $welcome = File::get(resource_path('js/components/onboarding/WelcomeStep.vue'));
@@ -298,7 +298,7 @@ test('onboarding composes shared icon tiles and bounded step motion', function (
 
     expect($onboarding)->toContain('<Transition name="ui-step" mode="out-in">');
     expect($shell)->toContain('IconTile');
-    expect($welcome)->toContain('IconTile')->not->toContain('ui-stagger');
+    expect($welcome)->toContain('LeadingIconHeading')->not->toContain('ui-stagger');
     expect($workspace)->toContain('tile-tone="brand"');
     expect($project)->toContain('tile-tone="brand"');
     expect($task)->toContain('tile-tone="brand"');
@@ -310,9 +310,9 @@ test('onboarding results and safety states use one shot shared motion', function
     $safety = File::get(resource_path('js/components/onboarding/SafetyStep.vue'));
     $results = File::get(resource_path('js/components/onboarding/ResultsStep.vue'));
 
-    expect($preferences)->toContain('IconTile');
-    expect($productMap)->toContain('IconTile')->not->toContain('ui-stagger');
-    expect($safety)->toContain('IconTile')->not->toContain('ui-stagger');
+    expect($preferences)->toContain('LeadingIconHeading');
+    expect($productMap)->toContain('LeadingIconHeading')->not->toContain('ui-stagger');
+    expect($safety)->toContain('LeadingIconHeading')->not->toContain('ui-stagger');
     expect($results)->toContain('IconTile', 'ui-status-pop')->not->toContain('ui-stagger');
 });
 
