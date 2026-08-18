@@ -120,6 +120,8 @@ test('the NativePHP v4 mobile configuration contract is complete', function () {
 
     expect(config('nativephp.deeplink_scheme'))->toBe('sutelio')
         ->and(config('nativephp.deeplink_host'))->toBeNull()
+        ->and(config('nativephp.appearance'))->toBe('light')
+        ->and(config('nativephp.fps_overlay'))->toBeFalse()
         ->and(config('nativephp.permissions'))->toBe([])
         ->and(config('nativephp.permission_localizations'))->toBe([])
         ->and(config('nativephp.runtime'))->toBe([
@@ -179,6 +181,8 @@ test('the NativePHP v4 mobile configuration contract is complete', function () {
         ->and($environmentExample)->toContain(
             'NATIVEPHP_DEEPLINK_SCHEME=sutelio',
             'NATIVEPHP_DEEPLINK_HOST=',
+            'NATIVEPHP_APPEARANCE=light',
+            'NATIVEPHP_FPS_OVERLAY=false',
             'NATIVEPHP_DEVELOPMENT_TEAM=',
             'NATIVEPHP_ANDROID_STATUS_BAR_STYLE=auto',
             'NATIVEPHP_HTTP_PORT=3000',

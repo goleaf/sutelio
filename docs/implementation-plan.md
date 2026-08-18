@@ -6,7 +6,7 @@ This is the living plan as of 2026-08-18. Source code, migrations, routes, tests
 
 The application modernization, integrated UI/UX program, EN/LT/RU browser matrix, complete repository quality gates, Android APK/emulator delivery, in-place GitHub/Herd rename, Android 10 compatibility correction, and physical Samsung Task 22 verification are complete.
 
-The final verified debug artifact is `storage/app/native-build/sutelio-android-debug.apk` at SHA-256 `e827ee3eed48f44151494be5541b6e93ec9a5e3983f57d9f0f868ed29f9b4408`. It was installed successfully as `com.goleaf.sutelio` on the explicitly resolved Samsung SM-A920F running Android 10 / API 29. Russian locale persistence, resumed activity state, SQLite integrity, foreign keys, all 38 migrations, and process-scoped fatal/ANR/sensitive-log checks passed.
+The current NativePHP 4.2 refresh artifact is `storage/app/native-build/sutelio-android-debug.apk` at SHA-256 `b962f09d8d5a430664891e16e14c07c9864269960b9d7d1aff535738bae81231`. Its package, SDK, signature, alignment, bundle-exclusion, cold-launch, process-log, SQLite integrity, foreign-key, and 38-migration gates pass on the isolated Android 14 emulator. Installation on the explicitly resolved Samsung SM-A920F running Android 10 / API 29 remains the final delivery step after the tracked upgrade commit reaches `origin/main`; the previously verified APK remains installed until then.
 
 Completed execution-plan files are removed after their durable decisions and verification evidence are represented by canonical documentation and the append-only progress journal. Git history remains the recovery source for those deleted plans.
 

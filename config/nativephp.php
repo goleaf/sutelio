@@ -82,6 +82,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Appearance
+    |--------------------------------------------------------------------------
+    |
+    | Sutelio uses one fixed light color mode across web and native shells.
+    | On iOS this is written to Info.plist as UIUserInterfaceStyle.
+    |
+    */
+
+    'appearance' => env('NATIVEPHP_APPEARANCE', 'light'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Development Team (iOS)
     |--------------------------------------------------------------------------
     |
@@ -245,6 +257,18 @@ return [
         'reset_instances' => true,
         'gc_between_dispatches' => false,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | FPS Overlay
+    |--------------------------------------------------------------------------
+    |
+    | Enable the development-only frame performance overlay explicitly when
+    | profiling. It remains disabled for regular and production builds.
+    |
+    */
+
+    'fps_overlay' => env('NATIVEPHP_FPS_OVERLAY', false),
 
     'android' => [
         'compile_sdk' => (int) env('NATIVEPHP_ANDROID_COMPILE_SDK', 36),

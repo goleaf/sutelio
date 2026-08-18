@@ -4,6 +4,8 @@
 
 Laravel owns routing, Fortify/Sanctum authentication, authorization, validation, transactions, persistence, scheduling, files, notifications, versioned JSON, and Inertia page responses. Vue 3 pages use `<script setup lang="ts">`, the Composition API, typed Inertia props, Pinia only for genuine shared state, Wayfinder-generated routes/actions, Reka-based components, and Tailwind CSS 4. SQLite is the sole relational database. NativePHP packages the same Laravel application for mobile with its embedded runtime.
 
+NativePHP Mobile 4.2 continues to host the existing Inertia/Vue application in its supported WebView architecture; the optional beta SuperNative renderer is not a second application architecture. Both generated platform shells are ephemeral and rebuilt with `native:install --force`, after which the deterministic project command reapplies Sutelio identity, assets, and Android log/bundle hardening. Native appearance is fixed to light and the v4 FPS overlay is opt-in only.
+
 ## Product And Package Identity
 
 Sutelio is the single active product identity. Deterministic tracked brand inputs generate the stripe-free clean-S browser mark, one-color wordmark, raster icons, Android adaptive/monochrome resources, and native splash imagery. Android's external `applicationId` and the primary iOS bundle identifier are `com.goleaf.sutelio`; the custom deep-link scheme is `sutelio`.

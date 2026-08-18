@@ -14,9 +14,10 @@ All notable project changes are documented here.
 
 ### Runtime And Dependencies
 
+- Re-ran the complete NativePHP Mobile 4 upgrade procedure against the latest stable `4.2.0` package: refreshed Composer resolution, force-regenerated both ignored platform shells, reapplied deterministic Sutelio branding and Android log/bundle hardening, and rebuilt the Android artifact with embedded PHP 8.5.9. The tracked mobile configuration now fixes native appearance to the product's single light mode and keeps the v4 FPS overlay disabled unless explicitly enabled.
 - Lowered the supported Android floor from API 31 to NativePHP's API 29 baseline so the debug application can run on Android 10 while retaining compile/target SDK 36, ARM64 packaging, and the existing Sutelio package identity.
 - Installed and launched the exact verified API 29 debug APK on a Samsung SM-A920F running Android 10; Russian locale persistence, resumed activity state, SQLite integrity/foreign keys/38 migrations, and process-scoped fatal/ANR/sensitive-log checks passed.
-- Moved the Herd web/development runtime and CI to PHP 8.5 while retaining `>=8.4 <8.6` compatibility for NativePHP Mobile 4.2's embedded PHP 8.4 runtime.
+- Moved the Herd web/development runtime and CI to PHP 8.5 while retaining `>=8.4 <8.6` compatibility because NativePHP Mobile 4.2's generated runtime is PHP 8.5.9 while its official support documentation still describes PHP 8.4.
 - Updated Laravel to 13.25, Inertia Laravel to 3.3.1, Fortify to 1.38, Sanctum to 4.3.3, Wayfinder to 0.1.21, Boost to 2.5.3, Pest to 5.1.1/PHPUnit 13.3, NativePHP Mobile to 4.2, Vite to 8.2.1, Laravel Vite plugin to 3.2, Vue to 3.5.41, and compatible frontend tooling.
 - Re-ran complete stable dependency resolution on 2026-08-16 and upgraded PHPStan from 2.2.5 to 2.2.8. Every direct Composer and npm package remains at its latest mutually compatible release; newer Guzzle, Workerman, Brick Math, PHPUnit, TypeScript, and Node-type majors remain behind explicit upstream framework/runtime peer constraints rather than unsafe overrides.
 - Re-ran complete stable dependency resolution on 2026-08-17, upgraded `laravel/mcp` to 0.9.4 and transitive `es-toolkit` to 1.51.0, and refreshed the tracked NativePHP embedded runtime from PHP 8.4.24 to 8.5.9. Composer and npm audits remain clean, and no compatible direct dependency update remains.

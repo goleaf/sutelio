@@ -12,7 +12,7 @@ Only external/environmental blockers and explicitly accepted platform data bound
 ## NativePHP Runtime Documentation Drift
 
 - Affected requirement: `sys-runtime-001`.
-- Evidence: NativePHP Mobile v4 official documentation still states that its mobile bundle uses PHP 8.4, while `native:install` on 2026-08-17 produced a tracked PHP 8.5.9 runtime and the resulting Android APK booted successfully on that engine.
+- Evidence: NativePHP Mobile v4 official documentation still states that its mobile bundle uses PHP 8.4, while the complete `native:install --force` refresh on 2026-08-18 produced the tracked PHP 8.5.9 runtime and the resulting Android APK booted successfully on that engine.
 - Impact: the current web and generated mobile runtimes are both PHP 8.5, but the project keeps the conservative `>=8.4 <8.6` Composer envelope rather than treating undocumented runtime behavior as a PHP 8.5-only support guarantee.
 - Resolution trigger: after NativePHP's official documentation/package constraints consistently declare PHP 8.5 and a fresh web/mobile verification passes, reconsider the Composer floor and PHP 8.5-only syntax.
 
