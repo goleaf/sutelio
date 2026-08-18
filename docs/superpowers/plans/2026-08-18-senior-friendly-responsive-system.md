@@ -329,7 +329,7 @@ Require accessible member/invitation controls, wrap-safe roles/names/emails, 48/
 
 Reuse `WorkspaceDialogContent`, `WorkspaceConfirmDialog`, `ResponsiveSectionNavigation`, Field, StatusNotice, and current policies/actions. No inline request, query, authorization, or business logic moves into Vue.
 
-- [ ] **Step 3: Verify and deliver**
+- [x] **Step 3: Verify and deliver**
 
 Run focused workspace/settings/security tests, query budgets, frontend/browser gates, then commit `feat(ui): adapt workspace and settings management` and push normally.
 
