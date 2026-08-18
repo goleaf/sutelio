@@ -214,17 +214,6 @@ return [
             'title' => 'Dviejų veiksnių autentifikavimas',
         ],
     ],
-    'commands' => [
-        'account' => 'Paskyra',
-        'empty' => 'Komandų nerasta',
-        'go_dashboard' => 'Eiti į apžvalgą',
-        'go_projects' => 'Eiti į projektus',
-        'go_settings' => 'Eiti į nustatymus',
-        'go_tasks' => 'Eiti į užduotis',
-        'logout' => 'Atsijungti',
-        'navigation' => 'Navigacija',
-        'placeholder' => 'Įveskite komandą...',
-    ],
     'dashboard' => [
         'completed_today' => 'Atlikta šiandien',
         'created' => 'Sukurta',

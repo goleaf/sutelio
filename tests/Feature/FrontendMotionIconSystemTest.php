@@ -34,7 +34,6 @@ dataset('measured layout transition exceptions', [
 ]);
 
 dataset('accessible icon only controls', [
-    'sidebar search' => ['components/AppSidebarHeader.vue', 'aria-label'],
     'timezone selector' => ['components/preferences/TimezoneCombobox.vue', ':aria-label'],
     'workspace dialog close' => ['components/shared/WorkspaceDialogContent.vue', 'sr-only'],
     'dialog close' => ['components/ui/dialog/DialogContent.vue', 'sr-only'],
@@ -422,7 +421,6 @@ test('navigation shells and empty states expose accessible shared interactions',
     $userNavigation = File::get(resource_path('js/components/NavUser.vue'));
     $userMenu = File::get(resource_path('js/components/UserMenuContent.vue'));
     $breadcrumbs = File::get(resource_path('js/components/Breadcrumbs.vue'));
-    $palette = File::get(resource_path('js/components/shared/CommandPalette.vue'));
     $sidebarHeader = File::get(resource_path('js/components/AppSidebarHeader.vue'));
     $sidebarLayout = File::get(resource_path('js/layouts/app/AppSidebarLayout.vue'));
 
@@ -433,9 +431,12 @@ test('navigation shells and empty states expose accessible shared interactions',
     expect($userNavigation)->toContain(':tooltip="user.name"', 'aria-hidden="true"');
     expect($userMenu)->toContain('aria-hidden="true"');
     expect($breadcrumbs)->toContain('BreadcrumbSeparator');
-    expect($palette)->toContain('<Dialog', 'IconTile', '<Button', 'aria-label', '$el?.focus()');
-    expect($sidebarHeader)->toContain('openCommandPalette', 'aria-label');
-    expect($sidebarLayout)->toContain('<CommandPalette');
+    expect(File::exists(resource_path('js/components/shared/CommandPalette.vue')))->toBeFalse();
+    expect(File::exists(resource_path('js/stores/ui.ts')))->toBeFalse();
+    expect($sidebarHeader)
+        ->toContain('LanguageSwitcher')
+        ->not->toContain('Search', 'useUiStore', 'openCommandPalette', 'commands.');
+    expect($sidebarLayout)->not->toContain('CommandPalette');
 });
 
 test('first party presentation remains fixed light and free of raw brand colors', function () {

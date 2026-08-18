@@ -214,17 +214,6 @@ return [
             'title' => 'Two-factor authentication',
         ],
     ],
-    'commands' => [
-        'account' => 'Account',
-        'empty' => 'No commands found',
-        'go_dashboard' => 'Go to Dashboard',
-        'go_projects' => 'Go to Projects',
-        'go_settings' => 'Go to Settings',
-        'go_tasks' => 'Go to Tasks',
-        'logout' => 'Log Out',
-        'navigation' => 'Navigation',
-        'placeholder' => 'Type a command...',
-    ],
     'dashboard' => [
         'completed_today' => 'Completed today',
         'created' => 'Created',

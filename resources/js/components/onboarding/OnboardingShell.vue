@@ -211,11 +211,12 @@ const progressScale = computed(() =>
                     aria-hidden="true"
                 />
                 <Button
+                    v-if="canBack"
                     type="button"
                     variant="outline"
                     size="lg"
                     class="min-h-12 w-full whitespace-normal sm:w-auto pointer-coarse:min-h-13"
-                    :disabled="!canBack || processing"
+                    :disabled="processing"
                     @click="emit('back')"
                 >
                     {{ copy.actions.back }}
@@ -225,6 +226,7 @@ const progressScale = computed(() =>
                     form="onboarding-step-form"
                     size="lg"
                     class="min-h-12 w-full min-w-32 whitespace-normal sm:w-auto pointer-coarse:min-h-13"
+                    :class="{ 'min-[30rem]:col-span-2': !canBack }"
                     :disabled="processing"
                 >
                     <Spinner v-if="processing" />

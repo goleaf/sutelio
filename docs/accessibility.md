@@ -53,6 +53,6 @@ The 2026-08-18 responsive-foundation pass adds guest checks at 320×568, 430×93
 
 ## Soft Motion And Icon Remediation Status
 
-Shared icon surfaces now preserve a visible shape, text label, or accessible name independently of color. Icon-only shell controls have translated labels; decorative glyphs are hidden from assistive technology. The mounted command palette uses the shared Reka dialog primitive so focus trapping, Escape dismissal, labelling, and focus return remain primitive-owned.
+Shared icon surfaces now preserve a visible shape, text label, or accessible name independently of color. Icon-only shell controls have translated labels; decorative glyphs are hidden from assistive technology. The authenticated header intentionally omits global search, avoiding an unnecessary icon-only control and dialog focus lifecycle.
 
 Motion communicates appearance, interaction, or one-shot completion only. Initial list staggering is bounded, live/refetched feeds do not replay it, and reduced-motion removes nonessential transform and duration while leaving state changes visible. Forced-colors retains explicit tile/control boundaries and native focus. Source regressions cover shared ownership, icon-only names, allowed non-tile controls, bounded stagger, fixed-light brand roles, and the intentional entity-color exceptions. Task 10 re-executed the final authenticated EN/LT/RU browser matrix, 200% reflow, reduced motion, forced colors, offline recovery, and NativePHP large-font/orientation checks against the integrated tree.

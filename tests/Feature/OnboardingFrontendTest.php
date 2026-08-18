@@ -191,6 +191,19 @@ test('required onboarding exposes no skip affordance while replay has a distinct
         ->not->toContain('skip_description: string');
 });
 
+test('onboarding renders the back action only when backward navigation is available', function () {
+    $page = File::get(resource_path('js/pages/onboarding/Index.vue'));
+    $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
+
+    expect($page)
+        ->toContain(':can-back="progress.position > 1 && !recovery"')
+        ->and($shell)
+        ->toContain('v-if="canBack"')
+        ->toContain('@click="emit(\'back\')"')
+        ->toContain('copy.actions.back')
+        ->not->toContain(':disabled="!canBack || processing"');
+});
+
 test('onboarding visible actions and assistive messages come from semantic copy', function () {
     $source = File::get(resource_path('js/pages/onboarding/Index.vue'))
         .collect(File::allFiles(resource_path('js/components/onboarding')))

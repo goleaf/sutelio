@@ -136,7 +136,9 @@ test('unreachable legacy responsive components are removed in favor of active sh
     $sidebarHeader = File::get(resource_path('js/components/AppSidebarHeader.vue'));
 
     expect($sidebar)->toContain('NavMain', 'NavUser', 'WorkspaceSwitcher');
-    expect($sidebarHeader)->toContain('openCommandPalette', 'LanguageSwitcher');
+    expect($sidebarHeader)
+        ->toContain('LanguageSwitcher')
+        ->not->toContain('Search', 'useUiStore', 'openCommandPalette', 'commands.');
     expect(File::get(base_path('docs/frontend.md')))->not->toContain('`AppHeader`');
 });
 
