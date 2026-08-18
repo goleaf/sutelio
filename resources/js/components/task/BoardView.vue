@@ -66,6 +66,7 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
 
 <template>
     <div
+        data-slot="task-board"
         class="touch-pan-x overflow-x-auto overscroll-x-contain pb-2"
         :aria-label="t('tasks.board.label')"
     >
@@ -93,7 +94,7 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
                     />
                     <h2
                         :id="`task-column-${column.id}`"
-                        class="text-sm font-semibold"
+                        class="text-base font-semibold wrap-anywhere"
                     >
                         {{ column.name }}
                     </h2>
@@ -127,11 +128,11 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
                                 aria-hidden="true"
                             />
                             <div class="min-w-0 flex-1">
-                                <p class="line-clamp-2 text-sm font-medium">
+                                <p class="line-clamp-2 text-base font-medium">
                                     {{ todo.title }}
                                 </p>
                                 <div
-                                    class="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+                                    class="mt-2 flex flex-wrap items-center gap-2 text-[0.9375rem] leading-6 text-muted-foreground"
                                 >
                                     <span v-if="todo.project">{{
                                         todo.project.name
@@ -154,7 +155,7 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
                                     "
                                 >
                                     <SelectTrigger
-                                        class="mt-3 min-h-11 w-full text-xs"
+                                        class="mt-3 min-h-12 w-full text-base pointer-coarse:min-h-13"
                                         :aria-label="
                                             t('tasks.board.move', {
                                                 title: todo.title,
@@ -179,7 +180,7 @@ function openWithKeyboard(event: KeyboardEvent, todo: Todo): void {
 
                     <p
                         v-if="columnTodos(column).length === 0"
-                        class="rounded-xl border border-dashed border-border/80 px-3 py-8 text-center text-xs text-muted-foreground"
+                        class="rounded-xl border border-dashed border-border/80 px-3 py-8 text-center text-[0.9375rem] leading-6 text-muted-foreground"
                     >
                         {{ t('tasks.board.empty') }}
                     </p>

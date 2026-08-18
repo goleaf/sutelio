@@ -125,7 +125,7 @@ function clear(): void {
             >
                 <label
                     for="project-task-search"
-                    class="mb-2 block text-xs font-semibold tracking-[0.1em] text-muted-foreground uppercase"
+                    class="mb-2 block text-[0.9375rem] leading-5 font-semibold text-muted-foreground"
                 >
                     {{ t('projects.show.filters.search_label') }}
                 </label>
@@ -138,7 +138,7 @@ function clear(): void {
                         id="project-task-search"
                         v-model="search"
                         type="search"
-                        class="min-h-11 pl-10 motion-reduce:transition-none"
+                        class="min-h-12 pl-10 motion-reduce:transition-none pointer-coarse:min-h-13"
                         :placeholder="
                             t('projects.show.filters.search_placeholder')
                         "
@@ -151,7 +151,7 @@ function clear(): void {
                 <Button
                     type="button"
                     variant="outline"
-                    class="min-h-11 flex-1 justify-between motion-reduce:transition-none"
+                    class="min-h-12 flex-1 justify-between motion-reduce:transition-none pointer-coarse:min-h-13"
                     :disabled="processing"
                     aria-haspopup="dialog"
                     :aria-expanded="mobileOpen"
@@ -163,13 +163,13 @@ function clear(): void {
                     </span>
                     <span
                         v-if="activeFilterCount"
-                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums"
+                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-[0.9375rem] leading-5 font-semibold text-orange-800 tabular-nums"
                         >{{ activeFilterCount }}</span
                     >
                 </Button>
                 <Button
                     type="button"
-                    class="min-h-11"
+                    class="min-h-12 pointer-coarse:min-h-13"
                     :disabled="processing"
                     @click="apply"
                 >
@@ -180,7 +180,7 @@ function clear(): void {
             <Button
                 type="submit"
                 form="project-task-filter-form"
-                class="hidden min-h-11 lg:inline-flex"
+                class="hidden min-h-12 lg:inline-flex pointer-coarse:min-h-13"
                 :disabled="processing"
             >
                 {{ t('projects.show.filters.apply') }}
@@ -215,7 +215,7 @@ function clear(): void {
                 type="button"
                 :aria-pressed="attention === option.value"
                 :disabled="processing"
-                class="min-h-11 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none disabled:opacity-50 motion-reduce:transition-none"
+                class="min-h-12 rounded-xl px-3 text-base font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none disabled:opacity-50 motion-reduce:transition-none pointer-coarse:min-h-13"
                 :class="
                     attention === option.value
                         ? 'bg-orange-500/10 text-orange-800'
@@ -228,7 +228,7 @@ function clear(): void {
             <Button
                 type="button"
                 variant="ghost"
-                class="ml-auto min-h-11 motion-reduce:transition-none"
+                class="ml-auto min-h-12 motion-reduce:transition-none pointer-coarse:min-h-13"
                 :disabled="processing || !hasProjectFilters(currentFilters())"
                 @click="clear"
             >

@@ -245,7 +245,7 @@ async function submit(): Promise<void> {
                         </Select>
                         <InputError :message="form.errors.recurring_rule" />
                         <div
-                            class="mt-3 flex min-h-11 items-center gap-3 rounded-xl border border-border/70 bg-muted/25 px-3.5"
+                            class="mt-3 flex min-h-12 items-center gap-3 rounded-xl border border-border/70 bg-muted/25 px-3.5 pointer-coarse:min-h-13"
                         >
                             <Checkbox
                                 id="task-is-recurring"
@@ -258,7 +258,7 @@ async function submit(): Promise<void> {
                             />
                             <Label
                                 for="task-is-recurring"
-                                class="cursor-pointer text-sm font-normal text-muted-foreground"
+                                class="cursor-pointer text-base font-normal text-muted-foreground"
                             >
                                 {{ t('tasks.create.repeat_task') }}
                             </Label>

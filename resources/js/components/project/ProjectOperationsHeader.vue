@@ -62,7 +62,7 @@ const { formatNumber, t } = useUi();
                 type="button"
                 variant="ghost"
                 size="sm"
-                class="-ml-3 min-h-11 text-muted-foreground"
+                class="-ml-3 min-h-12 text-muted-foreground pointer-coarse:min-h-13"
                 :disabled="Boolean(processingAction)"
                 @click="emit('back')"
             >
@@ -85,7 +85,7 @@ const { formatNumber, t } = useUi();
                         type="button"
                         variant="outline"
                         size="lg"
-                        class="min-h-11"
+                        class="min-h-12 pointer-coarse:min-h-13"
                         :disabled="Boolean(processingAction)"
                         :aria-label="t('projects.show.actions.more')"
                     >
@@ -129,7 +129,7 @@ const { formatNumber, t } = useUi();
             <Button
                 type="button"
                 size="lg"
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :disabled="Boolean(processingAction) || project.is_archived"
                 @click="emit('newTask')"
             >

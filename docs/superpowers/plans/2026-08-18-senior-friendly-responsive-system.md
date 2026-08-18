@@ -277,11 +277,11 @@ Stage only attributable files, inspect the staged diff, and verify local/remote 
 - Modify: `resources/js/components/project/**`
 - Modify: focused task/project Pest and frontend tests
 
-- [ ] **Step 1: Inventory every task/project state and write failing contracts**
+- [x] **Step 1: Inventory every task/project state and write failing contracts**
 
 Cover list, board, search, filters, pagination, creation, editing, detail, comments, checklist, members, labels/tags, validation, empty, loading, processing, offline, and destructive confirmation in EN/LT/RU.
 
-- [ ] **Step 2: Implement mobile-first daily-work layouts**
+- [x] **Step 2: Implement mobile-first daily-work layouts**
 
 Use one-column phone rows with two-line titles, visible status text/icon, 48 px completion and menu targets, a labeled mobile filter Sheet, visible active-filter summary, tablet two-column layouts only above a readable container width, scroll-safe dialogs, and sticky mobile form actions. Keep every request, Wayfinder route, policy, workspace scope, and query count unchanged.
 

@@ -17,7 +17,7 @@ const { formatNumber, t } = useUi();
         class="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-orange-500/15 bg-orange-500/[0.06] p-3"
         aria-live="polite"
     >
-        <span class="mr-auto text-sm font-medium">
+        <span class="mr-auto text-base font-medium">
             {{
                 t('common.states.selected', {
                     count: formatNumber(selectedIds.length),
@@ -27,6 +27,7 @@ const { formatNumber, t } = useUi();
         <Button
             variant="outline"
             size="sm"
+            class="min-h-12 pointer-coarse:min-h-13"
             :disabled="processing"
             @click="emit('action', 'complete')"
         >
@@ -37,6 +38,7 @@ const { formatNumber, t } = useUi();
         <Button
             variant="outline"
             size="sm"
+            class="min-h-12 pointer-coarse:min-h-13"
             :disabled="processing"
             @click="emit('action', 'uncomplete')"
         >
@@ -46,6 +48,7 @@ const { formatNumber, t } = useUi();
         <Button
             variant="outline"
             size="sm"
+            class="min-h-12 pointer-coarse:min-h-13"
             :disabled="processing"
             @click="emit('action', 'archive')"
         >
@@ -55,6 +58,7 @@ const { formatNumber, t } = useUi();
         <Button
             variant="destructive"
             size="sm"
+            class="min-h-12 pointer-coarse:min-h-13"
             :disabled="processing"
             @click="emit('action', 'delete')"
         >
@@ -63,7 +67,8 @@ const { formatNumber, t } = useUi();
         </Button>
         <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
+            class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
             :aria-label="t('tasks.index.clear_selection')"
             :disabled="processing"
             @click="emit('clear')"

@@ -56,11 +56,11 @@ function activeFilterSummary(count: number): string {
 
         <div
             v-if="view === 'list'"
-            class="flex min-h-11 flex-wrap items-center gap-2"
+            class="flex min-h-12 flex-wrap items-center gap-2 pointer-coarse:min-h-13"
         >
             <template v-if="selectionMode">
                 <label
-                    class="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-2 text-sm font-medium"
+                    class="flex min-h-12 cursor-pointer items-center gap-2 rounded-lg px-2 text-base font-medium pointer-coarse:min-h-13"
                 >
                     <Checkbox
                         :model-value="allSelected"
@@ -74,7 +74,7 @@ function activeFilterSummary(count: number): string {
                 </label>
                 <span
                     v-if="selectedCount"
-                    class="text-xs text-muted-foreground tabular-nums"
+                    class="text-[0.9375rem] leading-6 text-muted-foreground tabular-nums"
                 >
                     {{
                         t('common.states.selected', {
@@ -85,7 +85,7 @@ function activeFilterSummary(count: number): string {
                 <Button
                     type="button"
                     variant="ghost"
-                    class="min-h-11"
+                    class="min-h-12 pointer-coarse:min-h-13"
                     :disabled="processing"
                     @click="emit('updateSelectionMode', false)"
                 >
@@ -97,7 +97,7 @@ function activeFilterSummary(count: number): string {
                 v-else
                 type="button"
                 variant="outline"
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :disabled="processing"
                 @click="emit('updateSelectionMode', true)"
             >

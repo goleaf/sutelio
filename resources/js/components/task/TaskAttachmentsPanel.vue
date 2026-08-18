@@ -123,6 +123,7 @@ function formatSize(bytes: number): string {
                 <Button
                     type="submit"
                     variant="outline"
+                    size="lg"
                     :disabled="uploadRequest.processing || !uploadRequest.file"
                 >
                     <Spinner v-if="uploadRequest.processing" />
@@ -138,7 +139,9 @@ function formatSize(bytes: number): string {
                 :aria-label="t('tasks.detail.upload_progress')"
             />
             <InputError :message="uploadRequest.errors.file" />
-            <p class="text-xs text-muted-foreground">
+            <p
+                class="text-[0.9375rem] leading-6 wrap-anywhere text-muted-foreground"
+            >
                 {{ t('tasks.detail.attachment_help') }}
             </p>
         </form>
@@ -151,14 +154,19 @@ function formatSize(bytes: number): string {
             >
                 <Paperclip class="size-4 shrink-0 text-muted-foreground" />
                 <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-medium">
+                    <p class="text-base font-medium wrap-anywhere">
                         {{ attachment.filename }}
                     </p>
-                    <p class="text-xs text-muted-foreground">
+                    <p class="text-[0.9375rem] leading-6 text-muted-foreground">
                         {{ formatSize(attachment.size) }}
                     </p>
                 </div>
-                <Button as-child variant="ghost" size="icon-sm">
+                <Button
+                    as-child
+                    variant="ghost"
+                    size="icon"
+                    class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                >
                     <a
                         :href="attachment.download_url"
                         :aria-label="
@@ -173,8 +181,8 @@ function formatSize(bytes: number): string {
                 <Button
                     v-if="attachment.permissions?.delete"
                     variant="ghost"
-                    size="icon-sm"
-                    class="text-muted-foreground hover:text-destructive"
+                    size="icon"
+                    class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                     :aria-label="
                         t('tasks.detail.delete_attachment', {
                             name: attachment.filename,

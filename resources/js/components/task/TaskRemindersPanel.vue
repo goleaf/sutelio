@@ -142,7 +142,9 @@ async function deleteReminder(reminder: Reminder): Promise<void> {
                 reminderRequest.errors.type
             "
         />
-        <p class="mt-2 text-xs text-muted-foreground">
+        <p
+            class="mt-2 text-[0.9375rem] leading-6 wrap-anywhere text-muted-foreground"
+        >
             {{ t('tasks.detail.reminder_delivery_note') }}
         </p>
 
@@ -153,7 +155,7 @@ async function deleteReminder(reminder: Reminder): Promise<void> {
                 class="flex items-center gap-3 rounded-xl border border-border/70 bg-muted/20 p-3"
             >
                 <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium">
+                    <p class="text-base font-medium wrap-anywhere">
                         {{
                             formatDate(reminder.reminded_at, {
                                 dateStyle: 'medium',

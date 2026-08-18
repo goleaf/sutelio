@@ -26,7 +26,11 @@ function formatRule(rule: string): string {
 </script>
 
 <template>
-    <Badge v-if="rule" variant="outline" class="gap-1 text-xs">
+    <Badge
+        v-if="rule"
+        variant="outline"
+        class="gap-1 text-[0.9375rem] leading-5"
+    >
         <Repeat class="h-3 w-3" />
         {{ formatRule(rule) }}
     </Badge>

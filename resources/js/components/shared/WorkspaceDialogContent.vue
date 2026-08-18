@@ -72,7 +72,7 @@ const accentClasses = computed(() =>
                 </DialogDescription>
             </DialogHeader>
             <DialogClose
-                class="absolute top-4.5 right-4.5 flex size-11 cursor-pointer items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:outline-none"
+                class="absolute top-4.5 right-4.5 flex size-12 cursor-pointer items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:outline-none pointer-coarse:size-13"
                 :class="accentClasses.focus"
             >
                 <X class="size-4.5" aria-hidden="true" />

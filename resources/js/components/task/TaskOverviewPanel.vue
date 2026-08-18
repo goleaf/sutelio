@@ -168,10 +168,12 @@ async function save(): Promise<void> {
                 </div>
             </div>
             <fieldset class="space-y-3 rounded-xl border border-border/70 p-4">
-                <legend class="px-1 text-sm font-medium">
+                <legend class="px-1 text-base font-medium">
                     {{ t('tasks.detail.recurrence') }}
                 </legend>
-                <div class="flex min-h-11 items-center gap-3">
+                <div
+                    class="flex min-h-12 items-center gap-3 pointer-coarse:min-h-13"
+                >
                     <Checkbox
                         :id="`task-recurring-${todo.id}`"
                         :model-value="form.is_recurring"

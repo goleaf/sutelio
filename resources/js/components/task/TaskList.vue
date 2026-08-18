@@ -92,7 +92,8 @@ function deleteFromActions(todo: Todo): void {
         <article
             v-for="todo in todos"
             :key="todo.id"
-            class="ui-lift group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-xl border border-border/80 bg-background p-3 transition-[border-color,box-shadow] hover:border-orange-500/25 hover:shadow-[0_16px_36px_-30px_rgba(255,96,56,0.55)] motion-reduce:transition-none sm:gap-3 sm:p-4"
+            data-slot="task-row"
+            class="ui-lift group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-xl border border-border/80 bg-background p-3 transition-[border-color,box-shadow] hover:border-orange-500/25 hover:shadow-[0_16px_36px_-30px_rgba(255,96,56,0.55)] motion-reduce:transition-none sm:gap-3 sm:p-4"
             :class="[
                 selected.has(todo.id)
                     ? 'border-orange-500/30 bg-orange-500/[0.035]'
@@ -101,22 +102,31 @@ function deleteFromActions(todo: Todo): void {
             ]"
             :aria-busy="busyTodoId === todo.id"
         >
-            <div class="flex size-11 items-center justify-center">
-                <Checkbox
+            <div
+                class="flex size-12 items-center justify-center pointer-coarse:size-13"
+            >
+                <label
                     v-if="selectionMode"
-                    :model-value="selected.has(todo.id)"
-                    :aria-label="
-                        t('tasks.index.select_task', { title: todo.title })
-                    "
-                    :disabled="busyTodoId !== null"
-                    @update:model-value="emit('toggleSelection', todo)"
-                />
+                    data-slot="task-checkbox-target"
+                    :for="`task-select-${todo.id}`"
+                    class="flex size-12 cursor-pointer items-center justify-center pointer-coarse:size-13"
+                >
+                    <Checkbox
+                        :id="`task-select-${todo.id}`"
+                        :model-value="selected.has(todo.id)"
+                        :aria-label="
+                            t('tasks.index.select_task', { title: todo.title })
+                        "
+                        :disabled="busyTodoId !== null"
+                        @update:model-value="emit('toggleSelection', todo)"
+                    />
+                </label>
                 <Button
                     v-else
                     type="button"
                     variant="ghost"
                     size="icon"
-                    class="min-h-11 min-w-11"
+                    class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                     :aria-label="
                         todo.is_completed
                             ? t('tasks.index.mark_pending', {
@@ -144,60 +154,19 @@ function deleteFromActions(todo: Todo): void {
 
             <button
                 type="button"
-                class="min-h-11 min-w-0 cursor-pointer rounded-lg py-1 text-left focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none"
+                class="min-h-12 min-w-0 cursor-pointer rounded-lg py-1 text-left focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none pointer-coarse:min-h-13"
                 :aria-label="t('tasks.index.open_task', { title: todo.title })"
                 @click="selectFromRow(todo, $event)"
             >
                 <span
                     :class="[
-                        'line-clamp-2 block text-sm font-semibold tracking-tight sm:truncate',
+                        'line-clamp-2 text-base font-semibold tracking-tight',
                         todo.is_completed
                             ? 'text-muted-foreground line-through'
                             : '',
                     ]"
                 >
                     {{ todo.title }}
-                </span>
-                <span
-                    class="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-muted-foreground"
-                >
-                    <span v-if="todo.project" class="max-w-full truncate">
-                        {{ todo.project.name }}
-                    </span>
-                    <Badge
-                        v-if="todo.status_definition || todo.status"
-                        class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
-                        variant="outline"
-                        :style="{
-                            borderColor: statusColor(todo),
-                            color: statusColor(todo),
-                        }"
-                    >
-                        {{ todo.status_definition?.name ?? todo.status }}
-                    </Badge>
-                    <Badge
-                        v-if="todo.priority_definition || todo.priority"
-                        class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
-                        variant="outline"
-                        :style="{
-                            borderColor: priorityColor(todo),
-                            color: priorityColor(todo),
-                        }"
-                    >
-                        {{ todo.priority_definition?.name ?? todo.priority }}
-                    </Badge>
-                    <Badge
-                        v-if="todo.due_date"
-                        class="inline-flex w-auto max-w-full shrink overflow-visible text-left leading-snug break-all whitespace-normal"
-                        :class="
-                            isOverdue(todo)
-                                ? 'border-red-500/50 text-red-700'
-                                : ''
-                        "
-                        variant="outline"
-                    >
-                        {{ dueLabel(todo) }}
-                    </Badge>
                 </span>
             </button>
 
@@ -207,7 +176,7 @@ function deleteFromActions(todo: Todo): void {
                         type="button"
                         variant="ghost"
                         size="icon"
-                        class="min-h-11 min-w-11 text-muted-foreground"
+                        class="min-h-12 min-w-12 text-muted-foreground pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                         :aria-label="
                             t('tasks.index.row_actions', {
                                 title: todo.title,
@@ -220,7 +189,7 @@ function deleteFromActions(todo: Todo): void {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" class="w-52">
                     <DropdownMenuItem
-                        class="min-h-11"
+                        class="min-h-12 pointer-coarse:min-h-13"
                         @select="selectFromActions(todo)"
                     >
                         <PanelRightOpen class="size-4" aria-hidden="true" />
@@ -229,7 +198,7 @@ function deleteFromActions(todo: Todo): void {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         variant="destructive"
-                        class="min-h-11"
+                        class="min-h-12 pointer-coarse:min-h-13"
                         @select="deleteFromActions(todo)"
                     >
                         <Trash2 class="size-4" aria-hidden="true" />
@@ -237,6 +206,48 @@ function deleteFromActions(todo: Todo): void {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+
+            <div
+                data-slot="task-row-metadata"
+                class="col-span-3 row-start-2 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 text-[0.9375rem] leading-6 text-muted-foreground sm:col-start-2 sm:col-end-3"
+            >
+                <span v-if="todo.project" class="max-w-full wrap-anywhere">
+                    {{ todo.project.name }}
+                </span>
+                <Badge
+                    v-if="todo.status_definition || todo.status"
+                    data-slot="task-status"
+                    class="inline-flex w-auto max-w-full shrink overflow-visible text-left text-[0.9375rem] leading-6 break-all whitespace-normal"
+                    variant="outline"
+                    :style="{
+                        borderColor: statusColor(todo),
+                        color: statusColor(todo),
+                    }"
+                >
+                    {{ todo.status_definition?.name ?? todo.status }}
+                </Badge>
+                <Badge
+                    v-if="todo.priority_definition || todo.priority"
+                    class="inline-flex w-auto max-w-full shrink overflow-visible text-left text-[0.9375rem] leading-6 break-all whitespace-normal"
+                    variant="outline"
+                    :style="{
+                        borderColor: priorityColor(todo),
+                        color: priorityColor(todo),
+                    }"
+                >
+                    {{ todo.priority_definition?.name ?? todo.priority }}
+                </Badge>
+                <Badge
+                    v-if="todo.due_date"
+                    class="inline-flex w-auto max-w-full shrink overflow-visible text-left text-[0.9375rem] leading-6 break-all whitespace-normal"
+                    :class="
+                        isOverdue(todo) ? 'border-red-500/50 text-red-700' : ''
+                    "
+                    variant="outline"
+                >
+                    {{ dueLabel(todo) }}
+                </Badge>
+            </div>
         </article>
     </div>
 </template>

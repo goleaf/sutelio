@@ -181,7 +181,7 @@ function setView(nextView: 'board' | 'list'): void {
                     v-model="search"
                     type="search"
                     :placeholder="t('tasks.filters.search')"
-                    class="min-h-11 pl-10 motion-reduce:transition-none"
+                    class="min-h-12 pl-10 motion-reduce:transition-none pointer-coarse:min-h-13"
                     :disabled="processing"
                 />
             </form>
@@ -190,7 +190,7 @@ function setView(nextView: 'board' | 'list'): void {
                 <Button
                     type="button"
                     variant="outline"
-                    class="min-h-11 flex-1 justify-between md:hidden"
+                    class="min-h-12 flex-1 justify-between md:hidden pointer-coarse:min-h-13"
                     :aria-label="
                         activeFilterCount
                             ? activeFilterLabel
@@ -207,7 +207,7 @@ function setView(nextView: 'board' | 'list'): void {
                     </span>
                     <span
                         v-if="activeFilterCount"
-                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-xs font-semibold text-orange-800 tabular-nums"
+                        class="rounded-full bg-orange-500/12 px-2 py-0.5 text-[0.9375rem] leading-5 font-semibold text-orange-800 tabular-nums"
                     >
                         {{ activeFilterCount }}
                     </span>
@@ -220,7 +220,7 @@ function setView(nextView: 'board' | 'list'): void {
                     <Button
                         type="button"
                         size="sm"
-                        class="min-h-11"
+                        class="min-h-12 pointer-coarse:min-h-13"
                         :variant="view === 'list' ? 'secondary' : 'ghost'"
                         :aria-pressed="view === 'list'"
                         :disabled="processing"
@@ -232,7 +232,7 @@ function setView(nextView: 'board' | 'list'): void {
                     <Button
                         type="button"
                         size="sm"
-                        class="min-h-11"
+                        class="min-h-12 pointer-coarse:min-h-13"
                         :variant="view === 'board' ? 'secondary' : 'ghost'"
                         :aria-pressed="view === 'board'"
                         :disabled="processing"
@@ -247,7 +247,7 @@ function setView(nextView: 'board' | 'list'): void {
 
         <div class="space-y-2">
             <p
-                class="text-xs font-semibold tracking-[0.1em] text-muted-foreground uppercase"
+                class="text-[0.9375rem] leading-5 font-semibold text-muted-foreground"
             >
                 {{ t('tasks.filters.focus') }}
             </p>
@@ -260,7 +260,7 @@ function setView(nextView: 'board' | 'list'): void {
                     v-for="option in focusOptions"
                     :key="option.key"
                     :active="Boolean(focusFilters[option.key])"
-                    class="min-h-11 flex-1 sm:flex-none"
+                    class="min-h-12 flex-1 sm:flex-none pointer-coarse:min-h-13"
                     :aria-pressed="Boolean(focusFilters[option.key])"
                     :disabled="processing"
                     @click="toggleFocus(option.key)"

@@ -73,7 +73,7 @@ function toggleDirection(): void {
             @update:model-value="commitOnDesktop"
         >
             <SelectTrigger
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :aria-label="t('tasks.filters.project')"
             >
                 <SelectValue :placeholder="t('tasks.filters.project')" />
@@ -98,7 +98,7 @@ function toggleDirection(): void {
             @update:model-value="commitOnDesktop"
         >
             <SelectTrigger
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :aria-label="t('tasks.filters.status')"
             >
                 <SelectValue :placeholder="t('tasks.filters.status')" />
@@ -123,7 +123,7 @@ function toggleDirection(): void {
             @update:model-value="commitOnDesktop"
         >
             <SelectTrigger
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :aria-label="t('tasks.filters.priority')"
             >
                 <SelectValue :placeholder="t('tasks.filters.priority')" />
@@ -148,7 +148,7 @@ function toggleDirection(): void {
             @update:model-value="commitOnDesktop"
         >
             <SelectTrigger
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :aria-label="t('tasks.filters.sort')"
             >
                 <SelectValue :placeholder="t('tasks.filters.sort')" />
@@ -178,7 +178,7 @@ function toggleDirection(): void {
         <Button
             type="button"
             variant="outline"
-            class="min-h-11"
+            class="min-h-12 pointer-coarse:min-h-13"
             :disabled="props.disabled"
             @click="toggleDirection"
         >
@@ -197,7 +197,7 @@ function toggleDirection(): void {
                 @update:model-value="commitOnDesktop"
             >
                 <SelectTrigger
-                    class="min-h-11"
+                    class="min-h-12 pointer-coarse:min-h-13"
                     :aria-label="t('tasks.filters.per_page')"
                 >
                     <SelectValue />
@@ -213,7 +213,7 @@ function toggleDirection(): void {
                 type="button"
                 variant="ghost"
                 size="icon"
-                class="min-h-11 min-w-11"
+                class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                 :aria-label="t('tasks.filters.clear')"
                 :disabled="props.disabled || props.clearDisabled"
                 @click="emit('clear')"

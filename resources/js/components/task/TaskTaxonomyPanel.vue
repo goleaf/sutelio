@@ -108,7 +108,7 @@ async function toggleTag(tag: Tag): Promise<void> {
         </LeadingIconHeading>
         <div class="mt-4 space-y-5">
             <fieldset class="space-y-2">
-                <legend class="mb-2 text-sm font-medium">
+                <legend class="mb-2 text-base font-medium">
                     {{ t('tasks.detail.labels') }}
                 </legend>
                 <div
@@ -118,7 +118,7 @@ async function toggleTag(tag: Tag): Promise<void> {
                     <div
                         v-for="label in availableLabels"
                         :key="label.id"
-                        class="flex min-h-11 items-center gap-3 rounded-xl border border-border/70 bg-muted/20 px-3"
+                        class="flex min-h-12 items-center gap-3 rounded-xl border border-border/70 bg-muted/20 px-3 pointer-coarse:min-h-13"
                     >
                         <Checkbox
                             :id="`detail-label-${todo.id}-${label.id}`"
@@ -131,7 +131,7 @@ async function toggleTag(tag: Tag): Promise<void> {
                             class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 font-normal"
                         >
                             <ColorSwatch :color="label.color" size="md" />
-                            <span class="truncate">{{ label.name }}</span>
+                            <span class="wrap-anywhere">{{ label.name }}</span>
                             <Spinner
                                 v-if="busyKey === `label:${label.id}`"
                                 class="ml-auto"
@@ -139,12 +139,12 @@ async function toggleTag(tag: Tag): Promise<void> {
                         </FormLabel>
                     </div>
                 </div>
-                <p v-else class="text-sm text-muted-foreground">
+                <p v-else class="text-base leading-7 text-muted-foreground">
                     {{ t('tasks.detail.no_labels') }}
                 </p>
             </fieldset>
             <fieldset class="space-y-2">
-                <legend class="mb-2 text-sm font-medium">
+                <legend class="mb-2 text-base font-medium">
                     {{ t('tasks.detail.tags') }}
                 </legend>
                 <div v-if="availableTags.length" class="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@ async function toggleTag(tag: Tag): Promise<void> {
                         </Badge>
                     </button>
                 </div>
-                <p v-else class="text-sm text-muted-foreground">
+                <p v-else class="text-base leading-7 text-muted-foreground">
                     {{ t('tasks.detail.no_tags') }}
                 </p>
             </fieldset>

@@ -192,7 +192,7 @@ async function submit(): Promise<void> {
                     </div>
 
                     <fieldset class="space-y-3">
-                        <legend class="text-sm font-medium">
+                        <legend class="text-base font-medium">
                             {{ copy.projects.color }}
                         </legend>
                         <div class="flex flex-wrap gap-2.5">
@@ -200,7 +200,7 @@ async function submit(): Promise<void> {
                                 v-for="color in colors"
                                 :key="color"
                                 type="button"
-                                class="flex size-11 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transform-none motion-reduce:transition-none"
+                                class="flex size-12 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,transform] hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transform-none motion-reduce:transition-none pointer-coarse:size-13"
                                 :class="
                                     form.color === color
                                         ? 'border-orange-500/50 bg-orange-500/[0.08] shadow-sm'
@@ -222,7 +222,7 @@ async function submit(): Promise<void> {
                     </fieldset>
 
                     <fieldset class="space-y-3">
-                        <legend class="text-sm font-medium">
+                        <legend class="text-base font-medium">
                             {{ copy.projects.icon }}
                         </legend>
                         <div class="grid grid-cols-4 gap-2 sm:grid-cols-8">
@@ -231,7 +231,7 @@ async function submit(): Promise<void> {
                                 :key="option.value"
                                 type="button"
                                 :class="[
-                                    'flex min-h-12 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,color] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none',
+                                    'flex min-h-12 cursor-pointer items-center justify-center rounded-xl border transition-[background-color,border-color,box-shadow,color] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none pointer-coarse:min-h-13',
                                     form.icon === option.value
                                         ? 'border-orange-500/50 bg-orange-500/10 text-orange-700 shadow-sm'
                                         : 'border-border/80 bg-background text-muted-foreground hover:border-orange-500/25 hover:bg-orange-500/[0.04] hover:text-foreground',

@@ -88,13 +88,17 @@ function dueLabel(task: ProjectTask): string {
                 <h2 class="font-semibold tracking-tight">
                     {{ t('projects.show.pulse.title') }}
                 </h2>
-                <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                <p
+                    class="mt-1 text-[0.9375rem] leading-6 text-muted-foreground"
+                >
                     {{ t('projects.show.pulse.description') }}
                 </p>
             </LeadingIconHeading>
 
             <div class="mt-5">
-                <div class="flex items-center justify-between gap-3 text-xs">
+                <div
+                    class="flex items-center justify-between gap-3 text-[0.9375rem] leading-5"
+                >
                     <span class="font-medium text-muted-foreground">{{
                         t('projects.show.pulse.completion_label')
                     }}</span>
@@ -126,40 +130,40 @@ function dueLabel(task: ProjectTask): string {
             <div class="mt-5 grid grid-cols-3 gap-2">
                 <button
                     type="button"
-                    class="ui-lift min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift min-h-12 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13"
                     @click="emit('filter', 'overdue')"
                 >
                     <span class="block text-base font-semibold tabular-nums">{{
                         formatNumber(metrics.overdue)
                     }}</span>
                     <span
-                        class="mt-0.5 block text-[0.68rem] leading-4 text-muted-foreground"
+                        class="mt-0.5 block text-[0.9375rem] leading-5 text-muted-foreground"
                         >{{ t('projects.show.attention.overdue') }}</span
                     >
                 </button>
                 <button
                     type="button"
-                    class="ui-lift min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift min-h-12 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13"
                     @click="emit('filter', 'due_soon')"
                 >
                     <span class="block text-base font-semibold tabular-nums">{{
                         formatNumber(metrics.due_soon)
                     }}</span>
                     <span
-                        class="mt-0.5 block text-[0.68rem] leading-4 text-muted-foreground"
+                        class="mt-0.5 block text-[0.9375rem] leading-5 text-muted-foreground"
                         >{{ t('projects.show.attention.due_soon') }}</span
                     >
                 </button>
                 <button
                     type="button"
-                    class="ui-lift min-h-11 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift min-h-12 rounded-xl border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:border-orange-500/25 hover:bg-orange-500/[0.06] focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13"
                     @click="emit('filter', 'unassigned')"
                 >
                     <span class="block text-base font-semibold tabular-nums">{{
                         formatNumber(metrics.unassigned)
                     }}</span>
                     <span
-                        class="mt-0.5 block text-[0.68rem] leading-4 text-muted-foreground"
+                        class="mt-0.5 block text-[0.9375rem] leading-5 text-muted-foreground"
                         >{{ t('projects.show.attention.unassigned') }}</span
                     >
                 </button>
@@ -168,7 +172,7 @@ function dueLabel(task: ProjectTask): string {
 
         <div class="border-b border-border/70 px-5 py-5 sm:px-6">
             <h3
-                class="text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase"
+                class="text-[0.9375rem] leading-5 font-semibold text-muted-foreground"
             >
                 {{ t('projects.show.pulse.priorities') }}
             </h3>
@@ -178,7 +182,7 @@ function dueLabel(task: ProjectTask): string {
                     :key="priority.id"
                     class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5"
                 >
-                    <div class="flex min-w-0 items-center gap-2 text-sm">
+                    <div class="flex min-w-0 items-center gap-2 text-base">
                         <span
                             class="size-2 shrink-0 rounded-full"
                             :style="{
@@ -188,11 +192,12 @@ function dueLabel(task: ProjectTask): string {
                             }"
                             aria-hidden="true"
                         />
-                        <span class="truncate">{{ priority.name }}</span>
+                        <span class="wrap-anywhere">{{ priority.name }}</span>
                     </div>
-                    <span class="text-xs font-semibold tabular-nums">{{
-                        formatNumber(priority.count)
-                    }}</span>
+                    <span
+                        class="text-[0.9375rem] leading-5 font-semibold tabular-nums"
+                        >{{ formatNumber(priority.count) }}</span
+                    >
                     <div
                         class="col-span-2 h-1.5 overflow-hidden rounded-full bg-muted"
                         aria-hidden="true"
@@ -214,15 +219,17 @@ function dueLabel(task: ProjectTask): string {
         <div class="px-5 py-5 sm:px-6">
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <h3 class="text-sm font-semibold">
+                    <h3 class="text-base font-semibold">
                         {{ t('projects.show.pulse.attention_title') }}
                     </h3>
-                    <p class="mt-1 text-xs leading-5 text-muted-foreground">
+                    <p
+                        class="mt-1 text-[0.9375rem] leading-6 text-muted-foreground"
+                    >
                         {{ t('projects.show.pulse.attention_description') }}
                     </p>
                 </div>
                 <span
-                    class="rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-800 tabular-nums"
+                    class="rounded-full bg-orange-500/10 px-2.5 py-1 text-[0.9375rem] leading-5 font-semibold text-orange-800 tabular-nums"
                 >
                     {{ formatNumber(attentionTasks.total) }}
                 </span>
@@ -233,7 +240,7 @@ function dueLabel(task: ProjectTask): string {
                     v-for="task in attentionTasks.data"
                     :key="task.id"
                     type="button"
-                    class="ui-lift group flex min-h-11 w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none"
+                    class="ui-lift group flex min-h-12 w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13"
                     @click="emit('select', task)"
                 >
                     <CalendarClock
@@ -242,12 +249,12 @@ function dueLabel(task: ProjectTask): string {
                     />
                     <span class="min-w-0 flex-1">
                         <span
-                            class="block truncate text-sm font-medium group-hover:text-orange-800"
+                            class="line-clamp-2 text-base font-medium wrap-anywhere group-hover:text-orange-800"
                         >
                             {{ task.title }}
                         </span>
                         <span
-                            class="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground"
+                            class="mt-0.5 flex flex-wrap items-center gap-1 text-[0.9375rem] leading-6 text-muted-foreground"
                         >
                             <CircleUserRound
                                 class="size-3"
@@ -291,7 +298,7 @@ function dueLabel(task: ProjectTask): string {
             </div>
             <div
                 v-else
-                class="mt-4 flex items-start gap-3 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.06] p-3 text-sm text-emerald-900"
+                class="mt-4 flex items-start gap-3 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.06] p-3 text-base text-emerald-900"
             >
                 <CheckCircle2
                     class="mt-0.5 size-4 shrink-0"

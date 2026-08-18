@@ -39,7 +39,7 @@ function preventWhileProcessing(): boolean {
             as-child
             variant="outline"
             size="sm"
-            class="min-h-11"
+            class="min-h-12 pointer-coarse:min-h-13"
         >
             <Link
                 :href="pagination.links.prev"
@@ -55,7 +55,13 @@ function preventWhileProcessing(): boolean {
                 {{ t('tasks.pagination.previous') }}
             </Link>
         </Button>
-        <Button v-else variant="outline" size="sm" class="min-h-11" disabled>
+        <Button
+            v-else
+            variant="outline"
+            size="sm"
+            class="min-h-12 pointer-coarse:min-h-13"
+            disabled
+        >
             <ChevronLeft class="size-4" aria-hidden="true" />
             {{ t('tasks.pagination.previous') }}
         </Button>
@@ -64,7 +70,7 @@ function preventWhileProcessing(): boolean {
             as-child
             variant="outline"
             size="sm"
-            class="min-h-11"
+            class="min-h-12 pointer-coarse:min-h-13"
         >
             <Link
                 :href="pagination.links.next"
@@ -80,7 +86,13 @@ function preventWhileProcessing(): boolean {
                 <ChevronRight class="size-4" aria-hidden="true" />
             </Link>
         </Button>
-        <Button v-else variant="outline" size="sm" class="min-h-11" disabled>
+        <Button
+            v-else
+            variant="outline"
+            size="sm"
+            class="min-h-12 pointer-coarse:min-h-13"
+            disabled
+        >
             {{ t('tasks.pagination.next') }}
             <ChevronRight class="size-4" aria-hidden="true" />
         </Button>

@@ -166,7 +166,7 @@ function openCreateDialog(): void {
                 >
                     <div>
                         <p
-                            class="text-[0.68rem] font-semibold tracking-[0.16em] text-orange-700 uppercase"
+                            class="text-[0.9375rem] leading-5 font-semibold text-orange-700"
                         >
                             {{ copy.projects.workspace }}
                         </p>
@@ -185,7 +185,9 @@ function openCreateDialog(): void {
                             @click="activeFilter = filter.value"
                         >
                             {{ filter.label }}
-                            <span class="text-xs tabular-nums opacity-65">
+                            <span
+                                class="text-[0.9375rem] leading-5 tabular-nums opacity-65"
+                            >
                                 {{ formatNumber(filter.count) }}
                             </span>
                         </WorkspaceSegmentedButton>
@@ -199,6 +201,7 @@ function openCreateDialog(): void {
                     <Link
                         v-for="(project, index) in visibleProjects"
                         :key="project.id"
+                        data-slot="project-card"
                         :href="projectShow({ workspace, project })"
                         prefetch
                         class="group relative min-h-64 cursor-pointer overflow-hidden rounded-[1.35rem] border border-border/80 bg-background p-5 transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-orange-500/30 hover:shadow-[0_24px_50px_-38px_rgba(255,96,56,0.5)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transform-none sm:p-6"
@@ -225,7 +228,7 @@ function openCreateDialog(): void {
                                 </IconTile>
                                 <span
                                     :class="[
-                                        'rounded-full px-2.5 py-1 text-[0.65rem] font-semibold tracking-[0.08em] uppercase',
+                                        'rounded-full px-2.5 py-1 text-[0.9375rem] leading-5 font-semibold',
                                         project.is_archived
                                             ? 'bg-muted text-muted-foreground'
                                             : 'bg-emerald-500/10 text-emerald-700',
@@ -246,7 +249,7 @@ function openCreateDialog(): void {
                                     {{ project.name }}
                                 </h3>
                                 <p
-                                    class="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground"
+                                    class="mt-2 line-clamp-3 text-base leading-7 text-muted-foreground"
                                 >
                                     {{
                                         project.description ??
@@ -269,13 +272,13 @@ function openCreateDialog(): void {
                                         }}
                                     </p>
                                     <p
-                                        class="mt-0.5 text-xs text-muted-foreground"
+                                        class="mt-0.5 text-[0.9375rem] leading-6 text-muted-foreground"
                                     >
                                         {{ copy.common.tasks }}
                                     </p>
                                 </div>
                                 <p
-                                    class="text-right text-[0.68rem] leading-5 text-muted-foreground"
+                                    class="text-right text-[0.9375rem] leading-6 text-muted-foreground"
                                 >
                                     {{
                                         formatDate(project.updated_at, {

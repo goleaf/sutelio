@@ -194,7 +194,7 @@ async function deleteComment(): Promise<void> {
                 :placeholder="t('tasks.detail.comment_placeholder')"
                 :disabled="busyKey !== null"
                 :aria-invalid="Boolean(commentRequest.errors.body)"
-                class="flex min-h-20 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-sm shadow-xs outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:opacity-50 aria-invalid:border-destructive"
+                class="flex min-h-24 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-base shadow-xs outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:opacity-50 aria-invalid:border-destructive"
                 @input="commentRequest.clearErrors('body')"
             />
             <InputError :message="commentRequest.errors.body" />
@@ -202,6 +202,7 @@ async function deleteComment(): Promise<void> {
                 <Button
                     type="submit"
                     variant="outline"
+                    size="lg"
                     :disabled="busyKey !== null || !newComment.trim()"
                 >
                     <Spinner v-if="busyKey === 'comment:new'" />
@@ -218,12 +219,14 @@ async function deleteComment(): Promise<void> {
             >
                 <header class="flex flex-wrap items-start gap-2">
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-medium">
+                        <p class="text-base font-medium wrap-anywhere">
                             {{
                                 comment.user?.name ?? t('common.states.unknown')
                             }}
                         </p>
-                        <time class="text-xs text-muted-foreground">
+                        <time
+                            class="text-[0.9375rem] leading-6 text-muted-foreground"
+                        >
                             {{
                                 formatDate(comment.created_at, {
                                     dateStyle: 'medium',
@@ -235,7 +238,8 @@ async function deleteComment(): Promise<void> {
                     <Button
                         v-if="comment.permissions?.update"
                         variant="ghost"
-                        size="icon-sm"
+                        size="icon"
+                        class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                         :aria-label="t('tasks.detail.edit_comment')"
                         :disabled="busyKey !== null"
                         @click="startEditing(comment)"
@@ -245,8 +249,8 @@ async function deleteComment(): Promise<void> {
                     <Button
                         v-if="comment.permissions?.delete"
                         variant="ghost"
-                        size="icon-sm"
-                        class="text-muted-foreground hover:text-destructive"
+                        size="icon"
+                        class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                         :aria-label="t('tasks.detail.delete_comment')"
                         :disabled="busyKey !== null"
                         @click="deletingComment = comment"
@@ -265,18 +269,23 @@ async function deleteComment(): Promise<void> {
                         rows="3"
                         maxlength="5000"
                         :disabled="busyKey !== null"
-                        class="flex min-h-20 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-sm outline-none hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20"
+                        class="flex min-h-24 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-base outline-none hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20"
                     />
                     <div class="flex justify-end gap-2">
                         <Button
                             type="button"
                             variant="ghost"
+                            size="lg"
                             :disabled="busyKey !== null"
                             @click="editingId = null"
                         >
                             {{ t('common.actions.cancel') }}
                         </Button>
-                        <Button type="submit" :disabled="busyKey !== null">
+                        <Button
+                            type="submit"
+                            size="lg"
+                            :disabled="busyKey !== null"
+                        >
                             <Spinner
                                 v-if="busyKey === `comment:${comment.id}`"
                             />
@@ -284,7 +293,10 @@ async function deleteComment(): Promise<void> {
                         </Button>
                     </div>
                 </form>
-                <p v-else class="mt-3 text-sm leading-6 whitespace-pre-wrap">
+                <p
+                    v-else
+                    class="mt-3 text-base leading-7 wrap-anywhere whitespace-pre-wrap"
+                >
                     {{ comment.body }}
                 </p>
             </article>
@@ -297,7 +309,7 @@ async function deleteComment(): Promise<void> {
             <Button
                 v-if="nextUrl"
                 variant="outline"
-                class="w-full"
+                class="min-h-12 w-full pointer-coarse:min-h-13"
                 :disabled="listRequest.processing"
                 @click="loadMore"
             >

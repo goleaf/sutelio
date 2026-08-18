@@ -69,7 +69,7 @@ function commitOnDesktop(): void {
         "
     >
         <div :class="props.mode === 'mobile' ? 'grid gap-2' : 'contents'">
-            <span v-if="props.mode === 'mobile'" class="text-sm font-medium">
+            <span v-if="props.mode === 'mobile'" class="text-base font-medium">
                 {{ t('projects.show.filters.status') }}
             </span>
             <Select
@@ -78,7 +78,7 @@ function commitOnDesktop(): void {
                 @update:model-value="commitOnDesktop"
             >
                 <SelectTrigger
-                    class="min-h-11"
+                    class="min-h-12 pointer-coarse:min-h-13"
                     :aria-label="t('projects.show.filters.status')"
                 >
                     <SelectValue />
@@ -111,7 +111,7 @@ function commitOnDesktop(): void {
                 @update:model-value="commitOnDesktop"
             >
                 <SelectTrigger
-                    class="min-h-11"
+                    class="min-h-12 pointer-coarse:min-h-13"
                     :aria-label="t('projects.show.filters.priority')"
                 >
                     <SelectValue />
@@ -136,7 +136,7 @@ function commitOnDesktop(): void {
                 @update:model-value="commitOnDesktop"
             >
                 <SelectTrigger
-                    class="min-h-11"
+                    class="min-h-12 pointer-coarse:min-h-13"
                     :aria-label="t('projects.show.filters.assignee')"
                 >
                     <SelectValue />
@@ -168,7 +168,7 @@ function commitOnDesktop(): void {
                 type="button"
                 :aria-pressed="attention === option.value"
                 :disabled="props.disabled"
-                class="min-h-11 rounded-xl border px-3 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none disabled:opacity-50 motion-reduce:transition-none"
+                class="min-h-12 rounded-xl border px-3 text-base font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none disabled:opacity-50 motion-reduce:transition-none pointer-coarse:min-h-13"
                 :class="
                     attention === option.value
                         ? 'border-orange-500/25 bg-orange-500/10 text-orange-800'
@@ -186,7 +186,7 @@ function commitOnDesktop(): void {
             @update:model-value="commitOnDesktop"
         >
             <SelectTrigger
-                class="min-h-11"
+                class="min-h-12 pointer-coarse:min-h-13"
                 :aria-label="t('projects.show.filters.sort')"
             >
                 <ArrowUpDown

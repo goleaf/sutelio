@@ -106,7 +106,7 @@ async function deleteTodo(): Promise<void> {
                         {{ todo.title }}
                     </h2>
                     <div
-                        class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground"
+                        class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-base leading-7 text-muted-foreground"
                     >
                         <span class="flex items-center gap-2">
                             <Calendar class="size-4" aria-hidden="true" />
