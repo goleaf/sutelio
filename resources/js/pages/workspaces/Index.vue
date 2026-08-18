@@ -414,7 +414,10 @@ function manageWorkspace(workspace: Workspace): void {
                             {{ t('workspaces.sort_label') }}
                         </Label>
                         <Select v-model="sortOrder">
-                            <SelectTrigger id="workspace-sort" class="w-full">
+                            <SelectTrigger
+                                id="workspace-sort"
+                                class="min-h-12 w-full pointer-coarse:min-h-13"
+                            >
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -437,7 +440,7 @@ function manageWorkspace(workspace: Workspace): void {
 
                 <p
                     v-if="workspaces.data.length"
-                    class="mt-4 text-sm text-muted-foreground"
+                    class="mt-4 text-[0.9375rem] leading-5 text-muted-foreground"
                     aria-live="polite"
                     aria-atomic="true"
                 >
@@ -486,7 +489,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 <Badge
                                     v-if="isCurrentWorkspace(workspace)"
                                     variant="outline"
-                                    class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700"
+                                    class="border-emerald-500/25 bg-emerald-500/10 text-[0.9375rem] whitespace-normal text-emerald-700"
                                 >
                                     <CheckCircle2 aria-hidden="true" />
                                     {{ t('workspaces.current') }}
@@ -494,12 +497,13 @@ function manageWorkspace(workspace: Workspace): void {
                             </div>
                             <div class="space-y-2">
                                 <CardTitle
+                                    as="h2"
                                     class="tracking-[-0.02em] break-words"
                                 >
                                     {{ workspace.name }}
                                 </CardTitle>
                                 <p
-                                    class="line-clamp-3 text-sm leading-6 break-words text-muted-foreground"
+                                    class="line-clamp-3 text-base leading-6 break-words text-muted-foreground"
                                 >
                                     {{
                                         workspace.description ??
@@ -508,7 +512,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 </p>
                                 <p
                                     v-if="workspace.owner?.name"
-                                    class="flex items-center gap-1.5 text-xs text-muted-foreground"
+                                    class="flex flex-wrap items-center gap-1.5 text-[0.9375rem] leading-5 text-muted-foreground"
                                 >
                                     <span class="font-medium text-foreground">
                                         {{ t('workspaces.owner') }}:
@@ -521,10 +525,11 @@ function manageWorkspace(workspace: Workspace): void {
                         </CardHeader>
                         <CardContent class="relative mt-auto space-y-4">
                             <div
-                                class="grid grid-cols-3 divide-x divide-border/70 rounded-xl border border-border/70 bg-muted/25"
+                                data-workspace-portfolio-metrics
+                                class="grid grid-cols-1 gap-2 rounded-xl border border-border/70 bg-muted/25 p-2 sm:grid-cols-3"
                             >
                                 <div
-                                    class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
+                                    class="flex items-center gap-2 rounded-lg bg-background/70 px-3 py-3 text-base sm:flex-col sm:justify-center sm:text-center"
                                     :title="t('workspaces.members')"
                                 >
                                     <Users
@@ -538,9 +543,14 @@ function manageWorkspace(workspace: Workspace): void {
                                             )
                                         }}
                                     </span>
+                                    <span
+                                        class="ml-auto text-[0.9375rem] leading-5 text-muted-foreground sm:ml-0"
+                                    >
+                                        {{ t('workspaces.members') }}
+                                    </span>
                                 </div>
                                 <div
-                                    class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
+                                    class="flex items-center gap-2 rounded-lg bg-background/70 px-3 py-3 text-base sm:flex-col sm:justify-center sm:text-center"
                                     :title="t('workspaces.projects')"
                                 >
                                     <Folder
@@ -554,9 +564,14 @@ function manageWorkspace(workspace: Workspace): void {
                                             )
                                         }}
                                     </span>
+                                    <span
+                                        class="ml-auto text-[0.9375rem] leading-5 text-muted-foreground sm:ml-0"
+                                    >
+                                        {{ t('workspaces.projects') }}
+                                    </span>
                                 </div>
                                 <div
-                                    class="flex items-center justify-center gap-1.5 px-2 py-3 text-sm"
+                                    class="flex items-center gap-2 rounded-lg bg-background/70 px-3 py-3 text-base sm:flex-col sm:justify-center sm:text-center"
                                     :title="t('workspaces.tasks')"
                                 >
                                     <CheckSquare
@@ -569,6 +584,11 @@ function manageWorkspace(workspace: Workspace): void {
                                                 workspace.todos_count ?? 0,
                                             )
                                         }}
+                                    </span>
+                                    <span
+                                        class="ml-auto text-[0.9375rem] leading-5 text-muted-foreground sm:ml-0"
+                                    >
+                                        {{ t('workspaces.tasks') }}
                                     </span>
                                 </div>
                             </div>
@@ -583,7 +603,7 @@ function manageWorkspace(workspace: Workspace): void {
                             >
                                 <Button
                                     size="sm"
-                                    class="min-h-11 flex-1 sm:flex-none"
+                                    class="min-h-12 flex-1 sm:flex-none pointer-coarse:min-h-13"
                                     :disabled="switchRequest.processing"
                                     @click="manageWorkspace(workspace)"
                                 >
@@ -593,7 +613,7 @@ function manageWorkspace(workspace: Workspace): void {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    class="min-h-11 flex-1 sm:flex-none"
+                                    class="min-h-12 flex-1 sm:flex-none pointer-coarse:min-h-13"
                                     :disabled="
                                         switchRequest.processing ||
                                         isCurrentWorkspace(workspace)
@@ -634,7 +654,7 @@ function manageWorkspace(workspace: Workspace): void {
                                             type="button"
                                             variant="ghost"
                                             size="icon"
-                                            class="size-11 shrink-0"
+                                            class="size-12 shrink-0 pointer-coarse:size-13"
                                             :aria-label="
                                                 t('workspaces.actions_label', {
                                                     name: workspace.name,

@@ -130,7 +130,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                             <PanelsTopLeft />
                         </template>
 
-                        <CardTitle>{{
+                        <CardTitle as="h2">{{
                             t('settings.preferences.display')
                         }}</CardTitle>
                     </LeadingIconHeading>
@@ -207,13 +207,13 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                             <Languages />
                         </template>
 
-                        <CardTitle>{{
+                        <CardTitle as="h2">{{
                             t('settings.preferences.locale')
                         }}</CardTitle>
                     </LeadingIconHeading>
                 </CardHeader>
                 <CardContent class="space-y-4">
-                    <p class="text-sm text-muted-foreground">
+                    <p class="text-base leading-6 text-muted-foreground">
                         {{ t('settings.preferences.locale_description') }}
                     </p>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -394,11 +394,11 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                     </template>
 
                     <p
-                        class="text-xs font-semibold tracking-[0.16em] text-orange-700 uppercase"
+                        class="text-[0.9375rem] font-semibold tracking-[0.1em] text-orange-700 uppercase"
                     >
                         {{ t('settings.preferences.replay.eyebrow') }}
                     </p>
-                    <CardTitle>{{
+                    <CardTitle as="h2">{{
                         t('settings.preferences.replay.title')
                     }}</CardTitle>
                     <CardDescription class="max-w-2xl leading-6">
@@ -408,7 +408,7 @@ const startPages = ['dashboard', 'tasks', 'projects', 'calendar'];
                 <Button
                     type="button"
                     variant="outline"
-                    class="mt-4 min-h-11 shrink-0 border-orange-300 bg-background/80 sm:mt-0"
+                    class="mt-4 min-h-12 shrink-0 border-orange-300 bg-background/80 sm:mt-0 pointer-coarse:min-h-13"
                     :loading="replayForm.processing"
                     :loading-label="t('settings.preferences.replay.action')"
                     @click="replayOnboarding"

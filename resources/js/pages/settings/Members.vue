@@ -236,7 +236,7 @@ function removeMember(): void {
             <Card class="gap-0 overflow-hidden py-0">
                 <CardHeader class="gap-5 border-b py-5 sm:py-6">
                     <div class="space-y-1.5">
-                        <CardTitle>{{ copy.roster_title }}</CardTitle>
+                        <CardTitle as="h2">{{ copy.roster_title }}</CardTitle>
                         <CardDescription>
                             {{ copy.roster_description }}
                         </CardDescription>
@@ -274,7 +274,7 @@ function removeMember(): void {
                             <Avatar class="size-11 border shadow-xs">
                                 <AvatarFallback
                                     :class="[
-                                        'text-sm font-semibold',
+                                        'text-base font-semibold',
                                         avatarTone(member.id),
                                     ]"
                                 >
@@ -284,20 +284,22 @@ function removeMember(): void {
 
                             <div class="min-w-0">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <p class="truncate text-sm font-semibold">
+                                    <p
+                                        class="text-base leading-6 font-semibold break-words"
+                                    >
                                         {{ member.name }}
                                     </p>
                                     <Badge
                                         v-if="member.is_current_user"
                                         variant="secondary"
-                                        class="px-1.5 py-0 text-[10px]"
+                                        class="px-2 py-0.5 text-[0.9375rem]"
                                     >
                                         {{ copy.current_user }}
                                     </Badge>
                                 </div>
                                 <a
                                     :href="`mailto:${member.email}`"
-                                    class="mt-0.5 block truncate text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-orange-800 hover:underline focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
+                                    class="mt-0.5 block text-[0.9375rem] leading-5 wrap-anywhere text-muted-foreground underline-offset-4 transition-colors hover:text-orange-800 hover:underline focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
                                 >
                                     {{ member.email }}
                                 </a>
@@ -309,12 +311,15 @@ function removeMember(): void {
                                 <div class="min-w-0 text-right">
                                     <Badge
                                         variant="outline"
-                                        :class="roleClasses[member.role]"
+                                        :class="[
+                                            'text-[0.9375rem] whitespace-normal',
+                                            roleClasses[member.role],
+                                        ]"
                                     >
                                         {{ copy.roles[member.role] }}
                                     </Badge>
                                     <p
-                                        class="mt-1 hidden max-w-40 truncate text-xs text-muted-foreground lg:block"
+                                        class="mt-1 max-w-64 text-[0.9375rem] leading-5 break-words text-muted-foreground sm:max-w-40 sm:text-right"
                                     >
                                         {{
                                             copy.role_descriptions[member.role]
@@ -327,7 +332,7 @@ function removeMember(): void {
                                     type="button"
                                     variant="ghost"
                                     size="icon-sm"
-                                    class="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                    class="min-h-12 min-w-12 text-muted-foreground hover:bg-destructive/10 hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                     :aria-label="
                                         copy.remove_member.replace(
                                             ':name',
@@ -349,10 +354,12 @@ function removeMember(): void {
                         <IconTile tone="muted" size="md">
                             <Search />
                         </IconTile>
-                        <p class="mt-4 text-sm font-semibold">
+                        <p class="mt-4 text-base font-semibold">
                             {{ copy.no_results_title }}
                         </p>
-                        <p class="mt-1 max-w-sm text-sm text-muted-foreground">
+                        <p
+                            class="mt-1 max-w-sm text-base leading-6 text-muted-foreground"
+                        >
                             {{ copy.no_results_description }}
                         </p>
                     </div>
@@ -366,7 +373,7 @@ function removeMember(): void {
                             <UserPlus />
                         </template>
 
-                        <CardTitle>{{ copy.invite_title }}</CardTitle>
+                        <CardTitle as="h2">{{ copy.invite_title }}</CardTitle>
                         <CardDescription>
                             {{ copy.invite_description }}
                         </CardDescription>
@@ -411,7 +418,7 @@ function removeMember(): void {
                             >
                                 <SelectTrigger
                                     id="invite-role"
-                                    class="w-full"
+                                    class="min-h-12 w-full pointer-coarse:min-h-13"
                                     :aria-invalid="
                                         Boolean(inviteForm.errors.role)
                                     "
@@ -451,7 +458,9 @@ function removeMember(): void {
                             <LockKeyhole />
                         </template>
 
-                        <CardTitle>{{ copy.read_only_title }}</CardTitle>
+                        <CardTitle as="h2">{{
+                            copy.read_only_title
+                        }}</CardTitle>
                         <CardDescription>
                             {{ copy.read_only_description }}
                         </CardDescription>
@@ -459,7 +468,7 @@ function removeMember(): void {
                 </CardHeader>
                 <CardContent>
                     <div
-                        class="flex items-center gap-3 rounded-xl border bg-background p-3 text-sm"
+                        class="flex items-center gap-3 rounded-xl border bg-background p-3 text-base"
                     >
                         <ShieldCheck
                             class="size-5 shrink-0 text-muted-foreground"

@@ -211,7 +211,7 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
                     <Badge
                         v-if="workspace.is_current"
                         variant="outline"
-                        class="h-11 border-emerald-500/25 bg-emerald-500/10 px-4 text-emerald-700"
+                        class="min-h-12 border-emerald-500/25 bg-emerald-500/10 px-4 text-[0.9375rem] whitespace-normal text-emerald-700 pointer-coarse:min-h-13"
                     >
                         <CheckCircle2 aria-hidden="true" />
                         {{ t('workspaces.current') }}
@@ -263,10 +263,12 @@ const metadataRoutes = computed<WorkspaceMetadataRouteUrls>(() => ({
                             <Building2 />
                         </IconTile>
                         <div class="min-w-0">
-                            <p class="truncate font-semibold">
+                            <p class="font-semibold break-words">
                                 {{ workspace.name }}
                             </p>
-                            <p class="truncate text-sm text-muted-foreground">
+                            <p
+                                class="text-[0.9375rem] leading-5 break-words text-muted-foreground"
+                            >
                                 {{ workspace.owner?.name ?? '—' }}
                             </p>
                         </div>

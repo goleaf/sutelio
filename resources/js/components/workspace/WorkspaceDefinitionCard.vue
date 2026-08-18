@@ -309,7 +309,7 @@ async function deleteDefinition(): Promise<void> {
                     <InputError :message="createForm.errors.name" />
                     <label
                         v-if="kind === 'status'"
-                        class="flex items-center gap-2 text-sm"
+                        class="flex min-h-12 items-center gap-2 text-base pointer-coarse:min-h-13"
                     >
                         <Checkbox
                             :model-value="createForm.is_completed"
@@ -365,7 +365,7 @@ async function deleteDefinition(): Promise<void> {
                             <InputError :message="editForm.errors.name" />
                             <label
                                 v-if="kind === 'status'"
-                                class="flex items-center gap-2 text-sm"
+                                class="flex min-h-12 items-center gap-2 text-base pointer-coarse:min-h-13"
                             >
                                 <Checkbox
                                     :model-value="editForm.is_completed"
@@ -422,7 +422,7 @@ async function deleteDefinition(): Promise<void> {
                                         {{ definition.name }}
                                     </p>
                                     <p
-                                        class="text-xs break-all text-muted-foreground"
+                                        class="text-[0.9375rem] leading-5 wrap-anywhere text-muted-foreground"
                                     >
                                         {{ definition.key }}
                                     </p>
@@ -432,6 +432,7 @@ async function deleteDefinition(): Promise<void> {
                                 <Badge
                                     v-if="definition.is_default"
                                     variant="secondary"
+                                    class="text-[0.9375rem] whitespace-normal"
                                 >
                                     {{
                                         t(
@@ -445,6 +446,7 @@ async function deleteDefinition(): Promise<void> {
                                         definition.is_completed
                                     "
                                     variant="outline"
+                                    class="text-[0.9375rem] whitespace-normal"
                                 >
                                     {{
                                         t(
@@ -457,6 +459,7 @@ async function deleteDefinition(): Promise<void> {
                                         isStatus(definition) &&
                                         definition.is_completion_target
                                     "
+                                    class="text-[0.9375rem] whitespace-normal"
                                 >
                                     {{
                                         t(
@@ -467,6 +470,7 @@ async function deleteDefinition(): Promise<void> {
                                 <Badge
                                     v-if="definition.is_archived"
                                     variant="destructive"
+                                    class="text-[0.9375rem] whitespace-normal"
                                 >
                                     {{
                                         t(
@@ -474,7 +478,10 @@ async function deleteDefinition(): Promise<void> {
                                         )
                                     }}
                                 </Badge>
-                                <Badge variant="outline">
+                                <Badge
+                                    variant="outline"
+                                    class="text-[0.9375rem] whitespace-normal"
+                                >
                                     {{
                                         formatNumber(
                                             definition.todos_count ?? 0,
@@ -490,7 +497,7 @@ async function deleteDefinition(): Promise<void> {
                                     type="button"
                                     size="icon"
                                     variant="ghost"
-                                    class="size-11 shrink-0"
+                                    class="min-h-12 min-w-12 shrink-0 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                     :aria-label="
                                         t('workspaces.actions_label', {
                                             name: definition.name,

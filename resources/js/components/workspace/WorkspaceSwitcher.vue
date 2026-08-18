@@ -80,11 +80,13 @@ async function switchWorkspace(workspace: Workspace) {
                             class="grid min-w-0 flex-1 text-left leading-tight"
                         >
                             <span
-                                class="truncate text-[10px] font-semibold tracking-widest text-sidebar-foreground/80 uppercase"
+                                class="line-clamp-2 text-[0.9375rem] leading-5 font-semibold tracking-[0.1em] text-sidebar-foreground/80 uppercase"
                             >
                                 {{ labels.workspace }}
                             </span>
-                            <span class="truncate text-sm font-medium">
+                            <span
+                                class="line-clamp-2 text-base leading-6 font-medium break-words"
+                            >
                                 {{
                                     currentWorkspace?.name ??
                                     labels.selectWorkspace
@@ -126,7 +128,9 @@ async function switchWorkspace(workspace: Workspace) {
                         >
                             <Building2 class="size-3.5" />
                         </span>
-                        <span class="min-w-0 flex-1 truncate">
+                        <span
+                            class="min-w-0 flex-1 text-base leading-6 break-words"
+                        >
                             {{ workspace.name }}
                         </span>
                         <Check

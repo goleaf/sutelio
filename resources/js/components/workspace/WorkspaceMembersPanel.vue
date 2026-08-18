@@ -288,6 +288,7 @@ async function cancelInvitation(): Promise<void> {
                         {{ t('workspaces.management.members.total') }}
                     </CardDescription>
                     <CardTitle
+                        as="div"
                         class="flex items-center gap-3 text-3xl tabular-nums"
                     >
                         <Users
@@ -304,6 +305,7 @@ async function cancelInvitation(): Promise<void> {
                         {{ t('workspaces.management.members.managers') }}
                     </CardDescription>
                     <CardTitle
+                        as="div"
                         class="flex items-center gap-3 text-3xl tabular-nums"
                     >
                         <ShieldCheck
@@ -326,7 +328,7 @@ async function cancelInvitation(): Promise<void> {
                             <Users />
                         </template>
 
-                        <CardTitle id="workspace-members-title">
+                        <CardTitle as="h2" id="workspace-members-title">
                             {{
                                 t('workspaces.management.members.roster_title')
                             }}
@@ -373,7 +375,7 @@ async function cancelInvitation(): Promise<void> {
                                 />
                                 <AvatarFallback
                                     :class="[
-                                        'text-sm font-semibold',
+                                        'text-base font-semibold',
                                         avatarTone(member.id),
                                     ]"
                                 >
@@ -382,13 +384,15 @@ async function cancelInvitation(): Promise<void> {
                             </Avatar>
                             <div class="min-w-0">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <p class="truncate text-sm font-semibold">
+                                    <p
+                                        class="text-base leading-6 font-semibold break-words"
+                                    >
                                         {{ member.name }}
                                     </p>
                                     <Badge
                                         v-if="member.is_current_user"
                                         variant="secondary"
-                                        class="px-1.5 py-0 text-[10px]"
+                                        class="px-2 py-0.5 text-[0.9375rem]"
                                     >
                                         {{
                                             t(
@@ -399,7 +403,7 @@ async function cancelInvitation(): Promise<void> {
                                 </div>
                                 <a
                                     :href="`mailto:${member.email}`"
-                                    class="mt-0.5 block truncate text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-orange-800 hover:underline focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
+                                    class="mt-0.5 block text-[0.9375rem] leading-5 wrap-anywhere text-muted-foreground underline-offset-4 transition-colors hover:text-orange-800 hover:underline focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
                                 >
                                     {{ member.email }}
                                 </a>
@@ -421,7 +425,7 @@ async function cancelInvitation(): Promise<void> {
                                     "
                                 >
                                     <SelectTrigger
-                                        class="w-full sm:w-40"
+                                        class="min-h-12 w-full sm:w-40 pointer-coarse:min-h-13"
                                         :aria-label="`${member.name}: ${t(
                                             'workspaces.management.invite.role_label',
                                         )}`"
@@ -456,7 +460,10 @@ async function cancelInvitation(): Promise<void> {
                                 >
                                     <Badge
                                         variant="outline"
-                                        :class="roleClasses[member.role]"
+                                        :class="[
+                                            'text-[0.9375rem] whitespace-normal',
+                                            roleClasses[member.role],
+                                        ]"
                                     >
                                         {{
                                             t(
@@ -465,7 +472,7 @@ async function cancelInvitation(): Promise<void> {
                                         }}
                                     </Badge>
                                     <p
-                                        class="mt-1 hidden max-w-44 truncate text-xs text-muted-foreground lg:block"
+                                        class="mt-1 max-w-64 text-[0.9375rem] leading-5 break-words text-muted-foreground sm:max-w-44 sm:text-right"
                                     >
                                         {{
                                             t(
@@ -482,7 +489,7 @@ async function cancelInvitation(): Promise<void> {
                                     type="button"
                                     variant="ghost"
                                     size="icon-sm"
-                                    class="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                                    class="min-h-12 min-w-12 text-muted-foreground hover:bg-destructive/10 hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                     :aria-label="
                                         t(
                                             'workspaces.management.members.remove_action',
@@ -503,10 +510,12 @@ async function cancelInvitation(): Promise<void> {
                         <IconTile tone="muted" size="md">
                             <Search />
                         </IconTile>
-                        <p class="mt-4 text-sm font-semibold">
+                        <p class="mt-4 text-base font-semibold">
                             {{ t('workspaces.management.members.no_results') }}
                         </p>
-                        <p class="mt-1 max-w-sm text-sm text-muted-foreground">
+                        <p
+                            class="mt-1 max-w-sm text-base leading-6 text-muted-foreground"
+                        >
                             {{
                                 t(
                                     'workspaces.management.members.no_results_description',
@@ -527,7 +536,7 @@ async function cancelInvitation(): Promise<void> {
                             <UserPlus />
                         </template>
 
-                        <CardTitle>
+                        <CardTitle as="h2">
                             {{ t('workspaces.management.invite.title') }}
                         </CardTitle>
                         <CardDescription>
@@ -583,7 +592,7 @@ async function cancelInvitation(): Promise<void> {
                             >
                                 <SelectTrigger
                                     id="workspace-invite-role"
-                                    class="w-full"
+                                    class="min-h-12 w-full pointer-coarse:min-h-13"
                                     :aria-invalid="
                                         Boolean(inviteForm.errors.role)
                                     "
@@ -634,7 +643,7 @@ async function cancelInvitation(): Promise<void> {
                             <LockKeyhole />
                         </template>
 
-                        <CardTitle>
+                        <CardTitle as="h2">
                             {{ t('workspaces.management.members.title') }}
                         </CardTitle>
                         <CardDescription>
@@ -655,7 +664,7 @@ async function cancelInvitation(): Promise<void> {
                         <Mail />
                     </template>
 
-                    <CardTitle>
+                    <CardTitle as="h2">
                         {{ t('workspaces.management.invitations.title') }}
                     </CardTitle>
                     <CardDescription>
@@ -676,10 +685,15 @@ async function cancelInvitation(): Promise<void> {
                             </IconTile>
                             <div class="min-w-0">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <p class="truncate text-sm font-semibold">
+                                    <p
+                                        class="text-base leading-6 font-semibold wrap-anywhere"
+                                    >
                                         {{ invitation.email }}
                                     </p>
-                                    <Badge variant="outline">
+                                    <Badge
+                                        variant="outline"
+                                        class="text-[0.9375rem] whitespace-normal"
+                                    >
                                         {{
                                             t(
                                                 `workspaces.management.members.roles.${invitation.role}`,
@@ -689,6 +703,7 @@ async function cancelInvitation(): Promise<void> {
                                     <Badge
                                         v-if="invitation.is_expired"
                                         variant="destructive"
+                                        class="text-[0.9375rem] whitespace-normal"
                                     >
                                         {{
                                             t(
@@ -698,7 +713,7 @@ async function cancelInvitation(): Promise<void> {
                                     </Badge>
                                 </div>
                                 <p
-                                    class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground"
+                                    class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.9375rem] leading-5 text-muted-foreground"
                                 >
                                     <span
                                         class="inline-flex items-center gap-1"
@@ -740,6 +755,7 @@ async function cancelInvitation(): Promise<void> {
                                 v-if="invitation.permissions.resend"
                                 variant="outline"
                                 size="sm"
+                                class="min-h-12 pointer-coarse:min-h-13"
                                 :disabled="resendRequest.processing"
                                 @click="resendInvitation(invitation)"
                             >
@@ -763,7 +779,7 @@ async function cancelInvitation(): Promise<void> {
                                 v-if="invitation.permissions.cancel"
                                 variant="ghost"
                                 size="sm"
-                                class="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                class="min-h-12 text-destructive hover:bg-destructive/10 hover:text-destructive pointer-coarse:min-h-13"
                                 :disabled="cancelRequest.processing"
                                 @click="invitationToCancel = invitation"
                             >
@@ -785,7 +801,7 @@ async function cancelInvitation(): Promise<void> {
                         class="size-6 text-muted-foreground"
                         aria-hidden="true"
                     />
-                    <p class="mt-3 text-sm text-muted-foreground">
+                    <p class="mt-3 text-base text-muted-foreground">
                         {{ t('workspaces.management.invitations.empty') }}
                     </p>
                 </div>

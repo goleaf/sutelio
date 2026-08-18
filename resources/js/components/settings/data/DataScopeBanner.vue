@@ -48,12 +48,12 @@ const presentation = computed(() =>
 
             <div class="flex flex-wrap items-center gap-2">
                 <p
-                    class="text-[11px] font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+                    class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                 >
                     {{ label }}
                 </p>
                 <span
-                    class="inline-flex items-center gap-1 rounded-full bg-background/80 px-2 py-1 text-[11px] font-medium text-foreground ring-1 ring-border/70"
+                    class="inline-flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-[0.9375rem] font-medium text-foreground ring-1 ring-border/70"
                 >
                     <ShieldCheck class="size-3" aria-hidden="true" />
                     <slot name="status" />
@@ -65,7 +65,7 @@ const presentation = computed(() =>
             >
                 {{ title }}
             </h2>
-            <p class="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">
+            <p class="mt-1 max-w-3xl text-base leading-6 text-muted-foreground">
                 {{ description }}
             </p>
         </LeadingIconHeading>

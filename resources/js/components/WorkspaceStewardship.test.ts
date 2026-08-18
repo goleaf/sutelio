@@ -123,7 +123,7 @@ test('workspace portfolio and taxonomy rows hide secondary actions in menus', ()
     assert.match(definitionCard, /workspaces\.actions_label/);
     assert.match(definitionCard, /max-w-\[calc\(100dvw-2rem\)\]/);
     assert.match(definitionCard, /focus:ring-2/);
-    assert.match(definitionCard, /break-all/);
+    assert.match(definitionCard, /wrap-anywhere/);
     assert.match(configuration, /DropdownMenu/);
     assert.match(configuration, /restoreMetadataDialogFocus/);
 });

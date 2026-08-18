@@ -137,7 +137,9 @@ function formatDate(timestamp: number): string {
 
         <Card>
             <CardHeader>
-                <CardTitle>{{ t('settings.backup.list_title') }}</CardTitle>
+                <CardTitle as="h2">{{
+                    t('settings.backup.list_title')
+                }}</CardTitle>
                 <CardDescription>
                     {{ availableSummary }}
                     <span class="mt-1 block">
@@ -147,7 +149,7 @@ function formatDate(timestamp: number): string {
                 <CardAction>
                     <Button
                         size="lg"
-                        class="min-h-11"
+                        class="min-h-12 pointer-coarse:min-h-13"
                         :loading="creating"
                         :loading-label="t('settings.backup.creating')"
                         @click="createBackup"
@@ -186,7 +188,9 @@ function formatDate(timestamp: number): string {
                                     <div
                                         class="flex flex-wrap items-center gap-2"
                                     >
-                                        <h3 class="text-sm font-semibold">
+                                        <h3
+                                            class="text-base leading-6 font-semibold"
+                                        >
                                             {{
                                                 t('settings.backup.snapshot', {
                                                     date: formatDate(
@@ -199,13 +203,13 @@ function formatDate(timestamp: number): string {
                                             <CheckCircle2 />
                                         </IconTile>
                                         <span
-                                            class="text-[11px] font-medium text-emerald-800"
+                                            class="text-[0.9375rem] leading-5 font-medium text-emerald-800"
                                         >
                                             {{ t('settings.backup.verified') }}
                                         </span>
                                     </div>
                                     <dl
-                                        class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground"
+                                        class="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[0.9375rem] leading-5 text-muted-foreground"
                                     >
                                         <div class="flex items-center gap-1.5">
                                             <CalendarDays
@@ -255,7 +259,7 @@ function formatDate(timestamp: number): string {
                                     <Button
                                         :as-child="true"
                                         variant="outline"
-                                        class="min-h-11"
+                                        class="min-h-12 pointer-coarse:min-h-13"
                                     >
                                         <a :href="download(backup.id).url">
                                             <Download
@@ -268,7 +272,7 @@ function formatDate(timestamp: number): string {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        class="min-h-11"
+                                        class="min-h-12 pointer-coarse:min-h-13"
                                         @click="restoreBackup(backup)"
                                     >
                                         <RotateCcw
@@ -286,7 +290,7 @@ function formatDate(timestamp: number): string {
         </Card>
 
         <section
-            class="rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-sm text-amber-950"
+            class="rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 text-base leading-6 text-amber-950"
             aria-labelledby="backup-restore-risk-title"
         >
             <LeadingIconHeading tile tile-tone="warning" content-class="gap-0">

@@ -58,7 +58,7 @@ const items = computed<
             v-for="item in items"
             :key="item.section"
             type="button"
-            class="group flex min-h-14 items-center gap-3 rounded-xl border border-border/80 bg-card px-3 py-2.5 text-left transition-[border-color,background-color,box-shadow] hover:border-orange-500/25 hover:bg-orange-500/[0.03] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none"
+            class="group flex min-h-12 items-center gap-3 rounded-xl border border-border/80 bg-card px-3 py-2.5 text-left transition-[border-color,background-color,box-shadow] hover:border-orange-500/25 hover:bg-orange-500/[0.03] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13"
             :class="
                 activeSection === item.section
                     ? 'border-orange-500/30 bg-orange-500/[0.05] shadow-sm'
@@ -71,14 +71,16 @@ const items = computed<
                 <component :is="item.icon" />
             </IconTile>
             <span class="min-w-0 flex-1">
-                <span class="block text-sm font-medium break-words">
+                <span class="block text-base leading-6 font-medium break-words">
                     {{
                         t(
                             `workspaces.management.configuration.${item.section}.title`,
                         )
                     }}
                 </span>
-                <span class="mt-0.5 block text-xs text-muted-foreground">
+                <span
+                    class="mt-0.5 block text-[0.9375rem] leading-5 text-muted-foreground"
+                >
                     {{ formatNumber(counts[item.section]) }}
                 </span>
             </span>

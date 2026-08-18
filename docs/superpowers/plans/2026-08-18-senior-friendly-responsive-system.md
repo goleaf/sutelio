@@ -321,11 +321,11 @@ Run focused endpoint/query-budget tests, frontend gates, the authenticated viewp
 - Modify: `resources/js/pages/settings/**`
 - Modify: related dialogs, responsive navigation, translations, and focused tests
 
-- [ ] **Step 1: Write failing management contracts**
+- [x] **Step 1: Write failing management contracts**
 
 Require accessible member/invitation controls, wrap-safe roles/names/emails, 48/52 px actions, phone card/reflow behavior, tablet two-column settings layout, responsive section navigation, separated destructive actions, and authorization-preserving confirmation.
 
-- [ ] **Step 2: Implement without changing data/security boundaries**
+- [x] **Step 2: Implement without changing data/security boundaries**
 
 Reuse `WorkspaceDialogContent`, `WorkspaceConfirmDialog`, `ResponsiveSectionNavigation`, Field, StatusNotice, and current policies/actions. No inline request, query, authorization, or business logic moves into Vue.
 

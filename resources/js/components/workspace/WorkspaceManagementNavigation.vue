@@ -39,6 +39,7 @@ const navigationItems = computed(() =>
         :label="label"
         :current-label="currentLabel"
         :open-label="openLabel"
+        desktop-at="xl"
         desktop-mode="segmented"
         prefetch="click"
     />

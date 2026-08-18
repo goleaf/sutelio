@@ -271,7 +271,7 @@ async function confirmImport(): Promise<void> {
                         <Download />
                     </template>
 
-                    <CardTitle>{{
+                    <CardTitle as="h2">{{
                         t('settings.export.export_title')
                     }}</CardTitle>
                     <CardDescription>{{
@@ -279,7 +279,7 @@ async function confirmImport(): Promise<void> {
                     }}</CardDescription>
                 </LeadingIconHeading>
             </CardHeader>
-            <CardContent class="grid gap-3 sm:grid-cols-3">
+            <CardContent class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <Button
                     v-for="format in exportFormats"
                     :key="format.value"
@@ -302,7 +302,7 @@ async function confirmImport(): Promise<void> {
                                 format.label
                             }}</span>
                             <span
-                                class="mt-1 block text-xs leading-5 text-muted-foreground"
+                                class="mt-1 block text-[0.9375rem] leading-5 text-muted-foreground"
                                 >{{ format.description }}</span
                             >
                         </span>
@@ -318,7 +318,7 @@ async function confirmImport(): Promise<void> {
                         <Upload />
                     </template>
 
-                    <CardTitle>{{
+                    <CardTitle as="h2">{{
                         t('settings.export.import_title')
                     }}</CardTitle>
                     <CardDescription>{{
@@ -328,7 +328,7 @@ async function confirmImport(): Promise<void> {
             </CardHeader>
             <CardContent v-if="canImport" class="space-y-5">
                 <ol
-                    class="grid grid-cols-3 gap-2"
+                    class="grid grid-cols-1 gap-2 sm:grid-cols-3"
                     :aria-label="t('settings.export.import_title')"
                 >
                     <li
@@ -342,7 +342,7 @@ async function confirmImport(): Promise<void> {
                     >
                         <div
                             :class="[
-                                'flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl border px-1.5 py-2 text-center text-[10px] leading-tight font-medium transition-colors motion-reduce:transition-none sm:min-h-11 sm:flex-row sm:justify-start sm:gap-2 sm:px-3 sm:text-left sm:text-xs',
+                                'flex min-h-12 flex-row items-center justify-start gap-2 rounded-xl border px-3 py-2 text-left text-base leading-6 font-medium transition-colors motion-reduce:transition-none pointer-coarse:min-h-13',
                                 importStepState(index) === 'current'
                                     ? 'border-orange-500/30 bg-orange-500/[0.07] text-orange-900'
                                     : importStepState(index) === 'complete'
@@ -356,7 +356,7 @@ async function confirmImport(): Promise<void> {
                             "
                         >
                             <span
-                                class="flex size-6 shrink-0 items-center justify-center rounded-full bg-background text-[11px] font-semibold ring-1 ring-border/70"
+                                class="flex size-8 shrink-0 items-center justify-center rounded-full bg-background text-[0.9375rem] font-semibold ring-1 ring-border/70"
                             >
                                 <Check
                                     v-if="importStepState(index) === 'complete'"
@@ -371,7 +371,7 @@ async function confirmImport(): Promise<void> {
                 </ol>
 
                 <div
-                    class="flex gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-3 text-sm text-muted-foreground"
+                    class="flex gap-3 rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-3 text-base leading-6 text-muted-foreground"
                 >
                     <CircleAlert
                         class="mt-0.5 size-4 shrink-0 text-orange-700"
@@ -384,7 +384,7 @@ async function confirmImport(): Promise<void> {
                     <label
                         v-for="format in importFormats"
                         :key="format.value"
-                        class="ui-lift inline-flex min-h-24 cursor-pointer items-start gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-4 text-sm transition-colors focus-within:ring-2 focus-within:ring-orange-500 hover:border-orange-500/25 hover:bg-orange-500/[0.05] motion-reduce:transition-none"
+                        class="ui-lift inline-flex min-h-24 cursor-pointer items-start gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-4 text-base transition-colors focus-within:ring-2 focus-within:ring-orange-500 hover:border-orange-500/25 hover:bg-orange-500/[0.05] motion-reduce:transition-none"
                         :class="{
                             'pointer-events-none opacity-50':
                                 previewRequest.processing ||
@@ -428,7 +428,7 @@ async function confirmImport(): Promise<void> {
                                 format.label
                             }}</span>
                             <span
-                                class="mt-1 block text-xs leading-5 text-muted-foreground"
+                                class="mt-1 block text-[0.9375rem] leading-5 text-muted-foreground"
                                 >{{ format.description }}</span
                             >
                         </span>
@@ -473,18 +473,22 @@ async function confirmImport(): Promise<void> {
                             <FileCheck2 />
                         </IconTile>
                         <dl
-                            class="grid min-w-0 flex-1 gap-3 text-sm sm:grid-cols-3"
+                            class="grid min-w-0 flex-1 gap-3 text-base sm:grid-cols-3"
                         >
                             <div class="min-w-0">
-                                <dt class="text-xs text-muted-foreground">
+                                <dt
+                                    class="text-[0.9375rem] leading-5 text-muted-foreground"
+                                >
                                     {{ t('settings.export.file_name') }}
                                 </dt>
-                                <dd class="mt-1 truncate font-medium">
+                                <dd class="mt-1 font-medium wrap-anywhere">
                                     {{ selectedImportFile?.name }}
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-xs text-muted-foreground">
+                                <dt
+                                    class="text-[0.9375rem] leading-5 text-muted-foreground"
+                                >
                                     {{ t('settings.export.file_size') }}
                                 </dt>
                                 <dd class="mt-1 font-medium">
@@ -497,7 +501,9 @@ async function confirmImport(): Promise<void> {
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-xs text-muted-foreground">
+                                <dt
+                                    class="text-[0.9375rem] leading-5 text-muted-foreground"
+                                >
                                     {{ t('settings.export.file_format') }}
                                 </dt>
                                 <dd class="mt-1 font-medium uppercase">
@@ -508,7 +514,7 @@ async function confirmImport(): Promise<void> {
                         <Button
                             type="button"
                             variant="ghost"
-                            class="min-h-11 shrink-0"
+                            class="min-h-12 shrink-0 pointer-coarse:min-h-13"
                             :disabled="
                                 previewRequest.processing ||
                                 importRequest.processing
@@ -526,11 +532,13 @@ async function confirmImport(): Promise<void> {
                         <h3 id="import-preview-title" class="font-semibold">
                             {{ t('settings.export.preview_title') }}
                         </h3>
-                        <p class="mt-1 text-sm text-muted-foreground">
+                        <p
+                            class="mt-1 text-base leading-6 text-muted-foreground"
+                        >
                             {{ t('settings.export.preview_description') }}
                         </p>
 
-                        <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                        <dl class="mt-4 grid gap-3 text-base sm:grid-cols-3">
                             <div class="rounded-xl bg-muted/45 p-3">
                                 <dt class="text-muted-foreground">
                                     {{ t('settings.export.preview_projects') }}
@@ -563,7 +571,7 @@ async function confirmImport(): Promise<void> {
                             <Button
                                 type="button"
                                 variant="ghost"
-                                class="min-h-11"
+                                class="min-h-12 pointer-coarse:min-h-13"
                                 :disabled="importRequest.processing"
                                 @click="clearImportSelection(true)"
                             >
@@ -571,7 +579,7 @@ async function confirmImport(): Promise<void> {
                             </Button>
                             <Button
                                 type="button"
-                                class="min-h-11"
+                                class="min-h-12 pointer-coarse:min-h-13"
                                 :loading="importRequest.processing"
                                 :loading-label="
                                     t('settings.export.confirm_import')
@@ -599,7 +607,7 @@ async function confirmImport(): Promise<void> {
                     <h3 class="font-semibold">
                         {{ t('settings.export.import_restricted_title') }}
                     </h3>
-                    <p class="mt-1 text-sm leading-6 text-muted-foreground">
+                    <p class="mt-1 text-base leading-6 text-muted-foreground">
                         {{ t('settings.export.import_restricted_description') }}
                     </p>
                 </LeadingIconHeading>
@@ -608,7 +616,7 @@ async function confirmImport(): Promise<void> {
 
         <Card v-if="page.props.capabilities.manageDatabaseBackups">
             <CardHeader>
-                <CardTitle>{{
+                <CardTitle as="h2">{{
                     t('settings.export.operator_backup_title')
                 }}</CardTitle>
                 <CardDescription>{{
@@ -616,7 +624,11 @@ async function confirmImport(): Promise<void> {
                 }}</CardDescription>
             </CardHeader>
             <CardContent>
-                <Button :as-child="true" variant="outline" class="min-h-11">
+                <Button
+                    :as-child="true"
+                    variant="outline"
+                    class="min-h-12 pointer-coarse:min-h-13"
+                >
                     <Link :href="editBackup.url()">
                         <Download class="size-4" aria-hidden="true" />
                         {{ t('settings.export.operator_backup_action') }}

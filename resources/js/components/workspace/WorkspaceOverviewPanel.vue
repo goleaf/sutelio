@@ -127,7 +127,7 @@ async function switchWorkspace(): Promise<void> {
                     <CardDescription>
                         {{ t('workspaces.members') }}
                     </CardDescription>
-                    <CardTitle class="text-3xl tabular-nums">
+                    <CardTitle as="div" class="text-3xl tabular-nums">
                         {{ formatNumber(workspace.members_count ?? 0) }}
                     </CardTitle>
                 </CardHeader>
@@ -140,7 +140,7 @@ async function switchWorkspace(): Promise<void> {
                     <CardDescription>
                         {{ t('workspaces.projects') }}
                     </CardDescription>
-                    <CardTitle class="text-3xl tabular-nums">
+                    <CardTitle as="div" class="text-3xl tabular-nums">
                         {{ formatNumber(workspace.projects_count ?? 0) }}
                     </CardTitle>
                 </CardHeader>
@@ -155,7 +155,7 @@ async function switchWorkspace(): Promise<void> {
                     <CardDescription>
                         {{ t('workspaces.tasks') }}
                     </CardDescription>
-                    <CardTitle class="text-3xl tabular-nums">
+                    <CardTitle as="div" class="text-3xl tabular-nums">
                         {{ formatNumber(workspace.todos_count ?? 0) }}
                     </CardTitle>
                 </CardHeader>
@@ -171,7 +171,7 @@ async function switchWorkspace(): Promise<void> {
                         class="flex items-start justify-between gap-4 border-b border-border/70 pb-5"
                     >
                         <div class="space-y-1.5">
-                            <CardTitle id="workspace-overview-title">
+                            <CardTitle as="h2" id="workspace-overview-title">
                                 {{
                                     t(
                                         'workspaces.management.overview.details_title',
@@ -189,7 +189,7 @@ async function switchWorkspace(): Promise<void> {
                         <Badge
                             v-if="workspace.is_current"
                             variant="outline"
-                            class="border-emerald-500/25 bg-emerald-500/10 text-emerald-700"
+                            class="border-emerald-500/25 bg-emerald-500/10 text-[0.9375rem] whitespace-normal text-emerald-700"
                         >
                             <CheckCircle2 aria-hidden="true" />
                             {{ t('workspaces.current') }}
@@ -202,7 +202,7 @@ async function switchWorkspace(): Promise<void> {
                             class="rounded-xl border border-border/70 bg-muted/25 p-4"
                         >
                             <dt
-                                class="flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                                class="flex items-center gap-2 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                             >
                                 <Building2 class="size-4" aria-hidden="true" />
                                 {{ t('workspaces.name') }}
@@ -215,17 +215,17 @@ async function switchWorkspace(): Promise<void> {
                             class="rounded-xl border border-border/70 bg-muted/25 p-4"
                         >
                             <dt
-                                class="flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                                class="flex items-center gap-2 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                             >
                                 <UserRound class="size-4" aria-hidden="true" />
                                 {{ t('workspaces.management.overview.owner') }}
                             </dt>
                             <dd class="mt-2 min-w-0">
-                                <p class="truncate font-semibold">
+                                <p class="font-semibold wrap-anywhere">
                                     {{ workspace.owner?.name ?? '—' }}
                                 </p>
                                 <p
-                                    class="truncate text-sm text-muted-foreground"
+                                    class="text-[0.9375rem] leading-5 wrap-anywhere text-muted-foreground"
                                 >
                                     {{ workspace.owner?.email ?? '—' }}
                                 </p>
@@ -235,11 +235,13 @@ async function switchWorkspace(): Promise<void> {
                             class="rounded-xl border border-border/70 bg-muted/25 p-4"
                         >
                             <dt
-                                class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                                class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                             >
                                 {{ t('workspaces.management.overview.slug') }}
                             </dt>
-                            <dd class="mt-2 font-mono text-sm">
+                            <dd
+                                class="mt-2 font-mono text-[0.9375rem] wrap-anywhere"
+                            >
                                 {{ workspace.slug }}
                             </dd>
                         </div>
@@ -247,7 +249,7 @@ async function switchWorkspace(): Promise<void> {
                             class="rounded-xl border border-border/70 bg-muted/25 p-4"
                         >
                             <dt
-                                class="flex items-center gap-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                                class="flex items-center gap-2 text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                             >
                                 <CalendarDays
                                     class="size-4"
@@ -257,7 +259,7 @@ async function switchWorkspace(): Promise<void> {
                                     t('workspaces.management.overview.created')
                                 }}
                             </dt>
-                            <dd class="mt-2 text-sm font-medium">
+                            <dd class="mt-2 text-base font-medium">
                                 {{
                                     formatDate(workspace.created_at, {
                                         dateStyle: 'medium',
@@ -270,11 +272,13 @@ async function switchWorkspace(): Promise<void> {
                         class="mt-5 rounded-xl border border-border/70 bg-muted/25 p-4"
                     >
                         <p
-                            class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
+                            class="text-[0.9375rem] font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                         >
                             {{ t('workspaces.description') }}
                         </p>
-                        <p class="mt-2 text-sm leading-6 text-muted-foreground">
+                        <p
+                            class="mt-2 text-base leading-6 text-muted-foreground"
+                        >
                             {{
                                 workspace.description ??
                                 t('workspaces.no_description')
@@ -291,7 +295,7 @@ async function switchWorkspace(): Promise<void> {
                             <Pencil />
                         </template>
 
-                        <CardTitle>
+                        <CardTitle as="h2">
                             {{
                                 t(
                                     'workspaces.management.overview.actions_title',
@@ -319,7 +323,7 @@ async function switchWorkspace(): Promise<void> {
                     </Button>
                     <div
                         v-else
-                        class="flex items-start gap-3 rounded-xl border bg-muted/35 p-4 text-sm text-muted-foreground"
+                        class="flex items-start gap-3 rounded-xl border bg-muted/35 p-4 text-base leading-6 text-muted-foreground"
                     >
                         <LockKeyhole
                             class="mt-0.5 size-4 shrink-0"

@@ -160,7 +160,7 @@ async function deleteWorkspace(): Promise<void> {
                             <Crown />
                         </template>
 
-                        <CardTitle>
+                        <CardTitle as="h2">
                             {{
                                 t('workspaces.management.danger.transfer_title')
                             }}
@@ -245,7 +245,7 @@ async function deleteWorkspace(): Promise<void> {
                             <Trash2 />
                         </template>
 
-                        <CardTitle>
+                        <CardTitle as="h2">
                             {{ t('workspaces.management.danger.delete_title') }}
                         </CardTitle>
                         <CardDescription>
@@ -259,13 +259,15 @@ async function deleteWorkspace(): Promise<void> {
                 </CardHeader>
                 <CardContent class="space-y-4">
                     <div
-                        class="grid grid-cols-3 gap-2 rounded-xl border border-destructive/15 bg-destructive/[0.035] p-3 text-center"
+                        class="grid grid-cols-1 gap-3 rounded-xl border border-destructive/15 bg-destructive/[0.035] p-3 text-center sm:grid-cols-3"
                     >
                         <div>
                             <p class="text-lg font-semibold tabular-nums">
                                 {{ formatNumber(workspace.members_count ?? 0) }}
                             </p>
-                            <p class="text-xs text-muted-foreground">
+                            <p
+                                class="text-[0.9375rem] leading-5 text-muted-foreground"
+                            >
                                 {{ t('workspaces.members') }}
                             </p>
                         </div>
@@ -275,7 +277,9 @@ async function deleteWorkspace(): Promise<void> {
                                     formatNumber(workspace.projects_count ?? 0)
                                 }}
                             </p>
-                            <p class="text-xs text-muted-foreground">
+                            <p
+                                class="text-[0.9375rem] leading-5 text-muted-foreground"
+                            >
                                 {{ t('workspaces.projects') }}
                             </p>
                         </div>
@@ -283,7 +287,9 @@ async function deleteWorkspace(): Promise<void> {
                             <p class="text-lg font-semibold tabular-nums">
                                 {{ formatNumber(workspace.todos_count ?? 0) }}
                             </p>
-                            <p class="text-xs text-muted-foreground">
+                            <p
+                                class="text-[0.9375rem] leading-5 text-muted-foreground"
+                            >
                                 {{ t('workspaces.tasks') }}
                             </p>
                         </div>
@@ -308,7 +314,7 @@ async function deleteWorkspace(): Promise<void> {
                         <LockKeyhole />
                     </template>
 
-                    <CardTitle>
+                    <CardTitle as="h2">
                         {{ t('workspaces.management.danger.owner_title') }}
                     </CardTitle>
                     <CardDescription>
@@ -319,7 +325,10 @@ async function deleteWorkspace(): Promise<void> {
                 </LeadingIconHeading>
             </CardHeader>
             <CardContent>
-                <Badge variant="outline">
+                <Badge
+                    variant="outline"
+                    class="text-[0.9375rem] whitespace-normal"
+                >
                     <Crown aria-hidden="true" />
                     {{ workspace.owner?.name ?? '—' }}
                 </Badge>

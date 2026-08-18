@@ -99,7 +99,7 @@ async function requestBrowserPermission(): Promise<void> {
                             <BellRing />
                         </template>
 
-                        <CardTitle>{{
+                        <CardTitle as="h2">{{
                             t('settings.notifications.channels_title')
                         }}</CardTitle>
                         <CardDescription>
@@ -126,7 +126,7 @@ async function requestBrowserPermission(): Promise<void> {
                                 {{ option.label }}
                             </span>
                             <span
-                                class="mt-1 block text-sm leading-5 font-normal text-muted-foreground"
+                                class="mt-1 block text-[0.9375rem] leading-5 font-normal text-muted-foreground"
                             >
                                 {{ option.description }}
                             </span>
@@ -149,14 +149,16 @@ async function requestBrowserPermission(): Promise<void> {
                             class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
                         >
                             <div>
-                                <p class="text-sm font-medium">
+                                <p class="text-base font-medium">
                                     {{
                                         t(
                                             'settings.notifications.browser_permission_title',
                                         )
                                     }}
                                 </p>
-                                <p class="mt-1 text-sm text-muted-foreground">
+                                <p
+                                    class="mt-1 text-[0.9375rem] leading-5 text-muted-foreground"
+                                >
                                     {{ browserPermissionLabel }}
                                 </p>
                             </div>
@@ -174,7 +176,9 @@ async function requestBrowserPermission(): Promise<void> {
                                 }}
                             </Button>
                         </div>
-                        <p class="mt-3 text-xs leading-5 text-muted-foreground">
+                        <p
+                            class="mt-3 text-[0.9375rem] leading-5 text-muted-foreground"
+                        >
                             {{ t('settings.notifications.browser_live_only') }}
                         </p>
                     </div>

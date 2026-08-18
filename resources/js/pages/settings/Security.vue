@@ -95,7 +95,7 @@ function disable2FA(): void {
                         <LockKeyhole />
                     </template>
 
-                    <CardTitle>{{
+                    <CardTitle as="h2">{{
                         t('settings.security.update_password')
                     }}</CardTitle>
                     <CardDescription>{{
@@ -190,7 +190,7 @@ function disable2FA(): void {
                         <Shield />
                     </template>
 
-                    <CardTitle>{{
+                    <CardTitle as="h2">{{
                         t('settings.security.two_factor_title')
                     }}</CardTitle>
                     <CardDescription>{{

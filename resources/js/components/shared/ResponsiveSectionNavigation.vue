@@ -29,6 +29,7 @@ const props = withDefaults(
     defineProps<{
         class?: HTMLAttributes['class'];
         currentLabel: string;
+        desktopAt?: 'lg' | 'xl';
         desktopMode?: 'list' | 'segmented';
         items: ResponsiveSectionNavigationItem[];
         label: string;
@@ -36,6 +37,7 @@ const props = withDefaults(
         prefetch?: boolean | LinkPrefetchOption | LinkPrefetchOption[];
     }>(),
     {
+        desktopAt: 'lg',
         desktopMode: 'list',
         prefetch: false,
     },
@@ -47,7 +49,7 @@ const activeItem = computed(
 
 const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
     cn(
-        'flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-[var(--motion-feedback)] ease-[var(--ease-emphasized)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none',
+        'flex min-h-12 shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-base break-words whitespace-normal transition-[color,background-color,border-color,box-shadow,transform] duration-[var(--motion-feedback)] ease-[var(--ease-emphasized)] focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none motion-reduce:transition-none pointer-coarse:min-h-13',
         item.active
             ? item.tone === 'danger'
                 ? 'bg-card font-medium text-destructive shadow-sm'
@@ -65,19 +67,21 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
         :class="
             cn(
                 props.desktopMode === 'list'
-                    ? 'lg:w-52 lg:shrink-0 lg:self-start'
+                    ? props.desktopAt === 'xl'
+                        ? 'xl:w-52 xl:shrink-0 xl:self-start'
+                        : 'lg:w-52 lg:shrink-0 lg:self-start'
                     : '',
                 props.class,
             )
         "
     >
-        <div class="lg:hidden">
+        <div :class="props.desktopAt === 'xl' ? 'xl:hidden' : 'lg:hidden'">
             <DropdownMenu>
                 <DropdownMenuTrigger :as-child="true">
                     <Button
                         type="button"
                         variant="outline"
-                        class="h-auto min-h-11 w-full justify-between rounded-xl border-border/80 bg-muted/55 px-3 py-2 text-left whitespace-normal shadow-none transition-colors hover:bg-muted focus-visible:ring-orange-500 motion-reduce:transition-none"
+                        class="h-auto min-h-12 w-full justify-between rounded-xl border-border/80 bg-muted/55 px-3 py-2 text-left whitespace-normal shadow-none transition-colors hover:bg-muted focus-visible:ring-orange-500 motion-reduce:transition-none pointer-coarse:min-h-13"
                     >
                         <span class="sr-only">{{ props.openLabel }}</span>
                         <span class="flex min-w-0 items-center gap-3">
@@ -96,12 +100,12 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
                             </IconTile>
                             <span class="min-w-0">
                                 <span
-                                    class="block text-[10px] leading-none font-semibold tracking-[0.14em] text-muted-foreground uppercase"
+                                    class="block text-[0.9375rem] leading-5 font-semibold tracking-[0.1em] text-muted-foreground uppercase"
                                 >
                                     {{ props.currentLabel }}
                                 </span>
                                 <span
-                                    class="mt-1 block text-sm font-medium break-words whitespace-normal"
+                                    class="mt-1 block text-base leading-6 font-medium break-words whitespace-normal"
                                 >
                                     {{ activeItem?.label }}
                                 </span>
@@ -128,7 +132,7 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
                             :href="item.href"
                             :prefetch="props.prefetch"
                             :aria-current="item.active ? 'page' : undefined"
-                            class="flex h-auto min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2 whitespace-normal transition-colors motion-reduce:transition-none"
+                            class="flex h-auto min-h-12 w-full items-center gap-3 rounded-lg px-3 py-2 text-base whitespace-normal transition-colors motion-reduce:transition-none pointer-coarse:min-h-13"
                             :class="
                                 item.tone === 'danger'
                                     ? 'text-destructive focus:text-destructive'
@@ -156,7 +160,8 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
 
         <div
             v-if="props.desktopMode === 'list'"
-            class="hidden flex-col gap-1 rounded-xl bg-muted/55 p-1 lg:flex"
+            class="hidden flex-col gap-1 rounded-xl bg-muted/55 p-1"
+            :class="props.desktopAt === 'xl' ? 'xl:flex' : 'lg:flex'"
         >
             <Link
                 v-for="item in props.items"
@@ -175,7 +180,8 @@ const linkClasses = (item: ResponsiveSectionNavigationItem): string =>
             v-else
             :label="props.label"
             role="group"
-            class="hidden lg:flex"
+            class="hidden"
+            :class="props.desktopAt === 'xl' ? 'xl:flex' : 'lg:flex'"
         >
             <Link
                 v-for="item in props.items"

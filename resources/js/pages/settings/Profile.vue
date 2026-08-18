@@ -200,7 +200,7 @@ onBeforeUnmount(clearAvatarPreview);
                         <Camera />
                     </template>
 
-                    <CardTitle>{{ labels.avatar.title }}</CardTitle>
+                    <CardTitle as="h2">{{ labels.avatar.title }}</CardTitle>
                     <CardDescription>
                         {{ labels.avatar.description }}
                     </CardDescription>
@@ -230,6 +230,11 @@ onBeforeUnmount(clearAvatarPreview);
                             type="file"
                             name="avatar"
                             accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                            :aria-label="
+                                user.avatar_url
+                                    ? labels.avatar.change
+                                    : labels.avatar.choose
+                            "
                             :disabled="avatarForm.processing"
                             :aria-invalid="Boolean(avatarForm.errors.avatar)"
                             @change="selectAvatar"
@@ -274,11 +279,13 @@ onBeforeUnmount(clearAvatarPreview);
 
                         <p
                             v-if="avatarForm.avatar"
-                            class="truncate text-sm font-medium"
+                            class="text-base leading-6 font-medium wrap-anywhere"
                         >
                             {{ avatarForm.avatar.name }}
                         </p>
-                        <p class="text-sm text-muted-foreground">
+                        <p
+                            class="text-[0.9375rem] leading-5 text-muted-foreground"
+                        >
                             {{ labels.avatar.help }}
                         </p>
                         <div
@@ -317,7 +324,7 @@ onBeforeUnmount(clearAvatarPreview);
                         <UserRound />
                     </template>
 
-                    <CardTitle>{{ labels.personal.title }}</CardTitle>
+                    <CardTitle as="h2">{{ labels.personal.title }}</CardTitle>
                     <CardDescription>{{
                         labels.personal.description
                     }}</CardDescription>

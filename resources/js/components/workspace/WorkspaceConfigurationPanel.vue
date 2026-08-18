@@ -392,7 +392,7 @@ async function deleteMetadata(): Promise<void> {
                     >
                         {{ t('workspaces.management.configuration.title') }}
                     </h2>
-                    <p class="text-sm leading-6 text-muted-foreground">
+                    <p class="text-base leading-6 text-muted-foreground">
                         {{
                             t('workspaces.management.configuration.description')
                         }}
@@ -616,7 +616,10 @@ async function deleteMetadata(): Promise<void> {
                                     <p class="font-medium break-words">
                                         {{ label.name }}
                                     </p>
-                                    <Badge variant="outline" class="mt-1">
+                                    <Badge
+                                        variant="outline"
+                                        class="mt-1 text-[0.9375rem] whitespace-normal"
+                                    >
                                         {{
                                             t(
                                                 'workspaces.management.configuration.tasks_count',
@@ -641,7 +644,7 @@ async function deleteMetadata(): Promise<void> {
                                         type="button"
                                         variant="ghost"
                                         size="icon"
-                                        class="size-11 shrink-0"
+                                        class="min-h-12 min-w-12 shrink-0 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                         :aria-label="
                                             t('workspaces.actions_label', {
                                                 name: label.name,
@@ -686,7 +689,7 @@ async function deleteMetadata(): Promise<void> {
                 </ul>
                 <p
                     v-else
-                    class="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-muted-foreground"
+                    class="rounded-xl border border-dashed px-4 py-10 text-center text-[0.9375rem] leading-5 text-muted-foreground"
                 >
                     {{ t('workspaces.management.configuration.labels.empty') }}
                 </p>
@@ -822,7 +825,10 @@ async function deleteMetadata(): Promise<void> {
                                 <p class="font-medium break-words">
                                     #{{ tag.name }}
                                 </p>
-                                <Badge variant="outline" class="mt-1">
+                                <Badge
+                                    variant="outline"
+                                    class="mt-1 text-[0.9375rem] whitespace-normal"
+                                >
                                     {{
                                         t(
                                             'workspaces.management.configuration.tasks_count',
@@ -846,7 +852,7 @@ async function deleteMetadata(): Promise<void> {
                                         type="button"
                                         variant="ghost"
                                         size="icon"
-                                        class="size-11 shrink-0"
+                                        class="min-h-12 min-w-12 shrink-0 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                         :aria-label="
                                             t('workspaces.actions_label', {
                                                 name: tag.name,
@@ -891,7 +897,7 @@ async function deleteMetadata(): Promise<void> {
                 </ul>
                 <p
                     v-else
-                    class="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-muted-foreground"
+                    class="rounded-xl border border-dashed px-4 py-10 text-center text-[0.9375rem] leading-5 text-muted-foreground"
                 >
                     {{ t('workspaces.management.configuration.tags.empty') }}
                 </p>

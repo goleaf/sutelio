@@ -31,7 +31,7 @@ defineProps<{
                 <LeadingIconHeading tile tile-tone="cobalt" tile-size="lg">
                     <template #icon><slot name="icon" /></template>
                     <p
-                        class="text-[0.7rem] font-semibold tracking-[0.22em] text-orange-700 uppercase"
+                        class="text-[0.9375rem] leading-6 font-semibold tracking-[0.16em] text-orange-700 uppercase"
                     >
                         {{ eyebrow }}
                     </p>
@@ -44,7 +44,7 @@ defineProps<{
                         {{ title }}
                     </h1>
                     <p
-                        class="max-w-2xl text-sm leading-6 wrap-anywhere text-muted-foreground sm:text-base"
+                        class="max-w-2xl text-base leading-7 wrap-anywhere text-muted-foreground"
                     >
                         {{ description }}
                     </p>

@@ -242,6 +242,7 @@ test('manual square containers are limited to named non icon controls', function
         'components/ui/dialog/DialogScrollContent.vue' => 'dialog close control',
         'components/ui/input-otp/InputOTPSlot.vue' => 'one time password cell',
         'components/ui/sheet/SheetContent.vue' => 'sheet close control',
+        'pages/settings/Export.vue' => 'numbered import workflow step',
     ];
 
     foreach (File::allFiles(resource_path('js')) as $file) {

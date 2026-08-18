@@ -33,7 +33,9 @@ const tileTones: Record<
             <component :is="icon" />
         </IconTile>
         <div class="min-w-0">
-            <p class="truncate text-xs font-medium text-muted-foreground">
+            <p
+                class="text-[0.9375rem] leading-5 font-medium wrap-anywhere text-muted-foreground"
+            >
                 {{ label }}
             </p>
             <p class="mt-0.5 text-xl font-semibold tracking-tight">
