@@ -230,7 +230,7 @@ Set `useMediaQuery("(max-width: 1023px)")`, widen the drawer with the exact boun
 
 Use a disposable product-created account. Verify phone and tablet drawer open/dismiss/navigation/focus behavior at 390, 768, 820, and 1023 px; verify persistent desktop collapse behavior at 1024 and 1440 px; delete the account through the product UI and confirm no residue with a read-only Boost query.
 
-- [ ] **Step 5: Review and deliver the responsive foundation**
+- [x] **Step 5: Review and deliver the responsive foundation**
 
 Review the complete shared/auth/navigation diff, run the focused and complete source gates, commit `feat(ui): establish responsive comfort foundation`, push normally, and prove local/remote equality before beginning onboarding implementation.
 
