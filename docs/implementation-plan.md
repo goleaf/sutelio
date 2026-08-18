@@ -59,7 +59,7 @@ Requirements: `sys-runtime-001`, `sec-deps-001`, `test-static-001`, `ops-deploym
 - [x] Isolate the Herd site/CLI to installed PHP 8.5 and record the exact patch version/extensions.
 - [x] Select a Composer PHP constraint that runs on web PHP 8.5 while remaining honest about NativePHP's documented PHP 8.4 compatibility and currently generated PHP 8.5.9 runtime.
 - [x] Upgrade Laravel 13, Inertia, Boost, Fortify, Sanctum, Wayfinder, Pint, Pail/Sail, Guzzle/CommonMark transitively, and other compatible first-party direct packages.
-- [x] Upgrade NativePHP Mobile 3 to stable 4 only after its upgrade contract and generated native-project implications are understood; verify Android 12/minSdk compatibility.
+- [x] Upgrade NativePHP Mobile 3 to stable 4 only after its upgrade contract and generated native-project implications are understood; verify the current Android minimum-SDK contract.
 - [x] Upgrade Pest 4 to stable Pest 5/PHPUnit 13 when the existing suite and Laravel plugin resolve cleanly; preserve Pest as the sole primary PHP test style.
 - [x] Upgrade Vite/Laravel Vite plugin/Vue/Pinia/Reka/TypeScript tooling and audit-fixed transitive JS dependencies without changing package manager.
 - [x] Rebuild lock files through Composer/npm, never by hand.
@@ -278,3 +278,15 @@ Requirements: `ui-system-001`, `ui-accessibility-001`, `ui-responsive-001`, `ui-
 - [ ] Complete final Task 22 Samsung installation.
 
 The implementation follows `docs/superpowers/plans/2026-08-17-sutelio-soft-motion-ui-remediation-master-plan.md`. Physical-device installation remains the final mutation after source delivery, APK inspection/emulator proof, and the canonical repository/Herd rename.
+
+## Android 10 Compatibility Correction — 2026-08-18
+
+Requirements: `sys-runtime-001`, `sys-brand-001`, `test-feature-001`, `ops-deployment-001`, `docs-traceability-001`, `git-delivery-001`.
+
+- [x] Reproduce the connected Samsung installation failure and verify it is API 29 versus APK min SDK 31, not a signature, ABI, storage, USB, or authorization failure.
+- [x] Add a failing-first NativePHP Android 10 contract and lower only the configured/documented minimum to API 29 while retaining compile/target SDK 36, ARM64, and `com.goleaf.sutelio`.
+- [x] Regenerate and harden the ignored native project, rebuild the exact APK, and independently verify manifest, v2 signature, alignment, archive, bundle exclusions, sensitive-log exclusions, and the 38 migrations.
+- [x] Clean-install on the Android 14 ARM64 emulator, complete Russian first run, cold-relaunch with locale persistence, and verify package/process, SQLite integrity, foreign keys, migrations, and process-scoped logs.
+- [x] Pass the complete quality gate and synchronize final evidence.
+- [ ] Commit the correction on `main`, push normally, and verify local/remote equality.
+- [ ] Install the exact verified hash with `adb install -r` on the explicitly resolved API 29 Samsung, launch it, and report package/activity/screenshot/log evidence without deleting another package or mutating Git afterward.

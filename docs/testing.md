@@ -41,7 +41,7 @@ The focused Sutelio documentation/identity gate is:
 php artisan test --compact tests/Feature/BrandIdentityTest.php tests/Feature/FrontendLocalizationTest.php tests/Feature/NativePhpMobileTest.php
 ```
 
-Automated brand tests prove deterministic source and generated-tree contracts, not a shipped artifact or human visual result. Browser verification must inspect title/metadata/favicon, shared/authentication logo composition, focus, forced colors, zoom, fixed-light behavior, and representative viewports. Task 20 independently inspected the named APK's manifest/resources/signature/alignment/archives, clean-installed it in the emulator, and verified launcher, splash, in-app identity, SQLite sandbox, and process-scoped logs. The deterministic brand test additionally guards removal of NativePHP request/header/cookie/response/CSRF value logging after every fresh native generation.
+Automated brand tests prove deterministic source and generated-tree contracts, not a shipped artifact or human visual result. Browser verification must inspect title/metadata/favicon, shared/authentication logo composition, focus, forced colors, zoom, fixed-light behavior, and representative viewports. The current Android 10 compatibility artifact was independently inspected for manifest/resources/signature/alignment/archives, then clean-installed on the Android 14 emulator to verify launcher, splash, Russian first-run flow and persistence, SQLite sandbox, and process-scoped logs. The deterministic brand test additionally guards removal of NativePHP request/header/cookie/response/CSRF value logging after every fresh native generation.
 
 Migration and seeding checks must use isolated testing SQLite databases. Never run `migrate:fresh` against the local working database:
 

@@ -14,6 +14,7 @@ All notable project changes are documented here.
 
 ### Runtime And Dependencies
 
+- Lowered the supported Android floor from API 31 to NativePHP's API 29 baseline so the debug application can run on Android 10 while retaining compile/target SDK 36, ARM64 packaging, and the existing Sutelio package identity.
 - Moved the Herd web/development runtime and CI to PHP 8.5 while retaining `>=8.4 <8.6` compatibility for NativePHP Mobile 4.2's embedded PHP 8.4 runtime.
 - Updated Laravel to 13.25, Inertia Laravel to 3.3.1, Fortify to 1.38, Sanctum to 4.3.3, Wayfinder to 0.1.21, Boost to 2.5.3, Pest to 5.1.1/PHPUnit 13.3, NativePHP Mobile to 4.2, Vite to 8.2.1, Laravel Vite plugin to 3.2, Vue to 3.5.41, and compatible frontend tooling.
 - Re-ran complete stable dependency resolution on 2026-08-16 and upgraded PHPStan from 2.2.5 to 2.2.8. Every direct Composer and npm package remains at its latest mutually compatible release; newer Guzzle, Workerman, Brick Math, PHPUnit, TypeScript, and Node-type majors remain behind explicit upstream framework/runtime peer constraints rather than unsafe overrides.
