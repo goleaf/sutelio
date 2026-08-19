@@ -25,6 +25,19 @@ test('production deployment waits for successful main CI and uses least privileg
         ->not->toMatch('/uses: [^#\n]+@(v[0-9]+|main|master)$/m');
 });
 
+test('clean CI creates the guarded SQLite file before Composer boots Laravel', function () {
+    $workflow = File::get(base_path('.github/workflows/tests.yml'));
+    $databasePreparation = strpos($workflow, 'touch database/database.sqlite');
+    $composerSetup = strpos($workflow, 'run: composer setup');
+
+    expect($databasePreparation)
+        ->toBeInt()
+        ->and($composerSetup)
+        ->toBeInt()
+        ->and($databasePreparation)
+        ->toBeLessThan($composerSetup);
+});
+
 test('production activation preserves shared state and rolls code back on failed health', function () {
     $script = File::get(base_path('deploy/activate-release.sh'));
 
