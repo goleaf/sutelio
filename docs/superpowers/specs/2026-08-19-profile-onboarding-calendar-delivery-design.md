@@ -80,13 +80,32 @@ Reminder timestamps are delivery instructions, can be multiple per task, and
 must not be presented as the task deadline. Created/updated timestamps are also
 not planning data. The selected approach adds optional task execution time.
 
-### Agenda time: local `TIME` column or UTC instant
+### Agenda schedule modes
+
+An undated task, a task expected sometime during a calendar day, and a task due
+at an exact time are different user intentions. Requiring a clock value would
+make ordinary day planning unnecessarily precise, while silently converting a
+date-only task to midnight would create false information.
+
+The selected design exposes three explicit states without adding a redundant
+database enum:
+
+- no schedule: `due_date`, `due_at`, and `due_timezone` are absent;
+- during the day: `due_date` is present while `due_at` and `due_timezone` are
+  absent;
+- exact time: `due_date`, `due_at`, and `due_timezone` are present.
+
+The state is derived from those canonical fields at every read boundary. It is
+not persisted independently, so it cannot drift out of sync.
+
+### Agenda exact time: local `TIME` column or UTC instant
 
 A local wall-clock column is ambiguous for collaborators in different time
 zones and around daylight-saving transitions. The selected design stores an
 optional UTC `due_at` plus the originating IANA `due_timezone`, while retaining
-`due_date` for all-day and existing date-only behavior. Input is interpreted in
-the authenticated user's configured timezone. Existing rows remain all-day.
+`due_date` for during-the-day and existing date-only behavior. Input is
+interpreted in the authenticated user's configured timezone. Existing dated
+rows remain during-the-day tasks without fabricated hours.
 
 ### Year view: return every task or return summaries
 
@@ -94,8 +113,9 @@ Returning all tasks for a year creates an unbounded response and duplicates the
 month/agenda drill-down. The selected year view returns twelve month summaries
 grouped by project. Each month exposes total, open, completed, and timed counts;
 each project group exposes its identity, color, total, open, and completed
-counts. Month and project links provide detail without sending a year of task
-cards.
+counts. `timed` counts only exact-time tasks; during-the-day tasks still
+contribute to the other applicable metrics. Month and project links provide
+detail without sending a year of task cards.
 
 ## Data And Migration Contract
 
@@ -104,16 +124,19 @@ SQLite-compatible migration. Existing `due_date` values are not backfilled with
 invented times. `due_timezone` is present only when `due_at` is present and is a
 validated IANA identifier.
 
-The task write boundary accepts optional `due_time` in `HH:mm` form. A due time
-requires `due_date`; clearing the date clears both exact-time fields. A shared
-schedule service combines date, time, and authenticated-user timezone into a
-UTC instant and can serialize an instant back into local date/time for Inertia
-and API resources. Requests validate shape, while actions own the stored state.
+The task write boundary accepts an explicit schedule mode plus optional
+`due_time` in `HH:mm` form. `none` clears all schedule fields,
+`during_day` requires only `due_date` and clears both exact-time fields, and
+`exact_time` requires both `due_date` and `due_time`. A shared schedule service
+combines date, time, and authenticated-user timezone into a UTC instant and can
+serialize an instant back into local date/time for Inertia and API resources.
+Requests validate shape, while actions own the stored state.
 
 Recurring tasks preserve the source wall-clock time in `due_timezone`: the
 next occurrence date is combined with that time and converted to a new UTC
-instant. Date-only recurring tasks remain date-only. Duplicated/imported tasks
-follow their existing scope rules and never receive fabricated exact times.
+instant. During-the-day recurring tasks remain during-the-day. Duplicated or
+imported tasks follow their existing scope rules and never receive fabricated
+exact times.
 
 Indexes continue to lead with workspace and archive boundaries. The final
 index choice must be supported by a current SQLite query plan for agenda and
@@ -146,8 +169,8 @@ returns to the current year without changing the selected view.
 
 Normal month/week/agenda reads keep their explicit projection and eager-loaded
 project/status/priority relations. Calendar task payloads add the viewer-local
-`due_time`, a boolean `is_all_day`, and the canonical UTC `due_at`; physical
-paths or unrelated task data remain absent.
+`due_time`, a typed `schedule_mode` (`during_day` or `exact_time`), and the
+canonical UTC `due_at`; physical paths or unrelated task data remain absent.
 
 A focused year-summary query iterates explicit, workspace-scoped task fields in
 bounded chunks and builds only twelve month aggregates plus project-group
@@ -179,16 +202,19 @@ remain intact.
 
 ### Time-aware agenda
 
-A shared task due-date field composes the existing `DatePickerField`. It offers
-an explicit localized exact-time choice: date-only mode writes `due_date` and
-clears `due_time`; exact-time mode uses minute granularity and writes both. It
-is reused by ordinary task create/detail edit and onboarding task creation.
+A shared task schedule field composes the existing `DatePickerField`. It offers
+three explicit localized choices: no schedule, During the day, and Exact time.
+During-the-day mode uses day granularity, writes `due_date`, and clears
+`due_time`; exact-time mode uses minute granularity and writes both. Switching
+back to during-the-day never retains a hidden clock value. The field is reused
+by ordinary task creation, task detail editing, and onboarding task creation.
 
 Agenda remains grouped by day. Within each day, exact-time tasks are ordered by
-local time and rendered on a vertical time rail; date-only tasks are grouped
-under the localized All day label. Equal times use the existing stable task
-order. Every visible time honors the viewer's timezone and 12/24-hour
-preference. Status, project, priority, and direct task navigation remain visible.
+local time and rendered on a vertical time rail; tasks without hours are
+grouped under the localized During the day label and never display `00:00`.
+Equal times use the existing stable task order. Every visible exact time honors
+the viewer's timezone and 12/24-hour preference. Status, project, priority, and
+direct task navigation remain visible.
 
 ### Year view
 
@@ -206,9 +232,9 @@ states remain usable without horizontal page overflow.
 ## Localization And Accessibility
 
 All new visible and assistive copy uses semantic PHP catalogs with exact EN/LT/RU
-key and placeholder parity. New copy includes AVIF help, exact-time controls,
-All day, Year, year metrics, project-group labels, and empty-year/month states.
-No language JSON file is introduced.
+key and placeholder parity. New copy includes AVIF help, schedule choices,
+During the day, Exact time, Year, year metrics, project-group labels, and
+empty-year/month states. No language JSON file is introduced.
 
 Controls keep native buttons/inputs, explicit labels, visible focus, stable
 heading hierarchy, chronological DOM order, non-color state cues, polite
@@ -221,8 +247,9 @@ assistive technology. No runtime theme or email-verification behavior changes.
   the dimension limit fail validation without storage or path disclosure.
 - A foreign onboarding workspace identifier fails authorization/validation and
   never changes the session or clears valid selected state.
-- Invalid time, time without date, invalid timezone, DST-invalid local time, and
-  malformed year/date input fail with localized human validation messages.
+- Invalid schedule modes, exact time without date, invalid timezone,
+  DST-invalid local time, and malformed year/date input fail with localized
+  human validation messages. During-the-day tasks never store an exact time.
 - Calendar queries remain scoped to the current authorized workspace. Year
   summaries never include foreign, archived, or undated tasks.
 - No secret, credential, session identifier, private avatar path, or user data is
@@ -231,12 +258,15 @@ assistive technology. No runtime theme or email-verification behavior changes.
 ## Verification Contract
 
 - Failing-first Pest coverage proves real AVIF acceptance/serving, spoof and
-  limit rejection, selected-workspace completion, exact-time validation and UTC
-  conversion, DST/timezone presentation, recurring-time preservation, year
-  ranges/aggregates, workspace isolation, and bounded query behavior.
+  limit rejection, selected-workspace completion, creation and editing in all
+  three schedule modes, exact-time validation and UTC conversion, clearing a
+  previously exact time when switching to during-the-day, DST/timezone
+  presentation, recurrence-mode preservation, year ranges/aggregates, workspace
+  isolation, and bounded query behavior.
 - Failing-first frontend/source coverage proves both checklist add rows are
   always one line, week has no multi-column breakpoint, year is offered by the
-  navigator, and agenda exposes ordered timed/all-day groups.
+  navigator, task creation exposes the three schedule choices, and agenda
+  exposes ordered exact-time/during-the-day groups without a false midnight.
 - Pint, Larastan, the complete Pest suite, fresh migration and repeated seeding,
   frontend tests, Vue type checking, ESLint, Prettier, Composer validation/audit,
   npm audit, and a final normal production Vite build must pass.
