@@ -730,6 +730,63 @@ test('Sutelio NativePHP brand sources include deterministic adaptive monochrome 
         ->and($adaptive)->toContain('<monochrome android:drawable="@drawable/ic_launcher_monochrome"/>')
         ->and($splashTheme)->toContain(
             '<item name="android:windowSplashScreenBackground">#FFF8E9</item>',
-            '<item name="android:windowSplashScreenIconBackgroundColor">#123C8B</item>',
-        );
+            '<item name="android:windowSplashScreenAnimatedIcon">@drawable/sutelio_splash_animated</item>',
+            '<item name="android:windowSplashScreenAnimationDuration">650</item>',
+        )
+        ->not->toContain('android:windowSplashScreenIconBackgroundColor');
+});
+
+test('Sutelio Android splash uses the ribbon mark and a localized motion-aware vector handoff', function () {
+    $mark = File::get(resource_path('brand/sutelio-mark.svg'));
+    $nativeBrandInstaller = File::get(base_path('scripts/apply-native-brand.mjs'));
+    $splashTheme = File::get(resource_path('brand/android/values-v31/themes.xml'));
+    $localizedStrings = collect([
+        'en' => File::get(resource_path('brand/android/values/sutelio_splash_strings.xml')),
+        'lt' => File::get(resource_path('brand/android/values-lt/sutelio_splash_strings.xml')),
+        'ru' => File::get(resource_path('brand/android/values-ru/sutelio_splash_strings.xml')),
+    ]);
+    $localizedKeys = $localizedStrings->map(static function (string $strings): array {
+        preg_match_all('/<string name="([^"]+)">/', $strings, $matches);
+
+        return $matches[1];
+    });
+
+    expect($mark)
+        ->toContain('data-mark="sutelio-ribbon"', '<circle cx="256" cy="256" r="220" fill="#FF6038"/>')
+        ->not->toContain('fill="#123C8B"', '<text', 'stroke=')
+        ->and(resource_path('brand/android/drawable/sutelio_splash_icon.xml'))->toBeFile()
+        ->and(resource_path('brand/android/drawable/sutelio_splash_animated.xml'))->toBeFile()
+        ->and(resource_path('brand/android/animator/sutelio_splash_scale.xml'))->toBeFile()
+        ->and(resource_path('brand/android/animator/sutelio_splash_fade.xml'))->toBeFile()
+        ->and(resource_path('brand/android/values/sutelio_splash_strings.xml'))->toBeFile()
+        ->and(resource_path('brand/android/values-lt/sutelio_splash_strings.xml'))->toBeFile()
+        ->and(resource_path('brand/android/values-ru/sutelio_splash_strings.xml'))->toBeFile()
+        ->and($splashTheme)
+        ->toContain(
+            '<item name="android:windowSplashScreenAnimatedIcon">@drawable/sutelio_splash_animated</item>',
+            '<item name="android:windowSplashScreenAnimationDuration">650</item>',
+        )
+        ->not->toContain('android:windowSplashScreenIconBackgroundColor', '#123C8B')
+        ->and($nativeBrandInstaller)
+        ->toContain(
+            'Sutelio Android splash activity',
+            'android.animation.ValueAnimator.areAnimatorsEnabled()',
+            'initialValue = if (animationsEnabled) 0f else 0.52f',
+            'targetValue = if (animationsEnabled) 1f else 0.52f',
+            'painterResource(id = R.drawable.sutelio_splash_icon)',
+            'stringResource(id = R.string.sutelio_splash_status)',
+            'exit = fadeOut(animationSpec = tween(170))',
+        )
+        ->not->toContain('BitmapFactory.decodeResource');
+
+    expect($localizedKeys->unique()->count())->toBe(1)
+        ->and($localizedKeys->first())->toBe([
+            'sutelio_splash_title',
+            'sutelio_splash_tagline',
+            'sutelio_splash_status',
+            'sutelio_splash_privacy',
+        ])
+        ->and($localizedStrings['en'])->toContain('Preparing your local workspace…')
+        ->and($localizedStrings['lt'])->toContain('Ruošiama vietinė darbo erdvė…')
+        ->and($localizedStrings['ru'])->toContain('Готовим локальное рабочее пространство…');
 });

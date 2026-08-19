@@ -2,7 +2,7 @@
 
 ## Active Sutelio Brand Evidence
 
-The active product identity is Sutelio. Application/package metadata, configuration fallbacks, English/Lithuanian/Russian catalogs, Blade metadata, `AppLogo`/`AppLogoIcon`, deterministic clean-S and one-color wordmark sources, favicon/raster outputs, Android adaptive/monochrome sources, iOS icon/splash inputs, external `com.goleaf.sutelio` package/bundle identifiers, and the `sutelio` deep-link scheme are present in current source and guarded by `BrandIdentityTest.php` plus `NativePhpMobileTest.php`.
+The active product identity is Sutelio. Application/package metadata, configuration fallbacks, English/Lithuanian/Russian catalogs, Blade metadata, `AppLogo`/`AppLogoIcon`, deterministic custom-ribbon and one-color wordmark sources, favicon/raster outputs, Android adaptive/monochrome/animated-vector sources, the guarded localized Compose handoff, iOS icon/splash inputs, external `com.goleaf.sutelio` package/bundle identifiers, and the `sutelio` deep-link scheme are present in current source and guarded by `BrandIdentityTest.php` plus `NativePhpMobileTest.php`.
 
 Task 7 proved that the unchanged sequence `php artisan native:install --force --no-interaction && npm run brand:native` reproducibly canonicalizes a fresh NativePHP 4.2 tree. The generated Android external application ID is `com.goleaf.sutelio`, while its NativePHP/JNI namespace deliberately remains `com.nativephp.mobile`; active architecture and implementation-plan text supersede contrary historical plan language. The publication and rollback follow-ups were delivered by `66318c0` and `e50f9c1`, with the combined NativePHP/brand gate passing 45 tests / 4,249 assertions.
 

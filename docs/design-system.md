@@ -17,7 +17,9 @@ The fixed Warm Precision language uses warm neutral canvases, explicit surface/f
 
 ## Sutelio Brand Geometry
 
-The master brand palette has exactly four identity tokens: cobalt `#123C8B`, deep cobalt `#0A285F`, Signal Orange `#FF6038`, and ivory `#FFF8E9`. The clean-S mark places a solid Signal Orange circle at 70% of the 512-unit artboard diameter on cobalt and uses one solid, stripe-free ivory S. Gradients, strokes, line decoration, and text elements are prohibited in the master mark.
+The master brand palette has exactly four identity tokens: cobalt `#123C8B`, deep cobalt `#0A285F`, Signal Orange `#FF6038`, and ivory `#FFF8E9`. The master mark is one Signal Orange disc carrying a custom solid ivory ribbon path. It contains no font-derived letter, cobalt tile, blue outline, gradient, stroke, line decoration, or text element. Opaque launcher/store canvases use Signal Orange edge to edge so the operating system owns the final mask; the monochrome Android resource reuses the same ribbon silhouette.
+
+The native startup composition pairs that mark with the deep-cobalt wordmark, short localized purpose/readiness/privacy copy, and one quiet indeterminate indicator. Android motion is limited to a one-time settle, low-amplitude breathing halo, slowly orbiting signal points, status emphasis, and progress sweep; it never delays readiness and becomes a static final composition when system animations are disabled.
 
 The Sutelio wordmark is one color, deep cobalt, and is exported as deterministic paths rather than live font text. Its final `o` is not orange. The darker accessible orange `#CD431F` is a solid-control surface derivative for white foreground text, not a fifth master-logo token. The runtime product remains light-only; no brand token establishes a dark/system mode or a switchable design family.
 

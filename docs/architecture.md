@@ -8,7 +8,7 @@ NativePHP Mobile 4.2 continues to host the existing Inertia/Vue application in i
 
 ## Product And Package Identity
 
-Sutelio is the single active product identity. Deterministic tracked brand inputs generate the stripe-free clean-S browser mark, one-color wordmark, raster icons, Android adaptive/monochrome resources, and native splash imagery. Android's external `applicationId` and the primary iOS bundle identifier are `com.goleaf.sutelio`; the custom deep-link scheme is `sutelio`.
+Sutelio is the single active product identity. Deterministic tracked brand inputs generate the custom ivory ribbon mark on Signal Orange, one-color wordmark, raster icons, Android adaptive/monochrome resources, Android 12 animated-vector splash, lightweight EN/LT/RU Compose startup handoff, and iOS splash imagery. The Android handoff renders vectors instead of decoding a full-screen bitmap, remains readiness-driven with no minimum delay, stops looping motion when platform animations are disabled, and exits in 170 ms on the existing truthful first-content signal. Android's external `applicationId` and the primary iOS bundle identifier are `com.goleaf.sutelio`; the custom deep-link scheme is `sutelio`.
 
 The generated Android `namespace = "com.nativephp.mobile"` is an internal NativePHP/JNI integration contract and must not be renamed to the external application ID. This active architecture decision supersedes contrary namespace language in historical Sutelio design and implementation plans. Both external mobile identifiers create a new operating-system sandbox: the application does not claim automatic access to or migration from the previous package's private SQLite files.
 

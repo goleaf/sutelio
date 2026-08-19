@@ -35,12 +35,19 @@ const outputPaths = [
     'resources/brand/android/drawable/ic_launcher_background.xml',
     'resources/brand/android/drawable/ic_launcher_foreground.xml',
     'resources/brand/android/drawable/ic_launcher_monochrome.xml',
+    'resources/brand/android/drawable/sutelio_splash_animated.xml',
+    'resources/brand/android/drawable/sutelio_splash_icon.xml',
+    'resources/brand/android/animator/sutelio_splash_fade.xml',
+    'resources/brand/android/animator/sutelio_splash_scale.xml',
     'resources/brand/android/mipmap-anydpi-v26/ic_launcher.xml',
     'resources/brand/android/mipmap-anydpi-v26/ic_launcher_round.xml',
     'resources/brand/android/mipmap-anydpi-v33/ic_launcher.xml',
     'resources/brand/android/mipmap-anydpi-v33/ic_launcher_round.xml',
     'resources/brand/android/values-v31/themes.xml',
     'resources/brand/android/values-night-v31/themes.xml',
+    'resources/brand/android/values/sutelio_splash_strings.xml',
+    'resources/brand/android/values-lt/sutelio_splash_strings.xml',
+    'resources/brand/android/values-ru/sutelio_splash_strings.xml',
     'public/icon.png',
     'public/apple-touch-icon.png',
     'public/splash.png',
@@ -416,16 +423,14 @@ function buildBrandAssets(buildDirectory) {
     const usesMatch = outlinedWordmark.match(
         /<g fill="[^"]+" fill-opacity="1">\s*([\s\S]*?)\s*<\/g>\s*<\/svg>/,
     );
-    const sPathMatch = definitions.match(
-        /<g id="glyph-0-0">\s*<path d="([^"]+)"\/>\s*<\/g>/,
-    );
 
-    if (!usesMatch || !sPathMatch) {
-        throw new Error('Unable to extract outlined Sutelio glyph geometry.');
+    if (!usesMatch) {
+        throw new Error(
+            'Unable to extract outlined Sutelio wordmark geometry.',
+        );
     }
 
     const wordmarkUses = usesMatch[1];
-    const sPath = sPathMatch[1];
     const glyphPaths = new Map(
         [
             ...definitions.matchAll(
@@ -452,17 +457,20 @@ function buildBrandAssets(buildDirectory) {
         throw new Error('Unable to inline every Sutelio wordmark glyph.');
     }
 
+    const ribbonPath =
+        'M353 154 C323 115 279 94 228 99 C173 104 131 135 128 183 C125 229 158 254 222 268 L270 279 C295 285 309 299 307 318 C304 343 277 358 244 358 C199 358 164 338 137 304 L92 347 C128 394 181 421 245 421 C316 421 373 383 380 322 C386 264 347 230 284 216 L236 205 C208 199 193 188 195 173 C197 153 218 141 245 141 C281 141 308 157 331 186 Z';
+    const ribbonArtwork = `<path data-mark="sutelio-ribbon" d="${ribbonPath}" fill="${colors.ivory}"/>`;
     const markArtwork = `
-  <rect width="512" height="512" rx="112" fill="${colors.cobalt}"/>
-  <circle cx="256" cy="256" r="179.2" fill="${colors.orange}"/>
-  <path d="${sPath}" transform="translate(149.73 376.14) scale(1.3)" fill="${colors.ivory}"/>`;
+  <circle cx="256" cy="256" r="220" fill="${colors.orange}"/>
+  ${ribbonArtwork}`;
     const markSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="sutelio-mark-title">
   <title id="sutelio-mark-title">Sutelio</title>${markArtwork}
 </svg>`;
     const opaqueMarkSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="${colors.cobalt}"/>${markArtwork}
+  <rect width="512" height="512" fill="${colors.orange}"/>
+  ${ribbonArtwork}
 </svg>`;
     const wordmarkSvg = `
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="847" height="313" viewBox="0 0 847 312.3125" data-wordmark="Sutelio">
@@ -542,24 +550,44 @@ function buildBrandAssets(buildDirectory) {
     );
 
     const circlePath =
-        'M256,76.8 A179.2,179.2 0 1,1 255.999,435.2 A179.2,179.2 0 1,1 256,76.8 Z';
+        'M256,36 A220,220 0 1,1 255.999,476 A220,220 0 1,1 256,36 Z';
     const androidDrawable = resolve(buildBrand, 'android/drawable');
+    const androidAnimator = resolve(buildBrand, 'android/animator');
     const androidV26 = resolve(buildBrand, 'android/mipmap-anydpi-v26');
     const androidV33 = resolve(buildBrand, 'android/mipmap-anydpi-v33');
     const androidV31 = resolve(buildBrand, 'android/values-v31');
     const androidNightV31 = resolve(buildBrand, 'android/values-night-v31');
+    const androidValues = resolve(buildBrand, 'android/values');
+    const androidValuesLt = resolve(buildBrand, 'android/values-lt');
+    const androidValuesRu = resolve(buildBrand, 'android/values-ru');
 
     write(
         resolve(androidDrawable, 'ic_launcher_background.xml'),
-        `<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="${colors.cobalt}"/></shape>`,
+        `<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="${colors.orange}"/></shape>`,
     );
     write(
         resolve(androidDrawable, 'ic_launcher_foreground.xml'),
-        `<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="512" android:viewportHeight="512"><group android:pivotX="256" android:pivotY="256" android:scaleX="0.86" android:scaleY="0.86"><path android:fillColor="${colors.orange}" android:pathData="${circlePath}"/><group android:translateX="149.73" android:translateY="376.14" android:scaleX="1.3" android:scaleY="1.3"><path android:fillColor="${colors.ivory}" android:pathData="${sPath}"/></group></group></vector>`,
+        `<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="512" android:viewportHeight="512"><group android:pivotX="256" android:pivotY="256" android:scaleX="0.8" android:scaleY="0.8"><path android:fillColor="${colors.ivory}" android:pathData="${ribbonPath}"/></group></vector>`,
     );
     write(
         resolve(androidDrawable, 'ic_launcher_monochrome.xml'),
-        `<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="512" android:viewportHeight="512"><group android:pivotX="256" android:pivotY="256" android:scaleX="0.86" android:scaleY="0.86"><group android:translateX="149.73" android:translateY="376.14" android:scaleX="1.3" android:scaleY="1.3"><path android:fillColor="#FF000000" android:pathData="${sPath}"/></group></group></vector>`,
+        `<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="108dp" android:height="108dp" android:viewportWidth="512" android:viewportHeight="512"><group android:pivotX="256" android:pivotY="256" android:scaleX="0.8" android:scaleY="0.8"><path android:fillColor="#FF000000" android:pathData="${ribbonPath}"/></group></vector>`,
+    );
+    write(
+        resolve(androidDrawable, 'sutelio_splash_icon.xml'),
+        `<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="192dp" android:height="192dp" android:viewportWidth="512" android:viewportHeight="512"><group android:name="sutelio_mark" android:pivotX="256" android:pivotY="256"><path android:name="signal_disc" android:fillColor="${colors.orange}" android:pathData="${circlePath}"/><path android:name="ribbon" android:fillColor="${colors.ivory}" android:pathData="${ribbonPath}"/></group></vector>`,
+    );
+    write(
+        resolve(androidAnimator, 'sutelio_splash_scale.xml'),
+        `<set xmlns:android="http://schemas.android.com/apk/res/android" android:ordering="together"><objectAnimator android:duration="650" android:propertyName="scaleX" android:valueFrom="0.9" android:valueTo="1" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in"/><objectAnimator android:duration="650" android:propertyName="scaleY" android:valueFrom="0.9" android:valueTo="1" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in"/></set>`,
+    );
+    write(
+        resolve(androidAnimator, 'sutelio_splash_fade.xml'),
+        `<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android" android:duration="420" android:propertyName="fillAlpha" android:valueFrom="0.15" android:valueTo="1" android:valueType="floatType" android:interpolator="@android:interpolator/fast_out_slow_in"/>`,
+    );
+    write(
+        resolve(androidDrawable, 'sutelio_splash_animated.xml'),
+        `<animated-vector xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@drawable/sutelio_splash_icon"><target android:name="sutelio_mark" android:animation="@animator/sutelio_splash_scale"/><target android:name="signal_disc" android:animation="@animator/sutelio_splash_fade"/><target android:name="ribbon" android:animation="@animator/sutelio_splash_fade"/></animated-vector>`,
     );
 
     const adaptiveIcon = (withMonochrome) =>
@@ -571,12 +599,39 @@ function buildBrandAssets(buildDirectory) {
     }
 
     const androidTheme = (primary) =>
-        `<resources><style name="Theme.AndroidPHP" parent="Theme.MaterialComponents.DayNight.DarkActionBar"><item name="colorPrimary">${primary}</item><item name="colorPrimaryVariant">${primary}</item><item name="colorOnPrimary">${colors.ivory}</item><item name="colorAccent">${colors.orange}</item><item name="android:colorAccent">${colors.orange}</item><item name="android:windowDrawsSystemBarBackgrounds">true</item><item name="android:statusBarColor">@android:color/transparent</item><item name="android:navigationBarColor">@android:color/transparent</item><item name="android:enforceStatusBarContrast">false</item><item name="android:enforceNavigationBarContrast">false</item><item name="android:windowSplashScreenBackground">${colors.ivory}</item><item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item><item name="android:windowSplashScreenIconBackgroundColor">${colors.cobalt}</item></style></resources>`;
+        `<resources><style name="Theme.AndroidPHP" parent="Theme.MaterialComponents.DayNight.DarkActionBar"><item name="colorPrimary">${primary}</item><item name="colorPrimaryVariant">${primary}</item><item name="colorOnPrimary">${colors.ivory}</item><item name="colorAccent">${colors.orange}</item><item name="android:colorAccent">${colors.orange}</item><item name="android:windowDrawsSystemBarBackgrounds">true</item><item name="android:statusBarColor">@android:color/transparent</item><item name="android:navigationBarColor">@android:color/transparent</item><item name="android:enforceStatusBarContrast">false</item><item name="android:enforceNavigationBarContrast">false</item><item name="android:windowSplashScreenBackground">${colors.ivory}</item><item name="android:windowSplashScreenAnimatedIcon">@drawable/sutelio_splash_animated</item><item name="android:windowSplashScreenAnimationDuration">650</item></style></resources>`;
 
     write(resolve(androidV31, 'themes.xml'), androidTheme(colors.cobalt));
     write(
         resolve(androidNightV31, 'themes.xml'),
         androidTheme(colors.deepCobalt),
+    );
+    const splashStrings = (tagline, status, privacy) =>
+        `<resources><string name="sutelio_splash_title">Sutelio</string><string name="sutelio_splash_tagline">${tagline}</string><string name="sutelio_splash_status">${status}</string><string name="sutelio_splash_privacy">${privacy}</string></resources>`;
+
+    write(
+        resolve(androidValues, 'sutelio_splash_strings.xml'),
+        splashStrings(
+            'Your day, clearly organized',
+            'Preparing your local workspace…',
+            'Local-first • Privacy by design',
+        ),
+    );
+    write(
+        resolve(androidValuesLt, 'sutelio_splash_strings.xml'),
+        splashStrings(
+            'Jūsų diena – aiškiai ir paprastai',
+            'Ruošiama vietinė darbo erdvė…',
+            'Vietiniai duomenys • Privatumas pirmiausia',
+        ),
+    );
+    write(
+        resolve(androidValuesRu, 'sutelio_splash_strings.xml'),
+        splashStrings(
+            'Ваш день — ясно и по делу',
+            'Готовим локальное рабочее пространство…',
+            'Локальные данные • Приватность прежде всего',
+        ),
     );
 
     return validateBuildOutputs(buildDirectory);

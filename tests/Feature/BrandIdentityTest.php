@@ -7,15 +7,22 @@ use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 
 $nativeBrandAndroidAssets = [
+    'animator/sutelio_splash_fade.xml',
+    'animator/sutelio_splash_scale.xml',
     'drawable/ic_launcher_background.xml',
     'drawable/ic_launcher_foreground.xml',
     'drawable/ic_launcher_monochrome.xml',
+    'drawable/sutelio_splash_animated.xml',
+    'drawable/sutelio_splash_icon.xml',
     'mipmap-anydpi-v26/ic_launcher.xml',
     'mipmap-anydpi-v26/ic_launcher_round.xml',
     'mipmap-anydpi-v33/ic_launcher.xml',
     'mipmap-anydpi-v33/ic_launcher_round.xml',
     'values-v31/themes.xml',
     'values-night-v31/themes.xml',
+    'values/sutelio_splash_strings.xml',
+    'values-lt/sutelio_splash_strings.xml',
+    'values-ru/sutelio_splash_strings.xml',
 ];
 
 $nativeBrandPublishedFiles = [
@@ -27,6 +34,7 @@ $nativeBrandPublishedFiles = [
     'nativephp/android/app/src/main/java/com/nativephp/mobile/network/WebViewManager.kt',
     'nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelCookieStore.kt',
     'nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelSecurity.kt',
+    'nativephp/android/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt',
     'nativephp/ios/NativePHP.xcodeproj/project.pbxproj',
     'nativephp/ios/NativePHP/Info.plist',
     'nativephp/ios/NativePHP-simulator-Info.plist',
@@ -122,6 +130,7 @@ $createNativeBrandInstallerFixture = static function (
         'java/com/nativephp/mobile/network/WebViewManager.kt',
         'java/com/nativephp/mobile/security/LaravelCookieStore.kt',
         'java/com/nativephp/mobile/security/LaravelSecurity.kt',
+        'java/com/nativephp/mobile/ui/MainActivity.kt',
     ] as $androidSourcePath) {
         $templatePath = 'vendor/nativephp/mobile/resources/androidstudio/app/src/main/'.$androidSourcePath;
         $generatedPath = 'nativephp/android/app/src/main/'.$androidSourcePath;
@@ -673,12 +682,19 @@ test('a handled brand publish failure restores every previous output and removes
         'resources/brand/android/drawable/ic_launcher_background.xml',
         'resources/brand/android/drawable/ic_launcher_foreground.xml',
         'resources/brand/android/drawable/ic_launcher_monochrome.xml',
+        'resources/brand/android/drawable/sutelio_splash_animated.xml',
+        'resources/brand/android/drawable/sutelio_splash_icon.xml',
+        'resources/brand/android/animator/sutelio_splash_fade.xml',
+        'resources/brand/android/animator/sutelio_splash_scale.xml',
         'resources/brand/android/mipmap-anydpi-v26/ic_launcher.xml',
         'resources/brand/android/mipmap-anydpi-v26/ic_launcher_round.xml',
         'resources/brand/android/mipmap-anydpi-v33/ic_launcher.xml',
         'resources/brand/android/mipmap-anydpi-v33/ic_launcher_round.xml',
         'resources/brand/android/values-v31/themes.xml',
         'resources/brand/android/values-night-v31/themes.xml',
+        'resources/brand/android/values/sutelio_splash_strings.xml',
+        'resources/brand/android/values-lt/sutelio_splash_strings.xml',
+        'resources/brand/android/values-ru/sutelio_splash_strings.xml',
         'public/icon.png',
         'public/apple-touch-icon.png',
         'public/splash.png',
@@ -758,6 +774,7 @@ test('the native brand installer canonicalizes a fresh NativePHP template and is
         $phpBridge = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/bridge/PHPBridge.kt');
         $cookieStore = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelCookieStore.kt');
         $laravelSecurity = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/security/LaravelSecurity.kt');
+        $mainActivity = File::get($temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt');
 
         expect($gradle)
             ->toContain('namespace = "com.nativephp.mobile"')
@@ -803,7 +820,24 @@ test('the native brand installer canonicalizes a fresh NativePHP template and is
             ->and($laravelSecurity)
             ->not->toContain('Extracted CSRF token from JSON: $csrfToken')
             ->not->toContain('Extracted CSRF token from form: $csrfToken')
-            ->not->toContain('Stored CSRF token manually: $token');
+            ->not->toContain('Stored CSRF token manually: $token')
+            ->and($mainActivity)
+            ->toContain(
+                'exit = fadeOut(animationSpec = tween(170))',
+                'android.animation.ValueAnimator.areAnimatorsEnabled()',
+                'initialValue = if (animationsEnabled) 0f else 0.52f',
+                'targetValue = if (animationsEnabled) 1f else 0.52f',
+                'painterResource(id = R.drawable.sutelio_splash_icon)',
+                'stringResource(id = R.string.sutelio_splash_status)',
+                'isAppearanceLightStatusBars = true',
+                'isAppearanceLightNavigationBars = true',
+            )
+            ->not->toContain(
+                'BitmapFactory',
+                'decodeResource',
+                'ContentScale.Crop',
+                'tween(300)',
+            );
 
         foreach (['NativePHP/Info.plist', 'NativePHP-simulator-Info.plist'] as $plistPath) {
             $plist = File::get($temporaryRoot.'/nativephp/ios/'.$plistPath);
@@ -860,13 +894,62 @@ test('the native brand installer canonicalizes a fresh NativePHP template and is
             ->and(collect($launchCatalog['images'])->pluck('filename')->all())
             ->toBe(['splash.png', 'splash-dark.png']);
 
-        $firstRun = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
+        $mainActivityPath = $temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt';
+        File::put(
+            $mainActivityPath,
+            str_replace(
+                'private val statusBarStyle = "REPLACE_STATUS_BAR_STYLE"',
+                'private val statusBarStyle = "auto"',
+                File::get($mainActivityPath),
+                $statusBarReplacementCount,
+            ),
+        );
+
+        expect($statusBarReplacementCount)->toBe(1);
+
+        $buildPreparedRun = $snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles);
         $secondProcess = $runNativeBrandInstaller($temporaryRoot);
 
         expect($secondProcess->isSuccessful(), $secondProcess->getErrorOutput().$secondProcess->getOutput())
             ->toBeTrue()
             ->and($snapshotNativeBrandFixture($temporaryRoot, $nativeBrandPublishedFiles))
-            ->toBe($firstRun);
+            ->toBe($buildPreparedRun)
+            ->and(File::get($mainActivityPath))
+            ->toContain('private val statusBarStyle = "auto"');
+    } finally {
+        File::deleteDirectory($temporaryRoot);
+    }
+});
+
+test('the native brand installer migrates the accepted exact splash predecessor', function () use ($createNativeBrandInstallerFixture, $runNativeBrandInstaller) {
+    $temporaryRoot = $createNativeBrandInstallerFixture();
+
+    try {
+        $firstProcess = $runNativeBrandInstaller($temporaryRoot);
+
+        expect($firstProcess->isSuccessful(), $firstProcess->getErrorOutput().$firstProcess->getOutput())
+            ->toBeTrue();
+
+        $mainActivityPath = $temporaryRoot.'/nativephp/android/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt';
+        $previousCanonical = str_replace(
+            'initialValue = if (animationsEnabled) 0f else 0.52f',
+            'initialValue = 0f',
+            File::get($mainActivityPath),
+            $replacementCount,
+        );
+
+        expect($replacementCount)->toBe(1);
+
+        File::put($mainActivityPath, $previousCanonical);
+
+        $migrationProcess = $runNativeBrandInstaller($temporaryRoot);
+        $migratedMainActivity = File::get($mainActivityPath);
+
+        expect($migrationProcess->isSuccessful(), $migrationProcess->getErrorOutput().$migrationProcess->getOutput())
+            ->toBeTrue()
+            ->and($migratedMainActivity)
+            ->toContain('initialValue = if (animationsEnabled) 0f else 0.52f')
+            ->not->toContain("val sweepProgress by motion.animateFloat(\n            initialValue = 0f,");
     } finally {
         File::deleteDirectory($temporaryRoot);
     }
@@ -1130,12 +1213,19 @@ test('the complete canonical brand export set is tracked', function () {
         'resources/brand/android/drawable/ic_launcher_background.xml',
         'resources/brand/android/drawable/ic_launcher_foreground.xml',
         'resources/brand/android/drawable/ic_launcher_monochrome.xml',
+        'resources/brand/android/drawable/sutelio_splash_animated.xml',
+        'resources/brand/android/drawable/sutelio_splash_icon.xml',
+        'resources/brand/android/animator/sutelio_splash_fade.xml',
+        'resources/brand/android/animator/sutelio_splash_scale.xml',
         'resources/brand/android/mipmap-anydpi-v26/ic_launcher.xml',
         'resources/brand/android/mipmap-anydpi-v26/ic_launcher_round.xml',
         'resources/brand/android/mipmap-anydpi-v33/ic_launcher.xml',
         'resources/brand/android/mipmap-anydpi-v33/ic_launcher_round.xml',
         'resources/brand/android/values-v31/themes.xml',
         'resources/brand/android/values-night-v31/themes.xml',
+        'resources/brand/android/values/sutelio_splash_strings.xml',
+        'resources/brand/android/values-lt/sutelio_splash_strings.xml',
+        'resources/brand/android/values-ru/sutelio_splash_strings.xml',
         'public/icon.png',
         'public/apple-touch-icon.png',
         'public/splash.png',
@@ -1164,7 +1254,7 @@ test('the complete canonical brand export set is tracked', function () {
         ->and($favicon['mime'])->toBe('image/vnd.microsoft.icon');
 });
 
-test('the clean-S master artwork uses the locked geometry and colors', function () {
+test('the ribbon master artwork uses the locked geometry and colors', function () {
     $mark = File::get(resource_path('brand/sutelio-mark.svg'));
     $wordmark = File::get(resource_path('brand/sutelio-wordmark.svg'));
     $lockup = File::get(resource_path('brand/sutelio-lockup.svg'));
@@ -1172,14 +1262,12 @@ test('the clean-S master artwork uses the locked geometry and colors', function 
     expect($mark)
         ->toContain(
             'viewBox="0 0 512 512"',
-            '<rect width="512" height="512" rx="112" fill="#123C8B"/>',
-            '<circle cx="256" cy="256" r="179.2" fill="#FF6038"/>',
-            '<path d="',
-            'transform="translate(149.73 376.14) scale(1.3)"',
+            '<circle cx="256" cy="256" r="220" fill="#FF6038"/>',
+            '<path data-mark="sutelio-ribbon" d="',
             'fill="#FFF8E9"',
         )
-        ->toMatch('/<path d="[^"]+" transform="translate\(149\.73 376\.14\) scale\(1\.3\)" fill="#FFF8E9"\/>/')
-        ->not->toContain('<text', '<line', '<linearGradient', '<radialGradient', 'stroke=', 'style=');
+        ->toMatch('/<path data-mark="sutelio-ribbon" d="M353 154 [^"]+" fill="#FFF8E9"\/>/')
+        ->not->toContain('#123C8B', '<rect', '<text', '<line', '<linearGradient', '<radialGradient', 'stroke=', 'style=');
 
     expect($wordmark)
         ->toContain(
@@ -1198,16 +1286,14 @@ test('the clean-S master artwork uses the locked geometry and colors', function 
     expect($lockup)
         ->toContain(
             'viewBox="0 0 1280 512"',
-            '<rect width="512" height="512" rx="112" fill="#123C8B"/>',
-            '<circle cx="256" cy="256" r="179.2" fill="#FF6038"/>',
-            '<path d="',
-            'transform="translate(149.73 376.14) scale(1.3)"',
+            '<circle cx="256" cy="256" r="220" fill="#FF6038"/>',
+            '<path data-mark="sutelio-ribbon" d="',
             'fill="#FFF8E9"',
             '<defs>',
             '<use xlink:href="#glyph-',
             '<g transform="translate(576 100) scale(.78)" fill="#0A285F">',
         )
-        ->toMatch('/<path d="[^"]+" transform="translate\(149\.73 376\.14\) scale\(1\.3\)" fill="#FFF8E9"\/>/')
+        ->toMatch('/<path data-mark="sutelio-ribbon" d="M353 154 [^"]+" fill="#FFF8E9"\/>/')
         ->toMatch('/<use xlink:href="#glyph-[^"]+"[^>]*\/>/')
         ->not->toContain('<text', '<line', '<linearGradient', '<radialGradient', 'stroke=', 'style=');
 });
@@ -1217,34 +1303,48 @@ test('the Android source overrides use the approved adaptive and splash contract
     $background = $androidAsset('drawable/ic_launcher_background.xml');
     $foreground = $androidAsset('drawable/ic_launcher_foreground.xml');
     $monochrome = $androidAsset('drawable/ic_launcher_monochrome.xml');
+    $splashIcon = $androidAsset('drawable/sutelio_splash_icon.xml');
+    $animatedSplash = $androidAsset('drawable/sutelio_splash_animated.xml');
     $adaptiveIcon = static fn (bool $withMonochrome): string => '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android"><background android:drawable="@drawable/ic_launcher_background"/><foreground android:drawable="@drawable/ic_launcher_foreground"/>'.($withMonochrome ? '<monochrome android:drawable="@drawable/ic_launcher_monochrome"/>' : '').'</adaptive-icon>'.PHP_EOL;
-    $androidTheme = static fn (string $primary): string => '<resources><style name="Theme.AndroidPHP" parent="Theme.MaterialComponents.DayNight.DarkActionBar"><item name="colorPrimary">'.$primary.'</item><item name="colorPrimaryVariant">'.$primary.'</item><item name="colorOnPrimary">#FFF8E9</item><item name="colorAccent">#FF6038</item><item name="android:colorAccent">#FF6038</item><item name="android:windowDrawsSystemBarBackgrounds">true</item><item name="android:statusBarColor">@android:color/transparent</item><item name="android:navigationBarColor">@android:color/transparent</item><item name="android:enforceStatusBarContrast">false</item><item name="android:enforceNavigationBarContrast">false</item><item name="android:windowSplashScreenBackground">#FFF8E9</item><item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item><item name="android:windowSplashScreenIconBackgroundColor">#123C8B</item></style></resources>'.PHP_EOL;
+    $androidTheme = static fn (string $primary): string => '<resources><style name="Theme.AndroidPHP" parent="Theme.MaterialComponents.DayNight.DarkActionBar"><item name="colorPrimary">'.$primary.'</item><item name="colorPrimaryVariant">'.$primary.'</item><item name="colorOnPrimary">#FFF8E9</item><item name="colorAccent">#FF6038</item><item name="android:colorAccent">#FF6038</item><item name="android:windowDrawsSystemBarBackgrounds">true</item><item name="android:statusBarColor">@android:color/transparent</item><item name="android:navigationBarColor">@android:color/transparent</item><item name="android:enforceStatusBarContrast">false</item><item name="android:enforceNavigationBarContrast">false</item><item name="android:windowSplashScreenBackground">#FFF8E9</item><item name="android:windowSplashScreenAnimatedIcon">@drawable/sutelio_splash_animated</item><item name="android:windowSplashScreenAnimationDuration">650</item></style></resources>'.PHP_EOL;
 
     expect($background)
-        ->toBe('<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="#123C8B"/></shape>'.PHP_EOL)
+        ->toBe('<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle"><solid android:color="#FF6038"/></shape>'.PHP_EOL)
         ->and($foreground)
         ->toContain(
             'android:viewportWidth="512"',
             'android:viewportHeight="512"',
-            'android:scaleX="0.86"',
-            'android:scaleY="0.86"',
-            'android:fillColor="#FF6038"',
-            'android:pathData="M256,76.8 A179.2,179.2 0 1,1 255.999,435.2 A179.2,179.2 0 1,1 256,76.8 Z"',
-            'android:translateX="149.73"',
-            'android:translateY="376.14"',
+            'android:scaleX="0.8"',
+            'android:scaleY="0.8"',
             'android:fillColor="#FFF8E9"',
+            'android:pathData="M353 154',
         )
+        ->not->toContain('#123C8B', '#FF6038', 'android:translateX')
         ->and($monochrome)
         ->toContain(
             'android:viewportWidth="512"',
             'android:viewportHeight="512"',
-            'android:scaleX="0.86"',
-            'android:scaleY="0.86"',
-            'android:translateX="149.73"',
-            'android:translateY="376.14"',
+            'android:scaleX="0.8"',
+            'android:scaleY="0.8"',
             'android:fillColor="#FF000000"',
+            'android:pathData="M353 154',
         )
-        ->not->toContain('#FF6038', '#FFF8E9');
+        ->not->toContain('#123C8B', '#FF6038', '#FFF8E9')
+        ->and($splashIcon)
+        ->toContain(
+            'android:name="sutelio_mark"',
+            'android:name="signal_disc"',
+            'android:name="ribbon"',
+            'android:fillColor="#FF6038"',
+            'android:fillColor="#FFF8E9"',
+        )
+        ->not->toContain('#123C8B')
+        ->and($animatedSplash)
+        ->toContain(
+            'android:drawable="@drawable/sutelio_splash_icon"',
+            'android:animation="@animator/sutelio_splash_scale"',
+            'android:animation="@animator/sutelio_splash_fade"',
+        );
 
     foreach (['ic_launcher.xml', 'ic_launcher_round.xml'] as $filename) {
         expect($androidAsset("mipmap-anydpi-v26/{$filename}"))

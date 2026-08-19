@@ -10,7 +10,7 @@ Livewire, Volt, and Flux are not installed and are explicitly non-applicable. Re
 
 ## Sutelio Identity Flow
 
-`AppLogoIcon` consumes the deterministic `/favicon.svg` clean-S mark as a decorative image. `AppLogo` combines that mark with the unchanged Sutelio proper noun; `AppSidebar`, `AppSidebarHeader`, and the authentication layout reuse those components instead of embedding divergent artwork. The authentication logo link owns the accessible `Sutelio` name, while adjacent visible text names the product in shared navigation.
+`AppLogoIcon` consumes the deterministic `/favicon.svg` Signal Orange/custom ivory ribbon mark as a decorative image. `AppLogo` combines that mark with the unchanged Sutelio proper noun; `AppSidebar`, `AppSidebarHeader`, and the authentication layout reuse those components instead of embedding divergent artwork. The authentication logo link owns the accessible `Sutelio` name, while adjacent visible text names the product in shared navigation.
 
 The Inertia Blade shell remains query-free and receives the canonical application name from server props for the document title, application metadata, and Apple mobile title. It links the deterministic favicon and touch icon outputs and declares cobalt as the browser theme color. `npm run brand:build` is the only supported way to regenerate these tracked assets.
 

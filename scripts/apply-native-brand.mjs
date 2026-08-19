@@ -69,6 +69,285 @@ const templateScheme = 'nativephp';
 const fixedAndroidNamespace = 'com.nativephp.mobile';
 const requestInspectorDependency =
     'implementation("com.github.acsbendi:Android-Request-Inspector-WebView:1.0.3")';
+const nativeSplashScreenTemplate = `    /**
+     * Splash screen composable - shows custom image or fallback text
+     */
+    @Composable
+    private fun SplashScreen() {
+        val splashResourceId = remember {
+            try {
+                resources.getIdentifier("splash", "drawable", packageName)
+            } catch (e: Exception) {
+                0
+            }
+        }
+
+        // Decode the full-screen splash bitmap OFF the main thread. painterResource
+        // decodes synchronously inside the first composition — directly on the TTID
+        // critical path (tens of ms for a full-screen PNG). The first frame paints
+        // solid black (identical to the theme's windowBackground, so there's no
+        // visible seam) and the image fades in as soon as the decode lands.
+        var splashBitmap by remember { mutableStateOf<androidx.compose.ui.graphics.ImageBitmap?>(null) }
+        LaunchedEffect(splashResourceId) {
+            if (splashResourceId != 0) {
+                splashBitmap = withContext(Dispatchers.IO) {
+                    try {
+                        android.graphics.BitmapFactory
+                            .decodeResource(resources, splashResourceId)
+                            ?.asImageBitmap()
+                    } catch (t: Throwable) {
+                        Log.w("Splash", "Failed to decode splash: \${t.message}")
+                        null
+                    }
+                }
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+            contentAlignment = Alignment.Center
+        ) {
+            val bitmap = splashBitmap
+            if (bitmap != null) {
+                // MutableTransitionState(false) → targetState = true makes the
+                // fade-in play on the Image's FIRST composition (plain
+                // AnimatedVisibility(visible = true) would skip it).
+                val fadeInState = remember {
+                    androidx.compose.animation.core.MutableTransitionState(false)
+                }.apply { targetState = true }
+                AnimatedVisibility(
+                    visibleState = fadeInState,
+                    enter = fadeIn(animationSpec = tween(150))
+                ) {
+                    Image(
+                        bitmap = bitmap,
+                        contentDescription = "App splash screen",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            } else if (splashResourceId == 0) {
+                SplashText()
+            }
+        }
+    }
+
+    @Composable
+    private fun SplashText() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Text(
+                text = "Loading…",
+                fontSize = 16.sp,
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 64.dp)
+            )
+        }
+    }
+`;
+const nativeSplashScreenCanonical = `    /**
+     * Sutelio's lightweight readiness-driven splash. Vector drawing and motion
+     * run while the existing boot pipeline works; neither adds a minimum delay.
+     */
+    @Composable
+    private fun SplashScreen() {
+        val animationsEnabled = remember {
+            android.animation.ValueAnimator.areAnimatorsEnabled()
+        }
+        SideEffect {
+            WindowInsetsControllerCompat(window, window.decorView).apply {
+                isAppearanceLightStatusBars = true
+                isAppearanceLightNavigationBars = true
+            }
+        }
+        DisposableEffect(Unit) {
+            onDispose { configureStatusBar() }
+        }
+        val entrance = remember {
+            Animatable(if (animationsEnabled) 0f else 1f)
+        }
+
+        LaunchedEffect(animationsEnabled) {
+            if (animationsEnabled) {
+                entrance.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(
+                        durationMillis = 480,
+                        easing = FastOutSlowInEasing,
+                    ),
+                )
+            } else {
+                entrance.snapTo(1f)
+            }
+        }
+
+        val motion = rememberInfiniteTransition(label = "sutelio-splash-motion")
+        val breathingScale by motion.animateFloat(
+            initialValue = if (animationsEnabled) 0.985f else 1f,
+            targetValue = if (animationsEnabled) 1.015f else 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2200, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+            label = "sutelio-splash-breathing",
+        )
+        val haloAlpha by motion.animateFloat(
+            initialValue = if (animationsEnabled) 0.08f else 0.12f,
+            targetValue = if (animationsEnabled) 0.18f else 0.12f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2600, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+            label = "sutelio-splash-halo",
+        )
+        val orbitRotation by motion.animateFloat(
+            initialValue = 0f,
+            targetValue = if (animationsEnabled) 360f else 0f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(7200, easing = LinearEasing),
+            ),
+            label = "sutelio-splash-orbit",
+        )
+        val sweepProgress by motion.animateFloat(
+            initialValue = if (animationsEnabled) 0f else 0.52f,
+            targetValue = if (animationsEnabled) 1f else 0.52f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1700, easing = FastOutSlowInEasing),
+            ),
+            label = "sutelio-splash-progress",
+        )
+        val statusAlpha by motion.animateFloat(
+            initialValue = if (animationsEnabled) 0.62f else 0.82f,
+            targetValue = if (animationsEnabled) 0.9f else 0.82f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1800, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+            label = "sutelio-splash-status",
+        )
+
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFFFF8E9)),
+        ) {
+            val isTablet = maxWidth >= 600.dp
+            val markSize = if (isTablet) 188.dp else 156.dp
+            val orbitSize = markSize + 54.dp
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp, vertical = 34.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Box(
+                    modifier = Modifier.size(orbitSize),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawCircle(
+                            color = Color(0xFF123C8B).copy(alpha = haloAlpha),
+                            radius = size.minDimension * 0.43f,
+                        )
+                        rotate(orbitRotation) {
+                            val dotRadius = 3.5.dp.toPx()
+                            drawCircle(
+                                color = Color(0xFFFF6038).copy(alpha = 0.72f),
+                                radius = dotRadius,
+                                center = Offset(size.width / 2f, 7.dp.toPx()),
+                            )
+                            drawCircle(
+                                color = Color(0xFF123C8B).copy(alpha = 0.46f),
+                                radius = dotRadius * 0.72f,
+                                center = Offset(size.width - 16.dp.toPx(), size.height / 2f),
+                            )
+                            drawCircle(
+                                color = Color(0xFFFF6038).copy(alpha = 0.38f),
+                                radius = dotRadius * 0.58f,
+                                center = Offset(20.dp.toPx(), size.height * 0.72f),
+                            )
+                        }
+                    }
+                    Image(
+                        painter = painterResource(id = R.drawable.sutelio_splash_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(markSize)
+                            .graphicsLayer {
+                                alpha = entrance.value
+                                scaleX = breathingScale * (0.94f + entrance.value * 0.06f)
+                                scaleY = breathingScale * (0.94f + entrance.value * 0.06f)
+                            },
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = stringResource(id = R.string.sutelio_splash_title),
+                    color = Color(0xFF0A285F),
+                    fontSize = if (isTablet) 42.sp else 36.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = (-0.5).sp,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(id = R.string.sutelio_splash_tagline),
+                    color = Color(0xFF123C8B),
+                    fontSize = if (isTablet) 19.sp else 17.sp,
+                    lineHeight = 25.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(28.dp))
+                Canvas(
+                    modifier = Modifier
+                        .width(if (isTablet) 216.dp else 184.dp)
+                        .height(5.dp),
+                ) {
+                    val corner = CornerRadius(size.height / 2f, size.height / 2f)
+                    val segmentWidth = size.width * 0.34f
+                    val startX = sweepProgress * (size.width + segmentWidth) - segmentWidth
+
+                    drawRoundRect(
+                        color = Color(0xFF123C8B).copy(alpha = 0.12f),
+                        cornerRadius = corner,
+                    )
+                    drawRoundRect(
+                        color = Color(0xFFFF6038),
+                        topLeft = Offset(startX, 0f),
+                        size = Size(segmentWidth, size.height),
+                        cornerRadius = corner,
+                    )
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Text(
+                    text = stringResource(id = R.string.sutelio_splash_status),
+                    color = Color(0xFF0A285F).copy(alpha = statusAlpha),
+                    fontSize = 15.sp,
+                    lineHeight = 22.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(id = R.string.sutelio_splash_privacy),
+                    color = Color(0xFF123C8B).copy(alpha = 0.68f),
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+`;
+const nativeSplashScreenPreviousCanonical = nativeSplashScreenCanonical.replace(
+    'initialValue = if (animationsEnabled) 0f else 0.52f,',
+    'initialValue = 0f,',
+);
 const androidSensitiveSourceDefinitions = [
     {
         relativePath:
@@ -215,6 +494,68 @@ const androidSensitiveSourceDefinitions = [
             ],
         ],
     },
+    {
+        relativePath:
+            'app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt',
+        label: 'Sutelio Android splash activity',
+        normalizeForComparison: normalizeMainActivityBuildConfiguration,
+        replacements: [
+            [
+                'import androidx.compose.animation.*',
+                [
+                    'import androidx.compose.animation.AnimatedVisibility',
+                    'import androidx.compose.animation.core.Animatable',
+                    'import androidx.compose.animation.core.FastOutSlowInEasing',
+                    'import androidx.compose.animation.core.LinearEasing',
+                    'import androidx.compose.animation.core.RepeatMode',
+                    'import androidx.compose.animation.core.animateFloat',
+                    'import androidx.compose.animation.core.infiniteRepeatable',
+                    'import androidx.compose.animation.core.rememberInfiniteTransition',
+                    'import androidx.compose.animation.fadeOut',
+                    'import androidx.compose.animation.slideInVertically',
+                    'import androidx.compose.animation.slideOutVertically',
+                ].join('\n'),
+            ],
+            [
+                'import com.nativephp.mobile.bridge.PHPBridge',
+                'import com.nativephp.mobile.R\nimport com.nativephp.mobile.bridge.PHPBridge',
+            ],
+            [
+                'import androidx.compose.foundation.Image',
+                'import androidx.compose.foundation.Canvas\nimport androidx.compose.foundation.Image',
+            ],
+            [
+                'import androidx.compose.ui.graphics.asImageBitmap',
+                [
+                    'import androidx.compose.ui.geometry.CornerRadius',
+                    'import androidx.compose.ui.geometry.Offset',
+                    'import androidx.compose.ui.geometry.Size',
+                    'import androidx.compose.ui.graphics.drawscope.rotate',
+                    'import androidx.compose.ui.graphics.graphicsLayer',
+                ].join('\n'),
+            ],
+            [
+                'import androidx.compose.ui.layout.ContentScale',
+                [
+                    'import androidx.compose.ui.res.painterResource',
+                    'import androidx.compose.ui.res.stringResource',
+                    'import androidx.compose.ui.text.font.FontWeight',
+                    'import androidx.compose.ui.text.style.TextAlign',
+                ].join('\n'),
+            ],
+            ['import kotlinx.coroutines.Dispatchers\n', ''],
+            ['import kotlinx.coroutines.launch\n', ''],
+            ['import kotlinx.coroutines.withContext\n', ''],
+            [
+                'exit = fadeOut(animationSpec = tween(300))',
+                'exit = fadeOut(animationSpec = tween(170))',
+            ],
+            [nativeSplashScreenTemplate, nativeSplashScreenCanonical],
+        ],
+        legacyCanonicalBlocks: [
+            [nativeSplashScreenPreviousCanonical, nativeSplashScreenCanonical],
+        ],
+    },
 ];
 const canonicalDeepLinkBlock = `            <!-- NATIVEPHP-DEEPLINKS-START -->
             <!-- Deep Links (Custom Scheme) -->
@@ -226,15 +567,22 @@ const canonicalDeepLinkBlock = `            <!-- NATIVEPHP-DEEPLINKS-START -->
             </intent-filter>
             <!-- NATIVEPHP-DEEPLINKS-END -->`;
 const androidAssetPaths = [
+    'animator/sutelio_splash_fade.xml',
+    'animator/sutelio_splash_scale.xml',
     'drawable/ic_launcher_background.xml',
     'drawable/ic_launcher_foreground.xml',
     'drawable/ic_launcher_monochrome.xml',
+    'drawable/sutelio_splash_animated.xml',
+    'drawable/sutelio_splash_icon.xml',
     'mipmap-anydpi-v26/ic_launcher.xml',
     'mipmap-anydpi-v26/ic_launcher_round.xml',
     'mipmap-anydpi-v33/ic_launcher.xml',
     'mipmap-anydpi-v33/ic_launcher_round.xml',
     'values-v31/themes.xml',
     'values-night-v31/themes.xml',
+    'values/sutelio_splash_strings.xml',
+    'values-lt/sutelio_splash_strings.xml',
+    'values-ru/sutelio_splash_strings.xml',
 ];
 
 function isContained(expectedRoot, candidate) {
@@ -803,6 +1151,13 @@ function canonicalizeSensitiveAndroidSource(templateText, replacements, label) {
     );
 }
 
+function normalizeMainActivityBuildConfiguration(sourceText) {
+    return sourceText.replace(
+        /private val statusBarStyle = "(?:REPLACE_STATUS_BAR_STYLE|auto|light|dark)"/,
+        'private val statusBarStyle = "REPLACE_STATUS_BAR_STYLE"',
+    );
+}
+
 function buildSensitiveAndroidSourceEntry(definition) {
     const templatePath = resolve(vendorAndroidRoot, definition.relativePath);
     const destination = resolve(androidGeneratedRoot, definition.relativePath);
@@ -816,18 +1171,66 @@ function buildSensitiveAndroidSourceEntry(definition) {
         destination,
         definition.label,
     ).toString('utf8');
-    const canonicalContents = canonicalizeSensitiveAndroidSource(
+    const canonicalTemplateContents = canonicalizeSensitiveAndroidSource(
         templateContents,
         definition.replacements,
         definition.label,
     );
-    const currentHash = sha256(currentContents);
-    const templateHash = sha256(templateContents);
-    const canonicalHash = sha256(canonicalContents);
+    const normalizeForComparison =
+        definition.normalizeForComparison ?? ((contents) => contents);
+    const currentHash = sha256(normalizeForComparison(currentContents));
+    const templateHash = sha256(normalizeForComparison(templateContents));
+    const canonicalHash = sha256(
+        normalizeForComparison(canonicalTemplateContents),
+    );
+    const legacyCanonicalCandidates = (
+        definition.legacyCanonicalBlocks ?? []
+    ).map(([legacyBlock, canonicalBlock], index) => {
+        const contents = replaceExactly(
+            canonicalTemplateContents,
+            canonicalBlock,
+            legacyBlock,
+            `${definition.label} legacy canonical block ${index + 1}`,
+        );
 
-    if (currentHash !== templateHash && currentHash !== canonicalHash) {
+        return {
+            canonicalBlock,
+            hash: sha256(normalizeForComparison(contents)),
+            legacyBlock,
+        };
+    });
+    let canonicalContents;
+
+    if (currentHash === templateHash) {
+        canonicalContents = canonicalizeSensitiveAndroidSource(
+            currentContents,
+            definition.replacements,
+            definition.label,
+        );
+    } else if (currentHash === canonicalHash) {
+        canonicalContents = currentContents;
+    } else {
+        const legacyCandidate = legacyCanonicalCandidates.find(
+            (candidate) => candidate.hash === currentHash,
+        );
+
+        if (legacyCandidate) {
+            canonicalContents = replaceExactly(
+                currentContents,
+                legacyCandidate.legacyBlock,
+                legacyCandidate.canonicalBlock,
+                `${definition.label} legacy canonical migration`,
+            );
+        } else {
+            throw new Error(
+                `${definition.label} must be the exact NativePHP 4.2 template, an accepted exact predecessor, or the exact canonical Sutelio source.`,
+            );
+        }
+    }
+
+    if (sha256(normalizeForComparison(canonicalContents)) !== canonicalHash) {
         throw new Error(
-            `${definition.label} must be the exact NativePHP 4.2 template or the exact Sutelio security-hardened source.`,
+            `${definition.label} canonical publication hash mismatch.`,
         );
     }
 
