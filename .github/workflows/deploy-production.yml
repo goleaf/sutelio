@@ -130,7 +130,10 @@ jobs:
           set -Eeuo pipefail
           archive="${{ steps.package.outputs.archive }}"
           checksum="${{ steps.package.outputs.checksum }}"
+          activation_script="$GITHUB_WORKSPACE/deploy/activate-release.sh"
+          activation_checksum="$(sha256sum "$activation_script" | cut -d' ' -f1)"
           remote_archive="${DEPLOY_PATH}/shared/incoming/${RELEASE_SHA}.tar.gz"
+          remote_activation="${DEPLOY_PATH}/shared/incoming/${RELEASE_SHA}.activate-release"
           ssh_target="${DEPLOY_USER}@${DEPLOY_HOST}"
           ssh_options=(
             -o BatchMode=yes
@@ -141,8 +144,9 @@ jobs:
           )
 
           scp "${ssh_options[@]}" "$archive" "${ssh_target}:${remote_archive}.uploading"
+          scp "${ssh_options[@]}" "$activation_script" "${ssh_target}:${remote_activation}.uploading"
           ssh "${ssh_options[@]}" "$ssh_target" \
-            "set -eu; mv -- '${remote_archive}.uploading' '${remote_archive}'; '${DEPLOY_PATH}/shared/bin/activate-release' '${RELEASE_SHA}' '${checksum}'"
+            "set -eu; mv -- '${remote_archive}.uploading' '${remote_archive}'; mv -- '${remote_activation}.uploading' '${remote_activation}'; printf '%s  %s\n' '${activation_checksum}' '${remote_activation}' | sha256sum --check --status; /usr/bin/bash '${remote_activation}' '${RELEASE_SHA}' '${checksum}'; rm -f -- '${remote_activation}'"
 
       - name: Remove ephemeral SSH material
         if: always()

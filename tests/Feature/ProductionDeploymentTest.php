@@ -25,6 +25,23 @@ test('production deployment waits for successful main CI and uses least privileg
         ->not->toMatch('/uses: [^#\n]+@(v[0-9]+|main|master)$/m');
 });
 
+test('production deployment executes the activation script from the tested commit', function () {
+    $workflow = File::get(base_path('.github/workflows/deploy-production.yml'));
+    $transfer = str($workflow)->between(
+        '      - name: Transfer and activate release',
+        '      - name: Remove ephemeral SSH material',
+    );
+
+    expect($transfer->toString())
+        ->toContain('activation_script="$GITHUB_WORKSPACE/deploy/activate-release.sh"')
+        ->toContain('activation_checksum="$(sha256sum "$activation_script" | cut -d\' \' -f1)"')
+        ->toContain('remote_activation="${DEPLOY_PATH}/shared/incoming/${RELEASE_SHA}.activate-release"')
+        ->toContain('"$activation_script" "${ssh_target}:${remote_activation}.uploading"')
+        ->toContain('printf \'%s  %s\n\' \'${activation_checksum}\' \'${remote_activation}\' | sha256sum --check --status')
+        ->toContain('/usr/bin/bash \'${remote_activation}\' \'${RELEASE_SHA}\' \'${checksum}\'')
+        ->not->toContain('\'${DEPLOY_PATH}/shared/bin/activate-release\'');
+});
+
 test('clean CI creates the guarded SQLite file before Composer boots Laravel', function () {
     $workflow = File::get(base_path('.github/workflows/tests.yml'));
     $databasePreparation = strpos($workflow, 'touch database/database.sqlite');
