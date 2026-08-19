@@ -14,7 +14,6 @@ cd "$CURRENT_PATH"
 exec "$PHP_BIN" artisan queue:work database \
     --sleep=3 \
     --tries=3 \
-    --max-time=300 \
+    --max-time=60 \
     --timeout=90 \
-    --stop-when-empty-for=5 \
     --no-interaction

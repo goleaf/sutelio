@@ -112,5 +112,6 @@ test('scheduler and queue worker serialize SQLite work against release migration
         ->toContain('flock --shared --wait 120')
         ->toContain('cd "$CURRENT_PATH"')
         ->toContain('queue:work database')
-        ->toContain('--stop-when-empty-for=5');
+        ->toContain('--max-time=60')
+        ->not->toContain('--stop-when-empty');
 });
