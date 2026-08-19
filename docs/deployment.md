@@ -28,6 +28,43 @@ The email-verification removal migration intentionally drops `users.email_verifi
 
 Configure the scheduler and, when reminder delivery is queued, a supervised bounded database queue worker. Monitor application logs, failed jobs, disk space, SQLite health, backup results, and scheduler freshness.
 
+## aaPanel Production Web Deployment
+
+The canonical web target is `https://sutelio.miniserver.fun`, managed by aaPanel with Nginx and PHP-FPM 8.5. The site root is `/www/wwwroot/sutelio.miniserver.fun/current/public`; aaPanel retains ownership of the website, certificate, PHP selection, Cron, Supervisor, validation include, and access/error logs. The tracked Nginx contract is `deploy/nginx/sutelio.miniserver.fun.conf`.
+
+Production code uses immutable releases and persistent shared state:
+
+```text
+/www/wwwroot/sutelio.miniserver.fun/
+├── current -> releases/<40-character-git-sha>
+├── releases/<40-character-git-sha>/
+└── shared/
+    ├── .env
+    ├── bin/activate-release
+    ├── database/database.sqlite
+    ├── incoming/
+    └── storage/
+```
+
+The database is a real file in `shared/database`, not a symlinked file, so SQLite's WAL/SHM files stay beside it. Each release links its `.env` and complete `storage` directory to `shared`, while `current` is changed atomically. The deploy principal is `sutelio-deploy`, belongs to `www`, owns only this deployment tree, has no `sudo`, and authenticates with its dedicated GitHub Actions Ed25519 key. PHP-FPM receives read access through group `www`; only shared runtime directories and `bootstrap/cache` are writable.
+
+The `deploy-production` workflow runs only after the existing `tests` workflow succeeds for the current `main` head in this repository. It checks out that exact SHA, rebuilds production Composer/npm dependencies, packages a secret-free immutable archive, verifies the pinned SSH host identity, and invokes `shared/bin/activate-release`. GitHub environment `production` owns secret `DEPLOY_SSH_KEY` and variables `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PATH`, and `DEPLOY_KNOWN_HOSTS`. Never store the root credential, production `.env`, Laravel application key, or generated deploy private key in source or workflow output.
+
+Activation is serialized with `flock` and verifies both the commit syntax and SHA-256 before extracting. It rejects absolute or parent-traversal archive members, rebuilds Laravel caches, and then takes the exclusive runtime lock shared by Cron and Supervisor. After active jobs finish, it backs up the live SQLite database, enables maintenance, runs populated-safe migrations and `app:database-health`, switches `current`, reloads long-running services, disables maintenance, and requires the local trusted HTTPS `/up` response. A failed post-switch health gate restores the previous code symlink and exits non-zero. Database migrations are forward-compatible and are not automatically reversed. The active release plus four prior immutable releases are retained.
+
+Production mail defaults to the non-disclosing log mailer until an approved SMTP provider and credentials exist. This keeps the web runtime safe but means invitation, password-reset, and reminder delivery outside the server is not operational until mail is configured and tested.
+
+Useful operator checks are:
+
+```bash
+readlink -f /www/wwwroot/sutelio.miniserver.fun/current
+sudo -u sutelio-deploy /www/server/php/85/bin/php /www/wwwroot/sutelio.miniserver.fun/current/artisan app:database-health --json
+/www/server/nginx/sbin/nginx -t
+curl --fail --show-error --silent https://sutelio.miniserver.fun/up
+```
+
+To roll back application code, select a retained known-good release, verify that it is compatible with the already-applied schema, atomically repoint `current`, run `reload` and `schedule:interrupt`, then require `/up` and `app:database-health` again. Never run down migrations, overwrite `shared`, or restore an older SQLite file as part of a routine code rollback.
+
 ## NativePHP Mobile
 
 Native builds must validate and compile the allowlisted `goleaf/nativephp-email-picker` plugin, confirm the final manifest contains no account/contact permission, and exercise chooser cancellation plus successful encrypted Sutelio-history persistence on a disposable emulator. The exact inspected APK may update a physical Samsung only after source publication and remote equality; ordinary feature delivery uses a data-preserving install and must not clear the application-private encrypted history, cookies, sessions, or the SQLite database.

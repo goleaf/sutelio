@@ -1,0 +1,146 @@
+name: deploy-production
+
+on:
+  workflow_run:
+    workflows:
+      - tests
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sutelio-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://sutelio.miniserver.fun
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+
+    steps:
+      - name: Checkout tested commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: Confirm commit is the current main head
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          [[ "$RELEASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          remote_sha="$(git ls-remote origin refs/heads/main | cut -f1)"
+          [[ "$remote_sha" == "$RELEASE_SHA" ]]
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.5'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install production dependencies
+        env:
+          APP_ENV: production
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+        run: composer install --no-dev --classmap-authoritative --prefer-dist --no-interaction
+
+      - name: Build production frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Package immutable release
+        id: package
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          release_root="$RUNNER_TEMP/sutelio-release"
+          archive="$RUNNER_TEMP/sutelio-${RELEASE_SHA}.tar.gz"
+
+          mkdir -p "$release_root"
+          git archive --format=tar "$RELEASE_SHA" | tar -xf - -C "$release_root"
+          cp -a vendor "$release_root/vendor"
+          rm -rf "$release_root/public/build"
+          cp -a public/build "$release_root/public/build"
+
+          rm -rf \
+            "$release_root/.ai" \
+            "$release_root/.github" \
+            "$release_root/docs" \
+            "$release_root/nativephp" \
+            "$release_root/node_modules" \
+            "$release_root/tests"
+          find "$release_root" -type f \( -name '.env' -o -name '.env.*' \) -delete
+          find "$release_root/database" -maxdepth 1 -type f -name '*.sqlite*' -delete
+          find "$release_root/storage" -type f ! -name '.gitignore' -delete
+
+          tar -czf "$archive" -C "$release_root" .
+          checksum="$(sha256sum "$archive" | cut -d' ' -f1)"
+
+          printf 'archive=%s\n' "$archive" >> "$GITHUB_OUTPUT"
+          printf 'checksum=%s\n' "$checksum" >> "$GITHUB_OUTPUT"
+
+      - name: Configure pinned SSH identity
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          [[ "$DEPLOY_HOST" =~ ^[A-Za-z0-9.-]+$ ]]
+          [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          [[ "$DEPLOY_PATH" =~ ^/www/wwwroot/[A-Za-z0-9._/-]+$ ]]
+          [[ -n "$DEPLOY_KNOWN_HOSTS" ]]
+          [[ -n "$DEPLOY_SSH_KEY" ]]
+
+          install -d -m 0700 "$HOME/.ssh"
+          install -m 0600 /dev/null "$HOME/.ssh/id_ed25519"
+          install -m 0644 /dev/null "$HOME/.ssh/known_hosts"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$HOME/.ssh/id_ed25519"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+
+      - name: Transfer and activate release
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          archive="${{ steps.package.outputs.archive }}"
+          checksum="${{ steps.package.outputs.checksum }}"
+          remote_archive="${DEPLOY_PATH}/shared/incoming/${RELEASE_SHA}.tar.gz"
+          ssh_target="${DEPLOY_USER}@${DEPLOY_HOST}"
+          ssh_options=(
+            -o BatchMode=yes
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=yes
+            -o UserKnownHostsFile="$HOME/.ssh/known_hosts"
+            -i "$HOME/.ssh/id_ed25519"
+          )
+
+          scp "${ssh_options[@]}" "$archive" "${ssh_target}:${remote_archive}.uploading"
+          ssh "${ssh_options[@]}" "$ssh_target" \
+            "set -eu; mv -- '${remote_archive}.uploading' '${remote_archive}'; '${DEPLOY_PATH}/shared/bin/activate-release' '${RELEASE_SHA}' '${checksum}'"
+
+      - name: Remove ephemeral SSH material
+        if: always()
+        shell: bash
+        run: rm -f "$HOME/.ssh/id_ed25519" "$HOME/.ssh/known_hosts"
