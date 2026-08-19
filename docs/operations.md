@@ -18,7 +18,7 @@ On the aaPanel production host, Cron invokes the stable scheduler wrapper once p
 /www/wwwroot/sutelio.miniserver.fun/shared/bin/run-queue-worker
 ```
 
-Both wrappers acquire a shared `shared/runtime.lock` before changing directory to `current`. The deployment script takes that lock exclusively before backup and migration, so a release waits for active work and no new scheduler/worker can write during the schema transition. The queue worker is bounded and exits after the queue has been empty for five seconds; Supervisor restarts it. Laravel's `reload` command restarts the worker after each release, and `schedule:interrupt` stops any still-running scheduler process from using old code.
+Both wrappers acquire a shared `shared/runtime.lock` before changing directory to `current`. The deployment script takes that lock exclusively before backup and migration, so a release waits for active work and no new scheduler/worker can write during the schema transition. The queue worker runs continuously for at most 60 seconds before Supervisor replaces it; this avoids empty-queue restart churn while keeping deployment lock acquisition bounded. Laravel's `reload` command restarts the worker after each release, and `schedule:interrupt` stops any still-running scheduler process from using old code.
 
 ## Health And Release Checks
 

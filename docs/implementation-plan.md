@@ -79,6 +79,14 @@ Requirements: `sys-auth-001`, `sys-auth-002`, `sec-auth-001`, `sec-secrets-001`,
 
 Fortify success events feed only the authenticated model email into a versioned, bounded MRU list encrypted and MAC-authenticated with NativePHP's protected per-device `APP_KEY`, atomically persisted as an application-private `0600` file. Login may prefill or select those entries; registration starts empty. The explicit Android system chooser is implemented by an allowlisted first-party NativePHP plugin with no account/contact permission or broad enumeration, and web/iOS keep manual entry. Remembered addresses never cross PHP/native bridge parameters. Failing-first Pest/frontend contracts, EN/LT/RU inline states, web fallback browser QA, complete source gates, APK inspection, isolated emulator chooser/history proof, scoped publication, and a final data-preserving Samsung update form the delivery sequence. Email verification, credentials/tokens, schema, workspace/onboarding data, and modal UI remain outside the feature.
 
+## Completed aaPanel Web Production And Automated Delivery
+
+Requirements: `ops-deployment-001`, `ops-observability-001`, `ops-sqlite-001`, `sec-auth-001`, `sec-secrets-001`, `test-feature-001`, `test-static-001`, and `git-delivery-001`.
+
+The production web application is live at `https://sutelio.miniserver.fun` under aaPanel-managed Nginx, PHP-FPM 8.5, Let's Encrypt ACME, Cron, and Supervisor. A successful test run for the current same-repository `main` SHA is the only automatic deployment entry: GitHub rebuilds production dependencies and assets, transfers a secret-free checksum-bound archive over pinned key-only SSH, and activates an immutable release through a no-sudo deploy principal. Shared environment, SQLite/WAL/SHM, storage, backups, and locks survive atomic code switches. Activation serializes writers, backs up before populated-safe migrations, verifies all SQLite runtime invariants and trusted HTTPS health, rolls code back on failure, and retains five releases without reversing schema.
+
+Focused deployment contracts, the complete GitHub CI suite, two successful automatic releases, an idempotent repeat deployment, a controlled two-known-good-release rollback and restore, aaPanel service checks, TLS 1.0/1.1 rejection with TLS 1.2/1.3 acceptance, Chrome DevTools and Playwright production navigation, responsive overflow checks, and clean production logs form the durable verification boundary. Outbound SMTP remains intentionally disabled through the safe non-disclosing log transport until an approved provider is configured; application code, migrations, and schema are otherwise fully operational.
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.
