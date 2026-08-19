@@ -7,7 +7,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Actions/**                                                                                                                        | .ai/rules/actions.md                  |
 | **                                                                                                                                    | .ai/rules/general.md                  |
 | {app/Http/Controllers/OnboardingController.php,routes/web.php,resources/js/pages/onboarding/**,resources/js/components/onboarding/**} | .ai/rules/js-components-onboarding.md |
-| resources/js/**, resources/js/**/*.vue                                                                                                | .ai/rules/js.md                       |
+| resources/js/**, resources/js/**/_.vue, resources/js/\**/_.{vue,ts}                                                                   | .ai/rules/js.md                       |
 | {app/Http/Middleware/EnsureOnboardingIsComplete.php,routes/**,resources/js/app.ts,resources/js/layouts/OnboardingLayout.vue}          | .ai/rules/layouts.md                  |
 | resources/js/components/onboarding/**                                                                                                 | .ai/rules/onboarding.md               |
 | resources/js/{components/project/**,components/onboarding/ProjectStep.vue,pages/projects/**}                                          | .ai/rules/projects.md                 |

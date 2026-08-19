@@ -91,18 +91,19 @@ test('project operations place pulse context before the queue on small screens',
     expect(strpos($page, '<ProjectPulse'))->toBeLessThan(strpos($page, '<ProjectTaskQueue'));
 });
 
-test('project operations preserve detail focus origin and merged page context', function () {
+test('project operations open canonical task pages and preserve merged queue context', function () {
     $page = File::get(resource_path('js/pages/projects/Show.vue'));
     $refresh = Str::betweenFirst(
         $page,
         'function refreshOperations',
-        'async function selectTodo',
+        'function selectTodo',
     );
 
     expect($page)
-        ->toContain('if (selectedTodo.value === null)')
-        ->toContain('taskDetailTrigger.value?.isConnected')
-        ->toContain('queueFallbackRef.value')
+        ->toContain("import { create as createTodo, show as showTodo } from '@/routes/todos'")
+        ->toContain('router.visit(showTodo(task.id).url)')
+        ->not->toContain('selectedTodo')
+        ->not->toContain('TaskDetail')
         ->toContain('hiddenTaskIds')
         ->toContain('taskOverrides')
         ->toContain('pendingTotalAdjustmentIds')

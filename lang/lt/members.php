@@ -26,7 +26,7 @@ return [
     'read_only_description' => 'Galite peržiūrėti šį sąrašą. Prieigą valdo darbo erdvės savininkai ir administratoriai.',
     'remove_member' => 'Pašalinti :name iš darbo erdvės',
     'remove_title' => 'Pašalinti darbo erdvės narį?',
-    'remove_description' => 'iškart neteks prieigos prie šios darbo erdvės ir jos projektų.',
+    'remove_description' => ':name iškart neteks prieigos prie šios darbo erdvės ir jos projektų.',
     'cancel' => 'Atšaukti',
     'remove_action' => 'Pašalinti narį',
     'removing' => 'Šalinama…',

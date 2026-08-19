@@ -12,9 +12,12 @@ use App\Services\TodoSortService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TodoIndexQuery
 {
+    public const int PROJECT_OPTION_LIMIT = 100;
+
     public function __construct(
         private TodoFilterService $filterService,
         private TodoSortService $sortService,
@@ -65,7 +68,50 @@ class TodoIndexQuery
     /** @return Collection<int, Project> */
     public function projects(Workspace $workspace): Collection
     {
-        return $workspace->projects()->active()->get();
+        return $this->projectQuery($workspace)->get();
+    }
+
+    /** @return Collection<int, Project> */
+    public function projectOptions(Workspace $workspace, ?string $selectedProjectId): Collection
+    {
+        $projects = $this->projectQuery($workspace)
+            ->orderBy('projects.position')
+            ->orderBy('projects.id')
+            ->limit(self::PROJECT_OPTION_LIMIT)
+            ->get();
+
+        if ($selectedProjectId === null || $projects->contains('id', $selectedProjectId)) {
+            return $projects;
+        }
+
+        $selectedProject = $this->projectQuery($workspace)
+            ->whereKey($selectedProjectId)
+            ->first();
+
+        if ($selectedProject !== null) {
+            $projects->push($selectedProject);
+        }
+
+        return $projects;
+    }
+
+    /** @return HasMany<Project, Workspace> */
+    private function projectQuery(Workspace $workspace): HasMany
+    {
+        return $workspace->projects()
+            ->select([
+                'projects.id',
+                'projects.workspace_id',
+                'projects.name',
+                'projects.description',
+                'projects.color',
+                'projects.icon',
+                'projects.is_archived',
+                'projects.position',
+                'projects.created_at',
+                'projects.updated_at',
+            ])
+            ->active();
     }
 
     /** @return Collection<int, TaskStatus> */

@@ -200,7 +200,7 @@ test('header mutations expose shared inert loading states', function () {
         ->toContain("import { Spinner } from '@/components/ui/spinner'")
         ->toContain('<Spinner v-if="markingAll" />')
         ->and($project)
-        ->toContain("type ProjectHeaderAction = 'archive' | 'duplicate' | 'restore'")
+        ->toContain("type ProjectHeaderAction = 'archive' | 'restore'")
         ->toContain('const processingAction = ref<ProjectHeaderAction | null>(null)')
         ->toContain('finally {')
         ->and($projectHeader)
@@ -522,7 +522,7 @@ test('primary user actions pair localized labels with meaningful icons', functio
     'password confirmation' => ['pages/auth/ConfirmPassword.vue', 'ShieldCheck'],
     'two factor challenge' => ['pages/auth/TwoFactorChallenge.vue', 'ShieldCheck'],
     'passkey registration' => ['components/PasskeyRegister.vue', 'KeyRound'],
-    'task creation' => ['components/task/TaskCreateDialog.vue', 'Plus'],
+    'task creation' => ['components/task/TaskCreateForm.vue', 'Plus'],
     'task editing' => ['components/task/TaskOverviewPanel.vue', 'Save'],
     'task taxonomy' => ['components/task/TaskTaxonomyPanel.vue', 'Tag'],
     'preferences save' => ['pages/settings/Preferences.vue', 'Save'],
@@ -647,48 +647,44 @@ test('autosave uses lifecycle safe Vue watcher cleanup', function () {
         ->not->toContain('debouncedSave.cancel');
 });
 
-test('workspace dialogs preserve the projects visual contract on every viewport', function () {
+test('specialized dialogs and page confirmations preserve the visual contract', function () {
     expect(File::get(resource_path('js/components/shared/WorkspaceDialogContent.vue')))
         ->toContain('rounded-feature')
         ->toContain('max-h-[calc(100dvh-1rem)]')
         ->toContain('overflow-y-auto')
         ->toContain('inset-y-0 left-0 w-1.5')
         ->toContain('border-orange-500/20')
-        ->and(File::get(resource_path('js/components/shared/WorkspaceConfirmDialog.vue')))
-        ->toContain('WorkspaceDialogContent')
-        ->toContain("accent=\"destructive ? 'red' : 'orange'\"");
+        ->and(File::get(resource_path('js/components/shared/PageConfirmPanel.vue')))
+        ->toContain('data-slot="page-confirm-panel"')
+        ->not->toContain('WorkspaceDialogContent');
 });
 
-test('feature dialogs use the shared projects style dialog surface', function (string $file) {
+test('remaining specialized dialogs use the shared dialog surface', function (string $file) {
     expect(File::get(resource_path("js/{$file}")))
         ->toContain('WorkspaceDialogContent')
         ->not->toContain('<DialogContent');
 })->with([
-    'project create' => 'components/project/ProjectCreateDialog.vue',
-    'task create' => 'components/task/TaskCreateDialog.vue',
-    'workspace create' => 'pages/workspaces/Index.vue',
-    'delete account' => 'components/DeleteUser.vue',
     'remove passkey' => 'components/PasskeyItem.vue',
     'two factor setup' => 'components/TwoFactorSetupModal.vue',
-    'remove member' => 'pages/settings/Members.vue',
 ]);
 
-test('active create dialogs reuse shared controls for processing states', function (string $file) {
+test('record create forms reuse shared controls for processing states', function (string $file) {
     expect(File::get(resource_path("js/components/{$file}")))
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('<Spinner v-if="form.processing" />')
+        ->toContain(':loading="form.processing"')
+        ->toContain(':loading-label=')
         ->toContain('size="lg"')
-        ->not->toContain('class="h-11 rounded-xl"')
+        ->not->toContain('<Dialog')
+        ->not->toContain('<Sheet')
         ->not->toContain('bg-orange-600 text-white hover:bg-orange-700');
 })->with([
-    'project create' => 'project/ProjectCreateDialog.vue',
-    'task create' => 'task/TaskCreateDialog.vue',
+    'project form' => 'project/ProjectForm.vue',
+    'task create' => 'task/TaskCreateForm.vue',
 ]);
 
 test('workspace creation reuses shared controls for complete processing states', function () {
-    expect(File::get(resource_path('js/pages/workspaces/Index.vue')))
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
-        ->toContain('<Spinner v-if="form.processing" />')
+    expect(File::get(resource_path('js/components/workspace/WorkspaceForm.vue')))
+        ->toContain(':loading="form.processing"')
+        ->toContain(':loading-label=')
         ->toContain(':aria-invalid="Boolean(form.errors.description)"')
         ->toContain(':disabled="form.processing"')
         ->toContain('size="lg"')
@@ -696,22 +692,21 @@ test('workspace creation reuses shared controls for complete processing states',
         ->not->toContain('bg-orange-600 text-white hover:bg-orange-700');
 });
 
-test('workspace portfolio exposes complete management actions with shared dialog surfaces', function () {
+test('workspace portfolio exposes complete management actions as page navigation', function () {
     expect(File::get(resource_path('js/pages/workspaces/Index.vue')))
-        ->toContain('WorkspaceConfirmDialog')
         ->toContain('editWorkspace')
-        ->toContain('duplicateWorkspace')
-        ->toContain('deleteWorkspace')
+        ->toContain('copyWorkspace')
+        ->toContain('manageWorkspaceDanger')
         ->toContain('switchWorkspace')
         ->toContain("t('workspaces.actions.manage')")
         ->toContain("t('workspaces.actions.edit')")
-        ->toContain("t('workspaces.actions.duplicate')")
+        ->toContain("'workspaces.actions.duplicate'")
         ->toContain("t('workspaces.actions.delete')")
-        ->toContain(':confirmation-text="deletingWorkspace?.name"')
-        ->toContain('members: formatNumber(')
-        ->toContain('projects: formatNumber(')
-        ->toContain('tasks: formatNumber(')
-        ->and(File::get(resource_path('js/components/shared/WorkspaceConfirmDialog.vue')))
+        ->toContain('router.visit(edit(workspace).url)')
+        ->toContain('router.visit(copy(workspace).url)')
+        ->toContain('router.visit(danger(workspace).url)')
+        ->not->toContain('WorkspaceDialogContent')
+        ->and(File::get(resource_path('js/components/shared/PageConfirmPanel.vue')))
         ->toContain('confirmationText?: string')
         ->toContain('confirmationValue.value === props.confirmationText')
         ->toContain(':disabled="processing || !confirmationMatches"');
@@ -739,9 +734,8 @@ test('notification option copy keeps a readable mobile hierarchy', function () {
 test('member actions reuse shared loading and large dialog controls', function () {
     expect(File::get(resource_path('js/pages/settings/Members.vue')))
         ->toContain(':loading="inviteForm.processing"')
-        ->toContain(':loading="removeForm.processing"')
+        ->toContain(':processing="removeForm.processing"')
         ->toContain(':loading-label="copy.inviting"')
-        ->toContain(':loading-label="copy.removing"')
         ->toContain('size="lg"')
         ->not->toContain('<Spinner v-if="inviteForm.processing" />')
         ->not->toContain('<Spinner v-if="removeForm.processing" />')
@@ -750,7 +744,7 @@ test('member actions reuse shared loading and large dialog controls', function (
 });
 
 test('shared confirmations use the shared large loading action contract', function () {
-    expect(File::get(resource_path('js/components/shared/WorkspaceConfirmDialog.vue')))
+    expect(File::get(resource_path('js/components/shared/PageConfirmPanel.vue')))
         ->toContain(':loading="processing"')
         ->toContain(':disabled="processing || !confirmationMatches"')
         ->toContain('size="lg"')
@@ -761,9 +755,10 @@ test('shared confirmations use the shared large loading action contract', functi
 
 test('account deletion uses inert processing and shared loading feedback', function () {
     expect(File::get(resource_path('js/components/DeleteUser.vue')))
-        ->toContain("import { Spinner } from '@/components/ui/spinner'")
         ->toContain('disable-while-processing')
-        ->toContain('<Spinner v-if="processing" />');
+        ->toContain(':processing="processing"')
+        ->toContain('confirm-type="submit"')
+        ->not->toContain('<Dialog');
 });
 
 test('remaining settings forms expose complete processing states', function () {
@@ -798,11 +793,11 @@ test('task editing uses shared loading actions and locks mutable fields', functi
 });
 
 test('project creation selectors expose warm precision interaction states', function () {
-    $dialog = File::get(resource_path('js/components/project/ProjectCreateDialog.vue'));
+    $form = File::get(resource_path('js/components/project/ProjectForm.vue'));
     $colorPicker = File::get(resource_path('js/components/ui/color-picker/ColorPickerField.vue'));
     $iconPicker = File::get(resource_path('js/components/project/ProjectIconPicker.vue'));
 
-    expect($dialog)
+    expect($form)
         ->toContain(':aria-invalid="Boolean(form.errors.description)"')
         ->toContain('<ColorPickerField')
         ->toContain(':invalid="Boolean(form.errors.color)"')
@@ -818,11 +813,11 @@ test('project creation selectors expose warm precision interaction states', func
 });
 
 test('task creation fields expose complete invalid and disabled states', function () {
-    $dialog = File::get(resource_path('js/components/task/TaskCreateDialog.vue'));
+    $form = File::get(resource_path('js/components/task/TaskCreateForm.vue'));
     $datePicker = File::get(resource_path('js/components/ui/date-picker/DatePickerField.vue'));
     $descriptionField = File::get(resource_path('js/components/task/TaskDescriptionField.vue'));
 
-    expect($dialog)
+    expect($form)
         ->toContain('<TaskDescriptionField')
         ->toContain(':error="form.errors.description"')
         ->toContain(':disabled="form.processing"')
@@ -831,7 +826,7 @@ test('task creation fields expose complete invalid and disabled states', functio
         ->toContain('form.errors.recurring_rule')
         ->toContain(':disabled="!form.is_recurring || form.processing"')
         ->toContain('<InputError :message="form.errors.priority" />')
-        ->toContain('id="due-date-error"')
+        ->toContain('id="task-due-date-error"')
         ->toContain(':message="form.errors.due_date"')
         ->toContain('<InputError :message="form.errors.recurring_rule" />')
         ->and($datePicker)
@@ -845,7 +840,7 @@ test('task creation fields expose complete invalid and disabled states', functio
 
 test('destructive actions use application confirmations instead of browser dialogs', function (string $file) {
     expect(File::get(resource_path("js/{$file}")))
-        ->toContain('WorkspaceConfirmDialog')
+        ->toContain('PageConfirmPanel')
         ->not->toContain('confirm(');
 })->with([
     'task list' => 'pages/tasks/Index.vue',
@@ -856,13 +851,13 @@ test('destructive actions use application confirmations instead of browser dialo
 ]);
 
 test('task interfaces use accessible application controls', function () {
-    expect(File::get(resource_path('js/components/task/TaskDetail.vue')))
-        ->toContain('<Sheet')
-        ->not->toContain('<Teleport')
+    expect(File::get(resource_path('js/pages/tasks/Show.vue')))
+        ->toContain('<TaskDetailContent')
+        ->not->toContain('<Sheet')
         ->and(File::get(resource_path('js/components/task/TaskChecklistPanel.vue')))
         ->toContain('<Checkbox')
         ->not->toContain('type="checkbox"')
-        ->and(File::get(resource_path('js/components/task/TaskCreateDialog.vue')))
+        ->and(File::get(resource_path('js/components/task/TaskCreateForm.vue')))
         ->toContain('<Checkbox')
         ->not->toContain('type="checkbox"')
         ->and(File::get(resource_path('js/components/task/TaskList.vue')))

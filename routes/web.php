@@ -73,7 +73,10 @@ Route::middleware(['auth', 'onboarding.complete'])->group(function () {
 
     // Workspaces
     Route::get('workspaces', [WorkspaceController::class, 'index'])->name('workspaces.index');
+    Route::get('workspaces/create', [WorkspaceController::class, 'create'])->name('workspaces.create');
     Route::post('workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store');
+    Route::get('workspaces/{workspace}/edit', [WorkspaceController::class, 'edit'])->name('workspaces.edit');
+    Route::get('workspaces/{workspace}/duplicate', [WorkspaceController::class, 'copy'])->name('workspaces.copy');
     Route::get('workspaces/{workspace}', [WorkspaceManagementController::class, 'show'])->name('workspaces.show');
     Route::get('workspaces/{workspace}/members', [WorkspaceManagementController::class, 'members'])->name('workspaces.members');
     Route::get('workspaces/{workspace}/configuration', [WorkspaceManagementController::class, 'configuration'])->name('workspaces.configuration');
@@ -100,7 +103,10 @@ Route::middleware(['auth', 'onboarding.complete'])->group(function () {
         ->name('workspaces.transferOwnership');
     // Projects
     Route::get('workspaces/{workspace}/projects', [ProjectIndexController::class, 'workspace'])->name('projects.index');
+    Route::get('workspaces/{workspace}/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     Route::post('workspaces/{workspace}/projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::get('workspaces/{workspace}/projects/{project}/edit', [ProjectController::class, 'edit'])->scopeBindings()->name('projects.edit');
+    Route::get('workspaces/{workspace}/projects/{project}/duplicate', [ProjectController::class, 'copy'])->scopeBindings()->name('projects.copy');
     Route::get('workspaces/{workspace}/projects/{project}', [ProjectController::class, 'show'])->scopeBindings()->name('projects.show');
     Route::put('workspaces/{workspace}/projects/{project}', [ProjectController::class, 'update'])->scopeBindings()->name('projects.update');
     Route::delete('workspaces/{workspace}/projects/{project}', [ProjectController::class, 'destroy'])->scopeBindings()->name('projects.destroy');
@@ -110,6 +116,7 @@ Route::middleware(['auth', 'onboarding.complete'])->group(function () {
     Route::put('workspaces/{workspace}/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
 
     // Todos
+    Route::get('workspaces/{workspace}/tasks/create', [TodoController::class, 'create'])->name('todos.create');
     Route::post('workspaces/{workspace}/tasks', [TodoController::class, 'store'])->name('todos.store');
     Route::get('tasks/{todo}', [TodoController::class, 'show'])->name('todos.show');
     Route::put('tasks/{todo}', [TodoController::class, 'update'])->name('todos.update');

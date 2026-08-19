@@ -2,7 +2,7 @@
 import { useHttp } from '@inertiajs/vue3';
 import { Calendar, CheckCircle2, Trash2, User } from '@lucide/vue';
 import { ref } from 'vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import TaskAttachmentsPanel from '@/components/task/TaskAttachmentsPanel.vue';
 import TaskChecklistPanel from '@/components/task/TaskChecklistPanel.vue';
 import TaskCommentsPanel from '@/components/task/TaskCommentsPanel.vue';
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 }>();
 const toast = useToast();
 const { formatDate, t } = useUi();
-const showDeleteDialog = ref(false);
+const showDeleteConfirmation = ref(false);
 const completionRequest = useHttp<Record<string, never>, { data: Todo }>({});
 const deleteRequest = useHttp<Record<string, never>, undefined>({});
 
@@ -59,7 +59,7 @@ async function deleteTodo(): Promise<void> {
         await deleteRequest.delete(
             destroy([props.todo.workspace_id, props.todo]).url,
         );
-        showDeleteDialog.value = false;
+        showDeleteConfirmation.value = false;
         toast.success(t('tasks.detail.deleted'));
         emit('deleted');
     } catch {
@@ -181,26 +181,26 @@ async function deleteTodo(): Promise<void> {
                 variant="destructive"
                 size="lg"
                 :disabled="deleteRequest.processing"
-                @click="showDeleteDialog = true"
+                @click="showDeleteConfirmation = true"
             >
                 <Trash2 class="size-4" aria-hidden="true" />
                 {{ t('tasks.detail.delete') }}
             </Button>
         </section>
-    </div>
 
-    <WorkspaceConfirmDialog
-        :open="showDeleteDialog"
-        :title="t('tasks.detail.delete_confirm_title')"
-        :description="t('tasks.detail.delete_confirm_description')"
-        :confirm-label="t('tasks.detail.delete')"
-        :cancel-label="t('common.actions.cancel')"
-        :processing="deleteRequest.processing"
-        @update:open="showDeleteDialog = $event"
-        @confirm="deleteTodo"
-    >
-        <template #icon>
-            <Trash2 class="size-5" aria-hidden="true" />
-        </template>
-    </WorkspaceConfirmDialog>
+        <PageConfirmPanel
+            :open="showDeleteConfirmation"
+            :title="t('tasks.detail.delete_confirm_title')"
+            :description="t('tasks.detail.delete_confirm_description')"
+            :confirm-label="t('tasks.detail.delete')"
+            :cancel-label="t('common.actions.cancel')"
+            :processing="deleteRequest.processing"
+            @update:open="showDeleteConfirmation = $event"
+            @confirm="deleteTodo"
+        >
+            <template #icon>
+                <Trash2 class="size-5" aria-hidden="true" />
+            </template>
+        </PageConfirmPanel>
+    </div>
 </template>

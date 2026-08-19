@@ -11,7 +11,7 @@ import {
 import { ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -57,7 +57,7 @@ const passwordForm = useForm({
 });
 
 const twoFactorForm = useForm({});
-const showDisableDialog = ref(false);
+const showDisableConfirmation = ref(false);
 
 function updatePassword() {
     passwordForm.put(updatePasswordRoute.url(), {
@@ -79,7 +79,7 @@ function disable2FA(): void {
         preserveScroll: true,
         onSuccess: () => {
             toast.success(t('settings.security.disabled_2fa'));
-            showDisableDialog.value = false;
+            showDisableConfirmation.value = false;
         },
     });
 }
@@ -218,7 +218,7 @@ function disable2FA(): void {
                     <Button
                         variant="destructive"
                         size="lg"
-                        @click="showDisableDialog = true"
+                        @click="showDisableConfirmation = true"
                     >
                         <ShieldOff class="size-4" aria-hidden="true" />
                         {{ t('common.actions.disable') }}
@@ -247,19 +247,19 @@ function disable2FA(): void {
             </CardContent>
         </Card>
 
-        <WorkspaceConfirmDialog
-            :open="showDisableDialog"
+        <PageConfirmPanel
+            :open="showDisableConfirmation"
             :title="t('settings.security.disable_2fa_title')"
             :description="t('settings.security.disable_2fa_confirm')"
             :confirm-label="t('common.actions.disable')"
             :cancel-label="t('common.actions.cancel')"
             :processing="twoFactorForm.processing"
-            @update:open="showDisableDialog = $event"
+            @update:open="showDisableConfirmation = $event"
             @confirm="disable2FA"
         >
             <template #icon>
                 <Shield class="size-5" aria-hidden="true" />
             </template>
-        </WorkspaceConfirmDialog>
+        </PageConfirmPanel>
     </div>
 </template>

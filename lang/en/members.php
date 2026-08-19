@@ -26,7 +26,7 @@ return [
     'read_only_description' => 'You can view this roster. Workspace owners and admins manage access.',
     'remove_member' => 'Remove :name from workspace',
     'remove_title' => 'Remove workspace member?',
-    'remove_description' => 'will immediately lose access to this workspace and its projects.',
+    'remove_description' => ':name will immediately lose access to this workspace and its projects.',
     'cancel' => 'Cancel',
     'remove_action' => 'Remove member',
     'removing' => 'Removing…',

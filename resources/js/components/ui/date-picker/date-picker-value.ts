@@ -1,8 +1,8 @@
 import {
+    CalendarDate,
     CalendarDateTime,
     parseDate,
     parseDateTime,
-    type CalendarDate,
     type DateValue,
 } from '@internationalized/date';
 
@@ -44,11 +44,11 @@ export function serializeDatePickerValue(
 
 export function replaceDatePickerDate(
     value: DateValue | undefined,
-    date: CalendarDate,
+    date: DateValue,
     granularity: DatePickerGranularity,
 ): DateValue {
     if (granularity === 'day') {
-        return date;
+        return new CalendarDate(date.year, date.month, date.day);
     }
 
     const hour = value instanceof CalendarDateTime ? value.hour : 9;

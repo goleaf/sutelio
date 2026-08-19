@@ -95,8 +95,8 @@ test('task detail collaboration and create flows reflow without dense phone rows
     $checklists = File::get(resource_path('js/components/task/TaskChecklistPanel.vue'));
     $comments = File::get(resource_path('js/components/task/TaskCommentsPanel.vue'));
     $attachments = File::get(resource_path('js/components/task/TaskAttachmentsPanel.vue'));
-    $taskDialog = File::get(resource_path('js/components/task/TaskCreateDialog.vue'));
-    $projectDialog = File::get(resource_path('js/components/project/ProjectCreateDialog.vue'));
+    $taskForm = File::get(resource_path('js/components/task/TaskCreateForm.vue'));
+    $projectForm = File::get(resource_path('js/components/project/ProjectForm.vue'));
     $projectIconPicker = File::get(resource_path('js/components/project/ProjectIconPicker.vue'));
     $dialogSurface = File::get(resource_path('js/components/shared/WorkspaceDialogContent.vue'));
 
@@ -117,13 +117,13 @@ test('task detail collaboration and create flows reflow without dense phone rows
         ->toContain('wrap-anywhere')
         ->toContain('text-[0.9375rem]')
         ->not->toContain('truncate')
-        ->and($taskDialog)
-        ->toContain('<DialogActions>')
+        ->and($taskForm)
+        ->toContain('<form')
         ->toContain('size="lg"')
         ->toContain('text-base')
         ->not->toContain('text-sm')
-        ->and($projectDialog)
-        ->toContain('<DialogActions>')
+        ->and($projectForm)
+        ->toContain('<form')
         ->toContain('size="lg"')
         ->toContain('<ProjectIconPicker')
         ->not->toContain('text-sm')

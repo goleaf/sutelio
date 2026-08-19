@@ -4,7 +4,7 @@ import { Crown, LockKeyhole, ShieldAlert, Trash2 } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -335,7 +335,7 @@ async function deleteWorkspace(): Promise<void> {
             </CardContent>
         </Card>
 
-        <WorkspaceConfirmDialog
+        <PageConfirmPanel
             :open="showTransferConfirmation"
             :title="t('workspaces.management.danger.transfer_title')"
             :description="
@@ -355,7 +355,7 @@ async function deleteWorkspace(): Promise<void> {
             @confirm="transferOwnership"
         />
 
-        <WorkspaceConfirmDialog
+        <PageConfirmPanel
             :open="showDeleteConfirmation"
             :title="t('workspaces.management.danger.delete_title')"
             :description="

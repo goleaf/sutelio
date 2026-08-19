@@ -2,6 +2,7 @@
 paths:
     - 'resources/js/**'
     - 'resources/js/**/*.vue'
+    - 'resources/js/**/*.{vue,ts}'
 ---
 
 # Js
@@ -33,3 +34,7 @@ Every first-party date or date-time entry must compose ui/date-picker/DatePicker
 ## Reset page scroll after navigation
 
 Successful foreground Inertia visits reset the document and every [scroll-region] through the shared pageScroll binding unless preserveScroll is explicitly true. Use preserveScroll only for same-page mutations or filters; onboarding step changes and pagination must return to the page start.
+
+## Use pages for record management
+
+Create, edit, duplicate, and detail flows for application records use dedicated Inertia pages, not Dialog or Sheet overlays. Destructive record confirmations use the in-flow PageConfirmPanel. Do not change onboarding surfaces or remove GlobalBusyOverlay; specialized security and first-run language ceremonies remain separate exceptions.

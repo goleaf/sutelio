@@ -13,7 +13,7 @@ import { computed, ref, watchEffect } from 'vue';
 import InputError from '@/components/InputError.vue';
 import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Dialog, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -195,11 +194,11 @@ function invite(): void {
     );
 }
 
-function openRemoveDialog(member: WorkspaceMember): void {
+function requestRemove(member: WorkspaceMember): void {
     memberToRemove.value = member;
 }
 
-function handleRemoveDialogOpen(open: boolean): void {
+function setRemoveConfirmation(open: boolean): void {
     if (!open && !removeForm.processing) {
         memberToRemove.value = null;
     }
@@ -339,7 +338,7 @@ function removeMember(): void {
                                             member.name,
                                         )
                                     "
-                                    @click="openRemoveDialog(member)"
+                                    @click="requestRemove(member)"
                                 >
                                     <Trash2 aria-hidden="true" />
                                 </Button>
@@ -480,51 +479,23 @@ function removeMember(): void {
             </Card>
         </div>
 
-        <Dialog
+        <PageConfirmPanel
             :open="memberToRemove !== null"
-            @update:open="handleRemoveDialogOpen"
+            :title="copy.remove_title"
+            :description="
+                copy.remove_description.replace(
+                    ':name',
+                    memberToRemove?.name ?? '',
+                )
+            "
+            :confirm-label="copy.remove_action"
+            :cancel-label="copy.cancel"
+            :processing="removeForm.processing"
+            destructive
+            @update:open="setRemoveConfirmation"
+            @confirm="removeMember"
         >
-            <WorkspaceDialogContent
-                :title="copy.remove_title"
-                :description="
-                    memberToRemove
-                        ? `${memberToRemove.name} — ${copy.remove_description}`
-                        : copy.remove_description
-                "
-                :close-label="copy.cancel"
-                accent="red"
-                max-width-class="sm:max-w-md"
-            >
-                <div class="space-y-6 px-6 py-6 sm:px-8">
-                    <IconTile tone="destructive" size="md">
-                        <UserCog />
-                    </IconTile>
-                    <DialogFooter
-                        class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                    >
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="lg"
-                            :disabled="removeForm.processing"
-                            @click="memberToRemove = null"
-                        >
-                            {{ copy.cancel }}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="destructive"
-                            size="lg"
-                            :loading="removeForm.processing"
-                            :loading-label="copy.removing"
-                            @click="removeMember"
-                        >
-                            <Trash2 aria-hidden="true" />
-                            {{ copy.remove_action }}
-                        </Button>
-                    </DialogFooter>
-                </div>
-            </WorkspaceDialogContent>
-        </Dialog>
+            <template #icon><UserCog aria-hidden="true" /></template>
+        </PageConfirmPanel>
     </div>
 </template>

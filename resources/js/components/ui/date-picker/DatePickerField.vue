@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import {
+    isWeekend,
     parseDateTime,
     today,
     type DateValue,
 } from '@internationalized/date';
-import { CalendarDays, Check, ChevronLeft, ChevronRight, X } from '@lucide/vue';
+import {
+    CalendarDays,
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    X,
+} from '@lucide/vue';
 import { usePage } from '@inertiajs/vue3';
 import {
     CalendarRoot,
@@ -58,6 +65,7 @@ const page = usePage();
 const { locale, t, timezone } = useUi();
 const rootElement = ref<HTMLElement | null>(null);
 const portalTarget = ref<HTMLElement | string>('body');
+const open = ref(false);
 
 const dateValue = computed(() =>
     parseDatePickerValue(value.value, props.granularity),
@@ -97,7 +105,23 @@ function updateValue(nextValue: DateValue | undefined): void {
 function updateCalendarValue(
     nextValue: DateValue | DateValue[] | undefined,
 ): void {
-    updateValue(Array.isArray(nextValue) ? nextValue[0] : nextValue);
+    const selectedDate = Array.isArray(nextValue)
+        ? nextValue[0]
+        : nextValue;
+
+    updateValue(
+        selectedDate
+            ? replaceDatePickerDate(
+                  dateValue.value,
+                  selectedDate,
+                  props.granularity,
+              )
+            : undefined,
+    );
+
+    if (selectedDate) {
+        open.value = false;
+    }
 }
 
 function selectToday(): void {
@@ -109,12 +133,22 @@ function selectToday(): void {
             props.granularity,
         ),
     );
+    open.value = false;
+}
+
+function isWeekendDate(calendarDate: DateValue): boolean {
+    return isWeekend(calendarDate, locale.value);
+}
+
+function isWeekendColumn(index: number): boolean {
+    return weekStartsOn.value === 0 ? index === 0 || index === 6 : index >= 5;
 }
 </script>
 
 <template>
     <div ref="rootElement" class="min-w-0">
         <DatePickerRoot
+            v-model:open="open"
             :id="id"
             :model-value="dateValue"
             :default-placeholder="defaultPlaceholder"
@@ -183,7 +217,7 @@ function selectToday(): void {
                 align="start"
                 :side-offset="8"
                 :collision-padding="8"
-                class="z-70 max-h-[min(36rem,var(--reka-popover-content-available-height))] w-[min(22rem,calc(100dvw-0.5rem))] origin-[var(--reka-popover-content-transform-origin)] overflow-y-auto rounded-2xl border border-border/80 bg-popover p-2.5 text-popover-foreground shadow-xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:p-4 motion-reduce:data-[state=closed]:animate-none motion-reduce:data-[state=open]:animate-none forced-colors:border-[CanvasText]"
+                class="z-70 max-h-[min(36rem,var(--reka-popover-content-available-height))] w-[min(22rem,calc(100dvw-0.5rem))] origin-[var(--reka-popover-content-transform-origin)] overflow-y-auto rounded-2xl border border-border/80 bg-popover p-2.5 text-popover-foreground shadow-xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-sm:!fixed max-sm:!inset-0 max-sm:h-dvh max-sm:max-h-dvh max-sm:w-dvw max-sm:max-w-none max-sm:rounded-none max-sm:border-0 max-sm:pt-[max(1rem,var(--safe-area-inset-top))] max-sm:pr-[max(1rem,var(--safe-area-inset-right))] max-sm:pb-[max(1rem,var(--safe-area-inset-bottom))] max-sm:pl-[max(1rem,var(--safe-area-inset-left))] sm:p-4 motion-reduce:data-[state=closed]:animate-none motion-reduce:data-[state=open]:animate-none forced-colors:border-[CanvasText]"
             >
                 <CalendarRoot
                     v-slot="{ grid, weekDays }"
@@ -224,6 +258,17 @@ function selectToday(): void {
                                 <ChevronRight class="size-5" aria-hidden="true" />
                             </Button>
                         </DatePickerNext>
+                        <DatePickerClose as-child>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon-lg"
+                                :aria-label="t('common.actions.close')"
+                                class="pointer-coarse:size-12 sm:hidden forced-colors:border-[ButtonBorder]"
+                            >
+                                <X class="size-5" aria-hidden="true" />
+                            </Button>
+                        </DatePickerClose>
                     </DatePickerHeader>
 
                     <DatePickerGrid
@@ -234,9 +279,19 @@ function selectToday(): void {
                         <DatePickerGridHead>
                             <DatePickerGridRow>
                                 <DatePickerHeadCell
-                                    v-for="weekDay in weekDays"
+                                    v-for="(weekDay, weekDayIndex) in weekDays"
                                     :key="weekDay"
-                                    class="h-9 text-center text-sm font-medium text-muted-foreground"
+                                    :data-slot="
+                                        isWeekendColumn(weekDayIndex)
+                                            ? 'date-picker-weekend'
+                                            : undefined
+                                    "
+                                    :class="[
+                                        'h-9 rounded-lg text-center text-sm font-medium',
+                                        isWeekendColumn(weekDayIndex)
+                                            ? 'bg-orange-50 text-orange-900 forced-colors:border forced-colors:border-[CanvasText]'
+                                            : 'text-muted-foreground',
+                                    ]"
                                 >
                                     {{ weekDay }}
                                 </DatePickerHeadCell>
@@ -251,7 +306,17 @@ function selectToday(): void {
                                     v-for="calendarDate in weekDates"
                                     :key="calendarDate.toString()"
                                     :date="calendarDate"
-                                    class="p-0.5"
+                                    :data-slot="
+                                        isWeekendDate(calendarDate)
+                                            ? 'date-picker-weekend'
+                                            : undefined
+                                    "
+                                    :class="[
+                                        'p-0.5',
+                                        isWeekendDate(calendarDate)
+                                            ? 'rounded-xl bg-orange-50/70 forced-colors:bg-[Canvas]'
+                                            : '',
+                                    ]"
                                 >
                                     <DatePickerCellTrigger
                                         v-slot="{
@@ -263,7 +328,12 @@ function selectToday(): void {
                                         type="button"
                                         :day="calendarDate"
                                         :month="month.value"
-                                        class="relative flex min-h-11 w-full min-w-0 cursor-pointer items-center justify-center rounded-xl text-base font-medium text-foreground outline-none transition-[background-color,color,box-shadow] hover:bg-orange-50 focus-visible:ring-3 focus-visible:ring-orange-500/35 data-[disabled]:pointer-events-none data-[disabled]:opacity-35 data-[outside-view]:opacity-35 data-[selected]:bg-orange-600 data-[selected]:text-white data-[today]:ring-2 data-[today]:ring-orange-500/45 motion-reduce:transition-none pointer-coarse:min-h-12 forced-colors:border forced-colors:border-transparent forced-colors:data-[selected]:bg-[Highlight] forced-colors:data-[selected]:text-[HighlightText]"
+                                        :class="[
+                                            'relative flex min-h-11 w-full min-w-0 cursor-pointer items-center justify-center rounded-xl text-base font-medium text-foreground outline-none transition-[background-color,color,box-shadow] hover:bg-orange-100 focus-visible:ring-3 focus-visible:ring-orange-500/35 data-[disabled]:pointer-events-none data-[disabled]:opacity-35 data-[outside-view]:opacity-35 data-[selected]:bg-orange-600 data-[selected]:text-white data-[today]:ring-2 data-[today]:ring-orange-500/45 motion-reduce:transition-none pointer-coarse:min-h-12 forced-colors:border forced-colors:border-transparent forced-colors:data-[selected]:bg-[Highlight] forced-colors:data-[selected]:text-[HighlightText]',
+                                            isWeekendDate(calendarDate)
+                                                ? 'text-orange-950 data-[selected]:text-white'
+                                                : '',
+                                        ]"
                                     >
                                         <span>{{ dayValue }}</span>
                                         <Check

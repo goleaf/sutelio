@@ -12,7 +12,7 @@ import { reactive, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InlineState from '@/components/shared/InlineState.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -293,132 +293,49 @@ async function confirmDelete(): Promise<void> {
 </script>
 
 <template>
-    <section class="rounded-panel border border-border/80 bg-card p-5">
-        <LeadingIconHeading tile tile-tone="brand">
-            <template #icon>
-                <ListChecks />
-            </template>
+    <div class="space-y-5">
+        <section class="rounded-panel border border-border/80 bg-card p-5">
+            <LeadingIconHeading tile tile-tone="brand">
+                <template #icon>
+                    <ListChecks />
+                </template>
 
-            <h2 class="text-base font-semibold">
-                {{ t('tasks.detail.checklists') }}
-            </h2>
-        </LeadingIconHeading>
+                <h2 class="text-base font-semibold">
+                    {{ t('tasks.detail.checklists') }}
+                </h2>
+            </LeadingIconHeading>
 
-        <div class="mt-4 space-y-4">
-            <article
-                v-for="(checklist, checklistIndex) in checklists"
-                :key="checklist.id"
-                class="rounded-2xl border border-border/70 bg-muted/20 p-4"
-                :aria-busy="busyKey?.includes(checklist.id)"
-            >
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <Input
-                        v-model="checklistDrafts[checklist.id]"
-                        class="h-12 font-medium pointer-coarse:min-h-13"
-                        :aria-label="t('tasks.detail.checklist_name')"
-                        :disabled="busyKey !== null"
-                        @keyup.enter="renameChecklist(checklist)"
-                    />
-                    <div class="flex flex-wrap justify-end gap-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                            :aria-label="t('common.actions.save')"
-                            :disabled="busyKey !== null"
-                            @click="renameChecklist(checklist)"
-                        >
-                            <Spinner
-                                v-if="busyKey === `checklist:${checklist.id}`"
-                            />
-                            <Save v-else class="size-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                            :aria-label="t('tasks.detail.move_up')"
-                            :disabled="busyKey !== null || checklistIndex === 0"
-                            @click="moveChecklist(checklistIndex, -1)"
-                        >
-                            <ArrowUp class="size-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                            :aria-label="t('tasks.detail.move_down')"
-                            :disabled="
-                                busyKey !== null ||
-                                checklistIndex === checklists.length - 1
-                            "
-                            @click="moveChecklist(checklistIndex, 1)"
-                        >
-                            <ArrowDown class="size-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                            :aria-label="t('tasks.detail.delete_checklist')"
-                            :disabled="busyKey !== null"
-                            @click="
-                                deleteTarget = { type: 'checklist', checklist }
-                            "
-                        >
-                            <Trash2 class="size-4" aria-hidden="true" />
-                        </Button>
-                    </div>
-                </div>
-                <InputError
-                    v-if="busyKey === `checklist:${checklist.id}`"
-                    :message="checklistRequest.errors.name"
-                    class="mt-2"
-                />
-
-                <div class="mt-3 space-y-2">
+            <div class="mt-4 space-y-4">
+                <article
+                    v-for="(checklist, checklistIndex) in checklists"
+                    :key="checklist.id"
+                    class="rounded-2xl border border-border/70 bg-muted/20 p-4"
+                    :aria-busy="busyKey?.includes(checklist.id)"
+                >
                     <div
-                        v-for="(item, itemIndex) in checklist.items ?? []"
-                        :key="item.id"
-                        data-slot="checklist-item-row"
-                        class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-xl border border-border/60 bg-background/70 p-2"
+                        class="flex flex-col gap-2 sm:flex-row sm:items-center"
                     >
-                        <label
-                            data-slot="checklist-item-checkbox-target"
-                            :for="`checklist-item-${item.id}`"
-                            class="flex size-12 cursor-pointer items-center justify-center pointer-coarse:size-13"
-                        >
-                            <Checkbox
-                                :id="`checklist-item-${item.id}`"
-                                :model-value="item.is_checked"
-                                :aria-label="item.content"
-                                :disabled="busyKey !== null"
-                                @update:model-value="toggle(checklist, item)"
-                            />
-                        </label>
                         <Input
-                            v-model="itemDrafts[item.id]"
-                            class="h-12 text-base pointer-coarse:min-h-13"
-                            :class="
-                                item.is_checked ? 'line-through opacity-65' : ''
-                            "
-                            :aria-label="t('tasks.detail.item_content')"
+                            v-model="checklistDrafts[checklist.id]"
+                            class="h-12 font-medium pointer-coarse:min-h-13"
+                            :aria-label="t('tasks.detail.checklist_name')"
                             :disabled="busyKey !== null"
-                            @keyup.enter="renameItem(checklist, item)"
+                            @keyup.enter="renameChecklist(checklist)"
                         />
-                        <div
-                            data-slot="checklist-item-actions"
-                            class="col-span-2 flex flex-wrap justify-end gap-2"
-                        >
+                        <div class="flex flex-wrap justify-end gap-2">
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                 :aria-label="t('common.actions.save')"
                                 :disabled="busyKey !== null"
-                                @click="renameItem(checklist, item)"
+                                @click="renameChecklist(checklist)"
                             >
-                                <Spinner v-if="busyKey === `item:${item.id}`" />
+                                <Spinner
+                                    v-if="
+                                        busyKey === `checklist:${checklist.id}`
+                                    "
+                                />
                                 <Save
                                     v-else
                                     class="size-4"
@@ -430,8 +347,10 @@ async function confirmDelete(): Promise<void> {
                                 size="icon"
                                 class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
                                 :aria-label="t('tasks.detail.move_up')"
-                                :disabled="busyKey !== null || itemIndex === 0"
-                                @click="moveItem(checklist, itemIndex, -1)"
+                                :disabled="
+                                    busyKey !== null || checklistIndex === 0
+                                "
+                                @click="moveChecklist(checklistIndex, -1)"
                             >
                                 <ArrowUp class="size-4" aria-hidden="true" />
                             </Button>
@@ -442,10 +361,9 @@ async function confirmDelete(): Promise<void> {
                                 :aria-label="t('tasks.detail.move_down')"
                                 :disabled="
                                     busyKey !== null ||
-                                    itemIndex ===
-                                        (checklist.items?.length ?? 0) - 1
+                                    checklistIndex === checklists.length - 1
                                 "
-                                @click="moveItem(checklist, itemIndex, 1)"
+                                @click="moveChecklist(checklistIndex, 1)"
                             >
                                 <ArrowDown class="size-4" aria-hidden="true" />
                             </Button>
@@ -453,13 +371,12 @@ async function confirmDelete(): Promise<void> {
                                 variant="ghost"
                                 size="icon"
                                 class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                                :aria-label="t('tasks.detail.delete_item')"
+                                :aria-label="t('tasks.detail.delete_checklist')"
                                 :disabled="busyKey !== null"
                                 @click="
                                     deleteTarget = {
-                                        type: 'item',
+                                        type: 'checklist',
                                         checklist,
-                                        item,
                                     }
                                 "
                             >
@@ -467,65 +384,183 @@ async function confirmDelete(): Promise<void> {
                             </Button>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-2 pt-1 sm:flex-row">
-                        <Input
-                            v-model="newItemDrafts[checklist.id]"
-                            :placeholder="t('tasks.detail.add_item')"
-                            :disabled="busyKey !== null"
-                            @keyup.enter="createItem(checklist)"
-                        />
-                        <Button
-                            variant="outline"
-                            class="min-h-12 pointer-coarse:min-h-13"
-                            :disabled="busyKey !== null"
-                            @click="createItem(checklist)"
+                    <InputError
+                        v-if="busyKey === `checklist:${checklist.id}`"
+                        :message="checklistRequest.errors.name"
+                        class="mt-2"
+                    />
+
+                    <div class="mt-3 space-y-2">
+                        <div
+                            v-for="(item, itemIndex) in checklist.items ?? []"
+                            :key="item.id"
+                            data-slot="checklist-item-row"
+                            class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-xl border border-border/60 bg-background/70 p-2"
                         >
-                            <Spinner
-                                v-if="busyKey === `item:new:${checklist.id}`"
+                            <label
+                                data-slot="checklist-item-checkbox-target"
+                                :for="`checklist-item-${item.id}`"
+                                class="flex size-12 cursor-pointer items-center justify-center pointer-coarse:size-13"
+                            >
+                                <Checkbox
+                                    :id="`checklist-item-${item.id}`"
+                                    :model-value="item.is_checked"
+                                    :aria-label="item.content"
+                                    :disabled="busyKey !== null"
+                                    @update:model-value="
+                                        toggle(checklist, item)
+                                    "
+                                />
+                            </label>
+                            <Input
+                                v-model="itemDrafts[item.id]"
+                                class="h-12 text-base pointer-coarse:min-h-13"
+                                :class="
+                                    item.is_checked
+                                        ? 'line-through opacity-65'
+                                        : ''
+                                "
+                                :aria-label="t('tasks.detail.item_content')"
+                                :disabled="busyKey !== null"
+                                @keyup.enter="renameItem(checklist, item)"
                             />
-                            <Plus v-else class="size-4" aria-hidden="true" />
-                            {{ t('common.actions.add') }}
-                        </Button>
+                            <div
+                                data-slot="checklist-item-actions"
+                                class="col-span-2 flex flex-wrap justify-end gap-2"
+                            >
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                                    :aria-label="t('common.actions.save')"
+                                    :disabled="busyKey !== null"
+                                    @click="renameItem(checklist, item)"
+                                >
+                                    <Spinner
+                                        v-if="busyKey === `item:${item.id}`"
+                                    />
+                                    <Save
+                                        v-else
+                                        class="size-4"
+                                        aria-hidden="true"
+                                    />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                                    :aria-label="t('tasks.detail.move_up')"
+                                    :disabled="
+                                        busyKey !== null || itemIndex === 0
+                                    "
+                                    @click="moveItem(checklist, itemIndex, -1)"
+                                >
+                                    <ArrowUp
+                                        class="size-4"
+                                        aria-hidden="true"
+                                    />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                                    :aria-label="t('tasks.detail.move_down')"
+                                    :disabled="
+                                        busyKey !== null ||
+                                        itemIndex ===
+                                            (checklist.items?.length ?? 0) - 1
+                                    "
+                                    @click="moveItem(checklist, itemIndex, 1)"
+                                >
+                                    <ArrowDown
+                                        class="size-4"
+                                        aria-hidden="true"
+                                    />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                                    :aria-label="t('tasks.detail.delete_item')"
+                                    :disabled="busyKey !== null"
+                                    @click="
+                                        deleteTarget = {
+                                            type: 'item',
+                                            checklist,
+                                            item,
+                                        }
+                                    "
+                                >
+                                    <Trash2 class="size-4" aria-hidden="true" />
+                                </Button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 pt-1 sm:flex-row">
+                            <Input
+                                v-model="newItemDrafts[checklist.id]"
+                                :placeholder="t('tasks.detail.add_item')"
+                                :disabled="busyKey !== null"
+                                @keyup.enter="createItem(checklist)"
+                            />
+                            <Button
+                                variant="outline"
+                                class="min-h-12 pointer-coarse:min-h-13"
+                                :disabled="busyKey !== null"
+                                @click="createItem(checklist)"
+                            >
+                                <Spinner
+                                    v-if="
+                                        busyKey === `item:new:${checklist.id}`
+                                    "
+                                />
+                                <Plus
+                                    v-else
+                                    class="size-4"
+                                    aria-hidden="true"
+                                />
+                                {{ t('common.actions.add') }}
+                            </Button>
+                        </div>
+                        <InputError :message="itemRequest.errors.content" />
                     </div>
-                    <InputError :message="itemRequest.errors.content" />
-                </div>
-            </article>
+                </article>
 
-            <InlineState
-                v-if="checklists.length === 0"
-                :description="t('tasks.detail.no_checklists')"
-            />
-
-            <div class="flex flex-col gap-2 sm:flex-row">
-                <Input
-                    v-model="newChecklistName"
-                    :placeholder="t('tasks.detail.checklist_name')"
-                    :disabled="busyKey !== null"
-                    @keyup.enter="createChecklist"
+                <InlineState
+                    v-if="checklists.length === 0"
+                    :description="t('tasks.detail.no_checklists')"
                 />
-                <Button
-                    variant="outline"
-                    class="min-h-12 pointer-coarse:min-h-13"
-                    :disabled="busyKey !== null"
-                    @click="createChecklist"
-                >
-                    <Spinner v-if="busyKey === 'checklist:new'" />
-                    <Plus v-else class="size-4" aria-hidden="true" />
-                    {{ t('common.actions.add') }}
-                </Button>
-            </div>
-            <InputError :message="checklistRequest.errors.name" />
-        </div>
-    </section>
 
-    <WorkspaceConfirmDialog
-        :open="deleteTarget !== null"
-        :title="t('tasks.detail.delete_child_title')"
-        :description="t('tasks.detail.delete_child_description')"
-        :confirm-label="t('common.actions.delete')"
-        :cancel-label="t('common.actions.cancel')"
-        :processing="busyKey?.startsWith('delete:') ?? false"
-        @update:open="!$event && (deleteTarget = null)"
-        @confirm="confirmDelete"
-    />
+                <div class="flex flex-col gap-2 sm:flex-row">
+                    <Input
+                        v-model="newChecklistName"
+                        :placeholder="t('tasks.detail.checklist_name')"
+                        :disabled="busyKey !== null"
+                        @keyup.enter="createChecklist"
+                    />
+                    <Button
+                        variant="outline"
+                        class="min-h-12 pointer-coarse:min-h-13"
+                        :disabled="busyKey !== null"
+                        @click="createChecklist"
+                    >
+                        <Spinner v-if="busyKey === 'checklist:new'" />
+                        <Plus v-else class="size-4" aria-hidden="true" />
+                        {{ t('common.actions.add') }}
+                    </Button>
+                </div>
+                <InputError :message="checklistRequest.errors.name" />
+            </div>
+        </section>
+
+        <PageConfirmPanel
+            :open="deleteTarget !== null"
+            :title="t('tasks.detail.delete_child_title')"
+            :description="t('tasks.detail.delete_child_description')"
+            :confirm-label="t('common.actions.delete')"
+            :cancel-label="t('common.actions.cancel')"
+            :processing="busyKey?.startsWith('delete:') ?? false"
+            @update:open="!$event && (deleteTarget = null)"
+            @confirm="confirmDelete"
+        />
+    </div>
 </template>

@@ -237,7 +237,7 @@ test('manual square containers are limited to named non icon controls', function
     $allowedControls = [
         'components/calendar/CalendarMonthGrid.vue' => 'numeric calendar cells',
         'components/preferences/TimezoneCombobox.vue' => 'combobox trigger',
-        'components/project/ProjectCreateDialog.vue' => 'color selection buttons',
+        'components/project/ProjectForm.vue' => 'color selection buttons',
         'components/shared/WorkspaceDialogContent.vue' => 'dialog close control',
         'components/ui/dialog/DialogContent.vue' => 'dialog close control',
         'components/ui/dialog/DialogScrollContent.vue' => 'dialog close control',
@@ -446,7 +446,7 @@ test('first party presentation remains fixed light and free of raw brand colors'
     $rawColorAllowlist = [
         realpath(resource_path('views/app.blade.php')) => ['#123c8b' => 1],
         realpath(resource_path('js/pages/onboarding/Index.vue')) => ['#ff6038' => 2],
-        realpath(resource_path('js/components/project/ProjectCreateDialog.vue')) => ['#ff6038' => 3],
+        realpath(resource_path('js/components/project/ProjectForm.vue')) => ['#ff6038' => 2],
     ];
     $forbiddenRawColors = ['#123c8b', '#0a285f', '#ff6038', '#cd431f'];
 

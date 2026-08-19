@@ -5,7 +5,7 @@ import { reactive, ref, watch } from 'vue';
 import InputError from '@/components/InputError.vue';
 import InlineState from '@/components/shared/InlineState.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
@@ -171,162 +171,165 @@ async function deleteComment(): Promise<void> {
 </script>
 
 <template>
-    <section class="rounded-panel border border-border/80 bg-card p-5">
-        <LeadingIconHeading tile tile-tone="brand">
-            <template #icon>
-                <MessageSquare />
-            </template>
+    <div class="space-y-5">
+        <section class="rounded-panel border border-border/80 bg-card p-5">
+            <LeadingIconHeading tile tile-tone="brand">
+                <template #icon>
+                    <MessageSquare />
+                </template>
 
-            <h2 class="text-base font-semibold">
-                {{
-                    t('tasks.detail.comments_count', {
-                        count: formatNumber(commentTotal),
-                    })
-                }}
-            </h2>
-        </LeadingIconHeading>
+                <h2 class="text-base font-semibold">
+                    {{
+                        t('tasks.detail.comments_count', {
+                            count: formatNumber(commentTotal),
+                        })
+                    }}
+                </h2>
+            </LeadingIconHeading>
 
-        <form class="mt-4 space-y-2" @submit.prevent="createComment">
-            <textarea
-                v-model="newComment"
-                rows="3"
-                maxlength="5000"
-                :placeholder="t('tasks.detail.comment_placeholder')"
-                :disabled="busyKey !== null"
-                :aria-invalid="Boolean(commentRequest.errors.body)"
-                class="flex min-h-24 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-base shadow-xs outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:opacity-50 aria-invalid:border-destructive"
-                @input="commentRequest.clearErrors('body')"
-            />
-            <InputError :message="commentRequest.errors.body" />
-            <div class="flex justify-end">
-                <Button
-                    type="submit"
-                    variant="outline"
-                    size="lg"
-                    :disabled="busyKey !== null || !newComment.trim()"
+            <form class="mt-4 space-y-2" @submit.prevent="createComment">
+                <textarea
+                    v-model="newComment"
+                    rows="3"
+                    maxlength="5000"
+                    :placeholder="t('tasks.detail.comment_placeholder')"
+                    :disabled="busyKey !== null"
+                    :aria-invalid="Boolean(commentRequest.errors.body)"
+                    class="flex min-h-24 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-base shadow-xs outline-none placeholder:text-muted-foreground hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20 disabled:opacity-50 aria-invalid:border-destructive"
+                    @input="commentRequest.clearErrors('body')"
+                />
+                <InputError :message="commentRequest.errors.body" />
+                <div class="flex justify-end">
+                    <Button
+                        type="submit"
+                        variant="outline"
+                        size="lg"
+                        :disabled="busyKey !== null || !newComment.trim()"
+                    >
+                        <Spinner v-if="busyKey === 'comment:new'" />
+                        {{ t('common.actions.post') }}
+                    </Button>
+                </div>
+            </form>
+
+            <div class="mt-5 space-y-3">
+                <article
+                    v-for="comment in comments"
+                    :key="comment.id"
+                    class="rounded-2xl border border-border/70 bg-muted/20 p-4"
                 >
-                    <Spinner v-if="busyKey === 'comment:new'" />
-                    {{ t('common.actions.post') }}
+                    <header class="flex flex-wrap items-start gap-2">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-base font-medium wrap-anywhere">
+                                {{
+                                    comment.user?.name ??
+                                    t('common.states.unknown')
+                                }}
+                            </p>
+                            <time
+                                class="text-[0.9375rem] leading-6 text-muted-foreground"
+                            >
+                                {{
+                                    formatDate(comment.created_at, {
+                                        dateStyle: 'medium',
+                                        timeStyle: 'short',
+                                    })
+                                }}
+                            </time>
+                        </div>
+                        <Button
+                            v-if="comment.permissions?.update"
+                            variant="ghost"
+                            size="icon"
+                            class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                            :aria-label="t('tasks.detail.edit_comment')"
+                            :disabled="busyKey !== null"
+                            @click="startEditing(comment)"
+                        >
+                            <Pencil class="size-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                            v-if="comment.permissions?.delete"
+                            variant="ghost"
+                            size="icon"
+                            class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
+                            :aria-label="t('tasks.detail.delete_comment')"
+                            :disabled="busyKey !== null"
+                            @click="deletingComment = comment"
+                        >
+                            <Trash2 class="size-4" aria-hidden="true" />
+                        </Button>
+                    </header>
+
+                    <form
+                        v-if="editingId === comment.id"
+                        class="mt-3 space-y-2"
+                        @submit.prevent="saveComment(comment)"
+                    >
+                        <textarea
+                            v-model="editDrafts[comment.id]"
+                            rows="3"
+                            maxlength="5000"
+                            :disabled="busyKey !== null"
+                            class="flex min-h-24 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-base outline-none hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20"
+                        />
+                        <div class="flex justify-end gap-2">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="lg"
+                                :disabled="busyKey !== null"
+                                @click="editingId = null"
+                            >
+                                {{ t('common.actions.cancel') }}
+                            </Button>
+                            <Button
+                                type="submit"
+                                size="lg"
+                                :disabled="busyKey !== null"
+                            >
+                                <Spinner
+                                    v-if="busyKey === `comment:${comment.id}`"
+                                />
+                                {{ t('common.actions.save') }}
+                            </Button>
+                        </div>
+                    </form>
+                    <p
+                        v-else
+                        class="mt-3 text-base leading-7 wrap-anywhere whitespace-pre-wrap"
+                    >
+                        {{ comment.body }}
+                    </p>
+                </article>
+
+                <InlineState
+                    v-if="comments.length === 0 && !listRequest.processing"
+                    :description="t('tasks.detail.no_comments')"
+                />
+
+                <Button
+                    v-if="nextUrl"
+                    variant="outline"
+                    class="min-h-12 w-full pointer-coarse:min-h-13"
+                    :disabled="listRequest.processing"
+                    @click="loadMore"
+                >
+                    <Spinner v-if="listRequest.processing" />
+                    {{ t('tasks.detail.load_older_comments') }}
                 </Button>
             </div>
-        </form>
+        </section>
 
-        <div class="mt-5 space-y-3">
-            <article
-                v-for="comment in comments"
-                :key="comment.id"
-                class="rounded-2xl border border-border/70 bg-muted/20 p-4"
-            >
-                <header class="flex flex-wrap items-start gap-2">
-                    <div class="min-w-0 flex-1">
-                        <p class="text-base font-medium wrap-anywhere">
-                            {{
-                                comment.user?.name ?? t('common.states.unknown')
-                            }}
-                        </p>
-                        <time
-                            class="text-[0.9375rem] leading-6 text-muted-foreground"
-                        >
-                            {{
-                                formatDate(comment.created_at, {
-                                    dateStyle: 'medium',
-                                    timeStyle: 'short',
-                                })
-                            }}
-                        </time>
-                    </div>
-                    <Button
-                        v-if="comment.permissions?.update"
-                        variant="ghost"
-                        size="icon"
-                        class="min-h-12 min-w-12 pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                        :aria-label="t('tasks.detail.edit_comment')"
-                        :disabled="busyKey !== null"
-                        @click="startEditing(comment)"
-                    >
-                        <Pencil class="size-4" aria-hidden="true" />
-                    </Button>
-                    <Button
-                        v-if="comment.permissions?.delete"
-                        variant="ghost"
-                        size="icon"
-                        class="min-h-12 min-w-12 text-muted-foreground hover:text-destructive pointer-coarse:min-h-13 pointer-coarse:min-w-13"
-                        :aria-label="t('tasks.detail.delete_comment')"
-                        :disabled="busyKey !== null"
-                        @click="deletingComment = comment"
-                    >
-                        <Trash2 class="size-4" aria-hidden="true" />
-                    </Button>
-                </header>
-
-                <form
-                    v-if="editingId === comment.id"
-                    class="mt-3 space-y-2"
-                    @submit.prevent="saveComment(comment)"
-                >
-                    <textarea
-                        v-model="editDrafts[comment.id]"
-                        rows="3"
-                        maxlength="5000"
-                        :disabled="busyKey !== null"
-                        class="flex min-h-24 w-full rounded-xl border border-input bg-linear-to-br from-background via-orange-50/45 to-orange-100/65 px-3.5 py-2.5 text-base outline-none hover:border-orange-300/70 focus-visible:border-orange-500 focus-visible:ring-[3px] focus-visible:ring-orange-500/20"
-                    />
-                    <div class="flex justify-end gap-2">
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="lg"
-                            :disabled="busyKey !== null"
-                            @click="editingId = null"
-                        >
-                            {{ t('common.actions.cancel') }}
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            :disabled="busyKey !== null"
-                        >
-                            <Spinner
-                                v-if="busyKey === `comment:${comment.id}`"
-                            />
-                            {{ t('common.actions.save') }}
-                        </Button>
-                    </div>
-                </form>
-                <p
-                    v-else
-                    class="mt-3 text-base leading-7 wrap-anywhere whitespace-pre-wrap"
-                >
-                    {{ comment.body }}
-                </p>
-            </article>
-
-            <InlineState
-                v-if="comments.length === 0 && !listRequest.processing"
-                :description="t('tasks.detail.no_comments')"
-            />
-
-            <Button
-                v-if="nextUrl"
-                variant="outline"
-                class="min-h-12 w-full pointer-coarse:min-h-13"
-                :disabled="listRequest.processing"
-                @click="loadMore"
-            >
-                <Spinner v-if="listRequest.processing" />
-                {{ t('tasks.detail.load_older_comments') }}
-            </Button>
-        </div>
-    </section>
-
-    <WorkspaceConfirmDialog
-        :open="deletingComment !== null"
-        :title="t('tasks.detail.delete_comment_title')"
-        :description="t('tasks.detail.delete_comment_description')"
-        :confirm-label="t('common.actions.delete')"
-        :cancel-label="t('common.actions.cancel')"
-        :processing="busyKey?.startsWith('comment:delete:') ?? false"
-        @update:open="!$event && (deletingComment = null)"
-        @confirm="deleteComment"
-    />
+        <PageConfirmPanel
+            :open="deletingComment !== null"
+            :title="t('tasks.detail.delete_comment_title')"
+            :description="t('tasks.detail.delete_comment_description')"
+            :confirm-label="t('common.actions.delete')"
+            :cancel-label="t('common.actions.cancel')"
+            :processing="busyKey?.startsWith('comment:delete:') ?? false"
+            @update:open="!$event && (deletingComment = null)"
+            @confirm="deleteComment"
+        />
+    </div>
 </template>

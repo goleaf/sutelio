@@ -35,9 +35,9 @@ Success, warning, information, and destructive presentation each expose one shar
 
 ## Component Hierarchy
 
-- Reka/shadcn-style primitives own dialogs, sheets, menus, selects, checkboxes, focus traps, and keyboard semantics.
+- Reka/shadcn-style primitives own specialized language/security dialogs, navigation/filter sheets, menus, selects, checkboxes, and their keyboard semantics; ordinary record management uses pages and `PageConfirmPanel` instead of overlays.
 - `ColorPickerField` is the sole user-editable color primitive. It composes `@zag-js/color-picker` and `@zag-js/vue` for non-native color-area, hue, HEX, preset, positioning, touch, and keyboard behavior while Sutelio owns fixed-light styling and EN/LT/RU visible/assistive labels. Consumers pass opaque six-digit HEX values and optional presets rather than rendering `input[type=color]` or local swatches.
-- Shared workspace components own page headers, metrics, segmented controls, empty states, dialog surfaces, and confirmations.
+- Shared workspace components own page headers, metrics, segmented controls, empty states, dedicated record forms, and in-flow confirmations.
 - Feature components own task, project, calendar, dashboard, activity, and workspace composition.
 - Onboarding components own the Warm Guided Route shell plus one semantic component per step; they reuse shared buttons, controls, previews, confirmation dialogs, and application layout ownership rather than creating a parallel design system.
 - Settings Data Safety uses the shared current-section menu and scope banner, then composes workspace transfer and operator backup as separate permission-aware pages.
@@ -53,7 +53,7 @@ Future remediation must enumerate every matching consumer before changing tokens
 
 ## Responsive And State Contract
 
-Base utilities target the smallest viewport. Layout expands progressively for large mobile, tablet, laptop, desktop, and wide desktop. Horizontal page overflow is prohibited. Filters switch to sheets where a sidebar cannot remain usable; dialogs use dynamic viewport bounds; long and localized content can wrap; touch targets coexist with keyboard focus.
+Base utilities target the smallest viewport. Layout expands progressively for large mobile, tablet, laptop, desktop, and wide desktop. Horizontal page overflow is prohibited. Filters switch to sheets where a sidebar cannot remain usable; specialized dialogs use dynamic viewport bounds; the phone date picker fills the dynamic viewport and closes after selection; long and localized content can wrap; touch targets coexist with keyboard focus.
 
 The comfort baseline uses 16 px reading text and 15 px secondary/helper text in primary workflows. Coarse-pointer controls expose at least 48×48 px targets, while primary large actions expose at least 52 px height. Drawer navigation remains active through 1023 px and the persistent sidebar begins at 1024 px. The mandatory first-run dialog uses a two-column composition only on short landscape screens wide enough to preserve readable columns; smaller viewports retain bounded internal scrolling.
 
@@ -67,16 +67,16 @@ Every data surface distinguishes the applicable initial/loading, empty, filtered
 
 ## Tailwind 4 Applicability Matrix
 
-| Feature                                           | Decision and candidate                                | Responsive / accessibility / browser effect                | Evidence                       |
-| ------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------- | ------------------------------ |
-| CSS-first `@theme` and `@source`                  | Used in `app.css`                                     | Stable discovery and semantic light utilities              | production build               |
-| Data/ARIA/group/peer/has variants                 | Used where primitives expose state                    | State is synchronized with semantics                       | design and component tests     |
-| Reduced motion / forced colors                    | Used on critical interaction/motion paths             | Controls remain usable in emulated modes                   | browser smoke and source tests |
-| Logical properties                                | Preferred for direction-independent spacing/alignment | Better multilingual/RTL resilience                         | component review               |
-| Dynamic viewport units                            | Used for viewport-safe overlays                       | Prevents mobile browser clipping                           | dialog/sheet source contracts  |
-| Container queries                                 | Not currently applied                                 | No independently constrained component has a measured need | applicability review           |
-| View transitions, masks, zoom, text shadows       | Not applied decoratively                              | No proven orientation/usability benefit                    | applicability review           |
-| Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                             | Keeps source discovery and review deterministic            | architecture test              |
+| Feature                                           | Decision and candidate                                                | Responsive / accessibility / browser effect                        | Evidence                                              |
+| ------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------- |
+| CSS-first `@theme` and `@source`                  | Used in `app.css`                                                     | Stable discovery and semantic light utilities                      | production build                                      |
+| Data/ARIA/group/peer/has variants                 | Used where primitives expose state                                    | State is synchronized with semantics                               | design and component tests                            |
+| Reduced motion / forced colors                    | Used on critical interaction/motion paths                             | Controls remain usable in emulated modes                           | browser smoke and source tests                        |
+| Logical properties                                | Preferred for direction-independent spacing/alignment                 | Better multilingual/RTL resilience                                 | component review                                      |
+| Dynamic viewport units                            | Used for viewport-safe specialized overlays and the phone date picker | Prevents mobile browser clipping and off-screen floating calendars | dialog/sheet/date-picker source and browser contracts |
+| Container queries                                 | Not currently applied                                                 | No independently constrained component has a measured need         | applicability review                                  |
+| View transitions, masks, zoom, text shadows       | Not applied decoratively                                              | No proven orientation/usability benefit                            | applicability review                                  |
+| Sass/Less, broad `@apply`, unsafe dynamic classes | Prohibited/not applicable                                             | Keeps source discovery and review deterministic                    | architecture test                                     |
 
 The final integrated responsive build transforms 3,597 modules. Main application CSS is 184.85 kB (26.85 kB gzip), and the application entry is 137.73 kB (33.83 kB gzip). The CSS remains below the 50 kB gzip budget; the delta from the 150.72 kB / 22.43 kB responsive preflight includes the concurrent motion, component-constructor, timezone, onboarding, workspace-management, and semantic-status work as well as the responsive program, so it is not attributed to responsive CSS alone.
 

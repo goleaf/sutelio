@@ -85,7 +85,7 @@ test('task title and description fields compose the shared form primitives', fun
 
 test('task create and overview compose the same focused task fields', function () {
     foreach ([
-        'task create' => 'TaskCreateDialog.vue',
+        'task create' => 'TaskCreateForm.vue',
         'task overview' => 'TaskOverviewPanel.vue',
     ] as $name => $file) {
         $source = File::get(resource_path("js/components/task/{$file}"));
@@ -98,44 +98,38 @@ test('task create and overview compose the same focused task fields', function (
     }
 });
 
-test('workspace dialogs compose shared body and action spacing', function () {
+test('record confirmation uses the shared in-page panel instead of dialog helpers', function () {
     $bodyPath = resource_path('js/components/shared/DialogBody.vue');
     $actionsPath = resource_path('js/components/shared/DialogActions.vue');
+    $confirmationPath = resource_path('js/components/shared/PageConfirmPanel.vue');
 
-    expect(File::exists($bodyPath))->toBeTrue()
-        ->and(File::exists($actionsPath))->toBeTrue();
+    expect(File::exists($bodyPath))->toBeFalse()
+        ->and(File::exists($actionsPath))->toBeFalse()
+        ->and(File::exists($confirmationPath))->toBeTrue();
 
-    expect(File::get($bodyPath))
-        ->toContain('data-slot="dialog-body"')
-        ->toContain('space-y-6 px-4 py-5 sm:px-8 sm:py-6')
-        ->toContain('<slot />');
-
-    expect(File::get($actionsPath))
-        ->toContain("import { DialogFooter } from '@/components/ui/dialog'")
-        ->toContain('data-slot="dialog-actions"')
-        ->toContain('border-t border-border/70')
-        ->toContain('px-4 py-4')
-        ->toContain('sm:px-8')
-        ->toContain('<slot />');
+    expect(File::get($confirmationPath))
+        ->toContain('data-slot="page-confirm-panel"')
+        ->toContain('role="region"')
+        ->toContain(':type="confirmType"')
+        ->not->toContain('@/components/ui/dialog')
+        ->not->toContain('@/components/ui/sheet');
 });
 
-test('active workspace dialogs reuse shared body and action composition', function () {
+test('record management forms use page composition instead of dialog composition', function () {
     foreach ([
-        'project create' => 'project/ProjectCreateDialog.vue',
-        'task create' => 'task/TaskCreateDialog.vue',
-        'workspace confirmation' => 'shared/WorkspaceConfirmDialog.vue',
-        'workspace edit' => 'workspace/WorkspaceOverviewPanel.vue',
-        'delete user' => 'DeleteUser.vue',
+        'project form' => 'project/ProjectForm.vue',
+        'task create' => 'task/TaskCreateForm.vue',
+        'workspace create and edit' => 'workspace/WorkspaceForm.vue',
+        'workspace duplicate' => 'workspace/WorkspaceDuplicateForm.vue',
     ] as $name => $file) {
         $source = File::get(resource_path("js/components/{$file}"));
 
         expect($source, $name)
-            ->toContain("import DialogActions from '@/components/shared/DialogActions.vue'")
-            ->toContain("import DialogBody from '@/components/shared/DialogBody.vue'")
-            ->toContain('<DialogBody>')
-            ->toContain('<DialogActions>')
-            ->not->toContain('space-y-6 px-6 py-6 sm:px-8')
-            ->not->toContain('gap-2 border-t border-border/70 pt-5 sm:gap-2');
+            ->toContain('<form')
+            ->toContain('rounded-panel')
+            ->not->toContain('@/components/ui/dialog')
+            ->not->toContain('<Dialog')
+            ->not->toContain('<Sheet');
     }
 });
 
@@ -162,7 +156,7 @@ test('the shared button owns pending state without breaking as child composition
 
 test('active asynchronous actions delegate their visual pending state to the shared button', function () {
     foreach ([
-        'workspace confirmation' => 'shared/WorkspaceConfirmDialog.vue',
+        'workspace confirmation' => 'shared/PageConfirmPanel.vue',
         'project result pagination' => 'project/ProjectTaskQueue.vue',
     ] as $name => $file) {
         $source = File::get(resource_path("js/components/{$file}"));

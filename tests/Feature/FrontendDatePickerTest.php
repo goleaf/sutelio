@@ -3,6 +3,7 @@
 test('the shared date picker owns the package backed calendar contract', function () {
     $package = json_decode(File::get(base_path('package.json')), true, flags: JSON_THROW_ON_ERROR);
     $pickerPath = resource_path('js/components/ui/date-picker/DatePickerField.vue');
+    $stylesheet = File::get(resource_path('css/app.css'));
 
     expect(data_get($package, 'dependencies.reka-ui'))->toBeString()
         ->and(data_get($package, 'dependencies.@internationalized/date'))->toBeString()
@@ -16,14 +17,28 @@ test('the shared date picker owns the package backed calendar contract', functio
         ->toContain("from 'reka-ui'")
         ->toContain('RekaDatePickerField')
         ->toContain('CalendarRoot')
+        ->toContain('v-model:open="open"')
+        ->toContain('open.value = false')
+        ->toContain('replaceDatePickerDate(')
         ->toContain(":calendar-label=\"t('date_picker.calendar_label')\"")
         ->toContain(':locale="locale"')
         ->toContain(':week-starts-on="weekStartsOn"')
         ->toContain(':portal="{ to: portalTarget }"')
         ->toContain('data-slot="date-picker-content"')
+        ->toContain('date-picker-weekend')
+        ->toContain('max-sm:!fixed')
+        ->toContain('max-sm:!inset-0')
+        ->toContain('max-sm:h-dvh')
         ->toContain('pointer-coarse:min-h-12')
         ->toContain('motion-reduce:data-[state=open]:animate-none')
         ->toContain('forced-colors:border-[CanvasText]');
+
+    expect($stylesheet)
+        ->toContain('@media (max-width: 39.999rem)')
+        ->toContain("[data-slot='date-picker-content']")
+        ->toContain('transform: none !important;')
+        ->toContain('width: 100dvw !important;')
+        ->toContain('height: 100dvh !important;');
 });
 
 test('every application date entry composes the shared picker', function (string $path, string $model, bool $includesTime) {
@@ -39,7 +54,7 @@ test('every application date entry composes the shared picker', function (string
     }
 })->with([
     'mandatory onboarding task due date' => ['components/onboarding/TaskStep.vue', 'dueDate', false],
-    'ordinary task creation due date' => ['components/task/TaskCreateDialog.vue', 'form.due_date', false],
+    'ordinary task creation due date' => ['components/task/TaskCreateForm.vue', 'form.due_date', false],
     'task overview due date' => ['components/task/TaskOverviewPanel.vue', 'form.due_date', false],
     'task reminder date and time' => ['components/task/TaskRemindersPanel.vue', 'reminderRequest.reminded_at', true],
 ]);

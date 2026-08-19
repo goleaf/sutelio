@@ -20,6 +20,11 @@ use Inertia\Response;
 
 class WorkspaceController extends Controller
 {
+    public function create(): Response
+    {
+        return Inertia::render('workspaces/Create');
+    }
+
     public function index(Request $request): Response
     {
         $workspaces = $request->user()->workspaces()
@@ -53,6 +58,24 @@ class WorkspaceController extends Controller
         return response()->json([
             'workspace' => new WorkspaceResource($workspace->loadCount(['members', 'projects', 'todos'])),
         ], 201);
+    }
+
+    public function edit(Request $request, Workspace $workspace): Response
+    {
+        $this->authorize('update', $workspace);
+
+        return Inertia::render('workspaces/Edit', [
+            'workspace' => (new WorkspaceResource($workspace))->resolve($request),
+        ]);
+    }
+
+    public function copy(Request $request, Workspace $workspace): Response
+    {
+        $this->authorize('duplicate', $workspace);
+
+        return Inertia::render('workspaces/Duplicate', [
+            'workspace' => (new WorkspaceResource($workspace))->resolve($request),
+        ]);
     }
 
     public function update(UpdateWorkspaceRequest $request, Workspace $workspace, UpdateWorkspace $action): JsonResponse

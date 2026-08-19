@@ -67,7 +67,7 @@ test('every color editing workflow composes the shared picker', function (string
         ->toBeGreaterThanOrEqual($minimumUses);
 })->with([
     'onboarding project' => ['components/onboarding/ProjectStep.vue', 1],
-    'project creation' => ['components/project/ProjectCreateDialog.vue', 1],
+    'project management' => ['components/project/ProjectForm.vue', 1],
     'workspace labels' => ['components/workspace/WorkspaceConfigurationPanel.vue', 2],
     'workspace definitions' => ['components/workspace/WorkspaceDefinitionCard.vue', 2],
 ]);

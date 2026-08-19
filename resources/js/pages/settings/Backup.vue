@@ -17,7 +17,7 @@ import DataScopeBanner from '@/components/settings/data/DataScopeBanner.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
 import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -307,7 +307,7 @@ function formatDate(timestamp: number): string {
             </LeadingIconHeading>
         </section>
 
-        <WorkspaceConfirmDialog
+        <PageConfirmPanel
             :open="selectedBackup !== null"
             :title="t('settings.backup.restore_title')"
             :description="
@@ -330,6 +330,6 @@ function formatDate(timestamp: number): string {
             <template #icon>
                 <RotateCcw class="size-5" aria-hidden="true" />
             </template>
-        </WorkspaceConfirmDialog>
+        </PageConfirmPanel>
     </div>
 </template>

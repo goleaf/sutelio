@@ -14,16 +14,19 @@ use App\Actions\ReorderTodos;
 use App\Actions\UncompleteTodo;
 use App\Actions\UpdateTodo;
 use App\Http\Requests\BulkActionRequest;
+use App\Http\Requests\CreateTodoPageRequest;
 use App\Http\Requests\ReorderTodosRequest;
 use App\Http\Requests\StoreTodoRequest;
 use App\Http\Requests\UpdateTodoRequest;
 use App\Http\Resources\LabelResource;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskPriorityResource;
 use App\Http\Resources\TaskStatusResource;
 use App\Http\Resources\TodoResource;
 use App\Models\Todo;
 use App\Models\Workspace;
 use App\Queries\TodoDetailQuery;
+use App\Queries\TodoIndexQuery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,6 +36,33 @@ use Inertia\Response;
 
 class TodoController extends Controller
 {
+    public function create(
+        CreateTodoPageRequest $request,
+        Workspace $workspace,
+        TodoIndexQuery $todoIndexQuery,
+    ): Response {
+        $projectId = $request->projectId();
+        $projects = $todoIndexQuery->projectOptions($workspace, $projectId);
+
+        if ($projectId !== null) {
+            abort_unless($projects->contains('id', $projectId), 404);
+        }
+
+        return Inertia::render('tasks/Create', [
+            'workspace' => ['id' => $workspace->id, 'name' => $workspace->name],
+            'projects' => ProjectResource::collection($projects),
+            'selectedProjectId' => $projectId,
+            'taskDefinitions' => [
+                'statuses' => TaskStatusResource::collection(
+                    $todoIndexQuery->statuses($workspace),
+                )->resolve($request),
+                'priorities' => TaskPriorityResource::collection(
+                    $todoIndexQuery->priorities($workspace),
+                )->resolve($request),
+            ],
+        ]);
+    }
+
     public function store(StoreTodoRequest $request, Workspace $workspace, CreateTodo $action): JsonResponse
     {
         $this->authorize('create', [Todo::class, $workspace]);

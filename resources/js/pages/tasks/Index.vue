@@ -2,7 +2,7 @@
 import { Head, router, useHttp } from '@inertiajs/vue3';
 import { CheckCircle2, Clock3, ListChecks, Plus } from '@lucide/vue';
 import { computed, nextTick, ref } from 'vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
@@ -11,22 +11,19 @@ import {
     clearTaskFilters,
     restoreTaskFocus,
 } from '@/components/task/task-focus';
-import TaskCreateDialog from '@/components/task/TaskCreateDialog.vue';
-import TaskDetail from '@/components/task/TaskDetail.vue';
 import TaskWorkspacePanel from '@/components/task/TaskWorkspacePanel.vue';
 import { Button } from '@/components/ui/button';
 import { useBulkSelect } from '@/composables/useBulkSelect';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
-import {
-    show as showThroughApi,
-    update as updateThroughApi,
-} from '@/routes/api/v1/tasks';
+import { update as updateThroughApi } from '@/routes/api/v1/tasks';
 import {
     bulk,
     complete,
+    create,
     destroy,
     index as tasksIndex,
+    show,
     uncomplete,
 } from '@/routes/todos';
 import type { PaginatedResponse, TodoFilters } from '@/types/api';
@@ -48,11 +45,8 @@ const props = defineProps<{
 const bulkSelect = useBulkSelect<Todo>();
 const toast = useToast();
 const { formatNumber, t } = useUi();
-const selectedTodo = ref<Todo | null>(null);
-const taskDetailTrigger = ref<HTMLElement | null>(null);
 const taskQueueFallback = ref<HTMLElement | null>(null);
 const confirmationTrigger = ref<HTMLElement | null>(null);
-const showCreateDialog = ref(false);
 const todoToDelete = ref<Todo | null>(null);
 const deletingTodo = ref(false);
 const filtering = ref(false);
@@ -60,7 +54,6 @@ const busyTodoId = ref<string | null>(null);
 const bulkProcessing = ref(false);
 const confirmBulkDelete = ref(false);
 const selectionMode = ref(false);
-const detailRequest = useHttp<Record<string, never>, { data: Todo }>({});
 const statusRequest = useHttp<{ status: string }, { data: Todo }>({
     status: '',
 });
@@ -86,11 +79,6 @@ function applyFilters(filters: TodoFilters): void {
             filtering.value = false;
         },
     });
-}
-
-function refreshIndex(): void {
-    setSelectionMode(false);
-    router.reload({ only: ['todos', 'filters', 'stats'] });
 }
 
 function setSelectionMode(enabled: boolean): void {
@@ -119,40 +107,12 @@ function restoreFocus(origin: HTMLElement | null): void {
     void nextTick(() => restoreTaskFocus(origin, taskQueueFallback.value));
 }
 
-async function selectTodo(
-    todo: Todo,
-    trigger: HTMLElement | null = activeElement(),
-): Promise<void> {
-    if (!props.workspace.id || detailRequest.processing) {
-        return;
-    }
-
-    if (!selectedTodo.value) {
-        taskDetailTrigger.value = trigger ?? activeElement();
-    }
-
-    try {
-        const response = await detailRequest.get(
-            showThroughApi([props.workspace.id, todo]).url,
-        );
-        selectedTodo.value = response.data;
-    } catch {
-        toast.error(t('common.errors.generic'));
-    }
+function openCreatePage(): void {
+    router.visit(create(props.workspace.id).url);
 }
 
-function closeTaskDetail(): void {
-    selectedTodo.value = null;
-    restoreFocus(taskDetailTrigger.value);
-    taskDetailTrigger.value = null;
-}
-
-function updateSelectedTodo(todo: Todo): void {
-    if (selectedTodo.value?.id === todo.id) {
-        selectedTodo.value = { ...selectedTodo.value, ...todo };
-    }
-
-    refreshIndex();
+function selectTodo(todo: Todo): void {
+    router.visit(show(todo).url);
 }
 
 function toggleCompletion(todo: Todo): void {
@@ -189,10 +149,10 @@ async function moveTodo(
     statusRequest.status = status.key;
 
     try {
-        const response = await statusRequest.put(
+        await statusRequest.put(
             updateThroughApi([props.workspace.id, todo]).url,
         );
-        updateSelectedTodo(response.data);
+        router.reload({ only: ['todos', 'filters', 'stats'] });
     } catch {
         toast.error(t('common.errors.generic'));
     } finally {
@@ -292,10 +252,6 @@ function deleteTodo(): void {
             toast.success(t('tasks.index.deleted'));
             todoToDelete.value = null;
 
-            if (selectedTodo.value?.id === todo.id) {
-                selectedTodo.value = null;
-            }
-
             if (bulkSelect.selectedIds.value.has(todo.id)) {
                 bulkSelect.toggle(todo.id);
             }
@@ -331,7 +287,7 @@ function deleteTodo(): void {
                     <Button
                         size="lg"
                         :disabled="!workspace.id"
-                        @click="showCreateDialog = true"
+                        @click="openCreatePage"
                     >
                         <Plus class="size-4" aria-hidden="true" />
                         {{ t('tasks.create.new_task') }}
@@ -380,7 +336,7 @@ function deleteTodo(): void {
                     @bulk-action="requestBulkAction"
                     @clear-filters="applyFilters(clearTaskFilters(filters))"
                     @clear-selection="setSelectionMode(false)"
-                    @create="showCreateDialog = true"
+                    @create="openCreatePage"
                     @delete="requestDelete"
                     @move="moveTodo"
                     @navigate="handlePagination"
@@ -392,53 +348,35 @@ function deleteTodo(): void {
                     @update-selection-mode="setSelectionMode"
                 />
             </div>
-        </WorkspacePageFrame>
 
-        <TaskDetail
-            v-if="selectedTodo"
-            :key="selectedTodo.id"
-            :todo="selectedTodo"
-            :open="Boolean(selectedTodo)"
-            :task-definitions="taskDefinitions"
-            @close="closeTaskDetail"
-            @deleted="refreshIndex"
-            @refresh="selectTodo(selectedTodo)"
-            @updated="updateSelectedTodo"
-        />
-        <TaskCreateDialog
-            :open="showCreateDialog"
-            :workspace-id="workspace.id"
-            :task-definitions="taskDefinitions"
-            @close="showCreateDialog = false"
-            @created="refreshIndex"
-        />
-        <WorkspaceConfirmDialog
-            :open="todoToDelete !== null"
-            :title="t('tasks.index.delete_confirm_title')"
-            :description="
-                t('tasks.index.delete_confirm_description', {
-                    title: todoToDelete?.title ?? '',
-                })
-            "
-            :confirm-label="t('common.actions.delete')"
-            :cancel-label="t('common.actions.cancel')"
-            :processing="deletingTodo"
-            @update:open="!$event && closeConfirmation('todo')"
-            @confirm="deleteTodo"
-        />
-        <WorkspaceConfirmDialog
-            :open="confirmBulkDelete"
-            :title="t('tasks.index.bulk_delete_confirm_title')"
-            :description="
-                t('tasks.index.bulk_delete_confirm_description', {
-                    count: formatNumber(selectedIds.length),
-                })
-            "
-            :confirm-label="t('common.actions.delete')"
-            :cancel-label="t('common.actions.cancel')"
-            :processing="bulkProcessing"
-            @update:open="!$event && closeConfirmation('bulk')"
-            @confirm="performBulkAction('delete')"
-        />
+            <PageConfirmPanel
+                :open="todoToDelete !== null"
+                :title="t('tasks.index.delete_confirm_title')"
+                :description="
+                    t('tasks.index.delete_confirm_description', {
+                        title: todoToDelete?.title ?? '',
+                    })
+                "
+                :confirm-label="t('common.actions.delete')"
+                :cancel-label="t('common.actions.cancel')"
+                :processing="deletingTodo"
+                @update:open="!$event && closeConfirmation('todo')"
+                @confirm="deleteTodo"
+            />
+            <PageConfirmPanel
+                :open="confirmBulkDelete"
+                :title="t('tasks.index.bulk_delete_confirm_title')"
+                :description="
+                    t('tasks.index.bulk_delete_confirm_description', {
+                        count: formatNumber(selectedIds.length),
+                    })
+                "
+                :confirm-label="t('common.actions.delete')"
+                :cancel-label="t('common.actions.cancel')"
+                :processing="bulkProcessing"
+                @update:open="!$event && closeConfirmation('bulk')"
+                @confirm="performBulkAction('delete')"
+            />
+        </WorkspacePageFrame>
     </div>
 </template>

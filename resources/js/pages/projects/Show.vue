@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useHttp } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
     buildProjectQuery,
     projectTaskMatchesFilters,
@@ -20,28 +20,27 @@ import ProjectOperationsHeader from '@/components/project/ProjectOperationsHeade
 import ProjectPulse from '@/components/project/ProjectPulse.vue';
 import ProjectTaskFilters from '@/components/project/ProjectTaskFilters.vue';
 import ProjectTaskQueue from '@/components/project/ProjectTaskQueue.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
-import TaskCreateDialog from '@/components/task/TaskCreateDialog.vue';
-import TaskDetail from '@/components/task/TaskDetail.vue';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import {
     complete as completeThroughApi,
     destroy as destroyThroughApi,
-    show as showThroughApi,
     uncomplete as uncompleteThroughApi,
 } from '@/routes/api/v1/tasks';
 import {
     archive,
-    duplicate,
+    copy as copyProject,
+    edit as editProjectPage,
     index as projectsIndex,
     restore,
     show as showProject,
 } from '@/routes/projects';
+import { create as createTodo, show as showTodo } from '@/routes/todos';
 import type { Project, TaskDefinitionCatalog, Todo } from '@/types/models';
 
-type ProjectHeaderAction = 'archive' | 'duplicate' | 'restore';
+type ProjectHeaderAction = 'archive' | 'restore';
 type ProjectActionResponse = { project: Project };
 
 const props = defineProps<{
@@ -60,10 +59,6 @@ const props = defineProps<{
 const project = computed(() => props.project.data);
 const toast = useToast();
 const { t } = useUi();
-const selectedTodo = ref<Todo | null>(null);
-const taskDetailTrigger = ref<HTMLElement | null>(null);
-const queueFallbackRef = ref<HTMLElement | null>(null);
-const showCreateDialog = ref(false);
 const todoToDelete = ref<ProjectTask | null>(null);
 const hiddenTaskIds = ref<Set<string>>(new Set());
 const taskOverrides = ref<Map<string, ProjectTask>>(new Map());
@@ -72,7 +67,6 @@ const filtering = ref(false);
 const busyTaskId = ref<string | null>(null);
 const deletingTodo = ref(false);
 const processingAction = ref<ProjectHeaderAction | null>(null);
-const detailRequest = useHttp<Record<string, never>, { data: Todo }>({});
 const completionRequest = useHttp<Record<string, never>, { data: Todo }>({});
 const deleteRequest = useHttp<Record<string, never>, undefined>({});
 const projectActionRequest = useHttp<
@@ -169,56 +163,16 @@ function refreshOperations(includeTodos = true): void {
     });
 }
 
-async function selectTodo(task: Pick<ProjectTask, 'id'>): Promise<void> {
-    if (detailRequest.processing) {
-        return;
-    }
-
-    if (selectedTodo.value === null) {
-        taskDetailTrigger.value =
-            document.activeElement instanceof HTMLElement
-                ? document.activeElement
-                : null;
-    }
-
-    try {
-        const response = await detailRequest.get(
-            showThroughApi([props.workspace.id, task.id]).url,
-        );
-        selectedTodo.value = response.data;
-    } catch {
-        toast.error(t('common.errors.generic'));
-    }
+function selectTodo(task: Pick<ProjectTask, 'id'>): void {
+    router.visit(showTodo(task.id).url);
 }
 
-function closeTaskDetail(): void {
-    selectedTodo.value = null;
-
-    void nextTick(() => {
-        const focusTarget = taskDetailTrigger.value?.isConnected
-            ? taskDetailTrigger.value
-            : queueFallbackRef.value;
-
-        focusTarget?.focus();
-        taskDetailTrigger.value = null;
-    });
-}
-
-function refreshSelectedTodo(): void {
-    if (!selectedTodo.value) {
-        return;
-    }
-
-    void selectTodo(selectedTodo.value);
-}
-
-function updateSelectedTodo(todo: Todo): void {
-    if (selectedTodo.value?.id === todo.id) {
-        selectedTodo.value = { ...selectedTodo.value, ...todo };
-    }
-
-    synchronizeTask(todo);
-    refreshOperations();
+function openCreatePage(): void {
+    router.visit(
+        createTodo(props.workspace.id, {
+            query: { project_id: project.value.id },
+        }).url,
+    );
 }
 
 function synchronizeTask(todo: Todo): void {
@@ -318,15 +272,9 @@ async function toggleCompletion(task: ProjectTask): Promise<void> {
 function handleDeletedTodo(taskId: string): void {
     const overrides = new Map(taskOverrides.value);
     const totalAdjustmentIds = new Set(pendingTotalAdjustmentIds.value);
-    const selectedTask =
-        selectedTodo.value?.id === taskId ? selectedTodo.value : null;
-    const countedOutsideLoadedQueue =
-        selectedTask !== null &&
-        projectTaskMatchesFilters(selectedTask, props.filters, props.today);
 
     if (
-        (props.todos.data.some((task) => task.id === taskId) ||
-            countedOutsideLoadedQueue) &&
+        props.todos.data.some((task) => task.id === taskId) &&
         !hiddenTaskIds.value.has(taskId)
     ) {
         totalAdjustmentIds.add(taskId);
@@ -354,10 +302,6 @@ async function deleteTodo(): Promise<void> {
         toast.success(t('tasks.index.deleted'));
         todoToDelete.value = null;
         handleDeletedTodo(task.id);
-
-        if (selectedTodo.value?.id === task.id) {
-            closeTaskDetail();
-        }
     } catch {
         toast.error(t('common.errors.generic'));
     } finally {
@@ -382,11 +326,11 @@ function restoreProject(): void {
 }
 
 function duplicateProject(): void {
-    void submitProjectAction(
-        'duplicate',
-        duplicate([props.workspace.id, project.value.id]).url,
-        t('projects.show.duplicated'),
-    );
+    router.visit(copyProject([props.workspace.id, project.value.id]).url);
+}
+
+function editProject(): void {
+    router.visit(editProjectPage([props.workspace.id, project.value.id]).url);
 }
 
 async function submitProjectAction(
@@ -401,16 +345,8 @@ async function submitProjectAction(
     processingAction.value = action;
 
     try {
-        const response = await projectActionRequest.post(url);
+        await projectActionRequest.post(url);
         toast.success(successMessage);
-
-        if (action === 'duplicate') {
-            router.visit(
-                showProject([props.workspace.id, response.project.id]).url,
-            );
-
-            return;
-        }
 
         router.reload({ only: ['project'] });
     } catch {
@@ -431,7 +367,8 @@ async function submitProjectAction(
                 :metrics="metrics"
                 :processing-action="processingAction"
                 @back="router.visit(projectsIndex(workspace.id).url)"
-                @new-task="showCreateDialog = true"
+                @new-task="openCreatePage"
+                @edit="editProject"
                 @duplicate="duplicateProject"
                 @archive="archiveProject"
                 @restore="restoreProject"
@@ -452,7 +389,6 @@ async function submitProjectAction(
                 </div>
 
                 <div
-                    ref="queueFallbackRef"
                     tabindex="-1"
                     :aria-label="t('projects.show.results.title')"
                     class="min-w-0 space-y-6 rounded-panel focus-visible:ring-2 focus-visible:ring-orange-500/40 focus-visible:outline-none xl:col-start-1 xl:row-start-1"
@@ -474,45 +410,26 @@ async function submitProjectAction(
                         @select="selectTodo"
                         @toggle="toggleCompletion"
                         @delete="todoToDelete = $event"
-                        @create="showCreateDialog = true"
+                        @create="openCreatePage"
                         @clear="clearFilters"
                     />
                 </div>
             </div>
-        </WorkspacePageFrame>
 
-        <TaskDetail
-            v-if="selectedTodo"
-            :key="selectedTodo.id"
-            :todo="selectedTodo"
-            :open="Boolean(selectedTodo)"
-            :task-definitions="taskDefinitions"
-            @close="closeTaskDetail"
-            @deleted="handleDeletedTodo"
-            @refresh="refreshSelectedTodo"
-            @updated="updateSelectedTodo"
-        />
-        <TaskCreateDialog
-            :open="showCreateDialog"
-            :workspace-id="workspace.id"
-            :project-id="project.id"
-            :task-definitions="taskDefinitions"
-            @close="showCreateDialog = false"
-            @created="refreshOperations"
-        />
-        <WorkspaceConfirmDialog
-            :open="todoToDelete !== null"
-            :title="t('tasks.index.delete_confirm_title')"
-            :description="
-                t('tasks.index.delete_confirm_description', {
-                    title: todoToDelete?.title ?? '',
-                })
-            "
-            :confirm-label="t('common.actions.delete')"
-            :cancel-label="t('common.actions.cancel')"
-            :processing="deletingTodo"
-            @update:open="!$event && (todoToDelete = null)"
-            @confirm="deleteTodo"
-        />
+            <PageConfirmPanel
+                :open="todoToDelete !== null"
+                :title="t('tasks.index.delete_confirm_title')"
+                :description="
+                    t('tasks.index.delete_confirm_description', {
+                        title: todoToDelete?.title ?? '',
+                    })
+                "
+                :confirm-label="t('common.actions.delete')"
+                :cancel-label="t('common.actions.cancel')"
+                :processing="deletingTodo"
+                @update:open="!$event && (todoToDelete = null)"
+                @confirm="deleteTodo"
+            />
+        </WorkspacePageFrame>
     </div>
 </template>

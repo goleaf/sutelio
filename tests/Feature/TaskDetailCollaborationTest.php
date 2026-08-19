@@ -229,14 +229,10 @@ test('task taxonomy recurrence reminders and attachments use scoped detail contr
 });
 
 test('task detail entry points share the complete collaboration surface', function () {
-    $drawer = File::get(resource_path('js/components/task/TaskDetail.vue'));
     $page = File::get(resource_path('js/pages/tasks/Show.vue'));
     $content = File::get(resource_path('js/components/task/TaskDetailContent.vue'));
 
-    expect($drawer)
-        ->toContain('TaskDetailContent')
-        ->not->toContain("from '@/routes/api/v1/tasks'")
-        ->and(substr_count($drawer, "\n"))->toBeLessThan(100)
+    expect(File::exists(resource_path('js/components/task/TaskDetail.vue')))->toBeFalse()
         ->and($page)
         ->toContain('TaskDetailContent')
         ->not->toContain("from '@/routes/api/v1/tasks'")
@@ -250,10 +246,7 @@ test('task detail entry points share the complete collaboration surface', functi
         ->toContain('TaskAttachmentsPanel');
 
     expect(File::get(resource_path('js/pages/tasks/Index.vue')))
-        ->toContain('taskDetailTrigger.value =')
-        ->toContain('if (!selectedTodo.value)')
-        ->toContain('restoreTaskFocus')
-        ->toContain('taskQueueFallback')
-        ->toContain('restoreFocus(taskDetailTrigger.value)')
-        ->toContain('@close="closeTaskDetail"');
+        ->toContain('router.visit(show(todo).url)')
+        ->not->toContain('selectedTodo')
+        ->not->toContain('<TaskDetail');
 });

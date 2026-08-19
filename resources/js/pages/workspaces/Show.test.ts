@@ -47,7 +47,7 @@ test('workspace member management covers the complete invitation and role lifecy
     assert.match(membersPanel, /if \(!roleRequest\.wasSuccessful\)/);
     assert.match(membersPanel, /removeMember/);
     assert.match(membersPanel, /if \(!removeRequest\.wasSuccessful\)/);
-    assert.match(membersPanel, /WorkspaceConfirmDialog/);
+    assert.match(membersPanel, /PageConfirmPanel/);
     assert.match(membersPanel, /workspaces\.management\.invitations/);
 });
 
@@ -60,7 +60,7 @@ test('workspace ownership and deletion require explicit typed confirmations', ()
     assert.match(dangerPanel, /if \(!transferForm\.wasSuccessful\)/);
     assert.match(dangerPanel, /deleteWorkspace/);
     assert.match(dangerPanel, /if \(!deleteRequest\.wasSuccessful\)/);
-    assert.match(dangerPanel, /WorkspaceConfirmDialog/);
+    assert.match(dangerPanel, /PageConfirmPanel/);
     assert.match(dangerPanel, /:confirmation-text="workspace\.name"/);
 });
 
@@ -78,7 +78,7 @@ test('workspace task configuration exposes full label and tag crud', () => {
     assert.match(configurationPanel, /createTag/);
     assert.match(configurationPanel, /updateTag/);
     assert.match(configurationPanel, /deleteMetadata/);
-    assert.match(configurationPanel, /WorkspaceConfirmDialog/);
+    assert.match(configurationPanel, /PageConfirmPanel/);
     assert.match(configurationPanel, /manage_task_configuration/);
     assert.match(configurationPanel, /wasSuccessful/);
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useHttp, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useHttp, usePage } from '@inertiajs/vue3';
 import {
     Building2,
     CheckCircle2,
@@ -15,19 +15,15 @@ import {
     Trash2,
     Users,
 } from '@lucide/vue';
-import { computed, nextTick, ref } from 'vue';
-import InputError from '@/components/InputError.vue';
+import { computed, ref } from 'vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
 import IconTile from '@/components/shared/IconTile.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
-import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import WorkspaceMetric from '@/components/shared/WorkspaceMetric.vue';
 import WorkspacePageFrame from '@/components/shared/WorkspacePageFrame.vue';
 import WorkspacePageHeader from '@/components/shared/WorkspacePageHeader.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogFooter } from '@/components/ui/dialog';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -53,12 +49,12 @@ import type { WorkspacePortfolioSort } from '@/components/workspace/workspace-st
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
 import {
-    destroy,
-    duplicate,
+    copy,
+    create,
+    danger,
+    edit,
     show as showWorkspace,
-    store,
     switchMethod,
-    update,
 } from '@/routes/workspaces';
 import type { Workspace } from '@/types/models';
 
@@ -73,25 +69,7 @@ const toast = useToast();
 const { formatNumber, locale, t } = useUi();
 const searchQuery = ref('');
 const sortOrder = ref<WorkspacePortfolioSort>('name_asc');
-const showCreateDialog = ref(false);
-const editingWorkspace = ref<Workspace | null>(null);
-const duplicatingWorkspace = ref<Workspace | null>(null);
-const deletingWorkspace = ref<Workspace | null>(null);
 const switchingWorkspaceId = ref<string | null>(null);
-const portfolioDialogTrigger = ref<HTMLElement | null>(null);
-
-const form = useHttp({ name: '', description: '' });
-const editForm = useHttp<
-    { name: string; description: string },
-    WorkspaceResponse
->({
-    name: '',
-    description: '',
-});
-const duplicateForm = useHttp<{ name: string }, WorkspaceResponse>({
-    name: '',
-});
-const deleteRequest = useHttp<Record<string, never>>({});
 const switchRequest = useHttp<Record<string, never>, WorkspaceResponse>({});
 
 const filteredWorkspaces = computed(() =>
@@ -125,179 +103,8 @@ function canDeleteWorkspace(workspace: Workspace): boolean {
     return workspace.permissions?.delete ?? false;
 }
 
-function reloadPortfolio(onSuccess?: () => void): void {
-    router.reload({ only: ['workspaces', 'navigation'], onSuccess });
-}
-
-function capturePortfolioDialogTrigger(event: MouseEvent): void {
-    portfolioDialogTrigger.value =
-        event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
-}
-
-function restorePortfolioDialogFocus(): void {
-    const trigger = portfolioDialogTrigger.value;
-    portfolioDialogTrigger.value = null;
-
-    void nextTick(() => {
-        const fallback =
-            document.getElementById('workspace-search') ??
-            document.querySelector<HTMLElement>('[data-workspace-create]');
-        const target = trigger?.isConnected ? trigger : fallback;
-
-        target?.focus();
-    });
-}
-
-function openCreateDialog(event: MouseEvent): void {
-    capturePortfolioDialogTrigger(event);
-    setCreateDialog(true);
-}
-
-function setCreateDialog(open: boolean): void {
-    showCreateDialog.value = open;
-
-    if (open) {
-        form.resetAndClearErrors();
-    } else {
-        restorePortfolioDialogFocus();
-    }
-}
-
-function openEditDialog(workspace: Workspace): void {
-    editingWorkspace.value = workspace;
-    editForm.resetAndClearErrors();
-    editForm.name = workspace.name;
-    editForm.description = workspace.description ?? '';
-}
-
-function setEditDialog(open: boolean): void {
-    if (!open && !editForm.processing) {
-        editingWorkspace.value = null;
-        editForm.resetAndClearErrors();
-        restorePortfolioDialogFocus();
-    }
-}
-
-function openDuplicateDialog(workspace: Workspace): void {
-    duplicatingWorkspace.value = workspace;
-    duplicateForm.resetAndClearErrors();
-    duplicateForm.name = t('workspaces.copy_name', { name: workspace.name });
-}
-
-function setDuplicateDialog(open: boolean): void {
-    if (!open && !duplicateForm.processing) {
-        duplicatingWorkspace.value = null;
-        duplicateForm.resetAndClearErrors();
-        restorePortfolioDialogFocus();
-    }
-}
-
-function openDeleteDialog(workspace: Workspace): void {
-    deletingWorkspace.value = workspace;
-    deleteRequest.clearErrors();
-}
-
-function setDeleteDialog(open: boolean): void {
-    if (!open && !deleteRequest.processing) {
-        deletingWorkspace.value = null;
-        deleteRequest.clearErrors();
-        restorePortfolioDialogFocus();
-    }
-}
-
-async function createWorkspace(): Promise<void> {
-    if (!form.name.trim()) {
-        form.setError('name', t('workspaces.name_required'));
-
-        return;
-    }
-
-    try {
-        await form.submit(store(), {
-            onSuccess: () => {
-                toast.success(t('workspaces.created'));
-                setCreateDialog(false);
-                form.resetAndClearErrors();
-                reloadPortfolio();
-            },
-            onHttpException: () => {
-                toast.error(t('workspaces.create_failed'));
-            },
-            onNetworkError: () => {
-                toast.error(t('workspaces.create_failed'));
-            },
-        });
-    } catch {
-        if (!form.hasErrors) {
-            toast.error(t('workspaces.create_failed'));
-        }
-    }
-}
-
-async function editWorkspace(): Promise<void> {
-    const workspace = editingWorkspace.value;
-
-    if (!workspace || !editForm.name.trim()) {
-        editForm.setError('name', t('workspaces.name_required'));
-
-        return;
-    }
-
-    editForm.name = editForm.name.trim();
-    editForm.description = editForm.description.trim();
-
-    try {
-        await editForm.submit(update(workspace));
-        toast.success(t('workspaces.updated'));
-        editingWorkspace.value = null;
-        editForm.resetAndClearErrors();
-        reloadPortfolio(restorePortfolioDialogFocus);
-    } catch {
-        if (!editForm.hasErrors) {
-            toast.error(t('workspaces.update_failed'));
-        }
-    }
-}
-
-async function duplicateWorkspace(): Promise<void> {
-    const workspace = duplicatingWorkspace.value;
-
-    if (!workspace || !duplicateForm.name.trim()) {
-        duplicateForm.setError('name', t('workspaces.name_required'));
-
-        return;
-    }
-
-    duplicateForm.name = duplicateForm.name.trim();
-
-    try {
-        await duplicateForm.submit(duplicate(workspace));
-        toast.success(t('workspaces.duplicated'));
-        duplicatingWorkspace.value = null;
-        duplicateForm.resetAndClearErrors();
-        reloadPortfolio(restorePortfolioDialogFocus);
-    } catch {
-        if (!duplicateForm.hasErrors) {
-            toast.error(t('workspaces.duplicate_failed'));
-        }
-    }
-}
-
-async function deleteWorkspace(): Promise<void> {
-    const workspace = deletingWorkspace.value;
-
-    if (!workspace) {
-        return;
-    }
-
-    try {
-        await deleteRequest.submit(destroy(workspace));
-        toast.success(t('workspaces.deleted'));
-        deletingWorkspace.value = null;
-        reloadPortfolio(restorePortfolioDialogFocus);
-    } catch {
-        toast.error(t('workspaces.delete_failed'));
-    }
+function reloadPortfolio(): void {
+    router.reload({ only: ['workspaces', 'navigation'] });
 }
 
 async function switchWorkspace(
@@ -329,7 +136,19 @@ async function switchWorkspace(
 }
 
 function manageWorkspace(workspace: Workspace): void {
-    router.visit(showWorkspace(workspace));
+    router.visit(showWorkspace(workspace).url);
+}
+
+function editWorkspace(workspace: Workspace): void {
+    router.visit(edit(workspace).url);
+}
+
+function copyWorkspace(workspace: Workspace): void {
+    router.visit(copy(workspace).url);
+}
+
+function manageWorkspaceDanger(workspace: Workspace): void {
+    router.visit(danger(workspace).url);
 }
 </script>
 
@@ -348,13 +167,11 @@ function manageWorkspace(workspace: Workspace): void {
                 </template>
 
                 <template #actions>
-                    <Button
-                        size="lg"
-                        data-workspace-create
-                        @click="openCreateDialog"
-                    >
-                        <Plus class="size-4" aria-hidden="true" />
-                        {{ t('workspaces.new') }}
+                    <Button as-child size="lg" data-workspace-create>
+                        <Link :href="create().url">
+                            <Plus class="size-4" aria-hidden="true" />
+                            {{ t('workspaces.new') }}
+                        </Link>
                     </Button>
                 </template>
 
@@ -660,9 +477,6 @@ function manageWorkspace(workspace: Workspace): void {
                                                     name: workspace.name,
                                                 })
                                             "
-                                            @click="
-                                                capturePortfolioDialogTrigger
-                                            "
                                         >
                                             <MoreHorizontal
                                                 aria-hidden="true"
@@ -672,7 +486,7 @@ function manageWorkspace(workspace: Workspace): void {
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem
                                             v-if="canUpdateWorkspace(workspace)"
-                                            @select="openEditDialog(workspace)"
+                                            @select="editWorkspace(workspace)"
                                         >
                                             <Pencil aria-hidden="true" />
                                             {{ t('workspaces.actions.edit') }}
@@ -681,9 +495,7 @@ function manageWorkspace(workspace: Workspace): void {
                                             v-if="
                                                 canDuplicateWorkspace(workspace)
                                             "
-                                            @select="
-                                                openDuplicateDialog(workspace)
-                                            "
+                                            @select="copyWorkspace(workspace)"
                                         >
                                             <Copy aria-hidden="true" />
                                             {{
@@ -707,7 +519,7 @@ function manageWorkspace(workspace: Workspace): void {
                                             v-if="canDeleteWorkspace(workspace)"
                                             class="text-destructive focus:text-destructive"
                                             @select="
-                                                openDeleteDialog(workspace)
+                                                manageWorkspaceDanger(workspace)
                                             "
                                         >
                                             <Trash2 aria-hidden="true" />
@@ -736,7 +548,7 @@ function manageWorkspace(workspace: Workspace): void {
                     :title="t('workspaces.empty')"
                     :description="t('workspaces.empty_description')"
                     :action-label="t('workspaces.create')"
-                    @action="setCreateDialog(true)"
+                    @action="router.visit(create().url)"
                 >
                     <template #icon>
                         <Building2 class="size-7" aria-hidden="true" />
@@ -744,229 +556,5 @@ function manageWorkspace(workspace: Workspace): void {
                 </EmptyState>
             </section>
         </WorkspacePageFrame>
-
-        <Dialog :open="showCreateDialog" @update:open="setCreateDialog">
-            <WorkspaceDialogContent
-                :title="t('workspaces.new')"
-                :description="t('workspaces.create_description')"
-                :close-label="t('common.actions.cancel')"
-            >
-                <form
-                    class="space-y-6 px-6 py-6 sm:px-8"
-                    @submit.prevent="createWorkspace"
-                >
-                    <div class="space-y-2">
-                        <Label for="ws-name">{{ t('workspaces.name') }}</Label>
-                        <Input
-                            id="ws-name"
-                            v-model="form.name"
-                            :placeholder="t('workspaces.name_placeholder')"
-                            autofocus
-                            :disabled="form.processing"
-                            :aria-invalid="Boolean(form.errors.name)"
-                            @input="form.clearErrors('name')"
-                        />
-                        <InputError :message="form.errors.name" />
-                    </div>
-                    <div class="space-y-2">
-                        <Label for="ws-desc">
-                            {{ t('workspaces.description') }}
-                        </Label>
-                        <Input
-                            id="ws-desc"
-                            v-model="form.description"
-                            :placeholder="
-                                t('workspaces.description_placeholder')
-                            "
-                            :disabled="form.processing"
-                            :aria-invalid="Boolean(form.errors.description)"
-                            @input="form.clearErrors('description')"
-                        />
-                        <InputError :message="form.errors.description" />
-                    </div>
-                    <DialogFooter
-                        class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                    >
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="lg"
-                            :disabled="form.processing"
-                            @click="setCreateDialog(false)"
-                        >
-                            {{ t('common.actions.cancel') }}
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            :disabled="form.processing"
-                        >
-                            <Spinner v-if="form.processing" />
-                            {{
-                                form.processing
-                                    ? t('workspaces.creating')
-                                    : t('common.actions.create')
-                            }}
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </WorkspaceDialogContent>
-        </Dialog>
-
-        <Dialog :open="Boolean(editingWorkspace)" @update:open="setEditDialog">
-            <WorkspaceDialogContent
-                :title="t('workspaces.actions.edit')"
-                :description="t('workspaces.edit_description')"
-                :close-label="t('common.actions.cancel')"
-            >
-                <form
-                    class="space-y-6 px-6 py-6 sm:px-8"
-                    @submit.prevent="editWorkspace"
-                >
-                    <div class="space-y-2">
-                        <Label for="workspace-edit-name">
-                            {{ t('workspaces.name') }}
-                        </Label>
-                        <Input
-                            id="workspace-edit-name"
-                            v-model="editForm.name"
-                            :placeholder="t('workspaces.name_placeholder')"
-                            :disabled="editForm.processing"
-                            :aria-invalid="Boolean(editForm.errors.name)"
-                            @input="editForm.clearErrors('name')"
-                        />
-                        <InputError :message="editForm.errors.name" />
-                    </div>
-                    <div class="space-y-2">
-                        <Label for="workspace-edit-description">
-                            {{ t('workspaces.description') }}
-                        </Label>
-                        <Input
-                            id="workspace-edit-description"
-                            v-model="editForm.description"
-                            :placeholder="
-                                t('workspaces.description_placeholder')
-                            "
-                            :disabled="editForm.processing"
-                            :aria-invalid="Boolean(editForm.errors.description)"
-                            @input="editForm.clearErrors('description')"
-                        />
-                        <InputError :message="editForm.errors.description" />
-                    </div>
-                    <DialogFooter
-                        class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                    >
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="lg"
-                            :disabled="editForm.processing"
-                            @click="setEditDialog(false)"
-                        >
-                            {{ t('common.actions.cancel') }}
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            :disabled="editForm.processing"
-                        >
-                            <Spinner v-if="editForm.processing" />
-                            {{
-                                editForm.processing
-                                    ? t('workspaces.updating')
-                                    : t('common.actions.save')
-                            }}
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </WorkspaceDialogContent>
-        </Dialog>
-
-        <Dialog
-            :open="Boolean(duplicatingWorkspace)"
-            @update:open="setDuplicateDialog"
-        >
-            <WorkspaceDialogContent
-                :title="t('workspaces.actions.duplicate')"
-                :description="t('workspaces.duplicate_description')"
-                :close-label="t('common.actions.cancel')"
-            >
-                <form
-                    class="space-y-6 px-6 py-6 sm:px-8"
-                    @submit.prevent="duplicateWorkspace"
-                >
-                    <div class="space-y-2">
-                        <Label for="workspace-duplicate-name">
-                            {{ t('workspaces.name') }}
-                        </Label>
-                        <Input
-                            id="workspace-duplicate-name"
-                            v-model="duplicateForm.name"
-                            :placeholder="
-                                t('workspaces.duplicate_name_placeholder')
-                            "
-                            :disabled="duplicateForm.processing"
-                            :aria-invalid="Boolean(duplicateForm.errors.name)"
-                            @input="duplicateForm.clearErrors('name')"
-                        />
-                        <InputError :message="duplicateForm.errors.name" />
-                    </div>
-                    <DialogFooter
-                        class="gap-2 border-t border-border/70 pt-5 sm:gap-2"
-                    >
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="lg"
-                            :disabled="duplicateForm.processing"
-                            @click="setDuplicateDialog(false)"
-                        >
-                            {{ t('common.actions.cancel') }}
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            :disabled="duplicateForm.processing"
-                        >
-                            <Spinner v-if="duplicateForm.processing" />
-                            {{
-                                duplicateForm.processing
-                                    ? t('workspaces.duplicating')
-                                    : t('workspaces.actions.duplicate')
-                            }}
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </WorkspaceDialogContent>
-        </Dialog>
-
-        <WorkspaceConfirmDialog
-            :open="Boolean(deletingWorkspace)"
-            :title="t('workspaces.actions.delete')"
-            :description="
-                t('workspaces.delete_description', {
-                    name: deletingWorkspace?.name ?? '',
-                    members: formatNumber(
-                        deletingWorkspace?.members_count ?? 0,
-                    ),
-                    projects: formatNumber(
-                        deletingWorkspace?.projects_count ?? 0,
-                    ),
-                    tasks: formatNumber(deletingWorkspace?.todos_count ?? 0),
-                })
-            "
-            :confirm-label="t('workspaces.actions.delete')"
-            :cancel-label="t('common.actions.cancel')"
-            :processing="deleteRequest.processing"
-            :confirmation-text="deletingWorkspace?.name"
-            :confirmation-label="
-                t('workspaces.delete_confirmation', {
-                    name: deletingWorkspace?.name ?? '',
-                })
-            "
-            destructive
-            @update:open="setDeleteDialog"
-            @confirm="deleteWorkspace"
-        />
     </div>
 </template>

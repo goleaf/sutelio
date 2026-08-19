@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-const createDialog = readFileSync(
-    new URL('./task/TaskCreateDialog.vue', import.meta.url),
+const createForm = readFileSync(
+    new URL('./task/TaskCreateForm.vue', import.meta.url),
     'utf8',
 );
 const overviewPanel = readFileSync(
@@ -30,10 +30,10 @@ test('todo list displays title completion priority and due date', () => {
 });
 
 test('todo create UI submits title priority and due date', () => {
-    assert.match(createDialog, /title:/);
-    assert.match(createDialog, /priority:/);
-    assert.match(createDialog, /due_date:/);
-    assert.match(createDialog, /form\.submit\(store\(props\.workspaceId\)/);
+    assert.match(createForm, /title:/);
+    assert.match(createForm, /priority:/);
+    assert.match(createForm, /due_date:/);
+    assert.match(createForm, /form\.submit\(store\(props\.workspaceId\)/);
 });
 
 test('todo edit UI submits title priority and due date', () => {

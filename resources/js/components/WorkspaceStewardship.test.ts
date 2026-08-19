@@ -117,7 +117,10 @@ test('workspace portfolio and taxonomy rows hide secondary actions in menus', ()
     assert.match(portfolio, /workspacePortfolioTotals/);
     assert.match(portfolio, /workspaces\.result_summary/);
     assert.match(portfolio, /workspace\.owner\.name/);
-    assert.match(portfolio, /restorePortfolioDialogFocus/);
+    assert.match(portfolio, /router\.visit\(edit\(workspace\)\.url\)/);
+    assert.match(portfolio, /router\.visit\(copy\(workspace\)\.url\)/);
+    assert.match(portfolio, /router\.visit\(danger\(workspace\)\.url\)/);
+    assert.doesNotMatch(portfolio, /WorkspaceDialogContent|<Dialog/);
     assert.match(portfolio, /DropdownMenu/);
     assert.match(definitionCard, /DropdownMenu/);
     assert.match(definitionCard, /workspaces\.actions_label/);
@@ -125,5 +128,5 @@ test('workspace portfolio and taxonomy rows hide secondary actions in menus', ()
     assert.match(definitionCard, /focus:ring-2/);
     assert.match(definitionCard, /wrap-anywhere/);
     assert.match(configuration, /DropdownMenu/);
-    assert.match(configuration, /restoreMetadataDialogFocus/);
+    assert.match(configuration, /restoreMetadataActionFocus/);
 });

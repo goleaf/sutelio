@@ -15,6 +15,7 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectTaskResource;
 use App\Http\Resources\TaskPriorityResource;
 use App\Http\Resources\TaskStatusResource;
+use App\Http\Resources\WorkspaceResource;
 use App\Models\Project;
 use App\Models\Workspace;
 use App\Queries\ProjectDetailQuery;
@@ -25,6 +26,35 @@ use Inertia\Response;
 
 class ProjectController extends Controller
 {
+    public function create(Request $request, Workspace $workspace): Response
+    {
+        $this->authorize('create', [Project::class, $workspace]);
+
+        return Inertia::render('projects/Create', [
+            'workspace' => (new WorkspaceResource($workspace))->resolve($request),
+        ]);
+    }
+
+    public function edit(Request $request, Workspace $workspace, Project $project): Response
+    {
+        $this->authorize('update', $project);
+
+        return Inertia::render('projects/Edit', [
+            'workspace' => (new WorkspaceResource($workspace))->resolve($request),
+            'project' => (new ProjectResource($project))->resolve($request),
+        ]);
+    }
+
+    public function copy(Request $request, Workspace $workspace, Project $project): Response
+    {
+        $this->authorize('create', [Project::class, $workspace]);
+
+        return Inertia::render('projects/Duplicate', [
+            'workspace' => (new WorkspaceResource($workspace))->resolve($request),
+            'project' => (new ProjectResource($project))->resolve($request),
+        ]);
+    }
+
     public function show(
         ProjectShowRequest $request,
         Workspace $workspace,

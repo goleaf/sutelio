@@ -12,8 +12,8 @@ import {
 import { computed, nextTick, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import SearchField from '@/components/shared/SearchField.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -69,7 +69,7 @@ const activeSection = ref<WorkspaceTaxonomySection>('statuses');
 const editingLabel = ref<Label | null>(null);
 const editingTag = ref<Tag | null>(null);
 const deleteTarget = ref<DeleteTarget | null>(null);
-const metadataDialogTrigger = ref<HTMLElement | null>(null);
+const metadataActionTrigger = ref<HTMLElement | null>(null);
 const labelForm = useHttp<{ name: string; color: string }>({
     name: '',
     color: '#6366f1',
@@ -167,14 +167,14 @@ function reloadMetadata(onSuccess?: () => void): void {
     router.reload({ only: ['workspace', 'labels', 'tags'], onSuccess });
 }
 
-function captureMetadataDialogTrigger(event: MouseEvent): void {
-    metadataDialogTrigger.value =
+function captureMetadataActionTrigger(event: MouseEvent): void {
+    metadataActionTrigger.value =
         event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
 }
 
-function restoreMetadataDialogFocus(): void {
-    const trigger = metadataDialogTrigger.value;
-    metadataDialogTrigger.value = null;
+function restoreMetadataActionFocus(): void {
+    const trigger = metadataActionTrigger.value;
+    metadataActionTrigger.value = null;
 
     void nextTick(() => {
         const fallback = document.getElementById(activeSectionHeadingId());
@@ -329,7 +329,7 @@ async function updateTag(): Promise<void> {
 function setDeleteConfirmation(open: boolean): void {
     if (!open && !deleteRequest.processing) {
         deleteTarget.value = null;
-        restoreMetadataDialogFocus();
+        restoreMetadataActionFocus();
     }
 }
 
@@ -364,7 +364,7 @@ async function deleteMetadata(): Promise<void> {
             ),
         );
         deleteTarget.value = null;
-        metadataDialogTrigger.value = null;
+        metadataActionTrigger.value = null;
         reloadMetadata(focusActiveSectionHeading);
     } catch {
         toast.error(
@@ -658,7 +658,7 @@ async function deleteMetadata(): Promise<void> {
                                                 name: label.name,
                                             })
                                         "
-                                        @click="captureMetadataDialogTrigger"
+                                        @click="captureMetadataActionTrigger"
                                     >
                                         <MoreHorizontal aria-hidden="true" />
                                     </Button>
@@ -866,7 +866,7 @@ async function deleteMetadata(): Promise<void> {
                                                 name: tag.name,
                                             })
                                         "
-                                        @click="captureMetadataDialogTrigger"
+                                        @click="captureMetadataActionTrigger"
                                     >
                                         <MoreHorizontal aria-hidden="true" />
                                     </Button>
@@ -912,7 +912,7 @@ async function deleteMetadata(): Promise<void> {
             </CardContent>
         </Card>
 
-        <WorkspaceConfirmDialog
+        <PageConfirmPanel
             :open="Boolean(deleteTarget)"
             :title="deleteTitle"
             :description="deleteDescription"

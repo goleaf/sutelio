@@ -16,8 +16,8 @@ import { computed, ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
+import PageConfirmPanel from '@/components/shared/PageConfirmPanel.vue';
 import SearchField from '@/components/shared/SearchField.vue';
-import WorkspaceConfirmDialog from '@/components/shared/WorkspaceConfirmDialog.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -810,7 +810,7 @@ async function cancelInvitation(): Promise<void> {
             </CardContent>
         </Card>
 
-        <WorkspaceConfirmDialog
+        <PageConfirmPanel
             :open="Boolean(memberToRemove)"
             :title="t('workspaces.management.members.remove_title')"
             :description="
@@ -826,7 +826,7 @@ async function cancelInvitation(): Promise<void> {
             @confirm="removeMember"
         />
 
-        <WorkspaceConfirmDialog
+        <PageConfirmPanel
             :open="Boolean(invitationToCancel)"
             :title="t('workspaces.management.invitations.cancel')"
             :description="invitationToCancel?.email ?? ''"

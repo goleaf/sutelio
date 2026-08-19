@@ -7,6 +7,7 @@ import {
     Copy,
     ListChecks,
     MoreHorizontal,
+    Pencil,
     Plus,
     RotateCcw,
     TriangleAlert,
@@ -28,7 +29,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useUi } from '@/composables/useUi';
 import type { Project } from '@/types/models';
 
-type ProjectHeaderAction = 'archive' | 'duplicate' | 'restore';
+type ProjectHeaderAction = 'archive' | 'restore';
 
 defineProps<{
     metrics: ProjectMetrics;
@@ -40,6 +41,7 @@ const emit = defineEmits<{
     archive: [];
     back: [];
     duplicate: [];
+    edit: [];
     newTask: [];
     restore: [];
 }>();
@@ -96,12 +98,12 @@ const { formatNumber, t } = useUi();
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" class="w-60">
-                    <DropdownMenuItem
-                        :disabled="Boolean(processingAction)"
-                        @select="emit('duplicate')"
-                    >
-                        <Spinner v-if="processingAction === 'duplicate'" />
-                        <Copy v-else class="size-4" aria-hidden="true" />
+                    <DropdownMenuItem @select="emit('edit')">
+                        <Pencil class="size-4" aria-hidden="true" />
+                        {{ t('projects.show.actions.edit') }}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @select="emit('duplicate')">
+                        <Copy class="size-4" aria-hidden="true" />
                         {{ t('projects.show.actions.duplicate') }}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />

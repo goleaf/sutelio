@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Boxes, FolderKanban, Plus, Sparkles } from '@lucide/vue';
 import { computed, ref } from 'vue';
-import ProjectCreateDialog from '@/components/project/ProjectCreateDialog.vue';
 import ProjectIcon from '@/components/project/ProjectIcon.vue';
 import EmptyState from '@/components/shared/EmptyState.vue';
 import IconTile from '@/components/shared/IconTile.vue';
@@ -13,7 +12,10 @@ import WorkspaceSegmentedButton from '@/components/shared/WorkspaceSegmentedButt
 import WorkspaceSegmentedControl from '@/components/shared/WorkspaceSegmentedControl.vue';
 import { Button } from '@/components/ui/button';
 import { useWorkspaceUi } from '@/composables/useWorkspaceUi';
-import { show as projectShow } from '@/routes/projects';
+import {
+    create as projectCreate,
+    show as projectShow,
+} from '@/routes/projects';
 import type { Project, Workspace } from '@/types/models';
 
 type ProjectFilter = 'all' | 'active' | 'archived';
@@ -36,7 +38,6 @@ const props = defineProps<{
 }>();
 
 const { copy, formatDate, formatNumber } = useWorkspaceUi();
-const showCreateDialog = ref(false);
 const activeFilter = ref<ProjectFilter>('all');
 
 const activeProjects = computed(() =>
@@ -80,9 +81,9 @@ const filters = computed(() => [
     },
 ]);
 
-function openCreateDialog(): void {
+function openCreatePage(): void {
     if (props.workspace.id) {
-        showCreateDialog.value = true;
+        router.visit(projectCreate(props.workspace.id).url);
     }
 }
 </script>
@@ -102,13 +103,11 @@ function openCreateDialog(): void {
                 </template>
 
                 <template #actions>
-                    <Button
-                        size="lg"
-                        :disabled="!workspace.id"
-                        @click="openCreateDialog"
-                    >
-                        <Plus class="size-4" aria-hidden="true" />
-                        {{ copy.projects.new_project }}
+                    <Button v-if="workspace.id" as-child size="lg">
+                        <Link :href="projectCreate(workspace.id).url">
+                            <Plus class="size-4" aria-hidden="true" />
+                            {{ copy.projects.new_project }}
+                        </Link>
                     </Button>
                 </template>
 
@@ -276,7 +275,7 @@ function openCreateDialog(): void {
                             ? copy.projects.create_first
                             : undefined
                     "
-                    @action="openCreateDialog"
+                    @action="openCreatePage"
                 >
                     <template #icon>
                         <FolderKanban class="size-8" aria-hidden="true" />
@@ -284,12 +283,5 @@ function openCreateDialog(): void {
                 </EmptyState>
             </section>
         </WorkspacePageFrame>
-
-        <ProjectCreateDialog
-            :open="showCreateDialog"
-            :workspace-id="workspace.id"
-            @close="showCreateDialog = false"
-            @created="showCreateDialog = false"
-        />
     </div>
 </template>

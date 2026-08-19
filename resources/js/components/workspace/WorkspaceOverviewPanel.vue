@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { router, useHttp } from '@inertiajs/vue3';
+import { Link, router, useHttp } from '@inertiajs/vue3';
 import {
     Building2,
     CalendarDays,
@@ -12,13 +12,8 @@ import {
     UserRound,
     Users,
 } from '@lucide/vue';
-import { ref, watch } from 'vue';
-import InputError from '@/components/InputError.vue';
-import DialogActions from '@/components/shared/DialogActions.vue';
-import DialogBody from '@/components/shared/DialogBody.vue';
 import IconTile from '@/components/shared/IconTile.vue';
 import LeadingIconHeading from '@/components/shared/LeadingIconHeading.vue';
-import WorkspaceDialogContent from '@/components/shared/WorkspaceDialogContent.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,13 +23,10 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Dialog } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useToast } from '@/composables/useToast';
 import { useUi } from '@/composables/useUi';
-import { switchMethod, update } from '@/routes/workspaces';
+import { edit, switchMethod } from '@/routes/workspaces';
 import type { Workspace } from '@/types/models';
 
 interface WorkspaceResponse {
@@ -45,59 +37,7 @@ const props = defineProps<{ workspace: Workspace }>();
 
 const toast = useToast();
 const { formatDate, formatNumber, t } = useUi();
-const showEditDialog = ref(false);
-const editForm = useHttp<
-    { name: string; description: string },
-    WorkspaceResponse
->({
-    name: props.workspace.name,
-    description: props.workspace.description ?? '',
-});
 const switchRequest = useHttp<Record<string, never>, WorkspaceResponse>({});
-
-watch(
-    () => props.workspace,
-    (workspace) => {
-        if (!showEditDialog.value) {
-            editForm.name = workspace.name;
-            editForm.description = workspace.description ?? '';
-            editForm.defaults();
-        }
-    },
-);
-
-function setEditDialog(open: boolean): void {
-    if (editForm.processing) {
-        return;
-    }
-
-    showEditDialog.value = open;
-    editForm.resetAndClearErrors();
-    editForm.name = props.workspace.name;
-    editForm.description = props.workspace.description ?? '';
-}
-
-async function editWorkspace(): Promise<void> {
-    if (!editForm.name.trim()) {
-        editForm.setError('name', t('workspaces.name_required'));
-
-        return;
-    }
-
-    editForm.name = editForm.name.trim();
-    editForm.description = editForm.description.trim();
-
-    try {
-        await editForm.submit(update(props.workspace));
-        toast.success(t('workspaces.updated'));
-        showEditDialog.value = false;
-        router.reload({ only: ['workspace', 'navigation'] });
-    } catch {
-        if (!editForm.hasErrors) {
-            toast.error(t('workspaces.update_failed'));
-        }
-    }
-}
 
 async function switchWorkspace(): Promise<void> {
     if (props.workspace.is_current) {
@@ -316,12 +256,14 @@ async function switchWorkspace(): Promise<void> {
                 <CardContent class="space-y-3">
                     <Button
                         v-if="workspace.permissions?.update"
+                        as-child
                         size="lg"
                         class="w-full"
-                        @click="setEditDialog(true)"
                     >
-                        <Pencil aria-hidden="true" />
-                        {{ t('workspaces.actions.edit') }}
+                        <Link :href="edit(workspace).url">
+                            <Pencil aria-hidden="true" />
+                            {{ t('workspaces.actions.edit') }}
+                        </Link>
                     </Button>
                     <div
                         v-else
@@ -361,71 +303,5 @@ async function switchWorkspace(): Promise<void> {
                 </CardContent>
             </Card>
         </div>
-
-        <Dialog :open="showEditDialog" @update:open="setEditDialog">
-            <WorkspaceDialogContent
-                :title="t('workspaces.actions.edit')"
-                :description="t('workspaces.edit_description')"
-                :close-label="t('common.actions.cancel')"
-            >
-                <form @submit.prevent="editWorkspace">
-                    <DialogBody>
-                        <div class="space-y-2">
-                            <Label for="management-workspace-name">
-                                {{ t('workspaces.name') }}
-                            </Label>
-                            <Input
-                                id="management-workspace-name"
-                                v-model="editForm.name"
-                                :disabled="editForm.processing"
-                                :aria-invalid="Boolean(editForm.errors.name)"
-                                @input="editForm.clearErrors('name')"
-                            />
-                            <InputError :message="editForm.errors.name" />
-                        </div>
-                        <div class="space-y-2">
-                            <Label for="management-workspace-description">
-                                {{ t('workspaces.description') }}
-                            </Label>
-                            <Input
-                                id="management-workspace-description"
-                                v-model="editForm.description"
-                                :disabled="editForm.processing"
-                                :aria-invalid="
-                                    Boolean(editForm.errors.description)
-                                "
-                                @input="editForm.clearErrors('description')"
-                            />
-                            <InputError
-                                :message="editForm.errors.description"
-                            />
-                        </div>
-                    </DialogBody>
-                    <DialogActions>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="lg"
-                            :disabled="editForm.processing"
-                            @click="setEditDialog(false)"
-                        >
-                            {{ t('common.actions.cancel') }}
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="lg"
-                            :disabled="editForm.processing"
-                        >
-                            <Spinner v-if="editForm.processing" />
-                            {{
-                                editForm.processing
-                                    ? t('workspaces.updating')
-                                    : t('common.actions.save')
-                            }}
-                        </Button>
-                    </DialogActions>
-                </form>
-            </WorkspaceDialogContent>
-        </Dialog>
     </section>
 </template>

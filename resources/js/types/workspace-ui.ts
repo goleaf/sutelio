@@ -224,6 +224,18 @@ export interface WorkspaceUiCopy {
         creating: string;
         created: string;
         create_failed: string;
+        edit_title: string;
+        edit_description: string;
+        save: string;
+        saving: string;
+        updated: string;
+        update_failed: string;
+        duplicate_title: string;
+        duplicate_description: string;
+        duplicate: string;
+        duplicating: string;
+        duplicated: string;
+        duplicate_failed: string;
         name_required: string;
         icon_folder: string;
         icon_briefcase: string;

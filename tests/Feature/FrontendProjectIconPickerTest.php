@@ -57,7 +57,7 @@ test('every project creation workflow composes the shared visual icon picker', f
         ->toContain('<ProjectIconPicker')
         ->not->toContain('id="icon"');
 })->with([
-    'ordinary project creation' => 'components/project/ProjectCreateDialog.vue',
+    'ordinary project management' => 'components/project/ProjectForm.vue',
     'mandatory onboarding project creation' => 'components/onboarding/ProjectStep.vue',
 ]);
 
