@@ -12,5 +12,6 @@ Before planning or editing, find the row whose globs match the file's path and r
 | resources/js/components/onboarding/**                                                                                                 | .ai/rules/onboarding.md               |
 | resources/js/{components/project/**,components/onboarding/ProjectStep.vue,pages/projects/**}                                          | .ai/rules/projects.md                 |
 | resources/**                                                                                                                          | .ai/rules/resources.md                |
+| {routes/web.php,app/Providers/AppServiceProvider.php}                                                                                 | .ai/rules/routes-providers.md         |
 | scripts/apply-native-brand.mjs,config/nativephp.php                                                                                   | .ai/rules/scripts.md                  |
 | resources/js/components/ui/**                                                                                                         | .ai/rules/ui.md                       |

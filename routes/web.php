@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-Route::middleware('throttle:20,1')
+Route::middleware('throttle:locale')
     ->prefix('locale')
     ->name('locale.')
     ->group(function (): void {

@@ -259,7 +259,7 @@ watch(
 );
 
 const visitOptions = () => ({
-    preserveScroll: true,
+    preserveScroll: false,
     onStart: () => {
         saveStatus.value = 'saving';
     },

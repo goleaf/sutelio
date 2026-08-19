@@ -44,7 +44,6 @@ function preventWhileProcessing(): boolean {
             <Link
                 :href="pagination.links.prev"
                 :only="['todos', 'filters', 'stats']"
-                preserve-scroll
                 preserve-state
                 :aria-disabled="processing"
                 @before="preventWhileProcessing"
@@ -75,7 +74,6 @@ function preventWhileProcessing(): boolean {
             <Link
                 :href="pagination.links.next"
                 :only="['todos', 'filters', 'stats']"
-                preserve-scroll
                 preserve-state
                 :aria-disabled="processing"
                 @before="preventWhileProcessing"

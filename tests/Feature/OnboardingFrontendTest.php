@@ -67,6 +67,21 @@ test('onboarding page coordinates typed Inertia forms Wayfinder and connected fo
         ->toBe(1);
 });
 
+test('successful page changes use the shared page start contract', function () {
+    $application = File::get(resource_path('js/app.ts'));
+    $onboarding = File::get(resource_path('js/pages/onboarding/Index.vue'));
+    $pagination = File::get(resource_path('js/components/task/TaskPagination.vue'));
+
+    expect($application)
+        ->toContain("from '@/lib/pageScroll'")
+        ->toContain('bindPageScrollToRouter(router)')
+        ->and($onboarding)
+        ->toContain('preserveScroll: false')
+        ->not->toContain('preserveScroll: true')
+        ->and($pagination)
+        ->not->toContain('preserve-scroll');
+});
+
 test('onboarding shell exposes progress status validation and mobile-safe actions', function () {
     $shell = File::get(resource_path('js/components/onboarding/OnboardingShell.vue'));
     $panel = File::get(resource_path('js/components/onboarding/OnboardingStepPanel.vue'));

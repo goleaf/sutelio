@@ -30,6 +30,19 @@ class AppServiceProvider extends ServiceProvider
             $sqliteHealthService->assertHealthy();
         });
 
+        RateLimiter::for('locale', function (Request $request) {
+            if (in_array(config('nativephp-internal.platform'), ['android', 'ios'], true)) {
+                return Limit::none();
+            }
+
+            $userIdentifier = $request->user()?->getAuthIdentifier();
+            $actor = $userIdentifier !== null
+                ? 'user:'.$userIdentifier
+                : 'session:'.hash('sha256', $request->session()->getId());
+
+            return Limit::perMinute(60)->by('locale:'.$actor);
+        });
+
         RateLimiter::for('api-login', function (Request $request): array {
             $credential = hash('sha256', Str::lower(trim((string) $request->input('email'))));
             $ip = (string) $request->ip();

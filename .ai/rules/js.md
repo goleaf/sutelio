@@ -29,3 +29,7 @@ Never render third-party or browser error.message strings directly. Map stable t
 ## Use the shared localized date picker
 
 Every first-party date or date-time entry must compose ui/date-picker/DatePickerField; do not add native date, datetime-local, month, or week inputs. Preserve YYYY-MM-DD for day values and YYYY-MM-DDTHH:mm for minute values, honor locale/week start, portal inside the nearest dialog, and give every calendar control type="button" so it cannot submit a surrounding form.
+
+## Reset page scroll after navigation
+
+Successful foreground Inertia visits reset the document and every [scroll-region] through the shared pageScroll binding unless preserveScroll is explicitly true. Use preserveScroll only for same-page mutations or filters; onboarding step changes and pagination must return to the page start.

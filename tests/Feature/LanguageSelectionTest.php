@@ -161,3 +161,34 @@ test('settings and onboarding language changes refresh the device preference', f
 
     expect($preferences->fresh()->language)->toBe('lt');
 });
+
+test('native language changes never share a loopback rate limit bucket', function () {
+    config()->set('nativephp-internal.platform', 'android');
+
+    foreach (range(1, 25) as $attempt) {
+        $language = $attempt % 2 === 0 ? 'en' : 'ru';
+
+        $this->from(route('login'))
+            ->put(route('locale.update'), ['language' => $language])
+            ->assertRedirect(route('login'));
+    }
+});
+
+test('web language changes retain a per-actor safety limit', function () {
+    $user = User::factory()->create();
+    UserPreference::factory()->for($user)->create();
+
+    $this->actingAs($user);
+
+    foreach (range(1, 60) as $attempt) {
+        $language = $attempt % 2 === 0 ? 'en' : 'lt';
+
+        $this->from(route('dashboard'))
+            ->put(route('locale.update'), ['language' => $language])
+            ->assertRedirect(route('dashboard'));
+    }
+
+    $this->from(route('dashboard'))
+        ->put(route('locale.update'), ['language' => 'ru'])
+        ->assertTooManyRequests();
+});

@@ -14,10 +14,12 @@ import {
     createGlobalBusyHttpClient,
     globalBusy,
 } from '@/lib/globalBusy';
+import { bindPageScrollToRouter } from '@/lib/pageScroll';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Sutelio';
 
 bindGlobalBusyToRouter(router, globalBusy);
+bindPageScrollToRouter(router);
 
 createInertiaApp({
     http: createGlobalBusyHttpClient(axiosAdapter(), globalBusy),
