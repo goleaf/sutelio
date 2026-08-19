@@ -192,7 +192,11 @@ prune_old_releases() {
             continue
         fi
 
-        rm -rf -- "$release_path"
+        if ! rm -rf -- "$release_path"; then
+            log "WARNING: Could not remove expired release ${release_path##*/}; operator cleanup is required." >&2
+            continue
+        fi
+
         log "Removed expired release ${release_path##*/}."
     done
 }

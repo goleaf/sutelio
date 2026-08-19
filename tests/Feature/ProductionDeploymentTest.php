@@ -80,6 +80,18 @@ test('production activation preserves shared state and rolls code back on failed
         ->not->toContain('db:seed');
 });
 
+test('post activation release cleanup failures remain non fatal', function () {
+    $script = File::get(base_path('deploy/activate-release.sh'));
+    $cleanup = str($script)->between('prune_old_releases() {', "\n}\n\n[[");
+
+    expect($cleanup->toString())
+        ->toContain('if ! rm -rf -- "$release_path"; then')
+        ->toContain('WARNING: Could not remove expired release ${release_path##*/}; operator cleanup is required.')
+        ->toContain('continue')
+        ->not->toContain('sudo')
+        ->not->toContain('chown');
+});
+
 test('aaPanel Nginx contract serves only the current Laravel public release over modern TLS', function () {
     $configuration = File::get(base_path('deploy/nginx/sutelio.miniserver.fun.conf'));
 
