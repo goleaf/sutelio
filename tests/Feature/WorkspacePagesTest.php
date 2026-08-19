@@ -284,6 +284,9 @@ test('project collection selects and exposes only its page contract', function (
         ->first(fn (string $query): bool => str_contains($query, 'as "todos_count"')
             && str_contains($query, 'where "projects"."workspace_id" = ?')
             && ! str_contains($query, '"projects"."is_archived" = ?'));
+    $freshOnboardingQueries = $queries
+        ->pluck('query')
+        ->filter(fn (string $query): bool => str_contains($query, 'from "user_preferences"'));
 
     $emptyPayloadBytes = strlen(json_encode($emptyResponse->inertiaProps('projects'), JSON_THROW_ON_ERROR));
     $productionPayloadBytes = strlen(json_encode($populatedResponse->inertiaProps('projects'), JSON_THROW_ON_ERROR));
@@ -291,7 +294,8 @@ test('project collection selects and exposes only its page contract', function (
     expect($projectQuery)->toBeString()
         ->and($projectQuery)->toContain('select "projects"."id", "projects"."workspace_id", "projects"."name", "projects"."description", "projects"."color", "projects"."icon", "projects"."is_archived", "projects"."updated_at"')
         ->not->toContain('"projects".*')
-        ->and($queries)->toHaveCount(4)
+        ->and($freshOnboardingQueries)->toHaveCount(1)
+        ->and($queries)->toHaveCount(5)
         ->and($emptyPayloadBytes)->toBe(11)
         ->and($productionPayloadBytes)->toBeLessThanOrEqual(8_050);
 

@@ -53,7 +53,7 @@ class EnsureOnboardingIsComplete
             return $next($request);
         }
 
-        $user->loadMissing('preferences');
+        $user->load('preferences');
         $preferences = $user->preferences;
 
         if ($preferences instanceof UserPreference && $preferences->requiresOnboarding()) {

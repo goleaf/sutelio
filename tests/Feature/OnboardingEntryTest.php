@@ -46,6 +46,27 @@ test('existing complete users and legacy users without preferences are not redir
     $this->actingAs($legacy)->get(route('dashboard'))->assertOk();
 });
 
+test('the gate reads completed onboarding from storage when the authenticated user has a stale relation', function () {
+    $user = User::factory()->create();
+    $preferences = UserPreference::factory()->for($user)->pendingOnboarding()->create([
+        'onboarding_step' => OnboardingStep::Results->value,
+        'start_page' => 'tasks',
+    ]);
+    $user->setRelation('preferences', $preferences);
+
+    $this->actingAs($user)
+        ->post(route('onboarding.complete'))
+        ->assertSessionHasNoErrors()
+        ->assertRedirectToRoute('todos.index');
+
+    expect($user->preferences->requiresOnboarding())->toBeTrue()
+        ->and($preferences->fresh()->requiresOnboarding())->toBeFalse();
+
+    $this->get(route('todos.index'))->assertOk();
+
+    expect($user->preferences->requiresOnboarding())->toBeFalse();
+});
+
 test('onboarding requires authentication', function () {
     $this->get(route('onboarding.index'))
         ->assertRedirectToRoute('login');
