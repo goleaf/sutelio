@@ -713,6 +713,11 @@ test('a handled brand publish failure restores every previous output and removes
             File::copy(base_path($path), $temporaryRoot.'/'.$path);
         }
 
+        foreach ($outputPaths as $path) {
+            File::ensureDirectoryExists(dirname($temporaryRoot.'/fixtures/brand-publish/'.$path));
+            File::copy($temporaryRoot.'/'.$path, $temporaryRoot.'/fixtures/brand-publish/'.$path);
+        }
+
         File::delete($temporaryRoot.'/'.$newOutput);
 
         $originalHashes = [];
@@ -722,11 +727,27 @@ test('a handled brand publish failure restores every previous output and removes
         }
 
         $builder = File::get(base_path('scripts/build-brand-assets.mjs'));
+        $buildNeedle = '    const manifest = buildBrandAssets(buildDirectory);';
+        $fixtureBuild = <<<'JS'
+    for (const relativePath of outputPaths) {
+        const source = resolve(root, 'fixtures/brand-publish', relativePath);
+        const destination = resolve(buildDirectory, relativePath);
+
+        ensureDirectory(dirname(destination));
+        copyFileSync(source, destination);
+    }
+
+    const manifest = createOutputManifest(buildDirectory);
+JS;
+        $builder = str_replace($buildNeedle, $fixtureBuild, $builder, $buildReplacementCount);
         $needle = "            publishedEntries.push(entry);\n";
         $replacement = $needle."            if (relativePath === 'public/icon.png') {\n                throw new Error('Injected publish failure.');\n            }\n";
         $injectedBuilder = str_replace($needle, $replacement, $builder, $replacementCount);
 
-        expect($replacementCount)->toBe(1);
+        expect($buildReplacementCount)
+            ->toBe(1)
+            ->and($replacementCount)
+            ->toBe(1);
 
         File::put($temporaryRoot.'/scripts/build-brand-assets.mjs', $injectedBuilder);
 
