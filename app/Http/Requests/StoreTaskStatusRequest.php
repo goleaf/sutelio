@@ -48,13 +48,15 @@ class StoreTaskStatusRequest extends FormRequest
                 $query->whereKeyNot($status->id);
             } elseif ($workspace->taskStatuses()->count() >= TaskStatus::MAX_PER_WORKSPACE) {
                 $validator->errors()->add('name', __('validation.max.array', [
-                    'attribute' => 'statuses',
+                    'attribute' => __('validation.attributes.statuses'),
                     'max' => TaskStatus::MAX_PER_WORKSPACE,
                 ]));
             }
 
             if ($query->exists()) {
-                $validator->errors()->add('name', __('validation.unique', ['attribute' => 'name']));
+                $validator->errors()->add('name', __('validation.unique', [
+                    'attribute' => __('validation.attributes.name'),
+                ]));
             }
         }];
     }

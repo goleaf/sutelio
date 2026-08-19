@@ -16,4 +16,12 @@ trait ProfileValidationRules
             ],
         ];
     }
+
+    /** @return array<string, string> */
+    protected function profileValidationAttributes(): array
+    {
+        return [
+            'name' => __('validation.attributes.user_name'),
+        ];
+    }
 }

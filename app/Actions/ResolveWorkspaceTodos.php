@@ -23,7 +23,7 @@ class ResolveWorkspaceTodos
 
         if ($uniqueIds->count() !== count($todoIds) || $todos->count() !== $uniqueIds->count()) {
             throw ValidationException::withMessages([
-                'ids' => __('validation.exists', ['attribute' => 'ids']),
+                'ids' => __('validation.exists', ['attribute' => __('validation.attributes.ids')]),
             ]);
         }
 

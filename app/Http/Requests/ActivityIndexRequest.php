@@ -43,7 +43,7 @@ class ActivityIndexRequest extends FormRequest
 
         if ($actor !== null && ! $workspace->members()->whereKey($actor)->exists()) {
             throw ValidationException::withMessages([
-                'actor' => __('validation.exists', ['attribute' => 'actor']),
+                'actor' => __('validation.exists', ['attribute' => __('validation.attributes.actor')]),
             ]);
         }
 

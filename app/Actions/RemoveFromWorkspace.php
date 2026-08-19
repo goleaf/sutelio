@@ -25,7 +25,7 @@ class RemoveFromWorkspace
 
             if ($deleted !== 1) {
                 throw ValidationException::withMessages([
-                    'member' => [__('validation.in', ['attribute' => 'member'])],
+                    'member' => [__('validation.in', ['attribute' => __('validation.attributes.member')])],
                 ]);
             }
 

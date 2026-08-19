@@ -46,16 +46,19 @@ class ProjectShowRequest extends FormRequest
             'status',
             $filters['status'],
             fn (string $id): bool => $workspace->taskStatuses()->active()->whereKey($id)->exists(),
+            __('validation.exists', ['attribute' => __('validation.attributes.status')]),
         );
         $this->assertWorkspaceIdentifier(
             'priority',
             $filters['priority'],
             fn (string $id): bool => $workspace->taskPriorities()->active()->whereKey($id)->exists(),
+            __('validation.exists', ['attribute' => __('validation.attributes.priority')]),
         );
         $this->assertWorkspaceIdentifier(
             'assignee',
             $filters['assignee'],
             fn (string $id): bool => $workspace->members()->whereKey($id)->exists(),
+            __('validation.exists', ['attribute' => __('validation.attributes.assignee')]),
         );
 
         return $filters;
@@ -123,14 +126,18 @@ class ProjectShowRequest extends FormRequest
     }
 
     /** @param callable(string): bool $exists */
-    private function assertWorkspaceIdentifier(string $key, ?string $value, callable $exists): void
-    {
+    private function assertWorkspaceIdentifier(
+        string $key,
+        ?string $value,
+        callable $exists,
+        string $message,
+    ): void {
         if ($value === null || $exists($value)) {
             return;
         }
 
         throw ValidationException::withMessages([
-            $key => __('validation.exists', ['attribute' => $key]),
+            $key => $message,
         ]);
     }
 }

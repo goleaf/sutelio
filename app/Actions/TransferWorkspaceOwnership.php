@@ -16,7 +16,10 @@ class TransferWorkspaceOwnership
         return DB::transaction(function () use ($workspace, $actor, $newOwner): Workspace {
             if ($actor->is($newOwner)) {
                 throw ValidationException::withMessages([
-                    'user_id' => [__('validation.different', ['attribute' => 'user id', 'other' => 'owner'])],
+                    'user_id' => [__('validation.different', [
+                        'attribute' => __('validation.attributes.user_id'),
+                        'other' => __('validation.attributes.owner'),
+                    ])],
                 ]);
             }
 
@@ -27,7 +30,9 @@ class TransferWorkspaceOwnership
 
             if ($workspaceUpdated !== 1) {
                 throw ValidationException::withMessages([
-                    'user_id' => [__('validation.in', ['attribute' => 'user id'])],
+                    'user_id' => [__('validation.in', [
+                        'attribute' => __('validation.attributes.user_id'),
+                    ])],
                 ]);
             }
 
@@ -44,7 +49,9 @@ class TransferWorkspaceOwnership
 
             if ($currentOwnerUpdated !== 1 || $newOwnerUpdated !== 1) {
                 throw ValidationException::withMessages([
-                    'user_id' => [__('validation.exists', ['attribute' => 'user id'])],
+                    'user_id' => [__('validation.exists', [
+                        'attribute' => __('validation.attributes.user_id'),
+                    ])],
                 ]);
             }
 

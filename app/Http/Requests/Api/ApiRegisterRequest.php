@@ -27,6 +27,12 @@ class ApiRegisterRequest extends FormRequest
         ];
     }
 
+    /** @return array<string, string> */
+    public function attributes(): array
+    {
+        return $this->profileValidationAttributes();
+    }
+
     protected function prepareForValidation(): void
     {
         $this->merge([

@@ -126,7 +126,7 @@ class TransitionTodoDefinitions
 
         if (! $status instanceof TaskStatus) {
             throw ValidationException::withMessages([
-                'status' => __('validation.exists', ['attribute' => 'status']),
+                'status' => __('validation.exists', ['attribute' => __('validation.attributes.status')]),
             ]);
         }
 
@@ -159,7 +159,7 @@ class TransitionTodoDefinitions
 
         if (! $priority instanceof TaskPriority) {
             throw ValidationException::withMessages([
-                'priority' => __('validation.exists', ['attribute' => 'priority']),
+                'priority' => __('validation.exists', ['attribute' => __('validation.attributes.priority')]),
             ]);
         }
 

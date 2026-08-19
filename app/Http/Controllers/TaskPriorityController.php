@@ -58,7 +58,7 @@ class TaskPriorityController extends Controller
             'restore' => $action->restore($taskPriority),
             'set_default' => $action->setDefault($taskPriority),
             default => throw ValidationException::withMessages([
-                'operation' => __('validation.in', ['attribute' => 'operation']),
+                'operation' => __('validation.in', ['attribute' => __('validation.attributes.operation')]),
             ]),
         };
 

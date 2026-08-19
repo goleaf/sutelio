@@ -35,7 +35,7 @@ class InviteToWorkspace
 
             if ($workspace->members()->where('email', $normalizedEmail)->exists()) {
                 throw ValidationException::withMessages([
-                    'email' => [__('validation.unique', ['attribute' => 'email'])],
+                    'email' => [__('validation.unique', ['attribute' => __('validation.attributes.email')])],
                 ]);
             }
 

@@ -15,7 +15,7 @@ class CreateTag
             $tag = $workspace->tags()->create(['name' => $name]);
         } catch (UniqueConstraintViolationException) {
             throw ValidationException::withMessages([
-                'name' => [__('validation.unique', ['attribute' => 'name'])],
+                'name' => [__('validation.unique', ['attribute' => __('validation.attributes.name')])],
             ]);
         }
 

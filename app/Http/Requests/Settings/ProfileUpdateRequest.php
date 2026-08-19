@@ -19,4 +19,10 @@ class ProfileUpdateRequest extends FormRequest
     {
         return $this->profileRules($this->user()->id);
     }
+
+    /** @return array<string, string> */
+    public function attributes(): array
+    {
+        return $this->profileValidationAttributes();
+    }
 }

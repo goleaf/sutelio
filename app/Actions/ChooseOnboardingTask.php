@@ -109,7 +109,7 @@ class ChooseOnboardingTask
 
         if (! $workspace->members()->whereKey($assigneeId)->exists()) {
             throw ValidationException::withMessages([
-                'assigned_to' => __('validation.exists', ['attribute' => 'assignee']),
+                'assigned_to' => __('validation.exists', ['attribute' => __('validation.attributes.assignee')]),
             ]);
         }
     }

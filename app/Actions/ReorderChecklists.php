@@ -16,7 +16,7 @@ class ReorderChecklists
 
             if ($checklists->count() !== count($checklistIds)) {
                 throw ValidationException::withMessages([
-                    'ids' => __('validation.exists', ['attribute' => 'ids']),
+                    'ids' => __('validation.exists', ['attribute' => __('validation.attributes.ids')]),
                 ]);
             }
 

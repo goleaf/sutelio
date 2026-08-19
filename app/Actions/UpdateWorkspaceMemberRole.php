@@ -24,7 +24,7 @@ class UpdateWorkspaceMemberRole
 
             if ($updated !== 1) {
                 throw ValidationException::withMessages([
-                    'role' => [__('validation.in', ['attribute' => 'role'])],
+                    'role' => [__('validation.in', ['attribute' => __('validation.attributes.role')])],
                 ]);
             }
 

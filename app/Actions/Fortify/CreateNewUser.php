@@ -32,7 +32,7 @@ class CreateNewUser implements CreatesNewUsers
             'language' => ['sometimes', Rule::enum(UserLanguage::class)],
             'timezone' => ['sometimes', 'string', 'timezone:all'],
             'password' => $this->passwordRules(),
-        ])->validate();
+        ], attributes: $this->profileValidationAttributes())->validate();
 
         $language = UserLanguage::tryFrom($input['language'] ?? App::currentLocale())
             ?? UserLanguage::English;

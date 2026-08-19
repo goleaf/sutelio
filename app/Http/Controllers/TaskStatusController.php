@@ -59,7 +59,7 @@ class TaskStatusController extends Controller
             'set_default' => $action->setDefault($taskStatus),
             'set_completion_target' => $action->setCompletionTarget($taskStatus),
             default => throw ValidationException::withMessages([
-                'operation' => __('validation.in', ['attribute' => 'operation']),
+                'operation' => __('validation.in', ['attribute' => __('validation.attributes.operation')]),
             ]),
         };
 

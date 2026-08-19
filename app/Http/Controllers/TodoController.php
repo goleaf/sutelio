@@ -218,7 +218,7 @@ class TodoController extends Controller
             'restore' => $bulkUpdate->setArchived($workspace, $request->ids(), false),
             'delete' => $bulkDelete->handle($workspace, $request->ids()),
             default => throw ValidationException::withMessages([
-                'action' => __('validation.in', ['attribute' => 'action']),
+                'action' => __('validation.in', ['attribute' => __('validation.attributes.action')]),
             ]),
         };
 

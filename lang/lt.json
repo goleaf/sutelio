@@ -1,0 +1,21 @@
+{
+    "Invalid credential format.": "Nepavyko perskaityti šio prieigos rakto. Bandykite dar kartą.",
+    "Passkey registration session expired. Please try again.": "Baigėsi prieigos rakto pridėjimo laikas. Pradėkite iš naujo.",
+    "Passkey not recognized. It may have been removed from your account.": "Šis prieigos raktas neatpažintas. Jis galėjo būti pašalintas. Pasirinkite kitą prisijungimo būdą.",
+    "Passkey verification session expired. Please try again.": "Baigėsi patvirtinimo prieigos raktu laikas. Pradėkite iš naujo.",
+    "The :attribute must be at least :length characters and contain at least one number.": "Lauke „:attribute“ naudokite bent :length simbolių ir vieną skaičių.",
+    "The :attribute must be at least :length characters and contain at least one special character and one number.": "Lauke „:attribute“ naudokite bent :length simbolių, vieną skaičių ir vieną specialųjį simbolį.",
+    "The :attribute must be at least :length characters and contain at least one special character.": "Lauke „:attribute“ naudokite bent :length simbolių ir vieną specialųjį simbolį.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character and one number.": "Lauke „:attribute“ naudokite bent :length simbolių, vieną didžiąją raidę ir vieną skaičių.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character and one special character.": "Lauke „:attribute“ naudokite bent :length simbolių, vieną didžiąją raidę ir vieną specialųjį simbolį.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character, one number, and one special character.": "Lauke „:attribute“ naudokite bent :length simbolių, vieną didžiąją raidę, vieną skaičių ir vieną specialųjį simbolį.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character.": "Lauke „:attribute“ naudokite bent :length simbolių ir vieną didžiąją raidę.",
+    "The :attribute must be at least :length characters.": "Lauke „:attribute“ naudokite bent :length simbolių.",
+    "The provided password was incorrect.": "Slaptažodis nesutampa. Patikrinkite jį ir bandykite dar kartą.",
+    "The provided two factor authentication code was invalid.": "Patvirtinimo kodas netinka. Patikrinkite jį ir bandykite dar kartą.",
+    "The provided two factor recovery code was invalid.": "Atkūrimo kodas netinka. Patikrinkite jį ir bandykite dar kartą.",
+    "Unable to register passkey. Please try again.": "Nepavyko pridėti šio prieigos rakto. Bandykite dar kartą.",
+    "Unable to register this passkey.": "Šio prieigos rakto pridėti nepavyko. Pasirinkite kitą arba bandykite dar kartą.",
+    "Unable to sign in with this account.": "Šiuo prieigos raktu prie šios paskyros prisijungti negalima. Pasirinkite kitą prisijungimo būdą.",
+    "Unable to verify passkey. Please try again.": "Nepavyko patvirtinti šio prieigos rakto. Bandykite dar kartą."
+}

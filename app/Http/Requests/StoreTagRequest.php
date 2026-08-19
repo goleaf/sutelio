@@ -45,7 +45,9 @@ class StoreTagRequest extends FormRequest
             }
 
             if ($query->exists()) {
-                $validator->errors()->add('name', __('validation.unique', ['attribute' => 'name']));
+                $validator->errors()->add('name', __('validation.unique', [
+                    'attribute' => __('validation.attributes.name'),
+                ]));
             }
 
             if (! $tag instanceof Tag

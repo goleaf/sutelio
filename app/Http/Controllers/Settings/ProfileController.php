@@ -59,7 +59,7 @@ class ProfileController extends Controller
 
         if (! $avatar instanceof UploadedFile) {
             throw ValidationException::withMessages([
-                'avatar' => __('validation.uploaded', ['attribute' => 'avatar']),
+                'avatar' => __('validation.uploaded', ['attribute' => __('validation.attributes.avatar')]),
             ]);
         }
 

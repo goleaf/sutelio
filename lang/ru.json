@@ -1,0 +1,21 @@
+{
+    "Invalid credential format.": "Не удалось распознать этот ключ доступа. Попробуйте ещё раз.",
+    "Passkey registration session expired. Please try again.": "Время добавления ключа доступа истекло. Начните заново.",
+    "Passkey not recognized. It may have been removed from your account.": "Этот ключ доступа не распознан. Возможно, он был удалён. Выберите другой способ входа.",
+    "Passkey verification session expired. Please try again.": "Время подтверждения ключом доступа истекло. Начните заново.",
+    "The :attribute must be at least :length characters and contain at least one number.": "Используйте для поля «:attribute» не менее :length символов и хотя бы одну цифру.",
+    "The :attribute must be at least :length characters and contain at least one special character and one number.": "Используйте для поля «:attribute» не менее :length символов, хотя бы одну цифру и один специальный символ.",
+    "The :attribute must be at least :length characters and contain at least one special character.": "Используйте для поля «:attribute» не менее :length символов и хотя бы один специальный символ.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character and one number.": "Используйте для поля «:attribute» не менее :length символов, хотя бы одну заглавную букву и одну цифру.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character and one special character.": "Используйте для поля «:attribute» не менее :length символов, хотя бы одну заглавную букву и один специальный символ.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character, one number, and one special character.": "Используйте для поля «:attribute» не менее :length символов, хотя бы одну заглавную букву, одну цифру и один специальный символ.",
+    "The :attribute must be at least :length characters and contain at least one uppercase character.": "Используйте для поля «:attribute» не менее :length символов и хотя бы одну заглавную букву.",
+    "The :attribute must be at least :length characters.": "Используйте для поля «:attribute» не менее :length символов.",
+    "The provided password was incorrect.": "Пароль не совпадает. Проверьте его и попробуйте ещё раз.",
+    "The provided two factor authentication code was invalid.": "Код подтверждения не подходит. Проверьте его и попробуйте ещё раз.",
+    "The provided two factor recovery code was invalid.": "Код восстановления не подходит. Проверьте его и попробуйте ещё раз.",
+    "Unable to register passkey. Please try again.": "Не удалось добавить этот ключ доступа. Попробуйте ещё раз.",
+    "Unable to register this passkey.": "Не удалось добавить этот ключ доступа. Выберите другой ключ или попробуйте ещё раз.",
+    "Unable to sign in with this account.": "С этим ключом доступа нельзя войти в эту учётную запись. Выберите другой способ входа.",
+    "Unable to verify passkey. Please try again.": "Не удалось подтвердить этот ключ доступа. Попробуйте ещё раз."
+}

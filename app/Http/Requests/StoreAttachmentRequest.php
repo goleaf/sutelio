@@ -55,7 +55,7 @@ class StoreAttachmentRequest extends FormRequest
 
         if (! $file instanceof UploadedFile) {
             throw ValidationException::withMessages([
-                'file' => __('validation.uploaded', ['attribute' => 'file']),
+                'file' => __('validation.uploaded', ['attribute' => __('validation.attributes.file')]),
             ]);
         }
 
