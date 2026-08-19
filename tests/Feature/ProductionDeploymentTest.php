@@ -38,6 +38,20 @@ test('clean CI creates the guarded SQLite file before Composer boots Laravel', f
         ->toBeLessThan($composerSetup);
 });
 
+test('production frontend build boots Wayfinder against isolated SQLite', function () {
+    $workflow = File::get(base_path('.github/workflows/deploy-production.yml'));
+    $buildStep = str($workflow)->between(
+        '      - name: Build production frontend',
+        '      - name: Package immutable release',
+    );
+
+    expect($buildStep->toString())
+        ->toContain('APP_ENV: production')
+        ->toContain('DB_CONNECTION: sqlite')
+        ->toContain("DB_DATABASE: ':memory:'")
+        ->toContain('npm run build');
+});
+
 test('frontend source contracts use Git case-correct page paths on Linux', function () {
     foreach (File::allFiles(resource_path('js')) as $file) {
         if ($file->getExtension() !== 'ts') {
