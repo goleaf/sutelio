@@ -101,7 +101,17 @@ and session cookies are secure, HTTP-only, same-site, and encrypted.
    interrupted/reloaded, maintenance mode ends, and local HTTPS `/up` plus
    external HTTPS checks must pass.
 9. Only the five newest immutable releases are retained. Shared data and the
-   current target are never part of cleanup.
+   current target are never part of cleanup. Retention runs only after the new
+   release has passed health checks and rollback traps have been cleared.
+
+Release retention is post-activation housekeeping, not an application-health
+gate. An expired release that cannot be removed because it contains an
+operator-managed or root-owned path produces an explicit warning naming only
+the release commit ID, then cleanup continues. It does not turn an already
+healthy activation into a failed deployment. The inaccessible path remains for
+an operator to inspect and remove with the appropriate ownership; activation
+never broadens the deploy user's privileges or changes ownership recursively to
+hide the problem.
 
 Repeated delivery of the active SHA is idempotent: it verifies the existing
 release and health instead of mutating data or re-running a destructive setup.
@@ -133,6 +143,8 @@ automatically restarted after Laravel's graceful reload signal.
   check stops before the `current` switch.
 - A failed post-switch local health check atomically restores the previous
   `current` symlink and brings the old code back online.
+- A failed expired-release deletion after successful health verification is
+  reported as a warning and does not roll back or fail the active release.
 - Database migrations remain additive/populated-data-safe by the repository
   contract. Code rollback does not blindly run migration `down()` methods.
 - The pre-migration application backup is retained for guarded manual restore;
@@ -164,7 +176,7 @@ automatically restarted after Laravel's graceful reload signal.
 - Static regression coverage asserts the workflow trigger/guards, pinned action
   references, least permissions, host-key checking, checksum handoff, shared
   paths, maintenance cleanup, backup, migration, health, atomic switch, rollback,
-  and retention boundaries.
+  retention boundaries, and non-fatal post-activation cleanup failures.
 - `bash -n` validates every deployment shell script.
 - Focused Pest, Pint, Larastan, the full Pest suite, frontend tests, Vue type
   checking, ESLint, Prettier, Composer validation/audit, npm audit, and the final
