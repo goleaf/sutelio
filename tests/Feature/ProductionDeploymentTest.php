@@ -38,6 +38,17 @@ test('clean CI creates the guarded SQLite file before Composer boots Laravel', f
         ->toBeLessThan($composerSetup);
 });
 
+test('frontend source contracts use Git case-correct page paths on Linux', function () {
+    foreach (File::allFiles(resource_path('js')) as $file) {
+        if ($file->getExtension() !== 'ts') {
+            continue;
+        }
+
+        expect($file->getContents(), $file->getRelativePathname())
+            ->not->toContain('/Pages/');
+    }
+});
+
 test('production activation preserves shared state and rolls code back on failed health', function () {
     $script = File::get(base_path('deploy/activate-release.sh'));
 

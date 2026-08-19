@@ -15,7 +15,7 @@ const taskList = readFileSync(
     'utf8',
 );
 const taskIndex = readFileSync(
-    new URL('../../Pages/tasks/Index.vue', import.meta.url),
+    new URL('../../pages/tasks/Index.vue', import.meta.url),
     'utf8',
 );
 
