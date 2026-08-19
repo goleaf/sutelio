@@ -24,6 +24,8 @@ Current token domains include background/surface/foreground/muted, border/input/
 
 ## Interaction Contract
 
+Authentication pages compose one shared `AuthEmailAssistant`. Login may prefill and list up to five successful Sutelio-only addresses with inline removal; registration starts with an empty address and never shows that history. Android NativePHP adds an explicit system chooser action, while web/iOS and every failure state retain the standard email field and platform autofill. Chooser progress, cancellation, success, timeout, and failure use localized inline status rather than a modal; all choices and destructive icons retain at least 48-pixel touch targets, visible focus, non-color state, and manual keyboard/screen-reader operation.
+
 - Every server-backed action has action-specific processing, duplicate prevention, validation/error recovery, and confirmed success behavior.
 - Every deliberate foreground Inertia navigation, form submission, router mutation, and configured standalone HTTP request inherits `globalBusy` from the application bootstrap. `GlobalBusyOverlay` renders one Signal Orange progress line and centered localized status, applies `aria-busy` plus `inert` to the application root, leaves only 30% of the page visible through `bg-background/70`, and has no close, cancel, outside-click, or Escape path. Overlapping requests are token-safe, so the lock ends only after every tracked foreground operation finishes.
 - Prefetching, polling, deferred/partial background refreshes that explicitly set `showProgress: false`, infinite-scroll fetches, and Precognition validation remain non-blocking. They keep local contextual feedback; feature components must not add a second page-blocking overlay or bypass the configured HTTP client.

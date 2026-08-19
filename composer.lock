@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ae711c60c649486ee6d22034eb55c86",
+    "content-hash": "0cc359c35af46776dc82e6299ab5a846",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -849,6 +849,43 @@
                 }
             ],
             "time": "2025-12-03T09:33:47+00:00"
+        },
+        {
+            "name": "goleaf/nativephp-email-picker",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "packages/goleaf/nativephp-email-picker",
+                "reference": "4b2b04688477befdb2faf71c924b0df782358f96"
+            },
+            "require": {
+                "nativephp/mobile": "^4.2",
+                "php": ">=8.4 <8.6"
+            },
+            "type": "nativephp-plugin",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "GoLeaf\\NativeEmailPicker\\EmailPickerServiceProvider"
+                    ]
+                },
+                "nativephp": {
+                    "manifest": "nativephp.json"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GoLeaf\\NativeEmailPicker\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Permission-free Android account chooser bridge for Sutelio.",
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "graham-campbell/result-type",

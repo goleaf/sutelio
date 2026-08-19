@@ -2,6 +2,7 @@
 import { Form, Head, setLayoutProps, usePage } from '@inertiajs/vue3';
 import { UserPlus } from '@lucide/vue';
 import { onMounted, ref, watchEffect } from 'vue';
+import AuthEmailAssistant from '@/components/auth/AuthEmailAssistant.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -13,13 +14,16 @@ import { detectBrowserTimezone } from '@/lib/timezone';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
-defineProps<{
+const props = defineProps<{
+    deviceEmailPickerAvailable: boolean;
     passwordRules: string;
+    rememberedEmails: string[];
 }>();
 
 const { t } = useUi();
 const page = usePage();
 const detectedTimezone = ref('UTC');
+const email = ref('');
 
 onMounted(() => {
     detectedTimezone.value = detectBrowserTimezone() ?? 'UTC';
@@ -65,19 +69,15 @@ watchEffect(() => {
                 <InputError :message="errors.name" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="email">{{ t('auth.common.email') }}</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    required
-                    autocomplete="email"
-                    name="email"
-                    :placeholder="t('auth.common.email_placeholder')"
-                    :aria-invalid="Boolean(errors.email)"
-                />
-                <InputError :message="errors.email" />
-            </div>
+            <AuthEmailAssistant
+                v-model="email"
+                mode="register"
+                :error="errors.email"
+                :remembered-emails="props.rememberedEmails"
+                :device-email-picker-available="
+                    props.deviceEmailPickerAvailable
+                "
+            />
 
             <div class="grid gap-2">
                 <Label for="password">{{ t('auth.common.password') }}</Label>

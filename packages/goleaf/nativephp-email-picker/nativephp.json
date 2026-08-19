@@ -1,0 +1,48 @@
+{
+    "name": "goleaf/nativephp-email-picker",
+    "version": "1.0.0",
+    "description": "Permission-free Android account chooser bridge for Sutelio.",
+    "namespace": "EmailPicker",
+    "platforms": [
+        "android"
+    ],
+    "bridge_functions": [
+        {
+            "name": "EmailPicker.Choose",
+            "android": "com.goleaf.plugins.email_picker.EmailPickerFunctions.Choose",
+            "android_params": [
+                "activity"
+            ],
+            "description": "Open the Android system account chooser"
+        }
+    ],
+    "android": {
+        "min_version": 29,
+        "permissions": [],
+        "repositories": [],
+        "dependencies": {
+            "implementation": []
+        },
+        "activities": [],
+        "services": [],
+        "receivers": [],
+        "providers": []
+    },
+    "ios": {
+        "min_version": "15.0",
+        "permissions": [],
+        "repositories": [],
+        "dependencies": {
+            "swift_packages": [],
+            "pods": []
+        }
+    },
+    "assets": {
+        "android": [],
+        "ios": []
+    },
+    "events": [],
+    "hooks": [],
+    "secrets": [],
+    "service_provider": "GoLeaf\\NativeEmailPicker\\EmailPickerServiceProvider"
+}

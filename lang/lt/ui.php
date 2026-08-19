@@ -115,6 +115,22 @@ return [
         ],
     ],
     'auth' => [
+        'email_assistance' => [
+            'choose_from_device' => 'Pasirinkti šiame telefone',
+            'chooser_cancelled' => 'Paskyra nepasirinkta. El. paštą galite įvesti ranka.',
+            'chooser_description' => '„Android“ parodys saugų paskyrų parinkiklį. „Sutelio“ gaus tik jūsų pasirinktą adresą.',
+            'chooser_error' => 'Nepavyko atverti telefono paskyrų parinkiklio. Įveskite el. paštą ranka.',
+            'chooser_loading' => 'Atveriamos telefono paskyros…',
+            'chooser_selected' => 'Pasirinktas el. paštas paruoštas.',
+            'chooser_timeout' => 'Telefono paskyrų parinkiklis užtruko per ilgai. Bandykite dar kartą arba įveskite el. paštą ranka.',
+            'forget' => 'Pamiršti :email šiame įrenginyje',
+            'forget_error' => 'Nepavyko pašalinti šio el. pašto iš įrenginio. Bandykite dar kartą.',
+            'forgotten' => 'El. paštas pašalintas iš šio įrenginio.',
+            'remembered_description' => 'Pasirinkite adresą, kuriuo anksčiau sėkmingai naudojotės „Sutelio“.',
+            'remembered_title' => 'Išsaugota šiame įrenginyje',
+            'selected' => 'Pasirinktas el. paštas paruoštas.',
+            'use_remembered' => 'Naudoti :email',
+        ],
         'common' => [
             'confirm_password' => 'Patvirtinkite slaptažodį',
             'email' => 'El. pašto adresas',

@@ -14,6 +14,8 @@ On Android, NativePHP mirrors Laravel cookies between its app-private cookie sto
 
 The selected locale and text direction are shared to the frontend and the Inertia Blade document language. `TimeZoneRegion` owns translated group identities and the page-scoped `TimeZoneCatalog` retains every canonical PHP IANA identifier exactly once. The shared Reka combobox searches localized display text, UTC offsets, humanized city names, and original identifiers. PHP ICU supplies server display names where available; browser `Intl.DateTimeFormat` localizes the visible fallback on NativePHP builds without PHP ICU. Browser system-timezone detection is network-free progressive enhancement, never an authorization or validation boundary, and never replaces an explicit saved choice. User timezone, date format, time format, and first-day-of-week preferences drive presentation and query boundaries; canonical timestamps remain storage values.
 
+Native email assistance uses the same semantic EN/LT/RU catalogs for remembered-history labels, device chooser guidance, selection/removal actions, and loading/cancellation/success/timeout/failure notices. No native source owns user-facing copy, and web/iOS fallback does not expose unavailable Android controls.
+
 ## Contributor Workflow
 
 1. Add a stable semantic domain key to English.

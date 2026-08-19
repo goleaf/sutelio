@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
 import { BadgeCheck, LogIn } from '@lucide/vue';
-import { watchEffect } from 'vue';
-import InputError from '@/components/InputError.vue';
+import { ref, watchEffect } from 'vue';
+import AuthEmailAssistant from '@/components/auth/AuthEmailAssistant.vue';
 import PasskeyVerify from '@/components/PasskeyVerify.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useUi } from '@/composables/useUi';
 import { register } from '@/routes';
@@ -25,10 +24,14 @@ watchEffect(() => {
     });
 });
 
-defineProps<{
+const props = defineProps<{
     status?: string;
     canResetPassword: boolean;
+    deviceEmailPickerAvailable: boolean;
+    rememberedEmails: string[];
 }>();
+
+const email = ref(props.rememberedEmails[0] ?? '');
 </script>
 
 <template>
@@ -51,20 +54,16 @@ defineProps<{
         class="flex flex-col gap-6"
     >
         <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="email">{{ t('auth.common.email') }}</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    required
-                    autofocus
-                    autocomplete="email"
-                    :placeholder="t('auth.common.email_placeholder')"
-                    :aria-invalid="Boolean(errors.email)"
-                />
-                <InputError :message="errors.email" />
-            </div>
+            <AuthEmailAssistant
+                v-model="email"
+                mode="login"
+                autofocus
+                :error="errors.email"
+                :remembered-emails="props.rememberedEmails"
+                :device-email-picker-available="
+                    props.deviceEmailPickerAvailable
+                "
+            />
 
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">

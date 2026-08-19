@@ -30,6 +30,8 @@ Configure the scheduler and, when reminder delivery is queued, a supervised boun
 
 ## NativePHP Mobile
 
+Native builds must validate and compile the allowlisted `goleaf/nativephp-email-picker` plugin, confirm the final manifest contains no account/contact permission, and exercise chooser cancellation plus successful encrypted Sutelio-history persistence on a disposable emulator. The exact inspected APK may update a physical Samsung only after source publication and remote equality; ordinary feature delivery uses a data-preserving install and must not clear the application-private encrypted history, cookies, sessions, or the SQLite database.
+
 The tracked NativePHP Mobile 4.2 lock installs embedded PHP 8.5.9, and the current Android artifact boots on that engine. Official v4 documentation still describes PHP 8.4, so Composer retains the conservative `>=8.4 <8.6` envelope until upstream metadata converges. Build/release requires official NativePHP tools, configured app ID/version/signing, min Android SDK 29 for Android 10, target/compile SDK values from config, a production frontend build, and real-device testing before store submission. Sutelio explicitly sets `NATIVEPHP_APPEARANCE=light` to match the product's fixed presentation and keeps `NATIVEPHP_FPS_OVERLAY=false` outside deliberate profiling.
 
 Regenerate brand inputs and NativePHP projects in this order before any native build:

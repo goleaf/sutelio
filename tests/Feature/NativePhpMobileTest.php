@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Providers\NativeServiceProvider;
 use App\Services\NativePhpRuntimeService;
 use Composer\InstalledVersions;
+use GoLeaf\NativeEmailPicker\EmailPickerServiceProvider;
 use Illuminate\Foundation\Console\ServeCommand;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Artisan;
@@ -83,7 +84,9 @@ test('the NativePHP v4 upgrade contract is configured', function () {
 
     expect($composer['require']['nativephp/mobile'])->toBe('^4.2')
         ->and(json_encode($composer, JSON_THROW_ON_ERROR))->not->toContain('nativephp.composer.sh')
-        ->and((new NativeServiceProvider(app()))->plugins())->toBe([])
+        ->and((new NativeServiceProvider(app()))->plugins())->toBe([
+            EmailPickerServiceProvider::class,
+        ])
         ->and(config('nativephp.android.compile_sdk'))->toBe(36)
         ->and(config('nativephp.android.min_sdk'))->toBe(29)
         ->and(config('nativephp.android.target_sdk'))->toBe(36)

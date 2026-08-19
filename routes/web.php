@@ -8,6 +8,7 @@ use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ForgetRememberedEmailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\LabelController;
@@ -37,6 +38,13 @@ Route::middleware('throttle:locale')
     ->name('locale.')
     ->group(function (): void {
         Route::put('/', LocaleController::class)->name('update');
+    });
+
+Route::middleware(['guest', 'throttle:30,1'])
+    ->prefix('remembered-emails')
+    ->name('remembered-emails.')
+    ->group(function (): void {
+        Route::delete('/', ForgetRememberedEmailController::class)->name('destroy');
     });
 
 Route::middleware('auth')

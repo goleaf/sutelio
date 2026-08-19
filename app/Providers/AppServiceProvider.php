@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Services\NativePhpRuntimeService;
+use App\Services\RememberedEmailStore;
 use App\Services\SqliteHealthService;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,11 @@ use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $this->app->singleton(RememberedEmailStore::class);
+    }
+
     public function boot(
         SqliteHealthService $sqliteHealthService,
         NativePhpRuntimeService $nativePhpRuntimeService,

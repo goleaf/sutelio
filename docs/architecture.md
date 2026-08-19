@@ -25,6 +25,8 @@ Source and reproducible NativePHP generation satisfy `sys-brand-001`, and Task 9
 - Data operations: versioned import preview/execution, streamed export, SQLite backup/restore/health.
 - API: `/api/v1` controllers/resources/errors/abilities reusing the same actions and policies.
 
+Native authentication assistance is a progressive device-local layer, not a second identity system. A post-authentication Laravel listener writes only the authenticated model email to a versioned, five-entry MRU payload encrypted and MAC-authenticated with the NativePHP per-device `APP_KEY`; the ciphertext is atomically stored with `0600` permissions under the application-private sandbox. Login may render that bounded history; registration deliberately starts empty. On Android, the allowlisted first-party `nativephp-email-picker` plugin uses the permission-free system account chooser and returns only the explicitly selected email through an application-scoped WebView event. It never enumerates accounts, requests account/contact permissions, handles credentials/tokens, or transports remembered history through PHP/native bridge parameters. Web and iOS keep the normal manual field when this Android-only bridge is unavailable.
+
 ## Request And Domain Flow
 
 ```text

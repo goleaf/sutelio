@@ -1,0 +1,26 @@
+{
+    "name": "goleaf/nativephp-email-picker",
+    "version": "1.0.0",
+    "description": "Permission-free Android account chooser bridge for Sutelio.",
+    "type": "nativephp-plugin",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.4 <8.6",
+        "nativephp/mobile": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "GoLeaf\\NativeEmailPicker\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GoLeaf\\NativeEmailPicker\\EmailPickerServiceProvider"
+            ]
+        },
+        "nativephp": {
+            "manifest": "nativephp.json"
+        }
+    }
+}

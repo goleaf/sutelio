@@ -73,6 +73,12 @@ Ordinary workspace/project/task create, edit, duplicate, and detail operations u
 
 The shared package-backed date picker explicitly controls its open lifecycle, closes after day/today selection while preserving an existing reminder time, marks locale/week-start-derived weekend headings and cells in Warm Precision styling, occupies the complete safe-area-aware phone viewport, and remains a bounded popover on tablet/desktop. Task creation returns at most 100 ordered active project choices plus the explicit authorized selection. `PageBasedRecordManagementTest.php`, `FrontendDatePickerTest.php`, the affected workspace/project/task/design suites, and independent Chrome DevTools/Playwright page, focus, bounding-box, autoclose, overflow, console, and network checks are the durable regression boundary. No schema, migration, dependency, seed, or onboarding contract changes.
 
+## Native Email Assistance
+
+Requirements: `sys-auth-001`, `sys-auth-002`, `sec-auth-001`, `sec-secrets-001`, `ui-accessibility-001`, `ui-responsive-001`, `i18n-001`, and `test-feature-001`.
+
+Fortify success events feed only the authenticated model email into a versioned, bounded MRU list encrypted and MAC-authenticated with NativePHP's protected per-device `APP_KEY`, atomically persisted as an application-private `0600` file. Login may prefill or select those entries; registration starts empty. The explicit Android system chooser is implemented by an allowlisted first-party NativePHP plugin with no account/contact permission or broad enumeration, and web/iOS keep manual entry. Remembered addresses never cross PHP/native bridge parameters. Failing-first Pest/frontend contracts, EN/LT/RU inline states, web fallback browser QA, complete source gates, APK inspection, isolated emulator chooser/history proof, scoped publication, and a final data-preserving Samsung update form the delivery sequence. Email verification, credentials/tokens, schema, workspace/onboarding data, and modal UI remain outside the feature.
+
 ## Active Database Optimization
 
 Requirements: `data-schema-001`, `data-sqlite-001`, `perf-query-001`, `perf-payload-001`, `perf-cache-001`, `ops-sqlite-001`, `test-feature-001`, and `test-static-001`.

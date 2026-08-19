@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use GoLeaf\NativeEmailPicker\EmailPickerServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
 class NativeServiceProvider extends ServiceProvider
@@ -34,7 +35,7 @@ class NativeServiceProvider extends ServiceProvider
     public function plugins(): array
     {
         return [
-            // \Vendor\ExamplePlugin\ExamplePluginServiceProvider::class,
+            EmailPickerServiceProvider::class,
         ];
     }
 }

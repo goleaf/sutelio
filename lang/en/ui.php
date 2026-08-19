@@ -115,6 +115,22 @@ return [
         ],
     ],
     'auth' => [
+        'email_assistance' => [
+            'choose_from_device' => 'Choose from this phone',
+            'chooser_cancelled' => 'No account was selected. You can enter the email manually.',
+            'chooser_description' => 'Android shows its secure account chooser. Sutelio receives only the address you select.',
+            'chooser_error' => 'The phone account chooser could not be opened. Enter the email manually.',
+            'chooser_loading' => 'Opening phone accounts…',
+            'chooser_selected' => 'The selected email is ready.',
+            'chooser_timeout' => 'The phone account chooser took too long. Try again or enter the email manually.',
+            'forget' => 'Forget :email on this device',
+            'forget_error' => 'This email could not be removed from the device. Try again.',
+            'forgotten' => 'The email was removed from this device.',
+            'remembered_description' => 'Choose an address previously used successfully in Sutelio.',
+            'remembered_title' => 'Saved on this device',
+            'selected' => 'The selected email is ready.',
+            'use_remembered' => 'Use :email',
+        ],
         'common' => [
             'confirm_password' => 'Confirm password',
             'email' => 'Email address',
